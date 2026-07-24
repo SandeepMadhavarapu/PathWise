@@ -13,6 +13,7 @@
 
 import type { Student, Event } from '../types';
 import type { UnemploymentClockInput } from '../engines/unemployment-clock';
+import type { OptBudgetInput } from '../engines/opt-budget';
 
 export const priyaStudent: Student = {
   id: 'priya',
@@ -98,6 +99,38 @@ export const priyaOpt: UnemploymentClockInput = {
   stem: true,
   employment: [],
   asOf: '2026-07-24',
+};
+
+// OPT budget — Engine A part 3. The 12 months are per level, and pre-completion spends them too.
+//   - During the master's she took a part-time pre-completion OPT: 2025-10-01 -> 2026-03-31, six
+//     authorized months at 15 hrs/week. Part-time pre-completion is deducted at HALF rate, so those
+//     six months cost her 3.0 months of budget — not 6, and not 0.
+//   - Her post-completion OPT therefore could only be recommended for 9 months (12 - 3), which is
+//     why it runs 2026-05-16 -> 2027-02-15 and not a full year. Most students never learn that the
+//     shortened grant traces back to a campus job two years earlier.
+//   - Both are master's-level. Her bachelor's budget is a separate 12 months and is untouched here.
+//   - Usage is computed from the authorized ranges above; hours actually worked never enter it.
+export const priyaOptBudget: OptBudgetInput = {
+  level: 'masters',
+  authorizations: [
+    {
+      id: 'opt-pre-pt',
+      start: '2025-10-01',
+      end: '2026-03-31',
+      intensity: 'part_time',
+      phase: 'pre_completion',
+      level: 'masters',
+      employer: 'School Y Research Lab',
+    },
+    {
+      id: 'opt-post-ft',
+      start: '2026-05-16',
+      end: '2027-02-15',
+      intensity: 'full_time',
+      phase: 'post_completion',
+      level: 'masters',
+    },
+  ],
 };
 
 // The life event used in the demo's money moment.

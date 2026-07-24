@@ -32,6 +32,13 @@
     "part_time_pre_completion_half_rate": true,
     "part_time_threshold_hours_per_week": 20,
     "counting_basis": "authorized_periods",
+    "counting_note": "Budget usage runs on the AUTHORIZED period, never on hours actually worked. Overtime does not spend more budget; unemployment does not spend less.",
+    "level_partition": {
+      "rule": "The 12-month OPT budget is per education level. Master's OPT starts a fresh 12 months.",
+      "cite": "8 CFR 214.2(f)(11)"
+    },
+    "budget_cite": "8 CFR 214.2(f)(11)",
+    "budget_authority": "8 CFR 214.2(f)(11); USCIS Policy Manual",
     "apply_window": {
       "earliest_days_before_program_end": 90,
       "latest_days_after_program_end": 60,

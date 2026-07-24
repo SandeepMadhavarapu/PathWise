@@ -128,6 +128,41 @@ a:hover { text-decoration: underline; }
 .uclock .consequence.amber { background: var(--amber-soft); border-color: #f0dcb0; color: var(--amber); }
 .uclock .consequence .cite { margin-left: 4px; }
 
+/* OPT budget (12 months per education level) */
+.optbudget { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); }
+.optbudget .head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.optbudget .head .title { font-weight: 650; font-size: 15px; text-transform: capitalize; }
+.optbudget .head .sub { font-size: 13px; font-weight: 600; }
+.optbudget .head .sub.green { color: var(--green); }
+.optbudget .head .sub.amber { color: var(--amber); }
+.optbudget .head .sub.red { color: var(--red); }
+.optbudget .track { position: relative; height: 34px; background: #eef1f6; border-radius: 8px; overflow: hidden; }
+.optbudget .zone { position: absolute; top: 0; bottom: 0; }
+.optbudget .zone.green { left: 0; background: var(--green-soft); }
+.optbudget .zone.amber { background: var(--amber-soft); }
+.optbudget .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 8px 0 0 8px; }
+.optbudget .fill.green { background: linear-gradient(180deg, #2aa06b, var(--green)); }
+.optbudget .fill.amber { background: linear-gradient(180deg, #cf9433, var(--amber)); }
+.optbudget .fill.red { background: linear-gradient(180deg, #d0503f, var(--red)); }
+.optbudget .cap-mark { position: absolute; top: -4px; bottom: -4px; right: 0; width: 2px; background: var(--red); }
+.optbudget .cap-mark .lbl { position: absolute; top: -20px; right: -2px; font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; }
+
+/* Per-authorization usage lines */
+.opt-lines { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 8px; }
+.opt-line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--ink-soft);
+  padding-bottom: 8px; border-bottom: 1px dashed var(--line); }
+.opt-line:last-child { padding-bottom: 0; border-bottom: none; }
+.opt-line .ol-what { font-weight: 600; color: var(--ink); }
+.opt-line .ol-when { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.opt-line .ol-cost { margin-left: auto; white-space: nowrap; }
+.opt-line .ol-cost strong { color: var(--ink); }
+
+.optbudget .consequence { margin-top: 14px; padding: 12px 15px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600;
+  background: var(--red-soft); border: 1px solid #f0c8c2; color: var(--red); }
+.optbudget .consequence.green { background: var(--green-soft); border-color: #cfe9db; color: var(--green); }
+.optbudget .consequence.amber { background: var(--amber-soft); border-color: #f0dcb0; color: var(--amber); }
+.optbudget .consequence .cite { margin-left: 4px; }
+
 /* CTA to the money moment */
 .cta { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 22px;
   background: var(--ink); color: #fff; border-radius: var(--radius); padding: 20px 24px; box-shadow: var(--shadow); }
