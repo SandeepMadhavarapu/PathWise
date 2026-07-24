@@ -90,13 +90,20 @@ a:hover { text-decoration: underline; }
 .ledger .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
 .ledger .head .title { font-weight: 650; font-size: 15px; }
 .ledger .head .sub { font-size: 13px; color: var(--muted); }
+/* Bar wrapper. The track clips its fill to the rounded corners, which would also clip a label
+   sitting above the bar — so the cap/cliff marker is a SIBLING of the track, positioned in this
+   unclipped wrapper. padding-top reserves the label's row; the marker's top offset is measured
+   from the same origin, so tick and label stay locked to one another. */
+.track-wrap { position: relative; padding-top: 22px; }
+
 .track { position: relative; height: 34px; background: #eef1f6; border-radius: 8px; overflow: hidden; }
 .fill { position: absolute; left: 0; top: 0; bottom: 0; display: flex; }
 .seg { height: 100%; }
 .seg.full { background: linear-gradient(180deg, #3a6ae4, #2f5fe0); }
 .seg.overlap { background: repeating-linear-gradient(45deg, #b7791f, #b7791f 6px, #cf9433 6px, #cf9433 12px); }
-.cliff { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--red); }
-.cliff .lbl { position: absolute; top: -20px; right: -6px; font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; }
+/* top: 18px = the track's top edge (22px) less the 4px overhang the tick shows above the bar. */
+.cliff { position: absolute; top: 18px; bottom: -4px; width: 2px; background: var(--red); }
+.cliff .lbl { position: absolute; top: -18px; right: -6px; font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; }
 .legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-soft); }
 .legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
 .legend .sw.full { background: #2f5fe0; }
@@ -119,8 +126,8 @@ a:hover { text-decoration: underline; }
 .uclock .fill.green { background: linear-gradient(180deg, #2aa06b, var(--green)); }
 .uclock .fill.amber { background: linear-gradient(180deg, #cf9433, var(--amber)); }
 .uclock .fill.red { background: linear-gradient(180deg, #d0503f, var(--red)); }
-.uclock .cap-mark { position: absolute; top: -4px; bottom: -4px; right: 0; width: 2px; background: var(--red); }
-.uclock .cap-mark .lbl { position: absolute; top: -20px; right: -2px; font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; }
+.uclock .cap-mark { position: absolute; top: 18px; bottom: -4px; right: 0; width: 2px; background: var(--red); }
+.uclock .cap-mark .lbl { position: absolute; top: -18px; right: -2px; font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; }
 .uclock .legend { margin-top: 12px; font-size: 12.5px; color: var(--ink-soft); }
 .uclock .consequence { margin-top: 14px; padding: 12px 15px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600;
   background: var(--red-soft); border: 1px solid #f0c8c2; color: var(--red); }
@@ -144,8 +151,8 @@ a:hover { text-decoration: underline; }
 .optbudget .fill.green { background: linear-gradient(180deg, #2aa06b, var(--green)); }
 .optbudget .fill.amber { background: linear-gradient(180deg, #cf9433, var(--amber)); }
 .optbudget .fill.red { background: linear-gradient(180deg, #d0503f, var(--red)); }
-.optbudget .cap-mark { position: absolute; top: -4px; bottom: -4px; right: 0; width: 2px; background: var(--red); }
-.optbudget .cap-mark .lbl { position: absolute; top: -20px; right: -2px; font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; }
+.optbudget .cap-mark { position: absolute; top: 18px; bottom: -4px; right: 0; width: 2px; background: var(--red); }
+.optbudget .cap-mark .lbl { position: absolute; top: -18px; right: -2px; font-size: 11px; color: var(--red); font-weight: 600; white-space: nowrap; }
 
 /* Per-authorization usage lines */
 .opt-lines { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 8px; }

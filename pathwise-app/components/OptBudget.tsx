@@ -67,10 +67,13 @@ export function OptBudget({
         </span>
       </div>
 
-      <div className="track">
-        <div className="zone green" style={{ width: `${amberPct}%` }} />
-        <div className="zone amber" style={{ left: `${amberPct}%`, right: 0 }} />
-        <div className={`fill ${level.band}`} style={{ width: `${usedPct}%` }} />
+      <div className="track-wrap">
+        <div className="track">
+          <div className="zone green" style={{ width: `${amberPct}%` }} />
+          <div className="zone amber" style={{ left: `${amberPct}%`, right: 0 }} />
+          <div className={`fill ${level.band}`} style={{ width: `${usedPct}%` }} />
+        </div>
+        {/* Outside the track: the track clips its fill, and would clip this label with it. */}
         <div className="cap-mark">
           <span className="lbl">{level.budgetMonths}-month cap</span>
         </div>

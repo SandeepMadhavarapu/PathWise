@@ -25,11 +25,14 @@ export function LedgerBar({
         </span>
       </div>
 
-      <div className="track">
-        <div className="fill">
-          <div className="seg full" style={{ width: `${fullPct}%` }} />
-          <div className="seg overlap" style={{ width: `${overlapPct}%` }} />
+      <div className="track-wrap">
+        <div className="track">
+          <div className="fill">
+            <div className="seg full" style={{ width: `${fullPct}%` }} />
+            <div className="seg overlap" style={{ width: `${overlapPct}%` }} />
+          </div>
         </div>
+        {/* Outside the track: the track clips its fill, and would clip this label with it. */}
         <div className="cliff" style={{ left: `${cliffPct}%` }}>
           <span className="lbl">365-day cliff</span>
         </div>

@@ -42,8 +42,11 @@ export function UnemploymentClock({
         </span>
       </div>
 
-      <div className="track">
-        <div className={`fill ${clock.band}`} style={{ width: `${fillPct}%` }} />
+      <div className="track-wrap">
+        <div className="track">
+          <div className={`fill ${clock.band}`} style={{ width: `${fillPct}%` }} />
+        </div>
+        {/* Outside the track: the track clips its fill, and would clip this label with it. */}
         <div className="cap-mark">
           <span className="lbl">
             {clock.cap}-day cap
