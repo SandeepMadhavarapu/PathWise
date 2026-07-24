@@ -41,6 +41,15 @@ export default function StudentPage() {
         aidCite="SCHEV VASA"
       />
 
+      <Link href="/student/journey" className="memorystrip">
+        <span>
+          <span className="ms-k">PathWise remembers the whole journey.</span>{" "}
+          {priyaStudent.institutions.length} institutions, {priyaEvents.length} events, nothing to
+          re-explain.
+        </span>
+        <span className="ms-go">View Priya&apos;s full journey →</span>
+      </Link>
+
       <div className="section-h">Her three offices, at a glance</div>
       <div className="cards">
         <DomainCard

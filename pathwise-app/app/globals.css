@@ -297,3 +297,111 @@ a:hover { text-decoration: underline; }
 .form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin-top: 22px;
   padding-top: 18px; border-top: 1px dashed var(--line); }
 .check-privacy { font-size: 13.5px; color: var(--green); font-weight: 600; }
+
+/* ---------------------------------------------------------------------------
+   My Journey — the persistent timeline
+   --------------------------------------------------------------------------- */
+
+/* Status chip — icon + word + color, never color alone. Same four states everywhere. */
+.statuschip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.statuschip .ic { font-size: 11px; line-height: 1; }
+.statuschip.verified { background: var(--green-soft); color: var(--green); }
+.statuschip.attention { background: var(--amber-soft); color: var(--amber); }
+.statuschip.blocked { background: var(--red-soft); color: var(--red); }
+.statuschip.unknown { background: #f2f4f8; color: var(--muted); }
+
+/* Intro card */
+.jintro { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); padding: 26px 28px; box-shadow: var(--shadow); }
+.jintro-eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent);
+  font-weight: 600; margin-bottom: 10px; }
+.jintro h1 { font-size: 25px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em; }
+.jintro p { margin: 0; color: var(--ink-soft); font-size: 15.5px; max-width: 62ch; }
+.jstats { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 18px; padding-top: 14px;
+  border-top: 1px dashed var(--line); font-size: 13px; color: var(--muted); }
+.jstat strong { color: var(--ink); font-weight: 650; }
+
+/* The rail — one subtle connective line down the whole history */
+.journey { position: relative; padding: 2px 0; }
+.journey::before { content: ""; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, transparent, var(--line) 28px, var(--line) calc(100% - 28px), transparent); }
+
+.jgroup { position: relative; }
+.jgroup-head { position: relative; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px;
+  padding: 22px 0 12px 46px; }
+/* 34px = padding-top (22) + half the 16px/1.55 heading line — locks the marker to the first line
+   even when the name and its meta wrap onto two rows. */
+.jgroup-mark { position: absolute; left: 10px; top: 34px; width: 12px; height: 12px; border-radius: 3px;
+  background: var(--bg); border: 2px solid var(--muted); transform: translateY(-50%) rotate(45deg); }
+.jgroup-name { font-size: 16px; font-weight: 650; letter-spacing: -0.01em; }
+.jgroup-meta { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+
+.jlist { list-style: none; padding: 0; margin: 0; }
+.jitem { position: relative; margin-bottom: 10px; }
+.jdot { position: absolute; left: 9px; top: 22px; width: 14px; height: 14px; border-radius: 50%;
+  box-shadow: 0 0 0 4px var(--bg); }
+.jdot.verified { background: var(--green); }
+.jdot.attention { background: var(--amber); }
+.jdot.blocked { background: var(--red); }
+.jdot.unknown { background: var(--surface); border: 2px dashed var(--muted); }
+
+.jcard { margin-left: 46px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  transition: border-color 0.16s ease, transform 0.16s ease; }
+.jcard:hover { border-color: #d3e0ff; transform: translateX(2px); }
+.jitem.open .jcard { border-color: #d3e0ff; }
+.jitem.inferred .jcard { background: transparent; box-shadow: none; border-style: dashed; }
+
+.jrow { display: block; width: 100%; text-align: left; background: none; border: none;
+  font-family: var(--sans); color: var(--ink); padding: 15px 18px; cursor: pointer; border-radius: var(--radius); }
+.jrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jrow-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; }
+.jdate { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.jtitle { font-size: 15.5px; font-weight: 650; letter-spacing: -0.01em; }
+.jinst { font-size: 13px; color: var(--muted); }
+.jchev { margin-left: auto; font-size: 16px; color: var(--muted); transition: transform 0.18s ease; }
+.jitem.open .jchev { transform: rotate(90deg); }
+.jmeta { display: block; font-size: 13px; color: var(--ink-soft); margin-top: 5px; }
+
+/* Expanded detail card, in place */
+.jdetail { padding: 0 18px 18px; animation: jopen 0.18s ease both; }
+@keyframes jopen { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.jfacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px;
+  padding-top: 14px; border-top: 1px dashed var(--line); }
+@media (max-width: 640px) { .jfacts { grid-template-columns: 1fr; } }
+.jfact .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+.jfact .v { font-size: 14px; color: var(--ink); margin-top: 4px; }
+.jsub { color: var(--ink-soft); font-size: 13px; }
+
+.jev-block { margin-top: 16px; }
+.jev { list-style: none; padding: 0; margin: 7px 0 0; display: flex; flex-wrap: wrap; gap: 7px; }
+.jev li { font-size: 12.5px; color: var(--ink); background: #f2f4f8; border: 1px solid var(--line);
+  border-radius: 6px; padding: 3px 9px; }
+.jev-id { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.jev-note { font-size: 12.5px; color: var(--muted); margin-top: 7px; }
+
+/* Honest gap — designed, not errored */
+.jgap { margin-top: 16px; background: #f2f4f8; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 13px 15px; }
+.jgap .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+.jgap .v { font-size: 13.5px; color: var(--ink-soft); margin-top: 3px; }
+
+.jwhy { margin-top: 16px; background: var(--accent-soft); border: 1px solid #d3e0ff;
+  border-radius: var(--radius-sm); padding: 13px 15px; }
+.jwhy .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); font-weight: 700; }
+.jwhy .v { font-size: 13.5px; color: var(--ink); margin-top: 4px; }
+
+@media (max-width: 640px) {
+  .jintro { padding: 22px 20px; }
+  .jintro h1 { font-size: 21px; }
+  .jchev { display: none; }
+}
+
+/* Dashboard → journey link */
+.memorystrip { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px 18px; box-shadow: var(--shadow); color: var(--ink-soft); font-size: 14px;
+  transition: border-color 0.16s ease, transform 0.16s ease; }
+.memorystrip:hover { text-decoration: none; border-color: #d3e0ff; transform: translateY(-1px); }
+.memorystrip .ms-k { color: var(--ink); font-weight: 650; }
+.memorystrip .ms-go { color: var(--accent); font-weight: 600; font-size: 13.5px; white-space: nowrap; }
