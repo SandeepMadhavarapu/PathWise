@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { runDomicileGate } from "@/lib/engines/domicile-gate";
-import { priyaStudent, priyaEvents } from "@/lib/fixtures/priya";
+import { priyaStudent, priyaEvents, priyaOpt } from "@/lib/fixtures/priya";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
+import { UnemploymentClock } from "@/components/UnemploymentClock";
 
 export default function StudentPage() {
   // ---- Everything below is computed live by the real engines. Nothing is hard-coded. ----
@@ -76,6 +77,9 @@ export default function StudentPage() {
           <LedgerBar ledger={masters} />
         </>
       ) : null}
+
+      <div className="section-h">Immigration — the clock that runs while she waits</div>
+      <UnemploymentClock input={priyaOpt} />
 
       <Link href="/moment" className="cta">
         <div>

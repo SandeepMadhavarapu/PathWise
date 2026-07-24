@@ -12,6 +12,7 @@
 //     NOT stop; a new 10-day SEVIS obligation appears; residency clock (if past the gate) would start.
 
 import type { Student, Event } from '../types';
+import type { UnemploymentClockInput } from '../engines/unemployment-clock';
 
 export const priyaStudent: Student = {
   id: 'priya',
@@ -84,6 +85,20 @@ export const priyaEvents: Event[] = [
   { id: 'prog-mast-start', type: 'program_start', date: '2024-01-16', institution_id: 'schoolY', program_level: 'masters', attrs: {}, evidence_ids: ['i20-mast-1'], confidence: 'extracted' },
   { id: 'prog-mast-end', type: 'program_end', date: '2026-05-15', institution_id: 'schoolY', program_level: 'masters', attrs: {}, evidence_ids: ['i20-mast-1'], confidence: 'extracted' },
 ];
+
+// Post-completion OPT scenario — the live unemployment clock (Engine A part 4).
+//   - Her master's program ends 2026-05-15 (prog-mast-end above); post-completion OPT starts
+//     right after, inside the grace/OPT window.
+//   - She is in a STEM field (stem: true) — but she has NOT reported any employment yet. Per the
+//     rulepack that means her real cap is 90, not 150: the STEM +60 only unlocks once a
+//     qualifying job is on record. The clock is running the whole time she job-hunts.
+//   - asOf is the demo's "today". The engine computes ~70 of 90 days used — a live amber signal.
+export const priyaOpt: UnemploymentClockInput = {
+  optStartDate: '2026-05-16',
+  stem: true,
+  employment: [],
+  asOf: '2026-07-24',
+};
 
 // The life event used in the demo's money moment.
 export const priyaJobOffer = {

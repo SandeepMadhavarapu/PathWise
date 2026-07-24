@@ -1,0 +1,78 @@
+import {
+  computeUnemploymentClock,
+  type UnemploymentClockInput,
+} from "@/lib/engines/unemployment-clock";
+
+function formatDate(iso: string) {
+  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+export function UnemploymentClock({
+  input,
+  voice = "third",
+}: {
+  input: UnemploymentClockInput;
+  voice?: "second" | "third";
+}) {
+  const clock = computeUnemploymentClock(input);
+  const second = voice === "second";
+  const subject = second ? "you" : "she";
+  const possessive = second ? "your" : "her";
+
+  const fillPct = Math.min(100, (clock.daysUsed / clock.cap) * 100);
+  const capLine = clock.stemApplies
+    ? `STEM extension in effect — cap is ${clock.cap} days.`
+    : `No qualifying employment reported, so the cap is ${clock.cap} days — the STEM +${input.stem ? "60" : "0"} only unlocks once ${subject} report${second ? "" : "s"} a job.`;
+
+  return (
+    <div className="uclock">
+      <div className="head">
+        <span className="title">
+          Unemployment clock — Day {clock.daysUsed} of {clock.cap}
+        </span>
+        <span className={`sub ${clock.band}`}>
+          {clock.isPaused
+            ? "clock paused — qualifying job active"
+            : `${clock.daysRemaining} days remaining`}
+        </span>
+      </div>
+
+      <div className="track">
+        <div className={`fill ${clock.band}`} style={{ width: `${fillPct}%` }} />
+        <div className="cap-mark">
+          <span className="lbl">
+            {clock.cap}-day cap
+          </span>
+        </div>
+      </div>
+
+      <div className="legend">
+        <span>{capLine}</span>
+      </div>
+
+      {clock.isPaused ? (
+        <div className="note">
+          <strong>Right now the clock is paused.</strong> A qualifying job (20+ hrs/week) is active
+          as of {formatDate(input.asOf)}, so no unemployment days are accruing today. It resumes the
+          moment that job ends.
+        </div>
+      ) : (
+        <div className="note">
+          <strong>If the current gap continues,</strong> {possessive} SEVIS record auto-terminates on{" "}
+          <strong>{formatDate(clock.projectedTerminationDate as string)}</strong>. Days are counted
+          cumulatively — every gap while job-hunting adds up, not just the longest one.
+        </div>
+      )}
+
+      <div className={`consequence ${clock.band}`}>
+        On day {clock.cap + 1} {subject} fall{second ? "" : "s"} out of status — no grace period, no
+        reinstatement. <span className="cite">8 CFR 214.2(f) · SEVP</span>
+      </div>
+    </div>
+  );
+}
