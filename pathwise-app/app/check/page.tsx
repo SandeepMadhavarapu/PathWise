@@ -131,7 +131,9 @@ export default function CheckPage() {
           </Link>
           <span className="tag">check your own status</span>
         </div>
-        <span className="pill">Check your own status</span>
+        <Link href="/" className="pill">
+          ← Home
+        </Link>
       </div>
 
       <form className="check-form" onSubmit={onSubmit}>

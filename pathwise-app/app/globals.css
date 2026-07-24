@@ -46,6 +46,8 @@ a:hover { text-decoration: underline; }
 .brand .dot { color: var(--accent); }
 .brand .tag { font-size: 13px; color: var(--muted); }
 .pill { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; background: var(--surface); }
+/* Right side of the topbar when it carries more than one pill (e.g. a back link + a label). */
+.topnav { display: flex; align-items: baseline; gap: 8px; }
 
 /* Hero cross-domain finding */
 .hero {

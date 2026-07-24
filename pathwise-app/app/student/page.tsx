@@ -31,7 +31,12 @@ export default function StudentPage() {
           </Link>
           <span className="tag">your standing across every system</span>
         </div>
-        <span className="pill">Example student · Priya</span>
+        <div className="topnav">
+          <Link href="/" className="pill">
+            ← Home
+          </Link>
+          <span className="pill">Example student · Priya</span>
+        </div>
       </div>
 
       <HeroFinding
