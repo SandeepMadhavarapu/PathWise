@@ -21,9 +21,14 @@ export default function Landing() {
           International students face immigration (F-1), residency, and financial aid rules
           separately — PathWise reasons across all three at once.
         </p>
-        <Link href="/student" className="btn landing-cta">
-          View example student →
-        </Link>
+        <div className="landing-cta-row">
+          <Link href="/student" className="btn landing-cta">
+            View example student →
+          </Link>
+          <Link href="/check" className="landing-cta-alt">
+            Or check your own status →
+          </Link>
+        </div>
         <div className="landing-privacy">
           No account. Nothing stored on a server. PathWise reasons on your device.
         </div>
