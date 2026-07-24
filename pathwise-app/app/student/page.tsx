@@ -58,6 +58,8 @@ export default function StudentPage() {
           band={isBlocked ? "red" : "amber"}
           detail="Not an error — a reasoned finding. Student-visa holders cannot establish domicile."
           cite="SCHEV Pt II §03(A)"
+          detailHref="/student/finding/residency"
+          detailLabel="See full reasoning →"
         />
         <DomainCard
           domain="Financial aid (Virginia)"

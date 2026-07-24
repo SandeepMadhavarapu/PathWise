@@ -168,3 +168,42 @@ a:hover { text-decoration: underline; }
 /* Footer */
 .foot { margin-top: 40px; font-size: 12.5px; color: var(--muted); text-align: center; }
 .foot .privacy { color: var(--green); font-weight: 600; }
+
+/* Domain card "see full reasoning" link */
+.card-more { display: inline-block; margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--accent); }
+
+/* Finding detail */
+.finding { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 28px; box-shadow: var(--shadow); }
+.finding-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.finding-headline { font-size: 24px; line-height: 1.3; margin: 0; letter-spacing: -0.01em; }
+.finding .badge { flex: none; margin-top: 4px; }
+.badge.gray { background: #f2f4f8; color: var(--muted); }
+
+/* Reasoning chain — numbered vertical list */
+.reason-list { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 14px; }
+.reason-step { display: flex; gap: 14px; }
+.reason-num { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.reason-body { flex: 1; }
+.reason-claim { font-size: 14.5px; color: var(--ink); }
+.reason-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.reason-tag { font-family: var(--mono); font-size: 11.5px; color: var(--muted); background: #f2f4f8; border: 1px solid var(--line); border-radius: 6px; padding: 1px 7px; }
+
+/* Citation block */
+.citation-block { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius-sm); padding: 16px 18px; }
+.citation-quote { margin: 0 0 10px; font-size: 15px; color: var(--ink); font-style: italic; }
+.citation-meta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* Open questions */
+.unknowns { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 12px; }
+.unknown-item { background: var(--amber-soft); border: 1px solid #f0dcb0; border-radius: var(--radius-sm); padding: 14px 16px; }
+.unknown-what { font-size: 14.5px; font-weight: 650; color: var(--ink); margin-bottom: 6px; }
+.unknown-why, .unknown-how { font-size: 13.5px; color: var(--ink-soft); margin-top: 3px; }
+.unknown-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--amber); }
+
+/* Footer line */
+.finding-foot { margin-top: 22px; padding-top: 16px; border-top: 1px dashed var(--line); font-size: 13.5px; color: var(--ink-soft); font-style: italic; }
+
+/* Volatility banner */
+.volatility { margin-top: 16px; background: var(--amber-soft); border: 1px solid #f0dcb0; border-radius: var(--radius-sm);
+  padding: 12px 15px; font-size: 13.5px; color: var(--amber); font-weight: 600; }

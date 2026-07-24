@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type Band = "green" | "amber" | "red";
 
 export function DomainCard({
@@ -6,12 +8,16 @@ export function DomainCard({
   band,
   detail,
   cite,
+  detailHref,
+  detailLabel,
 }: {
   domain: string;
   status: string;
   band: Band;
   detail: string;
   cite?: string;
+  detailHref?: string;
+  detailLabel?: string;
 }) {
   const label = band === "green" ? "On track" : band === "amber" ? "Attention" : "Blocked";
   return (
@@ -22,6 +28,11 @@ export function DomainCard({
       <div className="detail" style={{ marginTop: 8 }}>
         {detail} {cite ? <span className="cite">{cite}</span> : null}
       </div>
+      {detailHref ? (
+        <Link href={detailHref} className="card-more">
+          {detailLabel ?? "See full reasoning →"}
+        </Link>
+      ) : null}
     </div>
   );
 }
