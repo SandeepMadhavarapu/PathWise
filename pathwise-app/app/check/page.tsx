@@ -238,6 +238,7 @@ export default function CheckPage() {
               statusLabel={status}
               residencyCite="SCHEV Pt II §03(A)"
               aidCite="SCHEV VASA"
+              voice="second"
             />
           ) : null}
 
@@ -289,7 +290,7 @@ export default function CheckPage() {
               <div className="section-h">Your CPT ledger, computed live</div>
               {ledger.byLevel.map((l) => (
                 <div key={l.level} style={{ marginBottom: 14 }}>
-                  <LedgerBar ledger={l} />
+                  <LedgerBar ledger={l} voice="second" />
                 </div>
               ))}
             </>

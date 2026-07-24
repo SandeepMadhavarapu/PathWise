@@ -3,7 +3,14 @@ import type { LevelLedger } from "@/lib/engines/cpt-ledger";
 const TRACK_MAX_DAYS = 400; // visual scale; cliff at 365 sits near the right
 const CLIFF_DAYS = 365;
 
-export function LedgerBar({ ledger }: { ledger: LevelLedger }) {
+export function LedgerBar({
+  ledger,
+  voice = "third",
+}: {
+  ledger: LevelLedger;
+  voice?: "second" | "third";
+}) {
+  const second = voice === "second";
   const solidFull = ledger.fullTimeDays - ledger.overlapDays; // single-authorization full-time days
   const fullPct = (solidFull / TRACK_MAX_DAYS) * 100;
   const overlapPct = (ledger.overlapDays / TRACK_MAX_DAYS) * 100;
@@ -39,10 +46,11 @@ export function LedgerBar({ ledger }: { ledger: LevelLedger }) {
       </div>
 
       <div className="note">
-        <strong>Why this matters:</strong> at {ledger.fullTimeDays} days she is{" "}
-        <strong>{ledger.daysToCliff} days</strong> from 365 — cross it and she loses OPT eligibility for
-        this level entirely. The {ledger.overlapDays} overlap days are ones she would never see herself,
-        and her bachelor&apos;s CPT is partitioned out because the cap resets by level.{" "}
+        <strong>Why this matters:</strong> at {ledger.fullTimeDays} days {second ? "you are" : "she is"}{" "}
+        <strong>{ledger.daysToCliff} days</strong> from 365 — cross it and {second ? "you lose" : "she loses"}{" "}
+        OPT eligibility for this level entirely. The {ledger.overlapDays} overlap days are ones{" "}
+        {second ? "you would never see yourself" : "she would never see herself"}, and{" "}
+        {second ? "your" : "her"} bachelor&apos;s CPT is partitioned out because the cap resets by level.{" "}
         <span className="cite">8 CFR 214.2(f)(10)</span>
       </div>
     </div>
