@@ -1,0 +1,276 @@
+{
+  "pack_id": "coverage",
+  "description": "All 50 states + DC, each with an honest coverage status. Unimplemented states are shown honestly in the UI with a source link \u2014 the same 'unable to verify' philosophy applied to our own coverage.",
+  "verified_on": "2026-07-24",
+  "legend": {
+    "implemented": "Rule pack authored and verified against primary source.",
+    "schema_ready": "Structural facts captured; rule pack not yet fully authored/verified.",
+    "not_yet": "Not yet modelled. UI links to the official source."
+  },
+  "jurisdictions": [
+    {
+      "code": "AL",
+      "name": "Alabama",
+      "status": "not_yet"
+    },
+    {
+      "code": "AK",
+      "name": "Alaska",
+      "status": "schema_ready",
+      "note": "24-month duration; clock anchors to census/add-drop date."
+    },
+    {
+      "code": "AZ",
+      "name": "Arizona",
+      "status": "not_yet"
+    },
+    {
+      "code": "AR",
+      "name": "Arkansas",
+      "status": "not_yet",
+      "note": "6-month duration requirement."
+    },
+    {
+      "code": "CA",
+      "name": "California",
+      "status": "schema_ready",
+      "note": "Uses a residency determination date; 1-year-plus-a-day durational."
+    },
+    {
+      "code": "CO",
+      "name": "Colorado",
+      "status": "not_yet"
+    },
+    {
+      "code": "CT",
+      "name": "Connecticut",
+      "status": "not_yet"
+    },
+    {
+      "code": "DE",
+      "name": "Delaware",
+      "status": "not_yet"
+    },
+    {
+      "code": "DC",
+      "name": "District of Columbia",
+      "status": "not_yet"
+    },
+    {
+      "code": "FL",
+      "name": "Florida",
+      "status": "not_yet"
+    },
+    {
+      "code": "GA",
+      "name": "Georgia",
+      "status": "not_yet"
+    },
+    {
+      "code": "HI",
+      "name": "Hawaii",
+      "status": "not_yet",
+      "note": "Uses a residency determination date."
+    },
+    {
+      "code": "ID",
+      "name": "Idaho",
+      "status": "not_yet"
+    },
+    {
+      "code": "IL",
+      "name": "Illinois",
+      "status": "not_yet"
+    },
+    {
+      "code": "IN",
+      "name": "Indiana",
+      "status": "not_yet"
+    },
+    {
+      "code": "IA",
+      "name": "Iowa",
+      "status": "not_yet"
+    },
+    {
+      "code": "KS",
+      "name": "Kansas",
+      "status": "not_yet"
+    },
+    {
+      "code": "KY",
+      "name": "Kentucky",
+      "status": "not_yet"
+    },
+    {
+      "code": "LA",
+      "name": "Louisiana",
+      "status": "not_yet"
+    },
+    {
+      "code": "ME",
+      "name": "Maine",
+      "status": "not_yet"
+    },
+    {
+      "code": "MD",
+      "name": "Maryland",
+      "status": "schema_ready",
+      "note": "Anchors to census/add-drop date."
+    },
+    {
+      "code": "MA",
+      "name": "Massachusetts",
+      "status": "not_yet"
+    },
+    {
+      "code": "MI",
+      "name": "Michigan",
+      "status": "not_yet"
+    },
+    {
+      "code": "MN",
+      "name": "Minnesota",
+      "status": "not_yet",
+      "note": "Anchors to application date."
+    },
+    {
+      "code": "MS",
+      "name": "Mississippi",
+      "status": "not_yet"
+    },
+    {
+      "code": "MO",
+      "name": "Missouri",
+      "status": "not_yet"
+    },
+    {
+      "code": "MT",
+      "name": "Montana",
+      "status": "not_yet"
+    },
+    {
+      "code": "NE",
+      "name": "Nebraska",
+      "status": "not_yet"
+    },
+    {
+      "code": "NV",
+      "name": "Nevada",
+      "status": "not_yet"
+    },
+    {
+      "code": "NH",
+      "name": "New Hampshire",
+      "status": "not_yet"
+    },
+    {
+      "code": "NJ",
+      "name": "New Jersey",
+      "status": "not_yet"
+    },
+    {
+      "code": "NM",
+      "name": "New Mexico",
+      "status": "not_yet"
+    },
+    {
+      "code": "NY",
+      "name": "New York",
+      "status": "not_yet"
+    },
+    {
+      "code": "NC",
+      "name": "North Carolina",
+      "status": "not_yet"
+    },
+    {
+      "code": "ND",
+      "name": "North Dakota",
+      "status": "not_yet"
+    },
+    {
+      "code": "OH",
+      "name": "Ohio",
+      "status": "not_yet"
+    },
+    {
+      "code": "OK",
+      "name": "Oklahoma",
+      "status": "not_yet"
+    },
+    {
+      "code": "OR",
+      "name": "Oregon",
+      "status": "not_yet"
+    },
+    {
+      "code": "PA",
+      "name": "Pennsylvania",
+      "status": "not_yet"
+    },
+    {
+      "code": "RI",
+      "name": "Rhode Island",
+      "status": "not_yet"
+    },
+    {
+      "code": "SC",
+      "name": "South Carolina",
+      "status": "not_yet"
+    },
+    {
+      "code": "SD",
+      "name": "South Dakota",
+      "status": "not_yet"
+    },
+    {
+      "code": "TN",
+      "name": "Tennessee",
+      "status": "schema_ready",
+      "note": "No durational component; anchors to admission date."
+    },
+    {
+      "code": "TX",
+      "name": "Texas",
+      "status": "schema_ready",
+      "note": "Anchors to census/add-drop date."
+    },
+    {
+      "code": "UT",
+      "name": "Utah",
+      "status": "not_yet"
+    },
+    {
+      "code": "VT",
+      "name": "Vermont",
+      "status": "not_yet"
+    },
+    {
+      "code": "VA",
+      "name": "Virginia",
+      "status": "implemented",
+      "note": "SCHEV statewide uniform criteria under Code of Virginia 23.1-510(D)."
+    },
+    {
+      "code": "WA",
+      "name": "Washington",
+      "status": "not_yet"
+    },
+    {
+      "code": "WV",
+      "name": "West Virginia",
+      "status": "not_yet"
+    },
+    {
+      "code": "WI",
+      "name": "Wisconsin",
+      "status": "not_yet"
+    },
+    {
+      "code": "WY",
+      "name": "Wyoming",
+      "status": "not_yet"
+    }
+  ]
+}

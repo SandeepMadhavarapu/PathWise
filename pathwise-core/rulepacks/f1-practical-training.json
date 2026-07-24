@@ -1,0 +1,68 @@
+{
+  "pack_id": "f1-practical-training",
+  "domain": "immigration",
+  "authority": "8 CFR 214.2(f)(10); USCIS Policy Manual; SEVP guidance",
+  "source_url": "https://www.ecfr.gov/current/title-8/chapter-I/subchapter-B/part-214/section-214.2",
+  "guidelines_effective": "2016-05-10",
+  "verified_on": "2026-07-24",
+  "volatility": {
+    "status": "stable",
+    "note": "Core CPT/OPT structure stable; STEM extension list updated periodically."
+  },
+  "cpt": {
+    "full_time_threshold_hours_per_week": 20,
+    "full_time_definition": "More than 20 hours/week is full-time CPT; 20 or fewer is part-time.",
+    "cliff_days": 365,
+    "cliff_effect": "365 or more days of full-time CPT removes OPT eligibility entirely.",
+    "cliff_cite": "8 CFR 214.2(f)(10)(i)",
+    "overlap_aggregation": {
+      "rule": "Concurrent part-time CPT authorizations aggregate; a day whose summed authorized hours exceed 20 counts as a full-time CPT day.",
+      "cite": "USCIS Policy Manual (practical training aggregation)"
+    },
+    "level_partition": {
+      "rule": "The CPT/OPT cap is per education level. Bachelor's CPT does not carry into a master's.",
+      "cite": "8 CFR 214.2(f)(10)"
+    },
+    "counting_basis": "authorized_periods",
+    "counting_note": "Usage runs on authorized periods, not hours actually worked. Overtime and unemployment are not recomputed."
+  },
+  "opt": {
+    "budget_months_per_level": 12,
+    "pre_completion_counts_against_budget": true,
+    "part_time_pre_completion_half_rate": true,
+    "part_time_threshold_hours_per_week": 20,
+    "counting_basis": "authorized_periods",
+    "apply_window": {
+      "earliest_days_before_program_end": 90,
+      "latest_days_after_program_end": 60,
+      "i765_within_days_of_i20_issue": 30,
+      "cite": "8 CFR 214.2(f)(11)"
+    }
+  },
+  "unemployment_clock": {
+    "opt_days_allowed": 90,
+    "stem_additional_days": 60,
+    "stem_total_days": 150,
+    "auto_terminate_at_days": 150,
+    "auto_terminate_no_report_days": 90,
+    "cumulative_not_consecutive": true,
+    "future_start_date_still_counts": true,
+    "qualifying_min_hours_per_week": 20,
+    "abroad_still_counts": true,
+    "no_grace_period_on_violation": true,
+    "cite": "SEVP OPT policy guidance"
+  },
+  "reporting_obligations": [
+    { "id": "stem_ead_receipt", "deadline_days": 10, "cite": "8 CFR 214.2(f)(12)" },
+    { "id": "employer_or_address_change", "deadline_days": 10, "cite": "8 CFR 214.2(f)(12)" },
+    { "id": "validation_report", "every_months": 6, "cite": "8 CFR 214.2(f)(12)" }
+  ],
+  "grace_period": {
+    "days_after_i20_or_ead_end": 60,
+    "whichever_comes_first": true,
+    "requires_qualifying_action_before_expiry": [
+      "post_completion_opt", "transfer", "level_up", "change_of_status"
+    ],
+    "cite": "8 CFR 214.2(f)(5)(iv)"
+  }
+}

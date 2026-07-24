@@ -1,0 +1,127 @@
+{
+  "pack_id": "consequence-map",
+  "description": "The Event Consequence Engine's core table. One life event -> consequences across all three domains. This is the product's central originality: it is why PathWise is one product, not three.",
+  "verified_on": "2026-07-24",
+  "events": {
+    "job_offer_signed": {
+      "summary": "Student signs a job offer with a future start date.",
+      "consequences": [
+        {
+          "domain": "immigration",
+          "kind": "clock_not_paused",
+          "effect": "Unemployment counter does NOT stop. A signed offer with a future start date does not stop the clock; days between now and the start date still count.",
+          "counterintuitive": true,
+          "cite": { "text": "Days are cumulative; future start dates count.", "authority": "SEVP OPT guidance" }
+        },
+        {
+          "domain": "immigration",
+          "kind": "obligation_created",
+          "effect": "New 10-day SEVIS reporting obligation once employment begins.",
+          "new_deadline": {
+            "derivation": "employment_start_date + 10 days",
+            "consequence_of_missing": "Failure to report can lead toward the 90-day no-report auto-termination."
+          },
+          "cite": { "text": "Report employment within 10 days.", "authority": "8 CFR 214.2(f)(12)" }
+        },
+        {
+          "domain": "residency",
+          "kind": "clock_started",
+          "effect": "A job can be a domicile intent factor; if it were the last qualifying factor, the one-year clock would start today.",
+          "condition": "attrs.is_coop != true",
+          "cite": { "text": "The clock starts at the date of the last qualifying intent factor.", "authority": "SCHEV Domicile Guidelines §05(C)(1)" }
+        },
+        {
+          "domain": "immigration",
+          "kind": "finding_invalidated",
+          "effect": "An earlier finding is now stale. \"No immediate OPT risk\" was computed before this offer and must be recomputed.",
+          "supersedes": ["opt_risk_finding", "unemployment_finding"],
+          "cite": { "text": "Findings are re-derived when the timeline changes.", "authority": "PathWise reasoning model" }
+        }
+      ]
+    },
+    "job_started": {
+      "summary": "Student's qualifying employment (>= 20 hrs/week) actually begins.",
+      "consequences": [
+        {
+          "domain": "immigration",
+          "kind": "clock_paused",
+          "effect": "Unemployment counter stops as of the actual start date IF the job is >= 20 hrs/week and in-field.",
+          "condition": "attrs.hours_per_week >= 20",
+          "cite": { "text": "A single <20 hr/week job does not stop the counter.", "authority": "SEVP OPT guidance" }
+        },
+        {
+          "domain": "immigration",
+          "kind": "obligation_created",
+          "effect": "Report the employment in SEVIS within 10 days of start.",
+          "new_deadline": { "derivation": "start_date + 10 days", "consequence_of_missing": "Moves toward no-report termination." },
+          "cite": { "text": "10-day reporting.", "authority": "8 CFR 214.2(f)(12)" }
+        },
+        {
+          "domain": "residency",
+          "kind": "clock_started",
+          "effect": "May start or advance the domicile clock as an intent factor (unless co-op, which confers no domicile). If it is the last qualifying factor, the one-year clock starts today.",
+          "condition": "attrs.is_coop != true",
+          "cite": { "text": "Clock starts at the last qualifying intent factor.", "authority": "SCHEV Section 05(C)(1)" }
+        },
+        {
+          "domain": "immigration",
+          "kind": "finding_invalidated",
+          "effect": "Any prior OPT-risk or unemployment finding computed before this event is now stale and must be recomputed.",
+          "supersedes": ["opt_risk_finding", "unemployment_finding"]
+        }
+      ]
+    },
+    "graduated": {
+      "summary": "Student completes degree requirements.",
+      "consequences": [
+        {
+          "domain": "immigration",
+          "kind": "clock_started",
+          "effect": "60-day grace period starts the day after degree requirements are met (not necessarily the I-20 end date).",
+          "new_deadline": { "derivation": "program_completion_date + 60 days", "consequence_of_missing": "Falls out of status unless a qualifying action occurred first." },
+          "cite": { "text": "Grace period 60 days after completion.", "authority": "8 CFR 214.2(f)(5)(iv)" }
+        }
+      ]
+    },
+    "level_changed": {
+      "summary": "Student moves to a higher education level (e.g., bachelor's -> master's).",
+      "consequences": [
+        {
+          "domain": "immigration",
+          "kind": "eligibility_changed",
+          "effect": "CPT/OPT cap RESETS for the new level. Prior-level CPT days no longer count toward the new level's 365-day cliff.",
+          "cite": { "text": "Cap is per education level.", "authority": "8 CFR 214.2(f)(10)" }
+        },
+        {
+          "domain": "immigration",
+          "kind": "obligation_created",
+          "effect": "DSO must issue a new I-20 for the new program before the grace period ends.",
+          "new_deadline": { "derivation": "grace_period_end", "consequence_of_missing": "Out of status." },
+          "cite": { "text": "New I-20 before grace period ends.", "authority": "8 CFR 214.2(f)" }
+        }
+      ]
+    },
+    "moved_state": {
+      "summary": "Student physically relocates to a new state.",
+      "consequences": [
+        {
+          "domain": "residency",
+          "kind": "eligibility_changed",
+          "effect": "Domicile analysis switches to the new state's rule pack; a prior determination does not transfer.",
+          "cite": { "text": "Determinations are not transferable.", "authority": "SCHEV guidance" }
+        }
+      ]
+    },
+    "turned_24": {
+      "summary": "Student turns 24.",
+      "consequences": [
+        {
+          "domain": "residency",
+          "kind": "eligibility_changed",
+          "effect": "Rebuttable dependency presumption no longer applies; student is evaluated on their own factors.",
+          "cite": { "text": "Presumed dependent under 24.", "authority": "SCHEV Section 09(C)(1)" }
+        }
+      ]
+    }
+  }
+}

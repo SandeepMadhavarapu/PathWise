@@ -1,0 +1,34 @@
+{
+  "pack_id": "va-aid",
+  "domain": "aid",
+  "jurisdiction": "VA",
+  "authority": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
+  "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college",
+  "guidelines_effective": "2022-07-01",
+  "verified_on": "2026-07-24",
+  "volatility": {
+    "status": "recently_changed",
+    "note": "State aid application landscape changing; re-verify VASA rules and dates before submission."
+  },
+  "form_selection": {
+    "rule": "Students eligible for FAFSA should file FAFSA (covers both federal and state aid). VASA is for students who cannot file FAFSA (e.g., undocumented / tuition-equity students).",
+    "fafsa_blocks": [
+      { "when": "immigration.status in ['F1','J1','M1']", "result": "ineligible", "headline": "F-1 status blocks Virginia state financial aid", "cite": "SCHEV VASA guidance" }
+    ]
+  },
+  "va_student_provisions": [
+    { "id": "domicile", "note": "Qualifies via VA domicile (see va-domicile pack).", "requires": ["domicile_established"] },
+    { "id": "military_dependent", "note": "Qualifies as a dependent of military personnel stationed in VA.", "requires": ["military_orders", "dependent_proof"] },
+    { "id": "tuition_equity", "note": "Qualifies under tuition-equity provision.", "requires": ["va_high_school_attendance", "va_high_school_graduation", "tax_filing_evidence"], "volatility": "under_litigation" }
+  ],
+  "deadlines": {
+    "vasa_priority_date": "03-01",
+    "rule": "A student's true deadline is the EARLIEST of {college priority date, state deadline, federal deadline}. Surface the earliest, not the federal fallback.",
+    "cite": "SCHEV VASA guidance; institutional priority dates"
+  },
+  "confidentiality": {
+    "note": "Campuses are legally prohibited from sharing VASA application information for immigration enforcement.",
+    "cite": "SCHEV public guidance",
+    "product_consequence": "Underpins the no-account / no-store privacy posture."
+  }
+}
