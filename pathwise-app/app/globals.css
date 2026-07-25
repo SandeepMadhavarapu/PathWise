@@ -189,6 +189,7 @@ a:hover { text-decoration: underline; }
 .btn { flex: none; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 12px 20px;
   font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow); }
 .btn:hover { background: #2450c8; }
+.btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
 .moment-count { margin: 22px 0 8px; font-size: 16px; }
 .conseq { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 12px; }
@@ -397,6 +398,135 @@ a:hover { text-decoration: underline; }
   .jintro { padding: 22px 20px; }
   .jintro h1 { font-size: 21px; }
   .jchev { display: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   What Changed? — before → after when evidence lands
+   --------------------------------------------------------------------------- */
+
+/* The honest gap, per the uncertainty pattern: what's missing, why, what you can do.
+   Gray while the evidence is absent; green once it lands. Never a red toast. */
+.wc-gap { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--muted);
+  border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); margin-top: 18px;
+  transition: border-left-color 0.2s ease; }
+.wc-gap.done { border-left-color: var(--green); }
+.wc-gap-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.wc-gap-title { font-size: 18px; line-height: 1.35; font-weight: 650; letter-spacing: -0.01em; margin: 9px 0 0; max-width: 40ch; }
+.wc-gap-rows { display: grid; grid-template-columns: auto 1fr; gap: 9px 18px; margin-top: 16px;
+  padding-top: 15px; border-top: 1px dashed var(--line); }
+.wc-gap-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  font-weight: 700; padding-top: 3px; white-space: nowrap; }
+.wc-gap-v { font-size: 14px; color: var(--ink); }
+@media (max-width: 640px) {
+  .wc-gap { padding: 20px; }
+  .wc-gap-rows { grid-template-columns: 1fr; gap: 2px; }
+  .wc-gap-k { padding-top: 10px; }
+}
+
+/* Before → after, side by side; stacked on mobile with the arrow turned down. */
+.wc-grid { display: grid; grid-template-columns: 1fr 34px 1fr; align-items: stretch; gap: 14px; }
+.wc-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--muted); }
+@media (max-width: 760px) {
+  .wc-grid { grid-template-columns: 1fr; }
+  .wc-arrow { transform: rotate(90deg); }
+}
+
+.wc-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px 20px; box-shadow: var(--shadow); }
+/* Waiting on evidence: present, but visibly not yet computed. */
+.wc-panel.pending { background: transparent; border-style: dashed; box-shadow: none; }
+.wc-when { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; color: var(--muted); }
+.wc-panel-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin: 9px 0 10px; }
+.wc-result { font-size: 15px; color: var(--ink); }
+.wc-sub { font-size: 12.5px; color: var(--muted); }
+.wc-pending-note { font-size: 14px; color: var(--muted); margin-top: 10px; max-width: 36ch; }
+
+/* The two readings PathWise can't choose between while the document is missing. */
+.wc-readings { display: flex; flex-direction: column; gap: 10px; margin-top: 14px;
+  padding-top: 13px; border-top: 1px dashed var(--line); }
+.wc-reading { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 11px 13px; background: var(--bg); }
+.wc-reading-k { display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.wc-reading-v { font-size: 13.5px; color: var(--ink); margin-top: 6px; }
+
+/* Settled facts on the after side. */
+.wc-facts { list-style: none; padding: 13px 0 0; margin: 14px 0 0; border-top: 1px dashed var(--line);
+  display: flex; flex-direction: column; gap: 8px; }
+.wc-fact { display: flex; align-items: baseline; justify-content: space-between; gap: 14px;
+  font-size: 13px; color: var(--ink-soft); }
+.wc-fact strong { color: var(--ink); font-weight: 650; white-space: nowrap; }
+
+/* What changed — the four confirmations */
+.wc-changes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.wc-change { display: flex; gap: 13px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 14px 16px; }
+.wc-check { flex: none; width: 21px; height: 21px; border-radius: 50%; background: var(--green-soft);
+  color: var(--green); font-size: 12px; font-weight: 700; line-height: 1;
+  display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+.wc-change-k { display: block; font-size: 14.5px; font-weight: 650; color: var(--ink); }
+.wc-change-v { display: block; font-size: 13.5px; color: var(--ink-soft); margin-top: 3px; }
+
+/* Why did this change? */
+.wc-why { margin-top: 16px; background: var(--accent-soft); border: 1px solid #d3e0ff;
+  border-radius: var(--radius); padding: 18px 20px; }
+.wc-why-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); font-weight: 700; }
+.wc-why-v { font-size: 14.5px; color: var(--ink); margin-top: 7px; }
+.wc-why-v + .wc-why-v { font-size: 13.5px; color: var(--ink-soft); margin-top: 10px;
+  padding-top: 10px; border-top: 1px dashed #d3e0ff; }
+
+/* Quiet reset, so the beat can be replayed. */
+.wc-undo { flex: none; font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--muted);
+  background: none; border: none; padding: 4px 0; cursor: pointer; text-decoration: underline; }
+.wc-undo:hover { color: var(--ink); }
+.wc-undo:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+/* Reuses the timeline's open animation — motion confirms causality, nothing more. */
+.wc-fade { animation: jopen 0.22s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .wc-fade { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Aid — the deadline that actually binds (the earliest-of rule, made visible)
+   --------------------------------------------------------------------------- */
+
+/* Accent left border, same as the hero: this is the actionable answer on the screen. */
+.dl { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); }
+.dl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.dl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); font-weight: 700; }
+.dl-v { font-size: 19px; font-weight: 650; letter-spacing: -0.01em; margin-top: 4px; }
+.dl-v .dl-which { font-size: 14.5px; font-weight: 500; color: var(--muted); }
+
+/* One row per candidate date. Only the binding row is styled as an answer; the other two are
+   context, and an unknown one is dashed — honestly absent, not broken. */
+.dl-rows { list-style: none; padding: 14px 0 0; margin: 15px 0 0; border-top: 1px dashed var(--line);
+  display: flex; flex-direction: column; gap: 8px; }
+.dl-row { display: grid; grid-template-columns: 106px 1fr; gap: 2px 14px; align-items: baseline;
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 13px; }
+.dl-row.binding { background: var(--accent-soft); border-color: #d3e0ff; }
+.dl-row.unknown { background: transparent; border-style: dashed; }
+.dl-date { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+.dl-row.binding .dl-date { color: var(--ink); font-weight: 700; }
+.dl-label { display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  font-size: 14px; font-weight: 650; color: var(--ink); }
+/* Word, not colour alone — the binding row says so in text as well as in tint. */
+.dl-flag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--accent); background: var(--surface); border: 1px solid #d3e0ff;
+  border-radius: 999px; padding: 1px 8px; }
+.dl-note { grid-column: 2; font-size: 13px; color: var(--ink-soft); }
+
+.dl-consequence { margin: 15px 0 0; padding-top: 14px; border-top: 1px dashed var(--line);
+  font-size: 14.5px; color: var(--ink); }
+.dl-foot { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+/* This citation is a full authority line, not a short section chip, so it is allowed to wrap
+   instead of pushing the page sideways on a narrow screen. */
+.dl-foot .cite { white-space: normal; }
+
+@media (max-width: 640px) {
+  .dl { padding: 18px 20px; }
+  .dl-row { grid-template-columns: 1fr; gap: 3px; }
+  .dl-note { grid-column: 1; }
 }
 
 /* Dashboard → journey link */

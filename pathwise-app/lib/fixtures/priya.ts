@@ -14,6 +14,7 @@
 import type { Student, Event } from '../types';
 import type { UnemploymentClockInput } from '../engines/unemployment-clock';
 import type { OptBudgetInput } from '../engines/opt-budget';
+import type { AidEligibilityInput } from '../engines/aid-eligibility';
 
 export const priyaStudent: Student = {
   id: 'priya',
@@ -131,6 +132,31 @@ export const priyaOptBudget: OptBudgetInput = {
       level: 'masters',
     },
   ],
+};
+
+// Aid eligibility — Engine C. The third reader of the same record.
+//   - Her F-1 status is the whole story again: it closes the Virginia state-aid door before need,
+//     merit or paperwork is reached. Same fact as the residency gate, different office.
+//   - The two provisions below are the ones she would actually ask about. `domicile` is the route
+//     everyone assumes after six years in Virginia; `tuition_equity` is the one that gets suggested
+//     in forums (and is under litigation). Listing them is not a claim she qualifies — it is what
+//     PathWise checks, and the checklist shows exactly what each one still needs.
+//   - Evidence on record: she has filed Virginia returns since her first CPT job, so
+//     `tax_filing_evidence` is present. She did not attend high school in Virginia, so those two
+//     items are absent — and stay absent, as honest unknowns, rather than being guessed at.
+//   - Deadlines are for the 2027–28 award year. The college's own priority date (1 Feb) lands a full
+//     149 days before the federal deadline everybody quotes — which is the entire point of the
+//     earliest-of rule. `state` is deliberately omitted so it is derived from the rulepack's own
+//     VASA priority date (03-01) rather than restated here.
+export const priyaAid: AidEligibilityInput = {
+  student: priyaStudent,
+  provisions: ['domicile', 'tuition_equity'],
+  evidence: ['tax_filing_evidence'],
+  deadlines: {
+    collegePriority: '2027-02-01',
+    federal: '2027-06-30',
+    asOf: '2026-07-24',
+  },
 };
 
 // The life event used in the demo's money moment.

@@ -1,4 +1,4 @@
-import type { Finding, FindingResult } from "@/lib/types";
+import type { DecidingOffice, Finding, FindingResult } from "@/lib/types";
 
 type Band = "green" | "amber" | "red" | "gray";
 
@@ -16,6 +16,17 @@ const RESULT_LABEL: Record<FindingResult, string> = {
   review_recommended: "Review recommended",
   no_issue: "Clear",
   unable_to_verify: "Unable to verify",
+};
+
+// Display only — the DecidingOffice codes stay exactly as the engines emit them. The article
+// carries its own "the", so each label reads inside the footer sentence.
+const OFFICE_LABEL: Record<DecidingOffice, string> = {
+  DSO: "your DSO",
+  registrar: "the registrar",
+  domicile_officer: "the domicile officer",
+  financial_aid: "the financial aid office",
+  USCIS: "USCIS",
+  SEVP: "SEVP",
 };
 
 const VOLATILITY_LABEL: Record<
@@ -107,8 +118,8 @@ export function FindingDetail({ finding }: { finding: Finding }) {
       ) : null}
 
       <p className="finding-foot">
-        Decided by: {finding.deciding_office} — PathWise advises, the office
-        decides.
+        Decided by {OFFICE_LABEL[finding.deciding_office]} — PathWise advises,
+        the office decides.
       </p>
 
       {finding.volatility ? (

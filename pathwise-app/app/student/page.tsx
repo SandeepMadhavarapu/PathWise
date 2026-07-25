@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { runDomicileGate } from "@/lib/engines/domicile-gate";
-import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget } from "@/lib/fixtures/priya";
+import { computeAidEligibility } from "@/lib/engines/aid-eligibility";
+import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget, priyaAid } from "@/lib/fixtures/priya";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
@@ -21,6 +22,10 @@ export default function StudentPage() {
   });
 
   const isBlocked = domicile.result === "ineligible";
+
+  // The aid card reads the same verdict the /student/finding/aid screen shows, so the two can't drift.
+  const aid = computeAidEligibility(priyaAid);
+  const aidBlocked = aid.result === "ineligible";
 
   return (
     <main className="wrap">
@@ -79,10 +84,12 @@ export default function StudentPage() {
         />
         <DomainCard
           domain="Financial aid (Virginia)"
-          status="Blocked by status"
-          band="red"
+          status={aidBlocked ? "Blocked by status" : "Under review"}
+          band={aidBlocked ? "red" : "amber"}
           detail="The same F-1 fact makes her ineligible for Virginia state aid. File FAFSA path instead."
           cite="SCHEV VASA"
+          detailHref="/student/finding/aid"
+          detailLabel="See full reasoning →"
         />
       </div>
 
@@ -90,6 +97,13 @@ export default function StudentPage() {
         <>
           <div className="section-h">The computation a chatbot can&apos;t do</div>
           <LedgerBar ledger={masters} />
+          <Link href="/student/changed" className="memorystrip">
+            <span>
+              <span className="ms-k">One missing document decides this count.</span> Watch the ledger
+              re-reason the moment it arrives.
+            </span>
+            <span className="ms-go">See what changes when you add evidence →</span>
+          </Link>
         </>
       ) : null}
 

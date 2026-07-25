@@ -1,0 +1,6 @@
+# Preview/scratch images generated while checking documents
+page-*.jpg
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
