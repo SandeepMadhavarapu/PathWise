@@ -750,3 +750,10 @@ a:hover { text-decoration: underline; }
 .memorystrip:hover { text-decoration: none; border-color: #d3e0ff; transform: translateY(-1px); }
 .memorystrip .ms-k { color: var(--ink); font-weight: 650; }
 .memorystrip .ms-go { color: var(--accent); font-weight: 600; font-size: 13.5px; white-space: nowrap; }
+
+/* On a phone the row cannot hold both halves — the nowrap link pushed the page sideways.
+   Stack them and let the link wrap; the desktop row is untouched. */
+@media (max-width: 640px) {
+  .memorystrip { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .memorystrip .ms-go { white-space: normal; }
+}
