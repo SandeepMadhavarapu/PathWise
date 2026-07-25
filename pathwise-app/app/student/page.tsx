@@ -11,6 +11,7 @@ import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { UnemploymentClock } from "@/components/UnemploymentClock";
 import { OptBudget } from "@/components/OptBudget";
+import { DeadlineExport } from "@/components/DeadlineExport";
 
 export default function StudentPage() {
   // ---- Everything below is computed live by the real engines. Nothing is hard-coded. ----
@@ -102,6 +103,8 @@ export default function StudentPage() {
           <span className="nc-go">Your next steps →</span>
         </Link>
       ) : null}
+
+      <DeadlineExport steps={steps} asOf={priyaOpt.asOf} variant="inline" />
 
       <Link href="/student/journey" className="memorystrip">
         <span>

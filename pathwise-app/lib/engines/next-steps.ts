@@ -136,7 +136,8 @@ const LEVEL_LABEL: Record<ProgramLevel, string> = {
   other: 'program',
 };
 
-const OFFICE_PROSE: Record<DecidingOffice, string> = {
+/** How an office is named inside a sentence. Exported so exports (calendar, email) read identically. */
+export const OFFICE_PROSE: Record<DecidingOffice, string> = {
   DSO: 'your DSO',
   registrar: 'the registrar',
   domicile_officer: 'the domicile officer',

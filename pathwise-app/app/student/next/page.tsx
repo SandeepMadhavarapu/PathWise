@@ -14,6 +14,7 @@ import {
   priyaOptBudget,
   priyaAid,
 } from "@/lib/fixtures/priya";
+import { DeadlineExport } from "@/components/DeadlineExport";
 
 // The app's one status vocabulary — icon + word + colour, never colour alone.
 const STATUS: Record<StepStatus, { icon: string; word: string }> = {
@@ -215,6 +216,9 @@ export default function NextStepsPage() {
           </section>
         );
       })}
+
+      <div className="section-h">Last — put the plan somewhere it will find you</div>
+      <DeadlineExport steps={steps} asOf={asOf} />
 
       <div className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · The plan is
