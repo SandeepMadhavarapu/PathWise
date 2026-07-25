@@ -610,6 +610,101 @@ a:hover { text-decoration: underline; }
   .nextcard { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
 
+/* ---------------------------------------------------------------------------
+   Coverage map + rule-pack viewer — the scale story, told honestly
+   --------------------------------------------------------------------------- */
+
+/* The three counts, each carrying the same icon + word + colour as the tiles below,
+   so the summary and the map can't read differently. */
+.cov-counts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+  margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
+.cov-count { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; color: var(--ink-soft); }
+.cov-count strong { font-size: 16px; font-weight: 700; color: var(--ink); }
+.cov-sep { color: var(--line); }
+
+/* Status mark — the shape that carries the colour. Same three states as the tiles. */
+.cov-ic { flex: none; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; font-weight: 700;
+  line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.cov-ic.verified { background: var(--green-soft); color: var(--green); }
+.cov-ic.attention { background: var(--amber-soft); color: var(--amber); }
+.cov-ic.unknown { background: #f2f4f8; color: var(--muted); }
+
+/* Legend — the mapping from coverage status to the app's four-state vocabulary, said out loud
+   and read from the rule pack's own legend text. */
+.cov-legend { list-style: none; padding: 0; margin: 0; display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .cov-legend { grid-template-columns: 1fr; } }
+.cov-legend li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 13px 15px; }
+.cov-legend-k { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 650; }
+.cov-legend-k.verified { color: var(--green); }
+.cov-legend-k.attention { color: var(--amber); }
+.cov-legend-k.unknown { color: var(--muted); }
+.cov-legend-v { font-size: 12.5px; color: var(--ink-soft); margin-top: 5px; }
+
+/* The map itself — compact, quiet, one tile per jurisdiction. */
+.cov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 10px; align-items: start; }
+@media (max-width: 420px) { .cov-grid { grid-template-columns: 1fr 1fr; } }
+
+.cov-tile { display: block; width: 100%; text-align: left; font-family: var(--sans); color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 11px 13px; transition: border-color 0.16s ease, transform 0.16s ease; }
+/* Not-yet states are shown, never hidden — dashed and untinted, which is what "honestly absent"
+   looks like everywhere else in this app. */
+.cov-tile.unknown { background: transparent; border-style: dashed; }
+.cov-tile.has-note { cursor: pointer; }
+.cov-tile.has-note:hover { border-color: #d3e0ff; transform: translateY(-1px); }
+.cov-tile.has-note:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cov-tile.open { border-color: #d3e0ff; border-style: solid; background: var(--surface); }
+
+.cov-top { display: flex; align-items: center; gap: 7px; }
+.cov-code { font-family: var(--mono); font-size: 11.5px; color: var(--muted); letter-spacing: 0.03em; }
+.cov-more { margin-left: auto; font-size: 13px; color: var(--muted); line-height: 1; }
+.cov-name { display: block; font-size: 13.5px; font-weight: 650; letter-spacing: -0.01em; margin-top: 6px; }
+.cov-word { display: block; font-size: 11.5px; font-weight: 600; margin-top: 2px; }
+.cov-word.verified { color: var(--green); }
+.cov-word.attention { color: var(--amber); }
+.cov-word.unknown { color: var(--muted); }
+/* Reuses the timeline's open animation — motion confirms causality, nothing more. */
+.cov-note { display: block; font-size: 12.5px; color: var(--ink-soft); margin-top: 9px;
+  padding-top: 9px; border-top: 1px dashed var(--line); animation: jopen 0.18s ease both; }
+@media (prefers-reduced-motion: reduce) { .cov-note { animation: none; } }
+
+/* ---- Rule-pack viewer: the rules, as the files they actually are ---- */
+.rp-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.rp-tab { font-family: var(--mono); font-size: 12.5px; color: var(--muted); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; cursor: pointer;
+  transition: border-color 0.16s ease, color 0.16s ease; }
+.rp-tab:hover { border-color: #d3e0ff; color: var(--ink); }
+.rp-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rp-tab.active { background: var(--accent-soft); border-color: #d3e0ff; color: var(--accent); font-weight: 700; }
+
+.rp-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 20px 22px; box-shadow: var(--shadow); margin-top: 12px; }
+.rp-title { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; margin: 0; }
+.rp-blurb { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-soft); max-width: 66ch; }
+.rp-meta { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; margin-top: 16px;
+  padding-top: 15px; border-top: 1px dashed var(--line); }
+.rp-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  font-weight: 700; padding-top: 2px; white-space: nowrap; }
+.rp-v { font-size: 13.5px; color: var(--ink); overflow-wrap: anywhere; }
+.rp-v.absent { color: var(--muted); }
+@media (max-width: 640px) {
+  .rp-meta { grid-template-columns: 1fr; gap: 2px; }
+  .rp-k { padding-top: 9px; }
+}
+
+/* Read-only rendering of the file itself — plain, scrollable, no syntax theatre. */
+.rp-filebar { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap;
+  gap: 4px 12px; margin-top: 16px; font-size: 12px; color: var(--muted); }
+.rp-filename { font-family: var(--mono); color: var(--ink-soft); }
+.rp-json { margin: 7px 0 0; max-height: 440px; overflow: auto; background: var(--bg);
+  border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px;
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--ink-soft);
+  white-space: pre; tab-size: 2; }
+.rp-frame { margin: 0 0 12px; font-size: 14.5px; color: var(--ink); }
+
 /* Dashboard → journey link */
 .memorystrip { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px;
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);

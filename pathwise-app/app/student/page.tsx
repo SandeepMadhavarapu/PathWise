@@ -173,6 +173,14 @@ export default function StudentPage() {
         <span className="cta-arrow">→</span>
       </Link>
 
+      <Link href="/coverage" className="memorystrip">
+        <span>
+          <span className="ms-k">Priya&apos;s residency rules are a file, not a special case.</span>{" "}
+          See how far the rule packs reach, and where they honestly don&apos;t yet.
+        </span>
+        <span className="ms-go">Coverage: 50 states + DC →</span>
+      </Link>
+
       <div className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · PathWise reasons on
         your device. Every finding shows its regulation and the office that decides it. PathWise advises;

@@ -33,6 +33,14 @@ export default function Landing() {
           No account. Nothing stored on a server. PathWise reasons on your device.
         </div>
       </section>
+
+      <Link href="/coverage" className="memorystrip">
+        <span>
+          <span className="ms-k">The rules are data, not code.</span> One state fully modelled, the
+          other 50 the same shape of file — and the map says which is which.
+        </span>
+        <span className="ms-go">Coverage: 50 states + DC →</span>
+      </Link>
     </main>
   );
 }
