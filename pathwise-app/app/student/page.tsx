@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
+import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
+import { computeOptBudget } from "@/lib/engines/opt-budget";
 import { runDomicileGate } from "@/lib/engines/domicile-gate";
-import { computeAidEligibility } from "@/lib/engines/aid-eligibility";
+import { computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
+import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
 import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget, priyaAid } from "@/lib/fixtures/priya";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
@@ -27,6 +30,32 @@ export default function StudentPage() {
   const aid = computeAidEligibility(priyaAid);
   const aidBlocked = aid.result === "ineligible";
 
+  // The plan, from the same engine outputs as everything else on this page. Only the first step is
+  // shown here — the whole point of /student/next is that the order is computed, not editorial.
+  const steps = computeNextSteps({
+    level: "masters",
+    ledger,
+    clock: computeUnemploymentClock(priyaOpt),
+    optBudget: computeOptBudget(priyaOptBudget),
+    domicile,
+    aid,
+    aidDeadline: resolveAidDeadline(priyaAid),
+    asOf: priyaOpt.asOf,
+  });
+  const firstStep = steps[0];
+  const stepWord: Record<string, string> = {
+    verified: "On track",
+    attention: "Attention",
+    blocked: "Blocked",
+    unknown: "Unable to verify",
+  };
+  const stepIcon: Record<string, string> = {
+    verified: "✓",
+    attention: "◐",
+    blocked: "●",
+    unknown: "?",
+  };
+
   return (
     <main className="wrap">
       <div className="topbar">
@@ -50,6 +79,29 @@ export default function StudentPage() {
         residencyCite="SCHEV Pt II §03(A)"
         aidCite="SCHEV VASA"
       />
+
+      {firstStep ? (
+        <Link href="/student/next" className="nextcard">
+          <div>
+            <div className="nc-k">
+              Your next steps · {steps.length} in order, first one first
+            </div>
+            <div className="nc-v">{firstStep.title}</div>
+            <div className="nc-when">
+              <span className={`statuschip ${firstStep.status}`}>
+                <span className="ic" aria-hidden="true">{stepIcon[firstStep.status]}</span>
+                {stepWord[firstStep.status]}
+              </span>
+              <span>
+                {firstStep.effectiveDeadline && firstStep.daysOfMargin !== undefined
+                  ? `Before ${formatStepDate(firstStep.effectiveDeadline)} — ${firstStep.daysOfMargin} days of margin`
+                  : firstStep.why}
+              </span>
+            </div>
+          </div>
+          <span className="nc-go">Your next steps →</span>
+        </Link>
+      ) : null}
 
       <Link href="/student/journey" className="memorystrip">
         <span>
