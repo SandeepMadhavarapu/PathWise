@@ -13,6 +13,7 @@
 // earliest-of rule, and the confidentiality note. Nothing here restates a rule the pack owns.
 
 import type { Student, Finding, ISODate } from '../types';
+import { formatStatusCode } from '../status-display';
 import pack from '../rulepacks/va-aid.json';
 
 // ---- pack shapes (a JSON import can't carry the optional fields we branch on) ----
@@ -241,7 +242,8 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
   const deadline = resolveAidDeadline(input);
 
   const steps: Finding['reasoning_steps'] = [
-    { claim: `The student holds ${status} status.`, from_events: [], from_evidence: [] },
+    // Display form only — `status` itself is what the pack's conditions are matched against.
+    { claim: `The student holds ${formatStatusCode(status)} status.`, from_events: [], from_evidence: [] },
   ];
 
   if (block) {

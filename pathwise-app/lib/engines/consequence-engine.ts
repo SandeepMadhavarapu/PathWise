@@ -9,6 +9,7 @@
 // which reinforces the cross-domain thesis instead of contradicting it.
 
 import type { LifeEvent, Student, RuleCitation } from '../types';
+import { formatStatusCode } from '../status-display';
 import map from '../rulepacks/consequence-map.json';
 
 const GATE_STATUSES = new Set(['F1', 'J1', 'M1']);
@@ -88,7 +89,7 @@ export function applyLifeEvent(student: Student, event: LifeEvent): DerivedConse
         domain: 'residency',
         kind: 'eligibility_changed',
         effect:
-          `You might expect a job to help your residency case — but ${student.immigration.status} status blocks Virginia domicile entirely, so this changes nothing for residency.`,
+          `You might expect a job to help your residency case — but ${formatStatusCode(student.immigration.status)} status blocks Virginia domicile entirely, so this changes nothing for residency.`,
         counterintuitive: true,
         applies: false,
         tone: 'info',

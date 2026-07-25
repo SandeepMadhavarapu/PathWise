@@ -4,6 +4,7 @@
 // which is the cross-domain moment the whole product is built around.
 
 import type { Student, Event, Finding, ISODate } from '../types';
+import { formatStatusCode } from '../status-display';
 
 const GATE_STATUSES = new Set(['F1', 'J1', 'M1']);
 const DOMICILE_DURATION_DAYS = 365;
@@ -32,6 +33,8 @@ function addDays(iso: string, n: number): ISODate {
 export function runDomicileGate(input: DomicileInput): Finding {
   const { student, intentFactors, allegedEntitlementDate } = input;
   const status = student.immigration.status;
+  // The code is what the gate matches on; this is only how it gets written for a reader.
+  const statusText = formatStatusCode(status);
 
   // GATE — runs first, stops analysis if it fires.
   if (GATE_STATUSES.has(status)) {
@@ -39,10 +42,10 @@ export function runDomicileGate(input: DomicileInput): Finding {
       rule_id: 'va-domicile:eligible_alien_gate',
       domain: 'residency',
       result: 'ineligible',
-      headline: `${status} status blocks domicile in Virginia`,
+      headline: `${statusText} status blocks domicile in Virginia`,
       reasoning_steps: [
         {
-          claim: `The student holds ${status} status, a temporary (student) visa.`,
+          claim: `The student holds ${statusText} status, a temporary (student) visa.`,
           from_events: [],
           from_evidence: [],
         },

@@ -7,6 +7,7 @@
 import { useState } from "react";
 import type { Event, Institution, ProgramLevel, Student } from "@/lib/types";
 import type { LedgerResult } from "@/lib/engines/cpt-ledger";
+import { formatStatusCode } from "@/lib/status-display";
 
 type StatusKey = "verified" | "attention" | "blocked" | "unknown";
 
@@ -71,9 +72,7 @@ function levelLabel(level?: ProgramLevel): string {
   return "Other";
 }
 
-function statusLabel(status: string): string {
-  return status === "F1" ? "F-1" : status === "J1" ? "J-1" : status === "M1" ? "M-1" : status;
-}
+const statusLabel = formatStatusCode;
 
 function titleFor(type: string): string {
   switch (type) {
