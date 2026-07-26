@@ -299,9 +299,11 @@ function fromLedger(ledger: LedgerResult, level: ProgramLevel): Draft[] {
 
   const cpt = pack.cpt;
   const lvl = LEVEL_LABEL[line.level];
+  // The number of overlapping authorizations is the ledger's, not the demo student's: a record with
+  // three concurrent part-time authorizations has to read as three here.
   const overlapClause =
     line.overlapDays > 0
-      ? `, and ${line.overlapDays} of them exist only because two part-time authorizations overlapped into a full-time day`
+      ? `, and ${line.overlapDays} of them exist only because ${line.overlapConcurrentAuths} part-time authorizations overlapped into a full-time day`
       : '';
 
   if (line.band === 'red') {

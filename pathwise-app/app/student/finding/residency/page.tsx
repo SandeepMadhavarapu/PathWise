@@ -27,6 +27,17 @@ export default function ResidencyFindingPage() {
       </div>
 
       <FindingDetail finding={domicile} />
+
+      {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the
+          engine has. The sibling route runs the rest of Engine B on a student it lets through. */}
+      <Link href="/student/finding/domicile" className="memorystrip">
+        <span>
+          <span className="ms-k">This is where the analysis stops, not where the engine does.</span>{" "}
+          Past the gate there are nine more sections of it — dependency, the intent factors and their
+          weights, the clock.
+        </span>
+        <span className="ms-go">See the full domicile analysis →</span>
+      </Link>
     </main>
   );
 }

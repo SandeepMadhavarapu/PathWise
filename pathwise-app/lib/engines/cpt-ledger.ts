@@ -31,10 +31,32 @@ export const SECTION_CITE = cpt.level_partition.cite;
 
 export type LedgerBand = 'green' | 'amber' | 'red';
 
+// How PathWise's own education levels are written for a reader. Display only — no rule turns on it,
+// which is why it lives with the type it describes rather than in a rulepack.
+const LEVEL_LABEL: Record<ProgramLevel, string> = {
+  bachelors: "bachelor's",
+  masters: "master's",
+  doctoral: 'doctoral',
+  other: 'other-level',
+};
+
+export function levelLabel(level: ProgramLevel): string {
+  return LEVEL_LABEL[level];
+}
+
 export interface LevelLedger {
   level: ProgramLevel;
   fullTimeDays: number;      // distinct days that count as full-time CPT at this level
   overlapDays: number;       // subset of fullTimeDays created purely by part-time aggregation
+  // How many part-time authorizations actually combined to produce those overlap days — the most
+  // that were concurrently active on any single overlap day. 0 when there are no overlap days, and
+  // never 1: a day needs two active authorizations before aggregation can create it. The screens
+  // print this rather than the demo student's own number, which is only ever right for her.
+  overlapConcurrentAuths: number;
+  // Other education levels in the SAME record that carry full-time days of their own — the days the
+  // per-level partition keeps out of this count. Empty when there are none, so a screen can only
+  // claim a partition that actually happened.
+  otherLevelsWithDays: ProgramLevel[];
   daysToCliff: number;       // CLIFF_DAYS - fullTimeDays (may be negative once crossed)
   band: LedgerBand;
   optEligible: boolean;      // false once the cliff is reached
@@ -105,6 +127,7 @@ export function computeCptLedger(events: Event[]): LedgerResult {
     // Pass 2: an "overlap day" is a full-time day created PURELY by aggregation — summed hours
     // exceed the threshold but no single active authorization was itself full-time.
     let overlapDays = 0;
+    let overlapConcurrentAuths = 0;
     for (const [d, { total }] of dayMap.entries()) {
       if (total <= FULL_TIME_HOURS_THRESHOLD) continue;
       const activeHere = auths.filter((a) => {
@@ -113,7 +136,10 @@ export function computeCptLedger(events: Event[]): LedgerResult {
         return d >= s && d <= e;
       });
       const anySingleFullTime = activeHere.some((a) => (a.attrs.hours_per_week as number) > FULL_TIME_HOURS_THRESHOLD);
-      if (!anySingleFullTime) overlapDays++;
+      if (!anySingleFullTime) {
+        overlapDays++;
+        overlapConcurrentAuths = Math.max(overlapConcurrentAuths, activeHere.length);
+      }
     }
 
     const daysToCliff = CLIFF_DAYS - fullTimeDays;
@@ -121,10 +147,20 @@ export function computeCptLedger(events: Event[]): LedgerResult {
       level,
       fullTimeDays,
       overlapDays,
+      overlapConcurrentAuths,
+      otherLevelsWithDays: [], // filled once every level is counted, below
       daysToCliff,
       band: bandFor(daysToCliff),
       optEligible: fullTimeDays < CLIFF_DAYS,
     });
+  }
+
+  // The partition is only visible from outside a single level: each line records which OTHER levels
+  // in this record have full-time days the cap is keeping separate from its own.
+  for (const line of byLevel) {
+    line.otherLevelsWithDays = byLevel
+      .filter((other) => other.level !== line.level && other.fullTimeDays > 0)
+      .map((other) => other.level);
   }
 
   return {

@@ -111,7 +111,7 @@ const CHANGES: { k: string; v: string }[] = [
   },
   {
     k: "CPT ledger updated",
-    v: `${bachelors.fullTimeDays} bachelor's-level days move out of the master's count: ${pooled.fullTimeDays} → ${settled.fullTimeDays} full-time days, of which ${settled.overlapDays} still come from two part-time authorizations that overlapped.`,
+    v: `${bachelors.fullTimeDays} bachelor's-level days move out of the master's count: ${pooled.fullTimeDays} → ${settled.fullTimeDays} full-time days, of which ${settled.overlapDays} still come from ${settled.overlapConcurrentAuths} part-time authorizations that overlapped.`,
   },
   {
     k: "Evidence linked",

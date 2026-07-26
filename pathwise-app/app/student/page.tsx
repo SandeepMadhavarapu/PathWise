@@ -2,7 +2,7 @@ import Link from "next/link";
 import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
 import { computeOptBudget, OPT_BUDGET_RULES } from "@/lib/engines/opt-budget";
-import { runDomicileGate } from "@/lib/engines/domicile-gate";
+import { DOMICILE_DURATION_DAYS, runDomicileGate } from "@/lib/engines/domicile-gate";
 import { computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
 import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
 import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget, priyaAid } from "@/lib/fixtures/priya";
@@ -151,6 +151,17 @@ export default function StudentPage() {
           detailLabel="See full reasoning →"
         />
       </div>
+
+      {/* The residency card above is a refusal, and a refusal is only half of an engine. This is the
+          other half, on a student the same gate lets through. */}
+      <Link href="/student/finding/domicile" className="memorystrip">
+        <span>
+          <span className="ms-k">A refusal is not the whole engine.</span> On a student the gate lets
+          through, residency runs the full determination — dependency, every intent factor and its
+          weight, and the {DOMICILE_DURATION_DAYS}-day clock.
+        </span>
+        <span className="ms-go">See Engine B do the work →</span>
+      </Link>
 
       {masters ? (
         <>

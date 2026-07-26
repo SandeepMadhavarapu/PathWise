@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { DecidingOffice, Finding, FindingResult } from "@/lib/types";
 
 type Band = "green" | "amber" | "red" | "gray";
@@ -38,7 +39,18 @@ const VOLATILITY_LABEL: Record<
   recently_changed: "recently changed",
 };
 
-export function FindingDetail({ finding }: { finding: Finding }) {
+export function FindingDetail({
+  finding,
+  analysis,
+}: {
+  finding: Finding;
+  /**
+   * The worked analysis behind the reasoning steps, where an engine has one to show — the tables,
+   * weights and arithmetic the numbered claims above are read off. It sits inside the finding
+   * rather than beside it, because it is the same answer at a lower altitude, not a second one.
+   */
+  analysis?: ReactNode;
+}) {
   const band = RESULT_BAND[finding.result];
 
   return (
@@ -73,6 +85,8 @@ export function FindingDetail({ finding }: { finding: Finding }) {
           </li>
         ))}
       </ol>
+
+      {analysis}
 
       <div className="section-h">The regulation itself</div>
       <section className="citation-block">

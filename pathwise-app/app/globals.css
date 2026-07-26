@@ -757,3 +757,123 @@ a:hover { text-decoration: underline; }
   .memorystrip { flex-direction: column; align-items: flex-start; gap: 8px; }
   .memorystrip .ms-go { white-space: normal; }
 }
+
+/* ---------------------------------------------------------------------------
+   Engine B, past the gate — the worked domicile analysis inside a finding
+   (dependency, the intent factors and their weight, the clock arithmetic,
+   and the rules of construction). Tokens only; no new colours.
+   --------------------------------------------------------------------------- */
+
+.dm { margin-top: 4px; }
+
+/* A block header that carries its own citation, per the inline-citation law. The .section-h keeps
+   its uppercase treatment; the chip beside it must not be uppercased, so it stays a sibling. */
+.dm-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 26px 0 12px; }
+.dm-h .section-h { margin: 0; }
+
+/* Long authority lines wrap instead of pushing the page sideways on a phone. */
+.cite.wrap { white-space: normal; }
+
+.dm-card { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 15px 17px; }
+.dm-card-top { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+.dm-fact { font-size: 13.5px; color: var(--ink-soft); }
+
+.dm-sub { margin-top: 13px; padding-top: 13px; border-top: 1px dashed var(--line); }
+.dm-sub-k { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 9px;
+  font-size: 14px; font-weight: 650; color: var(--ink); }
+.dm-sub-v { font-size: 13.5px; color: var(--ink-soft); margin-top: 5px; }
+.dm-sub .reason-tags { margin-top: 8px; }
+
+/* A small qualifier on a claim: where the fact came from, or whether a rule is in play. */
+.dm-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--accent); background: var(--accent-soft); border: 1px solid #d3e0ff;
+  border-radius: 999px; padding: 1px 8px; }
+.dm-tag.off { color: var(--muted); background: #f2f4f8; border-color: var(--line); }
+
+.dm-inline { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 9px 0 0; }
+.dm-inline li { font-size: 12.5px; color: var(--ink-soft); background: var(--surface);
+  border: 1px dashed var(--line); border-radius: 6px; padding: 2px 8px; }
+
+/* ---- the factor rows ---- */
+.dm-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 9px; }
+.dm-row { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--green);
+  border-radius: var(--radius-sm); padding: 13px 15px; }
+.dm-row.does_not_count { border-left-color: var(--red); background: var(--red-soft); }
+.dm-row.not_on_record { border-left-color: var(--muted); border-style: dashed; background: transparent; }
+/* Inapplicable is neither a risk nor an uncertainty — it is a settled "this rule cannot reach you",
+   so it is muted and dashed rather than given a status colour of its own. */
+.dm-row.inapplicable { border-left-color: var(--line); border-style: dashed; background: transparent; }
+
+.dm-row-top { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 10px; }
+.dm-factor { font-size: 14.5px; font-weight: 650; color: var(--ink); }
+.dm-weight { font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.05em; border-radius: 6px; padding: 2px 7px;
+  color: var(--accent); background: var(--accent-soft); border: 1px solid #d3e0ff; }
+/* Weight is stated in the pack's own word, so the chip never has to carry the meaning alone. */
+.dm-weight.secondary { color: var(--muted); background: #f2f4f8; border-color: var(--line); }
+.dm-aux { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600;
+  color: var(--amber); background: var(--amber-soft); border: 1px solid #f0dcb0;
+  border-radius: 999px; padding: 2px 9px; }
+.dm-aux .ic { font-size: 10px; line-height: 1; }
+.dm-when { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.dm-na { font-size: 12px; font-weight: 600; color: var(--muted); }
+.dm-row-top .statuschip, .dm-row-top .dm-na { margin-left: auto; }
+
+.dm-row-note { font-size: 13px; color: var(--ink-soft); margin-top: 7px; }
+.dm-clause { font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+  background: #f2f4f8; border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px;
+  overflow-wrap: anywhere; }
+.dm-row .reason-tags { margin-top: 8px; }
+
+/* ---- the auxiliary-acts warning ---- */
+.dm-warn { margin-top: 12px; background: var(--amber-soft); border: 1px solid #f0dcb0;
+  border-radius: var(--radius-sm); padding: 15px 17px; }
+.dm-warn-k { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 9px;
+  font-size: 13px; font-weight: 700; color: var(--amber); }
+.dm-warn-k .ic { font-size: 11px; line-height: 1; }
+.dm-warn-v { margin: 9px 0 0; font-size: 14px; color: var(--ink); font-style: italic; }
+.dm-acts { list-style: none; padding: 0; margin: 12px 0 0; display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; }
+.dm-act { background: var(--surface); border: 1px solid #f0dcb0; border-radius: 6px; padding: 9px 11px; }
+.dm-act.off { background: transparent; border-style: dashed; border-color: var(--line); }
+.dm-act-k { display: block; font-size: 13px; font-weight: 650; color: var(--ink); }
+.dm-act.off .dm-act-k { color: var(--muted); font-weight: 600; }
+.dm-act-v { display: block; font-size: 12.5px; color: var(--ink-soft); margin-top: 2px; }
+
+/* ---- the clock arithmetic ---- */
+.dm-calc { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.dm-calc-row { display: grid; grid-template-columns: 124px 1fr; gap: 2px 14px; align-items: baseline;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 11px 13px; }
+.dm-calc-row.op { background: transparent; border-style: dashed; }
+.dm-calc-row.binding { background: var(--accent-soft); border-color: #d3e0ff; }
+.dm-calc-row.pending { background: transparent; border-style: dashed; }
+.dm-calc-date { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+.dm-calc-row.binding .dm-calc-date { color: var(--ink); font-weight: 700; }
+.dm-calc-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 700; color: var(--ink); }
+.dm-calc-v { grid-column: 2; font-size: 13px; color: var(--ink-soft); }
+.dm-calc-v .statuschip { margin-left: 6px; }
+.dm-rule { margin: 14px 0 0; padding-top: 13px; border-top: 1px dashed var(--line);
+  font-size: 13.5px; color: var(--ink); font-style: italic; }
+
+/* ---- rules of construction ---- */
+.dm-cons { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.dm-con { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 13px 15px; }
+.dm-con.off { border-left-color: var(--line); border-style: dashed; background: transparent; }
+.dm-con-k { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 9px;
+  font-size: 14px; font-weight: 650; color: var(--ink); }
+.dm-con.off .dm-con-k { color: var(--muted); }
+.dm-con-note { margin: 8px 0 0; font-size: 13.5px; color: var(--ink); font-style: italic; }
+.dm-con.off .dm-con-note { color: var(--ink-soft); }
+.dm-con-v { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+
+/* A phone cannot hold the date column beside the label — stack them, and let the fixed columns go. */
+@media (max-width: 640px) {
+  .dm-calc-row { grid-template-columns: 1fr; }
+  .dm-calc-v { grid-column: 1; }
+  .dm-card, .dm-warn, .dm-row, .dm-con, .dm-calc-row { padding-left: 13px; padding-right: 13px; }
+  .dm-row-top .statuschip, .dm-row-top .dm-na { margin-left: 0; }
+}
