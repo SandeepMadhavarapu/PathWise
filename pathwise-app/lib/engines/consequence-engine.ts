@@ -4,15 +4,15 @@
 //
 // It reads rulepacks/consequence-map.json (declarative), evaluates each consequence's
 // condition against the event, computes derived deadline DATES from the derivation strings,
-// and is DOMICILE-GATE-AWARE: for a student blocked by F-1/J1/M1 status, residency-domain
+// and is DOMICILE-GATE-AWARE: for a student whose status trips the domicile gate (the gated set is
+// imported from domicile-gate.ts, which reads it from rulepacks/va-domicile.json), residency-domain
 // consequences are transformed into an honest "does not apply — blocked by status" note,
 // which reinforces the cross-domain thesis instead of contradicting it.
 
 import type { LifeEvent, Student, RuleCitation } from '../types';
 import { formatStatusCode } from '../status-display';
+import { GATE_STATUSES, DOMICILE_VERIFIED_ON } from './domicile-gate';
 import map from '../rulepacks/consequence-map.json';
-
-const GATE_STATUSES = new Set(['F1', 'J1', 'M1']);
 
 export interface DerivedConsequence {
   domain: 'immigration' | 'residency' | 'aid';
@@ -49,13 +49,49 @@ function resolveDeadline(derivation: string, event: LifeEvent): string | undefin
 }
 
 // Very small, safe condition evaluator for the handful of conditions in the map.
-// Supports: "attrs.is_coop != true", "attrs.hours_per_week >= 20".
+// Same deliberately small reader as domicile-gate's statusesFromWhen: it understands the one
+// shape the map uses — "attrs.<field> <operator> <literal>", e.g. "attrs.is_coop != true" or
+// "attrs.hours_per_week >= 20" — and takes BOTH the operator and the operand out of the clause,
+// so a threshold like 20 hrs/week is stated once, in the pack, and never restated here.
+type Comparison = { field: string; op: string; operand: string | number | boolean };
+
+function parseLiteral(raw: string): string | number | boolean | undefined {
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  if (/^-?\d+(\.\d+)?$/.test(raw)) return Number(raw);
+  const quoted = raw.match(/^'([^']*)'$/) ?? raw.match(/^"([^"]*)"$/);
+  return quoted ? quoted[1] : undefined;
+}
+
+function parseCondition(cond: string): Comparison | undefined {
+  const m = cond.match(/^\s*attrs\.([A-Za-z_]\w*)\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*$/);
+  if (!m) return undefined;
+  const operand = parseLiteral(m[3]);
+  if (operand === undefined) return undefined;
+  return { field: m[1], op: m[2], operand };
+}
+
 function evalCondition(cond: string | undefined, event: LifeEvent): boolean {
   if (!cond) return true;
-  const hpw = event.attrs.hours_per_week;
-  if (cond.includes('is_coop != true')) return event.attrs.is_coop !== true;
-  if (cond.includes('hours_per_week >= 20')) return typeof hpw === 'number' && hpw >= 20;
-  return true;
+
+  const c = parseCondition(cond);
+  // An unrecognised shape fails closed: the consequence declines to fire on a condition it
+  // cannot read, rather than guessing that the condition passed.
+  if (!c) return false;
+
+  const value = event.attrs[c.field];
+  if (c.op === '==') return value === c.operand;
+  if (c.op === '!=') return value !== c.operand;
+
+  // Ordered comparisons are numeric only; a missing or non-numeric attribute cannot satisfy one.
+  if (typeof value !== 'number' || typeof c.operand !== 'number') return false;
+  switch (c.op) {
+    case '>=': return value >= c.operand;
+    case '<=': return value <= c.operand;
+    case '>': return value > c.operand;
+    case '<': return value < c.operand;
+    default: return false;
+  }
 }
 
 type RawConsequence = {
@@ -96,7 +132,9 @@ export function applyLifeEvent(student: Student, event: LifeEvent): DerivedConse
         cite: {
           text: 'Holders of a student visa cannot establish domicile in Virginia.',
           authority: 'SCHEV Domicile Guidelines Pt II §03(A)',
-          verified_on: '2026-07-24',
+          // The gate this suppression rests on is the domicile pack's, so its verification date is
+          // the domicile pack's too — read from the same module the gated statuses come from.
+          verified_on: DOMICILE_VERIFIED_ON,
         },
       });
       continue;

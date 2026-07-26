@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import type { Event, Institution, ProgramLevel, Student } from "@/lib/types";
-import type { LedgerResult } from "@/lib/engines/cpt-ledger";
+import { CLIFF_DAYS, FULL_TIME_HOURS_THRESHOLD, type LedgerResult } from "@/lib/engines/cpt-ledger";
 import { formatStatusCode } from "@/lib/status-display";
 
 type StatusKey = "verified" | "attention" | "blocked" | "unknown";
@@ -106,7 +106,9 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
   const level = ev.program_level ?? inst?.level;
   const led = level ? ledger.forLevel(level) : undefined;
   const hours = typeof ev.attrs.hours_per_week === "number" ? ev.attrs.hours_per_week : undefined;
-  const fullTime = hours !== undefined && hours > 20;
+  // Same test the ledger applies (strictly greater than the pack threshold), off the same value —
+  // the row's "full-time" label cannot disagree with the days the engine counted.
+  const fullTime = hours !== undefined && hours > FULL_TIME_HOURS_THRESHOLD;
 
   const dateLabel = ev.end_date ? `${fmtDate(ev.date)} → ${fmtDate(ev.end_date)}` : fmtDate(ev.date);
   const periodLabel = ev.end_date
@@ -138,12 +140,12 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
         led.band === "green"
           ? `Counted at the ${levelLabel(level).toLowerCase()} level: ${led.fullTimeDays} full-time days, ${led.daysToCliff} still clear of the cliff.`
           : led.band === "amber"
-            ? `Counted at the ${levelLabel(level).toLowerCase()} level: ${led.fullTimeDays} of 365 full-time days used — ${led.daysToCliff} days from the cliff.`
-            : `The ${levelLabel(level).toLowerCase()} level has passed 365 full-time days; OPT at this level is gone.`;
+            ? `Counted at the ${levelLabel(level).toLowerCase()} level: ${led.fullTimeDays} of ${CLIFF_DAYS} full-time days used — ${led.daysToCliff} days from the cliff.`
+            : `The ${levelLabel(level).toLowerCase()} level has passed ${CLIFF_DAYS} full-time days; OPT at this level is gone.`;
 
       why = fullTime
-        ? `Feeds the CPT ledger at the ${levelLabel(level).toLowerCase()} level, and with it the 365-day cliff — at 365 full-time days, OPT at this level disappears. This authorization is counted in full because it is over 20 hrs/week.`
-        : `Feeds the CPT ledger at the ${levelLabel(level).toLowerCase()} level. Under 20 hrs/week it is part-time on its own — but concurrent authorizations aggregate, so where it overlaps another one the summed hours pass 20/week and those days count as full-time. ${led.overlapDays} of her ${led.fullTimeDays} full-time days were created that way.`;
+        ? `Feeds the CPT ledger at the ${levelLabel(level).toLowerCase()} level, and with it the ${CLIFF_DAYS}-day cliff — at ${CLIFF_DAYS} full-time days, OPT at this level disappears. This authorization is counted in full because it is over ${FULL_TIME_HOURS_THRESHOLD} hrs/week.`
+        : `Feeds the CPT ledger at the ${levelLabel(level).toLowerCase()} level. Under ${FULL_TIME_HOURS_THRESHOLD} hrs/week it is part-time on its own — but concurrent authorizations aggregate, so where it overlaps another one the summed hours pass ${FULL_TIME_HOURS_THRESHOLD}/week and those days count as full-time. ${led.overlapDays} of her ${led.fullTimeDays} full-time days were created that way.`;
 
       if (level !== "masters") {
         why += ` The cap is per education level, so these days are kept out of her master's count entirely.`;
@@ -151,7 +153,7 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
     }
   } else if (ev.type === "program_start") {
     statusLine = `Anchors the ${levelLabel(level).toLowerCase()} record at ${inst?.name ?? "this institution"}.`;
-    why = `Sets the level every later authorization is counted at. The 365-day CPT cliff is partitioned by level, so where this line falls decides which ledger each authorization lands in.`;
+    why = `Sets the level every later authorization is counted at. The ${CLIFF_DAYS}-day CPT cliff is partitioned by level, so where this line falls decides which ledger each authorization lands in.`;
     cite = "8 CFR 214.2(f)(10)";
   } else if (ev.type === "program_end") {
     statusLine = "The completion date every post-completion clock is measured from.";
@@ -264,7 +266,7 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
         how: `Ask School Y's DSO for the I-20 issued when the ${levelLabel(cur.level).toLowerCase()} program began, or confirm the transfer-out date with ${prev.heading}.`,
       },
       why: cliffLine
-        ? `This boundary decides which ledger every authorization lands in. The 365-day CPT cliff is counted per education level, never summed across them — which is why her ${levelLabel(prev.level).toLowerCase()} days sit apart from the ${cliffLine.fullTimeDays} full-time days now counted at the ${levelLabel(cur.level).toLowerCase()} level.`
+        ? `This boundary decides which ledger every authorization lands in. The ${CLIFF_DAYS}-day CPT cliff is counted per education level, never summed across them — which is why her ${levelLabel(prev.level).toLowerCase()} days sit apart from the ${cliffLine.fullTimeDays} full-time days now counted at the ${levelLabel(cur.level).toLowerCase()} level.`
         : "This boundary decides which ledger every authorization lands in — the CPT cap is counted per education level.",
       cite: "8 CFR 214.2(f)(10)",
       inferred: true,

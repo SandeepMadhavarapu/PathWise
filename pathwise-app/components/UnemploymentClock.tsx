@@ -1,5 +1,6 @@
 import {
   computeUnemploymentClock,
+  QUALIFYING_MIN_HOURS_PER_WEEK,
   type UnemploymentClockInput,
 } from "@/lib/engines/unemployment-clock";
 
@@ -60,9 +61,9 @@ export function UnemploymentClock({
 
       {clock.isPaused ? (
         <div className="note">
-          <strong>Right now the clock is paused.</strong> A qualifying job (20+ hrs/week) is active
-          as of {formatDate(input.asOf)}, so no unemployment days are accruing today. It resumes the
-          moment that job ends.
+          <strong>Right now the clock is paused.</strong> A qualifying job (
+          {QUALIFYING_MIN_HOURS_PER_WEEK}+ hrs/week) is active as of {formatDate(input.asOf)}, so no
+          unemployment days are accruing today. It resumes the moment that job ends.
         </div>
       ) : (
         <div className="note">

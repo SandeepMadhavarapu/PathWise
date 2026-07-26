@@ -1,7 +1,8 @@
-import type { LevelLedger } from "@/lib/engines/cpt-ledger";
+import { CLIFF_DAYS, type LevelLedger } from "@/lib/engines/cpt-ledger";
 
-const TRACK_MAX_DAYS = 400; // visual scale; cliff at 365 sits near the right
-const CLIFF_DAYS = 365;
+// Purely a visual scale (how much track to draw), not a regulatory number — safe to hardcode.
+// The cliff itself comes from the rulepack via CLIFF_DAYS above.
+const TRACK_MAX_DAYS = 400;
 
 export function LedgerBar({
   ledger,
@@ -34,7 +35,7 @@ export function LedgerBar({
         </div>
         {/* Outside the track: the track clips its fill, and would clip this label with it. */}
         <div className="cliff" style={{ left: `${cliffPct}%` }}>
-          <span className="lbl">365-day cliff</span>
+          <span className="lbl">{CLIFF_DAYS}-day cliff</span>
         </div>
       </div>
 
@@ -50,7 +51,7 @@ export function LedgerBar({
 
       <div className="note">
         <strong>Why this matters:</strong> at {ledger.fullTimeDays} days {second ? "you are" : "she is"}{" "}
-        <strong>{ledger.daysToCliff} days</strong> from 365 — cross it and {second ? "you lose" : "she loses"}{" "}
+        <strong>{ledger.daysToCliff} days</strong> from {CLIFF_DAYS} — cross it and {second ? "you lose" : "she loses"}{" "}
         OPT eligibility for this level entirely. The {ledger.overlapDays} overlap days are ones{" "}
         {second ? "you would never see yourself" : "she would never see herself"}, and{" "}
         {second ? "your" : "her"} bachelor&apos;s CPT is partitioned out because the cap resets by level.{" "}

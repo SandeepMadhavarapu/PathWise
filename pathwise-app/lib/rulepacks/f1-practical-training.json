@@ -15,6 +15,8 @@
     "cliff_days": 365,
     "cliff_effect": "365 or more days of full-time CPT removes OPT eligibility entirely.",
     "cliff_cite": "8 CFR 214.2(f)(10)(i)",
+    "amber_margin_days": 60,
+    "amber_margin_note": "Display band, not a regulation: within 60 days of the cliff the ledger reads amber. Authored here so a jurisdiction can set its own warning distance without touching code.",
     "overlap_aggregation": {
       "rule": "Concurrent part-time CPT authorizations aggregate; a day whose summed authorized hours exceed 20 counts as a full-time CPT day.",
       "cite": "USCIS Policy Manual (practical training aggregation)"

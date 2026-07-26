@@ -20,7 +20,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { computeCptLedger, type LedgerBand } from "@/lib/engines/cpt-ledger";
+import { computeCptLedger, CLIFF_DAYS, type LedgerBand } from "@/lib/engines/cpt-ledger";
 import { priyaEvents } from "@/lib/fixtures/priya";
 import type { Event } from "@/lib/types";
 
@@ -39,8 +39,6 @@ const BAND_STATUS: Record<LedgerBand, StatusKey> = {
   amber: "attention",
   red: "blocked",
 };
-
-const CLIFF_DAYS = 365; // the cliff the ledger engine enforces, shown here for scale
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 

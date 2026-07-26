@@ -21,7 +21,14 @@ import pack from '../rulepacks/f1-practical-training.json';
 const opt = pack.opt;
 
 // Display-only band margin (not regulatory). Same convention as the CPT ledger and the clock.
-const AMBER_MARGIN_MONTHS = 2; // 2 or fewer months left => amber
+// Exported because the budget bar draws the amber ZONE from it: a zone drawn from its own number
+// would sooner or later start at a different month than the band it is meant to explain.
+export const AMBER_MARGIN_MONTHS = 2; // 2 or fewer months left => amber
+
+// What "half rate" means as a multiplier. The pack states THAT part-time pre-completion OPT is
+// deducted at half rate (part_time_pre_completion_half_rate); this is the one place that becomes a
+// number, and the UI reads it from here to decide which lines to explain as half-rate.
+export const PART_TIME_HALF_RATE = 0.5;
 
 export type OptBudgetBand = 'green' | 'amber' | 'red';
 
@@ -139,7 +146,7 @@ function phaseOf(a: OptAuthorization): OptPhase {
 function rateFor(phase: OptPhase, intensity: OptIntensity): number {
   if (phase === 'pre_completion') {
     if (!opt.pre_completion_counts_against_budget) return 0;
-    if (intensity === 'part_time' && opt.part_time_pre_completion_half_rate) return 0.5;
+    if (intensity === 'part_time' && opt.part_time_pre_completion_half_rate) return PART_TIME_HALF_RATE;
   }
   return 1;
 }
@@ -214,4 +221,4 @@ export const OPT_BUDGET_RULES = {
   authority: opt.budget_authority,
 } as const;
 
-export const _internals = { AMBER_MARGIN_MONTHS, addMonths, daysInMonth, monthsInPeriod, rateFor, bandFor };
+export const _internals = { AMBER_MARGIN_MONTHS, PART_TIME_HALF_RATE, addMonths, daysInMonth, monthsInPeriod, rateFor, bandFor };

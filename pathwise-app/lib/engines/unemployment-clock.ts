@@ -19,6 +19,15 @@ import pack from '../rulepacks/f1-practical-training.json';
 
 const uc = pack.unemployment_clock;
 
+// Exported so the UI's "a qualifying job (N+ hrs/week)" copy names the same threshold the clock
+// pauses on; copy that can drift from the rule it describes is copy that will.
+export const QUALIFYING_MIN_HOURS_PER_WEEK = uc.qualifying_min_hours_per_week;
+
+// The STEM extension's own contribution, exported for the copy that has to name it while it is NOT
+// yet in effect: at that point `cap` is still the base allowance, so the "+N" the student is waiting
+// on cannot be read off the result and would otherwise be retyped into the sentence.
+export const STEM_ADDITIONAL_DAYS = uc.stem_additional_days;
+
 // Display-only band margins (not regulatory). Same convention as AMBER_MARGIN_DAYS in cpt-ledger.
 const RED_MARGIN_DAYS = 15;   // 15 or fewer days remaining => red
 const AMBER_MARGIN_DAYS = 30; // 30 or fewer days remaining => amber

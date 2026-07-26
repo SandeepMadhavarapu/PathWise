@@ -28,8 +28,16 @@ import pack from '../rulepacks/f1-practical-training.json';
 const REPORTING: { id: string; deadline_days?: number; every_months?: number; cite: string }[] =
   pack.reporting_obligations;
 
+// Every reporting deadline the pack actually states, in days. If the pack ever renames the specific
+// obligation below, the plan falls back to the SHORTEST deadline the pack does state — never to a
+// day count written here, because a fallback literal is a rule the pack has stopped owning.
+const REPORTING_DEADLINE_DAYS: number[] = REPORTING.map((r) => r.deadline_days).filter(
+  (d): d is number => typeof d === 'number',
+);
+
 const SEVIS_REPORT_DAYS =
-  REPORTING.find((r) => r.id === 'employer_or_address_change')?.deadline_days ?? 10;
+  REPORTING.find((r) => r.id === 'employer_or_address_change')?.deadline_days ??
+  Math.min(...REPORTING_DEADLINE_DAYS);
 const OPT_FILING_WINDOW_DAYS = pack.opt.apply_window.earliest_days_before_program_end;
 const GRACE_DAYS = pack.grace_period.days_after_i20_or_ead_end;
 

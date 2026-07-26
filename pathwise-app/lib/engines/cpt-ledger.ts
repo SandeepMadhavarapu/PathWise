@@ -9,12 +9,25 @@
 //   - Level partition: the cap is per education level; days are counted per level, never summed
 //     across levels.
 //   - Counting basis is AUTHORIZED periods, not hours actually worked.
+//   - Every number below is read from the rulepack; none are literal-coded here.
 
 import type { Event, ProgramLevel } from '../types';
+import pack from '../rulepacks/f1-practical-training.json';
 
-const FULL_TIME_HOURS_THRESHOLD = 20; // strictly greater than 20 => full-time
-const CLIFF_DAYS = 365;
-const AMBER_MARGIN_DAYS = 60; // within 60 days of the cliff => amber
+const cpt = pack.cpt;
+
+// Both exported so the UI reads the same pack values the ledger is computed from — LedgerBar's
+// cliff marker off CLIFF_DAYS, JourneyTimeline's full-time/part-time call off the threshold.
+// A marker or a label that can drift from the rule is one that will.
+export const FULL_TIME_HOURS_THRESHOLD = cpt.full_time_threshold_hours_per_week; // strictly greater => full-time
+export const CLIFF_DAYS = cpt.cliff_days;
+const AMBER_MARGIN_DAYS = cpt.amber_margin_days; // display band, not regulatory
+
+// The pack's own citation strings, so a screen that prints the authority prints the pack's text
+// rather than a retyped copy of it. CLIFF_CITE is the cliff subsection itself; SECTION_CITE is the
+// practical-training paragraph that the cap and its per-level partition both sit in.
+export const CLIFF_CITE = cpt.cliff_cite;
+export const SECTION_CITE = cpt.level_partition.cite;
 
 export type LedgerBand = 'green' | 'amber' | 'red';
 
