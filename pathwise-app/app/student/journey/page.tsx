@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { priyaStudent, priyaEvents } from "@/lib/fixtures/priya";
 import { JourneyTimeline } from "@/components/JourneyTimeline";
+import { Tabs } from "@/components/Tabs";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -22,20 +22,16 @@ export default function JourneyPage() {
   const latest = priyaEvents.map((e) => e.end_date ?? e.date).sort().slice(-1)[0];
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">the record, kept</span>
-        </div>
-        <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-          ← Back to dashboard
-        </Link>
-      </div>
+    <>
+      <Tabs
+        activeId="journey"
+        tabs={[
+          { id: "overview", label: "Overview", href: "/student" },
+          { id: "journey", label: "My journey", href: "/student/journey" },
+        ]}
+      />
 
-      <div className="jintro">
+      <div className="jintro surface">
         <div className="jintro-eyebrow">My journey</div>
         <h1>Priya never has to explain her history again.</h1>
         <p>
@@ -59,7 +55,7 @@ export default function JourneyPage() {
         </div>
       </div>
 
-      <div className="section-h">Her record, in order</div>
+      <div className="section-head">Her record, in order</div>
 
       <JourneyTimeline student={priyaStudent} events={priyaEvents} ledger={ledger} />
 
@@ -68,6 +64,6 @@ export default function JourneyPage() {
         product — every finding on every screen is read from these events. PathWise advises; the office
         decides.
       </div>
-    </main>
+    </>
   );
 }

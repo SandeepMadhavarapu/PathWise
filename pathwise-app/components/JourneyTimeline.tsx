@@ -7,14 +7,17 @@
 import { useState } from "react";
 import type { Event, Institution, ProgramLevel, Student } from "@/lib/types";
 import type { LedgerResult } from "@/lib/engines/cpt-ledger";
+import type { StatusKey as GlyphStatus } from "@/lib/tokens";
+import { StatusGlyph } from "./StatusGlyph";
+import { Capsule } from "./Capsule";
 
 type StatusKey = "verified" | "attention" | "blocked" | "unknown";
 
-const STATUS: Record<StatusKey, { icon: string; word: string }> = {
-  verified: { icon: "✓", word: "On track" },
-  attention: { icon: "◐", word: "Attention" },
-  blocked: { icon: "●", word: "Blocked" },
-  unknown: { icon: "?", word: "Unable to verify" },
+const STATUS: Record<StatusKey, { glyph: GlyphStatus; word: string }> = {
+  verified: { glyph: "done", word: "On track" },
+  attention: { glyph: "warn", word: "Attention" },
+  blocked: { glyph: "blocked", word: "Blocked" },
+  unknown: { glyph: "idle", word: "Unable to verify" },
 };
 
 interface Row {
@@ -280,8 +283,8 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
 function StatusChip({ status }: { status: StatusKey }) {
   const s = STATUS[status];
   return (
-    <span className={`statuschip ${status}`}>
-      <span className="ic" aria-hidden="true">{s.icon}</span>
+    <span className="statuschip">
+      <StatusGlyph status={s.glyph} />
       {s.word}
     </span>
   );
@@ -299,7 +302,7 @@ function JourneyRow({
   const panelId = `jd-${row.key}`;
   return (
     <li className={`jitem${open ? " open" : ""}${row.inferred ? " inferred" : ""}`}>
-      <span className={`jdot ${row.status}`} aria-hidden="true" />
+      <span className={`jdot ${STATUS[row.status].glyph}`} aria-hidden="true" />
       <div className="jcard">
         <button className="jrow" type="button" aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
           <span className="jrow-top">
@@ -328,7 +331,7 @@ function JourneyRow({
               <div className="jfact">
                 <div className="k">Type</div>
                 <div className="v">
-                  {row.title} <span className="reason-tag">{row.typeLabel}</span>
+                  {row.title} <Capsule>{row.typeLabel}</Capsule>
                 </div>
               </div>
               <div className="jfact">

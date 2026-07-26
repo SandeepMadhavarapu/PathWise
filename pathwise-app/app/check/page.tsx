@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { runDomicileGate } from "@/lib/engines/domicile-gate";
@@ -16,6 +15,7 @@ import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { FindingDetail } from "@/components/FindingDetail";
+import { formatDecidingOffice } from "@/lib/format";
 
 // The statuses this flow offers (a curated subset of ImmigrationStatus).
 const STATUS_OPTIONS: { value: ImmigrationStatus; label: string }[] = [
@@ -123,18 +123,8 @@ export default function CheckPage() {
   const stateName = STATE_OPTIONS.find((s) => s.code === state)?.name ?? state;
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">check your own status</span>
-        </div>
-        <span className="pill">Check your own status</span>
-      </div>
-
-      <form className="check-form" onSubmit={onSubmit}>
+    <>
+      <form className="check-form surface" onSubmit={onSubmit}>
         <div className="field-row">
           <div className="field">
             <label htmlFor="status">Immigration status</label>
@@ -162,7 +152,7 @@ export default function CheckPage() {
           </div>
         </div>
 
-        <div className="section-h">Your CPT authorizations</div>
+        <div className="section-head">Your CPT authorizations</div>
         {rows.map((row, i) => (
           <div className="cpt-row" key={i}>
             <div className="field">
@@ -242,10 +232,11 @@ export default function CheckPage() {
             />
           ) : null}
 
-          <div className="section-h">Your three offices, at a glance</div>
-          <div className="cards">
+          <div className="section-head">Your three offices, at a glance</div>
+          <div className="domain-cards">
             <DomainCard
               domain="Immigration (F-1)"
+              decidingOffice={formatDecidingOffice("SEVP")}
               status={
                 closestLevel
                   ? `${closestLevel.daysToCliff} days from the CPT cliff`
@@ -263,6 +254,7 @@ export default function CheckPage() {
             />
             <DomainCard
               domain={`Residency (${stateName})`}
+              decidingOffice={formatDecidingOffice(finding.deciding_office)}
               status={isBlocked ? "Blocked by status" : finding.headline}
               band={RESULT_CARD_BAND[finding.result]}
               detail={
@@ -274,6 +266,7 @@ export default function CheckPage() {
             />
             <DomainCard
               domain={`Financial aid (${stateName})`}
+              decidingOffice={formatDecidingOffice("financial_aid")}
               status={isBlocked ? "Blocked by status" : "Not blocked by your status"}
               band={isBlocked ? "red" : "green"}
               detail={
@@ -287,22 +280,22 @@ export default function CheckPage() {
 
           {ledger.byLevel.length > 0 ? (
             <>
-              <div className="section-h">Your CPT ledger, computed live</div>
-              {ledger.byLevel.map((l) => (
-                <div key={l.level} style={{ marginBottom: 14 }}>
-                  <LedgerBar ledger={l} voice="second" />
-                </div>
-              ))}
+              <div className="section-head">Your CPT ledger, computed live</div>
+              <div className="stack-gap">
+                {ledger.byLevel.map((l) => (
+                  <LedgerBar key={l.level} ledger={l} voice="second" />
+                ))}
+              </div>
             </>
           ) : null}
 
-          <div className="section-h">The full reasoning</div>
+          <div className="section-head">The full reasoning</div>
           {showReasoning ? (
             <FindingDetail finding={finding} />
           ) : (
             <button
               type="button"
-              className="card-more"
+              className="domain-card-more btn-link"
               onClick={() => setShowReasoning(true)}
             >
               See full reasoning →
@@ -316,6 +309,6 @@ export default function CheckPage() {
         your device. Every finding shows its regulation and the office that decides it. PathWise advises;
         the office decides.
       </div>
-    </main>
+    </>
   );
 }

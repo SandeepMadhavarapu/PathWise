@@ -13,20 +13,12 @@ export default function ResidencyFindingPage() {
   });
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">the full reasoning behind one finding</span>
-        </div>
-        <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-          ← Back
-        </Link>
-      </div>
+    <>
+      <Link href="/student" className="back-link">
+        ← Back to overview
+      </Link>
 
       <FindingDetail finding={domicile} />
-    </main>
+    </>
   );
 }

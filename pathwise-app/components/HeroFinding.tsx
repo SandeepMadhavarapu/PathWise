@@ -1,9 +1,4 @@
-// Display-format the visa status code (display text only — never mutates the code value
-// or any rule logic): F1 → F-1, J1 → J-1, M1 → M-1. Anything else passes through.
-function formatStatus(statusLabel: string): string {
-  const map: Record<string, string> = { F1: "F-1", J1: "J-1", M1: "M-1" };
-  return map[statusLabel] ?? statusLabel;
-}
+import { formatImmigrationStatus } from "@/lib/format";
 
 export function HeroFinding({
   studentName,
@@ -19,10 +14,10 @@ export function HeroFinding({
   voice?: "second" | "third";
 }) {
   const second = voice === "second";
-  const statusDisplay = formatStatus(statusLabel);
+  const statusDisplay = formatImmigrationStatus(statusLabel);
 
   return (
-    <div className="hero">
+    <div className="hero surface">
       <div className="eyebrow">The cross-domain finding</div>
       <h1>
         One fact —{" "}
