@@ -10,13 +10,26 @@
 import { useState } from "react";
 import type { NextStep } from "@/lib/engines/next-steps";
 import { formatStepDate } from "@/lib/engines/next-steps";
-import { buildIcs, calendarSteps } from "@/lib/ics";
+import {
+  buildIcs,
+  calendarSteps,
+  DEFAULT_ALARM_OFFSETS_DAYS,
+  EVENTS_PER_DATED_STEP,
+} from "@/lib/ics";
 import { buildMailtoHref } from "@/lib/reminder-text";
 
 const FILENAME = "pathwise-deadlines.ics";
 
-/** Kept in one place so the file and the sentence describing it cannot drift apart. */
-const ALARM_OFFSETS_COPY = "at 14 days, 3 days and 1 day out";
+/** Read off the offsets the file actually carries, so the file and the sentence cannot drift apart. */
+const ALARM_OFFSETS_COPY = `at ${listPhrase(
+  DEFAULT_ALARM_OFFSETS_DAYS.map((d) => `${d} ${d === 1 ? "day" : "days"}`),
+)} out`;
+
+/** ["a", "b", "c"] → "a, b and c". */
+function listPhrase(items: string[]): string {
+  if (items.length <= 1) return items.join("");
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
 
 export function DeadlineExport({
   steps,
@@ -47,7 +60,7 @@ export function DeadlineExport({
     setTimeout(() => URL.revokeObjectURL(url), 0);
 
     setSaved(
-      `${FILENAME} saved — ${dated.length * 2} events across ${dated.length} ${
+      `${FILENAME} saved — ${dated.length * EVENTS_PER_DATED_STEP} events across ${dated.length} ${
         dated.length === 1 ? "deadline" : "deadlines"
       }. Open it to add them to your calendar.`,
     );
@@ -65,8 +78,8 @@ export function DeadlineExport({
           Add these to your calendar
         </button>
         <span className="rem-hint">
-          {dated.length * 2} events, the first on {firstDate} — a file your calendar reads, not an
-          account it has to sign into.
+          {dated.length * EVENTS_PER_DATED_STEP} events, the first on {firstDate} — a file your
+          calendar reads, not an account it has to sign into.
         </span>
         <span className="rem-said" role="status">
           {saved}

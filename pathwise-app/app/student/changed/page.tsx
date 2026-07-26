@@ -20,7 +20,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { computeCptLedger, CLIFF_DAYS, type LedgerBand } from "@/lib/engines/cpt-ledger";
+import {
+  computeCptLedger,
+  CLIFF_CITE,
+  CLIFF_DAYS,
+  SECTION_CITE,
+  type LedgerBand,
+} from "@/lib/engines/cpt-ledger";
 import { priyaEvents } from "@/lib/fixtures/priya";
 import type { Event } from "@/lib/types";
 
@@ -198,7 +204,7 @@ export default function ChangedPage() {
           <div className="wc-gap-v">
             The CPT cap is counted per education level, so this one fact decides whether{" "}
             {bachelors.fullTimeDays} days from School X land in her master&apos;s ledger or stay out of
-            it. <span className="cite">8 CFR 214.2(f)(10)</span>
+            it. <span className="cite">{SECTION_CITE}</span>
           </div>
 
           <div className="wc-gap-k">{added ? "What happened" : "What she can do"}</div>
@@ -286,7 +292,7 @@ export default function ChangedPage() {
 
             <div className="wc-sub" style={{ marginTop: 12 }}>
               One reading survives, so the count is determinate. She is still close to the cliff — that
-              part is a finding, not a gap. <span className="cite">8 CFR 214.2(f)(10)(i)</span>
+              part is a finding, not a gap. <span className="cite">{CLIFF_CITE}</span>
             </div>
           </div>
         ) : (
@@ -322,7 +328,7 @@ export default function ChangedPage() {
             <div className="wc-why-v">
               The rule didn&apos;t change. The {CLIFF_DAYS}-day cliff and the per-level partition are
               the same rule, cited the same way, before and after{" "}
-              <span className="cite">8 CFR 214.2(f)(10)</span>. What changed is the evidence: the new
+              <span className="cite">{SECTION_CITE}</span>. What changed is the evidence: the new
               document establishes the level change, so School X&apos;s{" "}
               {bachelors.fullTimeDays} bachelor&apos;s-level days can be attributed to a different
               level and kept out of the master&apos;s count. One of the two readings is now ruled out,

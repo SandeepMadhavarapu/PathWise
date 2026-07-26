@@ -6,7 +6,12 @@
 
 import { useState } from "react";
 import type { Event, Institution, ProgramLevel, Student } from "@/lib/types";
-import { CLIFF_DAYS, FULL_TIME_HOURS_THRESHOLD, type LedgerResult } from "@/lib/engines/cpt-ledger";
+import {
+  CLIFF_DAYS,
+  FULL_TIME_HOURS_THRESHOLD,
+  SECTION_CITE,
+  type LedgerResult,
+} from "@/lib/engines/cpt-ledger";
 import { formatStatusCode } from "@/lib/status-display";
 
 type StatusKey = "verified" | "attention" | "blocked" | "unknown";
@@ -123,7 +128,7 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
 
   if (ev.type === "cpt_auth") {
     meta = hours !== undefined ? `${hours} hrs/week · ${fullTime ? "full-time" : "part-time"}` : undefined;
-    cite = "8 CFR 214.2(f)(10)";
+    cite = SECTION_CITE;
 
     if (led) {
       if (ev.evidence_ids.length === 0) {
@@ -154,7 +159,7 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
   } else if (ev.type === "program_start") {
     statusLine = `Anchors the ${levelLabel(level).toLowerCase()} record at ${inst?.name ?? "this institution"}.`;
     why = `Sets the level every later authorization is counted at. The ${CLIFF_DAYS}-day CPT cliff is partitioned by level, so where this line falls decides which ledger each authorization lands in.`;
-    cite = "8 CFR 214.2(f)(10)";
+    cite = SECTION_CITE;
   } else if (ev.type === "program_end") {
     statusLine = "The completion date every post-completion clock is measured from.";
     why =
@@ -268,7 +273,7 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
       why: cliffLine
         ? `This boundary decides which ledger every authorization lands in. The ${CLIFF_DAYS}-day CPT cliff is counted per education level, never summed across them — which is why her ${levelLabel(prev.level).toLowerCase()} days sit apart from the ${cliffLine.fullTimeDays} full-time days now counted at the ${levelLabel(cur.level).toLowerCase()} level.`
         : "This boundary decides which ledger every authorization lands in — the CPT cap is counted per education level.",
-      cite: "8 CFR 214.2(f)(10)",
+      cite: SECTION_CITE,
       inferred: true,
     };
   }

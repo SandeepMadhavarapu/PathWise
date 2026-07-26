@@ -11,20 +11,23 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import coverage from "@/lib/rulepacks/coverage.json";
+import {
+  COVERAGE_COUNTS,
+  COVERAGE_LEGEND,
+  COVERAGE_VERIFIED_ON,
+  IMPLEMENTED_COUNT,
+  JURISDICTIONS,
+  JURISDICTION_COUNT,
+  NOT_YET_COUNT,
+  STATE_COUNT,
+  UNMODELLED_COUNT,
+  type CoverageStatus,
+  type Jurisdiction,
+} from "@/lib/coverage";
 import f1Pack from "@/lib/rulepacks/f1-practical-training.json";
 import vaDomicilePack from "@/lib/rulepacks/va-domicile.json";
 import vaAidPack from "@/lib/rulepacks/va-aid.json";
 import consequencePack from "@/lib/rulepacks/consequence-map.json";
-
-type CoverageStatus = "implemented" | "schema_ready" | "not_yet";
-
-interface Jurisdiction {
-  code: string;
-  name: string;
-  status: CoverageStatus;
-  note?: string;
-}
 
 // The app's four-state vocabulary, applied to our own coverage. A state we haven't modelled is an
 // "unable to verify", not an error — the same honesty the engines use about a student's record.
@@ -37,15 +40,8 @@ const STATUS: Record<CoverageStatus, { key: "verified" | "attention" | "unknown"
 // The order the legend and the counts are read in — the confident state first, the honest one last.
 const STATUS_ORDER: CoverageStatus[] = ["implemented", "schema_ready", "not_yet"];
 
-const jurisdictions = coverage.jurisdictions as Jurisdiction[];
-const legend = coverage.legend as Record<CoverageStatus, string>;
-
-// Counts are derived from the file, never written down. Add a state to coverage.json and this
-// line changes on its own.
-const counts = jurisdictions.reduce(
-  (acc, j) => ({ ...acc, [j.status]: (acc[j.status] ?? 0) + 1 }),
-  {} as Record<CoverageStatus, number>,
-);
+// Every count on this page — the header, the tallies, the "not yet" remainder — is derived from
+// coverage.json by lib/coverage.ts, never written down here.
 
 // The header fields every pack is expected to carry. consequence-map.json deliberately has no
 // single external authority — each consequence inside it carries its own citation — so these are
@@ -252,14 +248,19 @@ export default function CoveragePage() {
       </div>
 
       <div className="jintro">
-        <div className="jintro-eyebrow">Coverage · 50 states + DC</div>
-        <h1>One state is fully modelled. The other 50 are the same shape of file.</h1>
+        <div className="jintro-eyebrow">Coverage · {STATE_COUNT} states + DC</div>
+        <h1>
+          {IMPLEMENTED_COUNT === 1
+            ? "One state is fully modelled."
+            : `${IMPLEMENTED_COUNT} states are fully modelled.`}{" "}
+          The other {UNMODELLED_COUNT} are the same shape of file.
+        </h1>
         <p>
           Residency and state aid are decided state by state, so a system that only ever worked in
           Virginia would not be a system. PathWise keeps every rule in a versioned rule pack — the
           authority, the source URL, the date it was verified, and the conditions themselves — and
           the engines read those files. Below is exactly how far that has been carried, including
-          the 45 states where the honest answer is &ldquo;not yet.&rdquo;
+          the {NOT_YET_COUNT} states where the honest answer is &ldquo;not yet.&rdquo;
         </p>
         <div className="cov-counts">
           {STATUS_ORDER.map((status, i) => {
@@ -274,7 +275,7 @@ export default function CoveragePage() {
                 <span className={`cov-ic ${s.key}`} aria-hidden="true">
                   {s.icon}
                 </span>
-                <strong>{counts[status] ?? 0}</strong> {s.count}
+                <strong>{COVERAGE_COUNTS[status] ?? 0}</strong> {s.count}
               </span>
             );
           })}
@@ -282,7 +283,7 @@ export default function CoveragePage() {
             <span className="cov-sep" aria-hidden="true">
               ·
             </span>
-            {jurisdictions.length} jurisdictions, verified {coverage.verified_on}
+            {JURISDICTION_COUNT} jurisdictions, verified {COVERAGE_VERIFIED_ON}
           </span>
         </div>
       </div>
@@ -299,7 +300,7 @@ export default function CoveragePage() {
                 </span>
                 {s.word}
               </span>
-              <span className="cov-legend-v">{legend[status]}</span>
+              <span className="cov-legend-v">{COVERAGE_LEGEND[status]}</span>
             </li>
           );
         })}
@@ -309,7 +310,7 @@ export default function CoveragePage() {
         Every jurisdiction, in order — the ones we can&apos;t do yet included
       </div>
       <div className="cov-grid">
-        {jurisdictions.map((j) => (
+        {JURISDICTIONS.map((j) => (
           <CoverageTile key={j.code} j={j} />
         ))}
       </div>

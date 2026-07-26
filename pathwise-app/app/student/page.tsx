@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { computeCptLedger } from "@/lib/engines/cpt-ledger";
+import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
-import { computeOptBudget } from "@/lib/engines/opt-budget";
+import { computeOptBudget, OPT_BUDGET_RULES } from "@/lib/engines/opt-budget";
 import { runDomicileGate } from "@/lib/engines/domicile-gate";
 import { computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
 import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
 import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget, priyaAid } from "@/lib/fixtures/priya";
+import { formatStatusCode } from "@/lib/status-display";
+import { STATE_COUNT } from "@/lib/coverage";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
@@ -126,7 +128,7 @@ export default function StudentPage() {
               ? `${masters.fullTimeDays} full-time CPT days at the master's level; OPT still available.`
               : ""
           }
-          cite="8 CFR 214.2(f)(10)"
+          cite={SECTION_CITE}
         />
         <DomainCard
           domain="Residency (Virginia)"
@@ -141,7 +143,9 @@ export default function StudentPage() {
           domain="Financial aid (Virginia)"
           status={aidBlocked ? "Blocked by status" : "Under review"}
           band={aidBlocked ? "red" : "amber"}
-          detail="The same F-1 fact makes her ineligible for Virginia state aid. File FAFSA path instead."
+          detail={`The same ${formatStatusCode(
+            priyaStudent.immigration.status,
+          )} fact makes her ineligible for Virginia state aid. File FAFSA path instead.`}
           cite="SCHEV VASA"
           detailHref="/student/finding/aid"
           detailLabel="See full reasoning →"
@@ -162,7 +166,9 @@ export default function StudentPage() {
         </>
       ) : null}
 
-      <div className="section-h">Immigration — the 12 months she didn&apos;t know she was spending</div>
+      <div className="section-h">
+        Immigration — the {OPT_BUDGET_RULES.budgetMonths} months she didn&apos;t know she was spending
+      </div>
       <OptBudget input={priyaOptBudget} />
 
       <div className="section-h">Immigration — the clock that runs while she waits</div>
@@ -181,7 +187,7 @@ export default function StudentPage() {
           <span className="ms-k">Priya&apos;s residency rules are a file, not a special case.</span>{" "}
           See how far the rule packs reach, and where they honestly don&apos;t yet.
         </span>
-        <span className="ms-go">Coverage: 50 states + DC →</span>
+        <span className="ms-go">Coverage: {STATE_COUNT} states + DC →</span>
       </Link>
 
       <div className="foot">

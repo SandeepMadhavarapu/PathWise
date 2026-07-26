@@ -1,6 +1,7 @@
 import {
   computeUnemploymentClock,
   QUALIFYING_MIN_HOURS_PER_WEEK,
+  STEM_ADDITIONAL_DAYS,
   type UnemploymentClockInput,
 } from "@/lib/engines/unemployment-clock";
 
@@ -28,7 +29,11 @@ export function UnemploymentClock({
   const fillPct = Math.min(100, (clock.daysUsed / clock.cap) * 100);
   const capLine = clock.stemApplies
     ? `STEM extension in effect — cap is ${clock.cap} days.`
-    : `No qualifying employment reported, so the cap is ${clock.cap} days — the STEM +${input.stem ? "60" : "0"} only unlocks once ${subject} report${second ? "" : "s"} a job.`;
+    : // The days the STEM extension would add are the pack's number, not a retyped one: while the
+      // extension is dormant `clock.cap` is still the base allowance, so it cannot be read off there.
+      `No qualifying employment reported, so the cap is ${clock.cap} days — the STEM +${
+        input.stem ? STEM_ADDITIONAL_DAYS : 0
+      } only unlocks once ${subject} report${second ? "" : "s"} a job.`;
 
   return (
     <div className="uclock">

@@ -1,6 +1,8 @@
 import {
+  AMBER_MARGIN_MONTHS,
   computeOptBudget,
   OPT_BUDGET_RULES as R,
+  PART_TIME_HALF_RATE,
   type OptBudgetInput,
   type OptUsageLine,
 } from "@/lib/engines/opt-budget";
@@ -46,11 +48,13 @@ export function OptBudget({
   const possessive = second ? "your" : "her";
 
   const usedPct = Math.min(100, (level.monthsUsed / level.budgetMonths) * 100);
-  const amberPct = ((level.budgetMonths - 2) / level.budgetMonths) * 100; // where the amber zone starts
+  // Where the amber zone starts — the engine's own band margin, so the zone and the colour of the
+  // fill can never disagree about which month the budget starts running short.
+  const amberPct = ((level.budgetMonths - AMBER_MARGIN_MONTHS) / level.budgetMonths) * 100;
 
   // The half-rate line is the insight: what the part-time blocks were authorized for vs. what they
   // actually cost. Computed from the engine's lines, never asserted.
-  const halfRate = level.lines.filter((l) => l.rate === 0.5);
+  const halfRate = level.lines.filter((l) => l.rate === PART_TIME_HALF_RATE);
   const halfAuthorized = halfRate.reduce((s, l) => s + l.authorizedMonths, 0);
   const halfCharged = halfRate.reduce((s, l) => s + l.chargedMonths, 0);
 
@@ -89,7 +93,8 @@ export function OptBudget({
             <span className="ol-when">{formatRange(l.start, l.end)}</span>
             <span className="ol-cost">
               {plural(l.authorizedMonths, "month")} authorized
-              {l.rate === 0.5 ? " × ½" : ""} → <strong>{fmtMonths(l.chargedMonths)}</strong> charged
+              {l.rate === PART_TIME_HALF_RATE ? " × ½" : ""} →{" "}
+              <strong>{fmtMonths(l.chargedMonths)}</strong> charged
             </span>
           </li>
         ))}

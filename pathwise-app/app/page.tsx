@@ -1,4 +1,7 @@
 import Link from "next/link";
+// The coverage claim in the strip below is a count out of rulepacks/coverage.json, not a boast typed
+// into a link label — the same file the /coverage map is drawn from.
+import { IMPLEMENTED_COUNT, STATE_COUNT, UNMODELLED_COUNT } from "@/lib/coverage";
 
 export default function Landing() {
   return (
@@ -36,10 +39,11 @@ export default function Landing() {
 
       <Link href="/coverage" className="memorystrip">
         <span>
-          <span className="ms-k">The rules are data, not code.</span> One state fully modelled, the
-          other 50 the same shape of file — and the map says which is which.
+          <span className="ms-k">The rules are data, not code.</span>{" "}
+          {IMPLEMENTED_COUNT === 1 ? "One state" : `${IMPLEMENTED_COUNT} states`} fully modelled, the
+          other {UNMODELLED_COUNT} the same shape of file — and the map says which is which.
         </span>
-        <span className="ms-go">Coverage: 50 states + DC →</span>
+        <span className="ms-go">Coverage: {STATE_COUNT} states + DC →</span>
       </Link>
     </main>
   );

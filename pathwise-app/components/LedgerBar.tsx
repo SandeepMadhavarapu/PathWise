@@ -1,4 +1,9 @@
-import { CLIFF_DAYS, type LevelLedger } from "@/lib/engines/cpt-ledger";
+import {
+  CLIFF_DAYS,
+  FULL_TIME_HOURS_THRESHOLD,
+  SECTION_CITE,
+  type LevelLedger,
+} from "@/lib/engines/cpt-ledger";
 
 // Purely a visual scale (how much track to draw), not a regulatory number — safe to hardcode.
 // The cliff itself comes from the rulepack via CLIFF_DAYS above.
@@ -44,8 +49,10 @@ export function LedgerBar({
           <span className="sw full" /> {solidFull} full-time CPT days
         </span>
         <span>
+          {/* The ledger carries days, not hours, so the only honest number here is the pack's own
+              threshold — what a summed week has to exceed for the day to count as full-time. */}
           <span className="sw overlap" /> {ledger.overlapDays} days from two part-time internships that
-          overlapped (24 hrs/wk → full-time)
+          overlapped (over {FULL_TIME_HOURS_THRESHOLD} hrs/wk combined → full-time)
         </span>
       </div>
 
@@ -55,7 +62,7 @@ export function LedgerBar({
         OPT eligibility for this level entirely. The {ledger.overlapDays} overlap days are ones{" "}
         {second ? "you would never see yourself" : "she would never see herself"}, and{" "}
         {second ? "your" : "her"} bachelor&apos;s CPT is partitioned out because the cap resets by level.{" "}
-        <span className="cite">8 CFR 214.2(f)(10)</span>
+        <span className="cite">{SECTION_CITE}</span>
       </div>
     </div>
   );

@@ -33,8 +33,19 @@ const CRLF = '\r\n';
 /** Content lines are folded at 75 OCTETS, not characters (RFC 5545 §3.1). */
 const OCTET_LIMIT = 75;
 
-/** Escalating nudges before the act-by date, for the clients that honour alarms. */
-const DEFAULT_ALARM_OFFSETS_DAYS = [14, 3, 1];
+/**
+ * Escalating nudges before the act-by date, for the clients that honour alarms. Exported because the
+ * explainer on screen names these offsets out loud, and a sentence that lists them from its own copy
+ * of the array is a sentence that will eventually describe a file that no longer matches it.
+ */
+export const DEFAULT_ALARM_OFFSETS_DAYS = [14, 3, 1];
+
+/**
+ * Events written per dated step: the student's act-by date, and the office's own hard deadline. The
+ * count is quoted on screen ("N events across M deadlines"), so it is stated here, once, next to the
+ * loop that emits them.
+ */
+export const EVENTS_PER_DATED_STEP = 2;
 
 const PRODUCT_ID = '-//PathWise//Student deadlines//EN';
 

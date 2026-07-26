@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { computeCptLedger } from "@/lib/engines/cpt-ledger";
+import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import { runDomicileGate } from "@/lib/engines/domicile-gate";
 import type {
   Event,
@@ -261,7 +261,7 @@ export default function CheckPage() {
                     }`
                   : "Add a CPT authorization above to see your ledger."
               }
-              cite="8 CFR 214.2(f)(10)"
+              cite={SECTION_CITE}
             />
             <DomainCard
               domain={`Residency (${stateName})`}
