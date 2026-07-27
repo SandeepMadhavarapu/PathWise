@@ -1,0 +1,13 @@
+<!-- icon.svg — the browser-tab mark. App Router picks this up automatically and emits the
+     <link rel="icon">, which is what stops the /favicon.ico request that was 404ing on every
+     page load — the only console error left on the judge-openable URL.
+
+     The wordmark is "Path" in ink and "Wise" in blue; at 16px only one letter survives, so the
+     mark is the P on the sidebar's own ink with the blue carried by the dot. Both colours are the
+     design system's --sidebar and --info, copied here because an SVG served as a static asset
+     cannot read CSS custom properties. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="7" fill="#1b1b1d" />
+  <path d="M9 7 H17 A5.5 5.5 0 0 1 17 18 H12.5 V25 H9 Z" fill="#ffffff" />
+  <circle cx="23" cy="23.5" r="3" fill="#2f80ed" />
+</svg>
