@@ -61,6 +61,33 @@ function formatVerifiedDate(iso: string): string {
   return `${Number(d)} ${months[Number(m) - 1]} ${y}`;
 }
 
+type NavItem = { href: string; label: string; icon: (p: { className?: string }) => JSX.Element };
+
+/**
+ * One rail link. The three navs rendered it identically three times over, which is how the three
+ * were able to disagree about anything.
+ *
+ * `aria-label` is the part that matters: `.sidebar-label` is `display: none` when the rail is
+ * collapsed and on every viewport under 900px, and `display: none` takes an element out of the
+ * accessibility tree as well as off the screen. That left every one of these links named nothing
+ * at all on the layout a judge opening the link on a phone would get. Naming the link keeps the
+ * name when the text goes, and matches the visible text exactly when it is there.
+ */
+function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
+  return (
+    <Link
+      href={item.href}
+      className={`sidebar-item${pathname === item.href ? " active" : ""}`}
+      aria-label={item.label}
+    >
+      <span className="sidebar-item-icon">
+        <item.icon className="icon-20" />
+      </span>
+      <span className="sidebar-label">{item.label}</span>
+    </Link>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -91,48 +118,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <nav className="sidebar-nav">
           {PRIMARY_NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`sidebar-item${pathname === item.href ? " active" : ""}`}
-            >
-              <span className="sidebar-item-icon">
-                <item.icon className="icon-20" />
-              </span>
-              <span className="sidebar-label">{item.label}</span>
-            </Link>
+            <NavLink key={item.href} item={item} pathname={pathname} />
           ))}
         </nav>
 
         <div className="sidebar-divider" />
         <nav className="sidebar-secondary">
           {ANALYSIS_NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`sidebar-item${pathname === item.href ? " active" : ""}`}
-            >
-              <span className="sidebar-item-icon">
-                <item.icon className="icon-20" />
-              </span>
-              <span className="sidebar-label">{item.label}</span>
-            </Link>
+            <NavLink key={item.href} item={item} pathname={pathname} />
           ))}
         </nav>
 
         <div className="sidebar-divider" />
         <nav className="sidebar-secondary">
           {SECONDARY_NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`sidebar-item${pathname === item.href ? " active" : ""}`}
-            >
-              <span className="sidebar-item-icon">
-                <item.icon className="icon-20" />
-              </span>
-              <span className="sidebar-label">{item.label}</span>
-            </Link>
+            <NavLink key={item.href} item={item} pathname={pathname} />
           ))}
         </nav>
 
@@ -147,17 +147,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="shell-main">
         <header className="topbar">
           <h1 className="topbar-title t-page-title">{title}</h1>
-          <div className="topbar-search-wrap">
-            <label className="topbar-search">
-              <SearchIcon className="icon-16" />
-              <input type="search" placeholder="Search findings, rules, students…" aria-label="Search" />
-            </label>
-          </div>
-          <div className="topbar-actions">
-            <span className="avatar" aria-hidden="true">
-              P
-            </span>
-          </div>
+          {/* This bar used to carry a search field that searched nothing and an avatar with an
+              initial in it. Both were dressing borrowed from products that have accounts, and on a
+              product whose first promise is "no account, nothing stored on a server" the avatar
+              contradicted the promise while the search box invited a judge to click something
+              inert. What sits here now is the one claim the whole page is entitled to make. */}
+          <p className="topbar-privacy">No account · nothing leaves this device</p>
         </header>
 
         <main className="content">{children}</main>

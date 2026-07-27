@@ -299,57 +299,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   padding: 0 var(--space-5);
 }
 .topbar-title { flex: none; }
-.topbar-search-wrap { flex: 1; display: flex; justify-content: center; }
-.topbar-search {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  max-width: 420px;
-  height: 40px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border-strong);
-  background: var(--canvas);
-  padding: 0 var(--space-3) 0 12px;
-  color: var(--text-muted);
-}
-.topbar-search input {
-  border: none;
-  background: none;
-  outline: none;
-  font-size: 14px;
-  color: var(--text);
-  flex: 1;
-  min-width: 0;
-}
-.topbar-search input::placeholder { color: var(--text-muted); }
-.topbar-actions { display: flex; align-items: center; gap: var(--space-2); flex: none; }
-.icon-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background var(--dur-fast) var(--ease);
-}
-.icon-btn:hover { background: var(--canvas); }
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--sidebar-active);
-  color: var(--text-inverse);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 600;
+
+/* The right of the bar. It held a search field and an account avatar, neither of which PathWise
+   has; it now holds the promise the product is actually built around, on every screen. Deliberately
+   uncoloured: chroma in this product means finding status, and a dot here would read as one. */
+.topbar-privacy {
   flex: none;
+  margin: 0 0 0 auto;
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
 .content {
@@ -1290,7 +1248,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* =============================================================================
    The shell on a phone. The sidebar is a fixed 208px column, which at 375px would
    leave the content 167px wide and push the page sideways — below 900px it becomes
-   a horizontal icon rail instead, and the topbar drops its search field.
+   a horizontal icon rail instead, and the topbar lets its privacy line wrap.
    ============================================================================= */
 @media (max-width: 900px) {
   .app-shell { flex-direction: column; }
@@ -1304,8 +1262,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .sidebar-divider, .sidebar-spacer, .sidebar-footer { display: none; }
   .sidebar-label { display: none; }
   .sidebar-item { padding: var(--space-2); }
-  .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); }
-  .topbar-search-wrap { display: none; }
+  .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); height: auto; min-height: var(--topbar-height); flex-wrap: wrap; }
+  /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
+     rather than being dropped the way the search field it replaced was. */
+  .topbar-privacy { margin-left: 0; font-size: 12px; }
   .content { padding: var(--space-4); }
 }
 @media (max-width: 640px) {
