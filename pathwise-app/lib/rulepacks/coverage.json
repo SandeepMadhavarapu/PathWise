@@ -7,6 +7,7 @@
     "schema_ready": "Structural facts captured; rule pack not yet fully authored/verified.",
     "not_yet": "Not yet modelled. UI links to the official source."
   },
+  "source_url_policy": "A jurisdiction's source_url is the official body or statute that decides residency there, and it is present ONLY where it was opened and read on verified_on. Where it is absent, PathWise says so on screen rather than linking a plausible guess — the same discipline the engines apply to a rule they cannot read.",
   "jurisdictions": [
     {
       "code": "AL",
@@ -34,7 +35,9 @@
       "code": "CA",
       "name": "California",
       "status": "schema_ready",
-      "note": "Uses a residency determination date; 1-year-plus-a-day durational."
+      "note": "Uses a residency determination date; 1-year-plus-a-day durational.",
+      "authority": "California Education Code § 68000 et seq.",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=68000.&lawCode=EDC"
     },
     {
       "code": "CO",
@@ -54,7 +57,10 @@
     {
       "code": "DC",
       "name": "District of Columbia",
-      "status": "not_yet"
+      "status": "not_yet",
+      "note": "90-day durational requirement; a Metro-area rate covers named MD and VA counties.",
+      "authority": "University of the District of Columbia — Policy on Student Residency Classification",
+      "source_url": "https://www.udc.edu/admissions/enroll/establishing-dc-and-metro-residency"
     },
     {
       "code": "FL",
@@ -182,7 +188,10 @@
     {
       "code": "NC",
       "name": "North Carolina",
-      "status": "not_yet"
+      "status": "not_yet",
+      "note": "Determined centrally by the statewide Residency Determination Service, not per-institution; 12-month domicile.",
+      "authority": "North Carolina Residency Determination Service (RDS)",
+      "source_url": "https://residencync.cfnc.org/residencyInfo/"
     },
     {
       "code": "ND",
@@ -234,7 +243,9 @@
       "code": "TX",
       "name": "Texas",
       "status": "schema_ready",
-      "note": "Anchors to census/add-drop date."
+      "note": "Anchors to census/add-drop date; 12 consecutive months, and lawful presence is required.",
+      "authority": "Texas Higher Education Coordinating Board; Texas Education Code § 54.052",
+      "source_url": "https://www.highered.texas.gov/texas-residency/"
     },
     {
       "code": "UT",

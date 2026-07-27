@@ -17,6 +17,12 @@ import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { FindingDetail } from "@/components/FindingDetail";
 import { formatDecidingOffice } from "@/lib/format";
+import { describeUnmodelled } from "@/lib/rulepacks";
+import {
+  unmodelledAidFinding,
+  unmodelledResidencyFinding,
+} from "@/lib/engines/unmodelled-jurisdiction";
+import { JURISDICTIONS } from "@/lib/coverage";
 
 // The statuses this flow offers (a curated subset of ImmigrationStatus).
 const STATUS_OPTIONS: { value: ImmigrationStatus; label: string }[] = [
@@ -28,16 +34,14 @@ const STATUS_OPTIONS: { value: ImmigrationStatus; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-// A handful of states; Virginia is the default because the domicile gate is VA-specific.
-const STATE_OPTIONS: { code: string; name: string }[] = [
-  { code: "VA", name: "Virginia" },
-  { code: "MD", name: "Maryland" },
-  { code: "DC", name: "District of Columbia" },
-  { code: "NC", name: "North Carolina" },
-  { code: "CA", name: "California" },
-  { code: "NY", name: "New York" },
-  { code: "TX", name: "Texas" },
-];
+// Every jurisdiction in the coverage file, not a curated handful. A student can now pick their own
+// state and get a truthful answer about it — which for most states is "PathWise has not modelled
+// this", said plainly, with the office that does decide and a link where one has been verified.
+// Virginia stays the default because it is the one with a rule pack behind it.
+const STATE_OPTIONS: { code: string; name: string }[] = JURISDICTIONS.map((j) => ({
+  code: j.code,
+  name: j.name,
+}));
 
 // finding.result -> a DomainCard band (green | amber | red). DomainCard has no "gray",
 // so unable_to_verify collapses to amber for the summary card.
@@ -107,13 +111,32 @@ export default function CheckPage() {
     jurisdiction_history: [{ state, from: today }],
   };
 
+  // The CPT ledger is federal (8 CFR) and answers in full for every jurisdiction — nothing below
+  // gates it on the state.
   const ledger = computeCptLedger(events);
-  const finding: Finding = runDomicileGate({
-    student,
-    events,
-    intentFactors: [],
-    allegedEntitlementDate: today,
-  });
+
+  // JURISDICTION ROUTING — asked before any residency reasoning happens.
+  //
+  // `describeUnmodelled` returns a jurisdiction only when PathWise has NO rule pack for it. When it
+  // does return one, the Virginia engines are not called at all: running them here is exactly how a
+  // SCHEV citation used to end up printed under a Texas heading.
+  const unmodelled = describeUnmodelled(state);
+
+  const finding: Finding = unmodelled
+    ? unmodelledResidencyFinding(unmodelled)
+    : runDomicileGate({
+        student,
+        events,
+        intentFactors: [],
+        allegedEntitlementDate: today,
+      });
+
+  // The aid side of the same question. For a modelled jurisdiction this stays the status-gate
+  // reading the page has always shown; for an unmodelled one it is its own honest finding.
+  const aidFinding: Finding | undefined = unmodelled ? unmodelledAidFinding(unmodelled) : undefined;
+
+  // `ineligible` is a determinate answer from a real pack. An unmodelled jurisdiction can never
+  // reach it, so the cross-domain hero — which cites SCHEV by name — cannot render off it.
   const isBlocked = finding.result === "ineligible";
 
   // Immigration summary: the level closest to the 365-day cliff.
@@ -256,26 +279,45 @@ export default function CheckPage() {
             <DomainCard
               domain={`Residency (${stateName})`}
               decidingOffice={formatDecidingOffice(finding.deciding_office)}
-              status={isBlocked ? "Blocked by status" : finding.headline}
+              status={
+                unmodelled ? "Not modelled by PathWise" : isBlocked ? "Blocked by status" : finding.headline
+              }
               band={RESULT_CARD_BAND[finding.result]}
               detail={
-                isBlocked
-                  ? "Not an error — a reasoned finding. Student-visa holders cannot establish domicile."
-                  : finding.headline
+                unmodelled
+                  ? `PathWise will not run another state's rules under a ${stateName} heading. ${
+                      unmodelled.authority
+                        ? `${unmodelled.authority} decides this.`
+                        : "PathWise has not yet verified an official source to link."
+                    }`
+                  : isBlocked
+                    ? "Not an error — a reasoned finding. Student-visa holders cannot establish domicile."
+                    : finding.headline
               }
-              cite={GATE_DISPLAY_CITE}
+              // The citation is the jurisdiction's own or none at all. Never a borrowed one.
+              cite={unmodelled ? undefined : GATE_DISPLAY_CITE}
+              detailHref={unmodelled?.source_url}
+              detailLabel={unmodelled ? `Official ${stateName} source →` : undefined}
             />
             <DomainCard
               domain={`Financial aid (${stateName})`}
               decidingOffice={formatDecidingOffice("financial_aid")}
-              status={isBlocked ? "Blocked by status" : "Not blocked by your status"}
-              band={isBlocked ? "red" : "green"}
-              detail={
-                isBlocked
-                  ? "The same status fact makes you ineligible for Virginia state aid. File the FAFSA path instead."
-                  : "Your status does not block state aid — other eligibility rules still apply."
+              status={
+                unmodelled
+                  ? "Not modelled by PathWise"
+                  : isBlocked
+                    ? "Blocked by status"
+                    : "Not blocked by your status"
               }
-              cite={AID_DISPLAY_CITE}
+              band={aidFinding ? RESULT_CARD_BAND[aidFinding.result] : isBlocked ? "red" : "green"}
+              detail={
+                unmodelled
+                  ? `State aid usually rides on the state's own residency determination, which PathWise has not modelled for ${stateName}. This says nothing either way about federal aid.`
+                  : isBlocked
+                    ? `The same status fact makes you ineligible for ${stateName} state aid. File the FAFSA path instead.`
+                    : "Your status does not block state aid — other eligibility rules still apply."
+              }
+              cite={unmodelled ? undefined : AID_DISPLAY_CITE}
             />
           </div>
 

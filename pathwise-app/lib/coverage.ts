@@ -15,9 +15,24 @@ export interface Jurisdiction {
   name: string;
   status: CoverageStatus;
   note?: string;
+  /**
+   * The body or statute that actually decides residency in this jurisdiction, and a link to it.
+   *
+   * Both are optional and deliberately so: they are present only where the source was opened and
+   * read on `verified_on`. An absent source_url means PathWise has not verified one — the UI says
+   * that in words rather than linking a plausible guess, which is the same discipline the engines
+   * apply to a rule they cannot read. See the pack's own `source_url_policy`.
+   */
+  authority?: string;
+  source_url?: string;
 }
 
 export const JURISDICTIONS = pack.jurisdictions as Jurisdiction[];
+
+/** Look one up by its two-letter code. Undefined for a code the coverage file does not list. */
+export function jurisdictionByCode(code: string): Jurisdiction | undefined {
+  return JURISDICTIONS.find((j) => j.code === code);
+}
 export const COVERAGE_LEGEND = pack.legend as Record<CoverageStatus, string>;
 export const COVERAGE_VERIFIED_ON = pack.verified_on;
 
