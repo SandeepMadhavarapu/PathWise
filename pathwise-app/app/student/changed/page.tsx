@@ -17,9 +17,14 @@
 // while the document is missing the finding is honestly "unable to verify". That gray state is
 // DERIVED from the disagreement between the two engine runs; it is not hard-coded. Add the
 // document and reading B falls away, so the count becomes determinate and the finding recomputes.
+//
+// The evidence is real. A file the student picks is read in this tab — its bytes counted and
+// fingerprinted — and a real Evidence record is built from that read. What PathWise cannot do is
+// read the WORDS in the document, so it does not pretend to: the level change is attested by the
+// student, and the event it produces is marked `asserted` rather than `confirmed`.
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   computeCptLedger,
   CLIFF_CITE,
@@ -28,7 +33,16 @@ import {
   type LedgerBand,
 } from "@/lib/engines/cpt-ledger";
 import { priyaEvents } from "@/lib/fixtures/priya";
-import type { Event } from "@/lib/types";
+import type { Event, Evidence, LocalFileRead } from "@/lib/types";
+import {
+  LEVEL_CHANGE_DOC_TYPE,
+  describeRead,
+  evidenceFromLocalRead,
+  formatBytes,
+  levelChangeEventFromEvidence,
+  shortHash,
+} from "@/lib/evidence";
+import { makeSampleDocument, readLocalFile } from "@/lib/evidence-read";
 import { StatusGlyph } from "@/components/StatusGlyph";
 import type { StatusKey as GlyphStatus } from "@/lib/tokens";
 
@@ -55,40 +69,41 @@ function fmtDate(iso: string): string {
   return `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`;
 }
 
-// ---- the missing evidence, and the timeline event it establishes ----
+// ---- the missing evidence ----
 
 const MISSING_DOC = {
   label: "Form I-20 recording the level change",
   detail: "School X (bachelor's) → School Y (master's), issued for the master's program",
 };
 
-const LEVEL_CHANGE: Event = {
-  id: "level-change-x-to-y",
-  type: "level_change",
-  date: "2024-01-16", // the master's program start at School Y
-  institution_id: "schoolY",
-  program_level: "masters",
-  attrs: { from_level: "bachelors", from_institution: "schoolX" },
-  evidence_ids: ["i20-level-change"],
-  confidence: "confirmed",
-};
+// What the student is asked to attest, spelled out so the assertion is never implied. Kept in the
+// page's third-person voice for the example student — the microcopy rule is second person only for
+// the reader's own data.
+const ATTESTATION =
+  "This document records the level change from bachelor's at School X to master's at School Y.";
 
 // ---- the two readings, both computed by the real engine ----
-
-// Reading A — the level change is established, so the record stands as written: School X's
-// authorizations are counted at the bachelor's level and kept out of the master's ledger.
-const settledEvents: Event[] = [...priyaEvents, LEVEL_CHANGE];
 
 // Reading B — nothing on file establishes that School X's program sat at a different education
 // level, so its authorizations can't be partitioned out of the level under review. Same events,
 // same engine, same authorized periods; only the level attribution differs.
 const pooledEvents: Event[] = priyaEvents.map((e) =>
-  e.type === "cpt_auth" ? { ...e, program_level: "masters" as const } : e
+  e.type === "cpt_auth" ? { ...e, program_level: "masters" as const } : e,
 );
 
-const settled = computeCptLedger(settledEvents).forLevel("masters")!;
+// Reading A — the level change is established, so the record stands as written: School X's
+// authorizations are counted at the bachelor's level and kept out of the master's ledger.
+//
+// Worth being exact about what the evidence does here. The ledger reads `cpt_auth` events only, so
+// attaching the level-change event does not move a single day of arithmetic — reading A is the
+// record as written either way. What the document settles is WHICH READING APPLIES: without it both
+// survive and the finding is honestly indeterminate; with it reading B is ruled out and one answer
+// is left. That is why the numbers below are identical before and after, and why the finding still
+// changes.
+const settledLedger = computeCptLedger(priyaEvents);
+const settled = settledLedger.forLevel("masters")!;
+const bachelors = settledLedger.forLevel("bachelors")!;
 const pooled = computeCptLedger(pooledEvents).forLevel("masters")!;
-const bachelors = computeCptLedger(settledEvents).forLevel("bachelors")!;
 
 // The readings disagree about the outcome that actually matters. THIS is why the before-state is
 // gray: the evidence on record cannot settle which answer is true.
@@ -105,25 +120,39 @@ const afterLine = `${settled.fullTimeDays} of ${CLIFF_DAYS} full-time CPT days c
 
 const cptCount = priyaEvents.filter((e) => e.type === "cpt_auth").length;
 
-// Every line below is read off the two ledger runs above — including the counts and the state names.
-const CHANGES: { k: string; v: string }[] = [
-  {
-    k: "Timeline updated",
-    v: `Level change added on ${fmtDate(LEVEL_CHANGE.date)}: School X (bachelor's) → School Y (master's). Her record goes from ${priyaEvents.length} events to ${settledEvents.length}.`,
-  },
-  {
-    k: "CPT ledger updated",
-    v: `${bachelors.fullTimeDays} bachelor's-level days move out of the master's count: ${pooled.fullTimeDays} → ${settled.fullTimeDays} full-time days, of which ${settled.overlapDays} still come from ${settled.overlapConcurrentAuths} part-time authorizations that overlapped.`,
-  },
-  {
-    k: "Evidence linked",
-    v: `One document now sits under the level change — and through it, under all ${cptCount} CPT authorizations whose level it settles.`,
-  },
-  {
-    k: "Analysis recalculated",
-    v: `The finding moves from "${STATUS[beforeStatus].word}" to "${STATUS[afterStatus].word}": one answer with ${settled.daysToCliff} days of margin, instead of two answers on opposite sides of the cliff.`,
-  },
-];
+/**
+ * The change list, built from the two ledger runs AND from the evidence that was actually read —
+ * so every line names a real file, a real id and real counts rather than a description of them.
+ */
+function buildChanges(
+  evidence: Evidence,
+  levelChange: Event,
+  settledEventCount: number,
+): { k: string; v: string }[] {
+  const read = evidence.local;
+  return [
+    {
+      k: "Timeline updated",
+      v: `Level change added on ${fmtDate(levelChange.date)}: School X (bachelor's) → School Y (master's). Her record goes from ${priyaEvents.length} events to ${settledEventCount}.`,
+    },
+    {
+      k: "CPT ledger updated",
+      v: `${bachelors.fullTimeDays} bachelor's-level days stay out of the master's count: the reading that pooled them at ${pooled.fullTimeDays} days is ruled out, leaving ${settled.fullTimeDays} full-time days — of which ${settled.overlapDays} still come from ${settled.overlapConcurrentAuths} part-time authorizations that overlapped.`,
+    },
+    {
+      k: "Evidence linked",
+      v: read
+        ? `${evidence.doc_type} · ${evidence.file_ref} (${formatBytes(read.sizeBytes)}${
+            shortHash(read) ? `, SHA-256 ${shortHash(read)}…` : ""
+          }) is on record as ${evidence.id}, and sits under the level change — and through it, under all ${cptCount} CPT authorizations whose level it settles.`
+        : `${evidence.id} sits under the level change, and through it under all ${cptCount} CPT authorizations whose level it settles.`,
+    },
+    {
+      k: "Analysis recalculated",
+      v: `The finding moves from "${STATUS[beforeStatus].word}" to "${STATUS[afterStatus].word}": one answer with ${settled.daysToCliff} days of margin, instead of two answers on opposite sides of the cliff.`,
+    },
+  ];
+}
 
 function Chip({ status }: { status: StatusKey }) {
   return (
@@ -134,8 +163,97 @@ function Chip({ status }: { status: StatusKey }) {
   );
 }
 
+/** The facts that came back from the read — every one of them measured, none of them described. */
+function ReadFacts({ read }: { read: LocalFileRead }) {
+  const hash = shortHash(read);
+  return (
+    <div className="wc-ev-read">
+      <div className="wc-ev-file">
+        <span className="wc-ev-name">{read.fileName}</span>
+        {read.origin === "sample" ? (
+          <span className="wc-ev-sample">Sample document — generated in your browser</span>
+        ) : null}
+      </div>
+      <dl className="wc-ev-facts">
+        <div>
+          <dt>Bytes read</dt>
+          <dd>{formatBytes(read.sizeBytes)}</dd>
+        </div>
+        <div>
+          <dt>Type</dt>
+          <dd>{read.mimeType}</dd>
+        </div>
+        {read.lastModified ? (
+          <div>
+            <dt>Last modified</dt>
+            <dd>{fmtDate(read.lastModified)}</dd>
+          </div>
+        ) : null}
+        <div className="wc-ev-hash">
+          <dt>SHA-256</dt>
+          <dd>{hash ? `${hash}…` : "not available on an insecure origin — not fabricated"}</dd>
+        </div>
+      </dl>
+      <p className="wc-ev-note">
+        PathWise read the file, not the words inside it. There is no text extraction here and nothing
+        left the tab — the bytes were counted, fingerprinted, and released.
+      </p>
+    </div>
+  );
+}
+
 export default function ChangedPage() {
-  const [added, setAdded] = useState(false);
+  const [read, setRead] = useState<LocalFileRead | null>(null);
+  const [attestChecked, setAttestChecked] = useState(false);
+  const [committed, setCommitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  // A real Evidence record, built from a real read. Null until a file has actually been read.
+  const evidence = read ? evidenceFromLocalRead(read, { docType: LEVEL_CHANGE_DOC_TYPE }) : null;
+  const levelChange = evidence ? levelChangeEventFromEvidence(evidence) : null;
+  const settledEvents: Event[] = levelChange ? [...priyaEvents, levelChange] : priyaEvents;
+
+  // The finding only moves once BOTH have happened: the file was read, and the student committed to
+  // what it records. Reading a file PathWise cannot interpret is not, by itself, evidence of
+  // anything — so ticking the box arms the action, and the action is a separate, deliberate click.
+  const added = evidence !== null && committed;
+
+  async function ingest(file: File, origin: LocalFileRead["origin"]) {
+    setBusy(true);
+    setError(null);
+    try {
+      setRead(await readLocalFile(file, origin));
+      setAttestChecked(false);
+      setCommitted(false);
+    } catch {
+      setError("That file could not be read in this browser. Try another one.");
+      setRead(null);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    // Cleared so picking the same file twice still fires a change event.
+    e.target.value = "";
+    if (file) void ingest(file, "picked");
+  }
+
+  function reset() {
+    setRead(null);
+    setAttestChecked(false);
+    setCommitted(false);
+    setError(null);
+  }
+
+  const gapTitle = added
+    ? "The level change is on the record."
+    : read
+      ? "One file read. Now tell PathWise what it is."
+      : "We couldn't verify this yet — and we won't guess.";
 
   return (
     <>
@@ -165,27 +283,25 @@ export default function ChangedPage() {
         <div className="wc-gap-head">
           <div>
             <Chip status={added ? "verified" : "unknown"} />
-            <h2 className="wc-gap-title">
-              {added
-                ? "The level change is on the record."
-                : "We couldn't verify this yet — and we won't guess."}
-            </h2>
+            <h2 className="wc-gap-title">{gapTitle}</h2>
           </div>
-          {!added ? (
-            <button className="btn" onClick={() => setAdded(true)}>
-              Add the missing document
-            </button>
-          ) : (
-            <button className="wc-undo" onClick={() => setAdded(false)}>
+          {added ? (
+            <button className="wc-undo" onClick={reset}>
               Take the document back out
             </button>
-          )}
+          ) : null}
         </div>
 
         <div className="wc-gap-rows">
-          <div className="wc-gap-k">{added ? "Added" : "What's missing"}</div>
+          <div className="wc-gap-k">{read ? "Read on this device" : "What's missing"}</div>
           <div className="wc-gap-v">
-            {MISSING_DOC.label} — {MISSING_DOC.detail}.
+            {read ? (
+              <ReadFacts read={read} />
+            ) : (
+              <>
+                {MISSING_DOC.label} — {MISSING_DOC.detail}.
+              </>
+            )}
           </div>
 
           <div className="wc-gap-k">Why it matters</div>
@@ -197,11 +313,92 @@ export default function ChangedPage() {
 
           <div className="wc-gap-k">{added ? "What happened" : "What she can do"}</div>
           <div className="wc-gap-v">
-            {added
-              ? "The document was read on this device, linked to the level change, and every finding that rests on it was recomputed."
-              : "Upload the master's I-20, or ask her DSO to confirm the level change in SEVIS."}
+            {added && read ? (
+              <>
+                {describeRead(read)} The level change is on the record because she attested it, and
+                every finding that rests on it was recomputed here.
+              </>
+            ) : read ? (
+              <>
+                PathWise cannot tell what this document says, so it will not decide that for her. She
+                confirms what it records, and the count recomputes.
+              </>
+            ) : (
+              <>
+                Choose the master&apos;s I-20 from this device, or ask her DSO to confirm the level
+                change in SEVIS.
+              </>
+            )}
           </div>
         </div>
+
+        {!added ? (
+          <div className="wc-ev-actions">
+            <input
+              ref={fileInput}
+              type="file"
+              className="sr-only"
+              onChange={onPick}
+              aria-label="Choose the document recording the level change"
+            />
+
+            {!read ? (
+              <>
+                <button
+                  type="button"
+                  className="btn"
+                  disabled={busy}
+                  onClick={() => fileInput.current?.click()}
+                >
+                  {busy ? "Reading…" : "Choose the document…"}
+                </button>
+                <button
+                  type="button"
+                  className="btn-link wc-ev-alt"
+                  disabled={busy}
+                  onClick={() => void ingest(makeSampleDocument(), "sample")}
+                >
+                  or use a sample document (generated here)
+                </button>
+              </>
+            ) : (
+              <div className="wc-ev-attest">
+                <label className="wc-ev-check">
+                  <input
+                    type="checkbox"
+                    checked={attestChecked}
+                    onChange={(e) => setAttestChecked(e.target.checked)}
+                  />
+                  <span>{ATTESTATION}</span>
+                </label>
+                <div className="wc-ev-attest-row">
+                  <button
+                    type="button"
+                    className="btn"
+                    disabled={!attestChecked}
+                    onClick={() => setCommitted(true)}
+                  >
+                    Add to my record
+                  </button>
+                  <button type="button" className="wc-undo" onClick={reset}>
+                    Choose a different file
+                  </button>
+                </div>
+                <p className="wc-ev-note">
+                  Ticking this records the level change at <strong>asserted</strong> confidence —
+                  attested, with a document attached — not <strong>extracted</strong>, which would
+                  mean PathWise had read what the document says. The DSO decides.
+                </p>
+              </div>
+            )}
+
+            {error ? (
+              <p className="wc-ev-error" role="alert">
+                {error}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       <div className="section-head">Before → after</div>
@@ -246,7 +443,7 @@ export default function ChangedPage() {
           →
         </div>
 
-        {added ? (
+        {added && evidence && read ? (
           <div className="wc-panel surface wc-fade">
             <div className="wc-when">After</div>
             <div className="wc-panel-head">
@@ -276,6 +473,12 @@ export default function ChangedPage() {
                 <span>OPT at the master&apos;s level</span>
                 <strong>{settled.optEligible ? "Still available" : "Gone"}</strong>
               </li>
+              <li className="wc-fact">
+                <span>Resting on</span>
+                <strong>
+                  {evidence.id} · {levelChange?.confidence}
+                </strong>
+              </li>
             </ul>
 
             <div className="wc-sub" style={{ marginTop: 12 }}>
@@ -287,18 +490,19 @@ export default function ChangedPage() {
           <div className="wc-panel surface pending">
             <div className="wc-when">After</div>
             <div className="wc-pending-note">
-              Nothing to recompute yet. The count stays open until the evidence lands — PathWise holds
-              the question rather than picking an answer.
+              {read
+                ? "The file is read, but nothing has been decided yet. PathWise cannot tell what the document records, so the count stays open until you say."
+                : "Nothing to recompute yet. The count stays open until the evidence lands — PathWise holds the question rather than picking an answer."}
             </div>
           </div>
         )}
       </div>
 
-      {added ? (
+      {added && evidence && levelChange ? (
         <div className="wc-fade">
           <div className="section-head">What changed</div>
           <ul className="wc-changes">
-            {CHANGES.map((c) => (
+            {buildChanges(evidence, levelChange, settledEvents.length).map((c) => (
               <li className="wc-change" key={c.k}>
                 <span className="wc-check" aria-hidden="true">
                   ✓
@@ -316,8 +520,8 @@ export default function ChangedPage() {
             <div className="wc-why-v">
               The rule didn&apos;t change. The {CLIFF_DAYS}-day cliff and the per-level partition are
               the same rule, cited the same way, before and after{" "}
-              <span className="cite">{SECTION_CITE}</span>. What changed is the evidence: the new
-              document establishes the level change, so School X&apos;s{" "}
+              <span className="cite">{SECTION_CITE}</span>. What changed is the evidence: the document
+              now on record establishes the level change, so School X&apos;s{" "}
               {bachelors.fullTimeDays} bachelor&apos;s-level days can be attributed to a different
               level and kept out of the master&apos;s count. One of the two readings is now ruled out,
               so the analysis has one answer where it had two.
@@ -326,7 +530,13 @@ export default function ChangedPage() {
               Both states on this page are computed by the same ledger engine over the same authorized
               periods — {settled.fullTimeDays} days with the level change established,{" "}
               {pooled.fullTimeDays} without. Nothing here is a stored result, and the recomputation
-              happened on this device. PathWise advises; the DSO decides.
+              happened on this device.
+            </div>
+            <div className="wc-why-v">
+              And one honest limit, because it is the difference between evidence and a claim about
+              evidence: PathWise read this file&apos;s bytes, never its contents. The level change is
+              recorded at <strong>asserted</strong> confidence — your word with a document attached —
+              which is exactly what the record now says. PathWise advises; the DSO decides.
             </div>
           </div>
 
@@ -342,8 +552,8 @@ export default function ChangedPage() {
 
       <div className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · The document is
-        never uploaded anywhere — the re-computation runs on this device. Every finding shows its
-        regulation and the office that decides it.
+        never uploaded anywhere — it is read in this tab and released, and the re-computation runs on
+        this device. Every finding shows its regulation and the office that decides it.
       </div>
     </>
   );

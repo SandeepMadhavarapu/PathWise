@@ -1097,6 +1097,36 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-why-v { font-size: 14px; color: var(--text); margin-top: var(--space-2); line-height: 1.55; }
 .wc-fade { display: flex; flex-direction: column; gap: var(--space-4); }
 
+/* The evidence flow: a real file, read in this tab. Two steps, deliberately separate — the read is
+   something PathWise did, the attestation is something the student did, and the surface says which
+   is which rather than blending them into one confident-looking action. */
+.wc-ev-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
+.wc-ev-alt { font-size: 13px; color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; }
+.wc-ev-alt:hover { color: var(--info); }
+.wc-ev-alt:disabled { opacity: 0.5; cursor: default; }
+
+/* What came back from the read — measured facts, so they are set like data, not like prose. */
+.wc-ev-read { display: flex; flex-direction: column; gap: var(--space-2); }
+.wc-ev-file { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-3); }
+.wc-ev-name { font-family: var(--font-mono); font-size: 13px; color: var(--text); word-break: break-all; }
+.wc-ev-sample { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
+.wc-ev-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-2) var(--space-4); margin: 0; }
+.wc-ev-facts > div { min-width: 0; }
+.wc-ev-facts dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+.wc-ev-facts dd { margin: 2px 0 0; font-size: 13px; color: var(--text); }
+.wc-ev-hash { grid-column: 1 / -1; }
+.wc-ev-hash dd { font-family: var(--font-mono); word-break: break-all; }
+.wc-ev-note { font-size: 12px; color: var(--text-muted); margin: 0; max-width: 62ch; line-height: 1.5; }
+
+/* The attestation. Its own bordered block because it is the one claim on this screen that comes
+   from the student rather than from a rule or a measurement. */
+.wc-ev-attest { display: flex; flex-direction: column; gap: var(--space-3); width: 100%; background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-input); padding: var(--space-4); }
+.wc-ev-check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: 14px; color: var(--text); cursor: pointer; }
+.wc-ev-check input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--info); cursor: pointer; }
+.wc-ev-attest-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); }
+.wc-ev-attest .btn:disabled { opacity: 0.45; cursor: default; }
+.wc-ev-error { font-size: 13px; color: var(--status-blocked); background: var(--blocked-soft); border: 1px solid var(--blocked-border); border-radius: var(--radius-input); padding: var(--space-2) var(--space-3); margin: 0; width: 100%; }
+
 /* ---- Coverage map + rule-pack viewer ---- */
 .cov-counts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px dashed var(--border); }
 .cov-count { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; color: var(--text-secondary); }

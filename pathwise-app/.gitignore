@@ -2,6 +2,7 @@ node_modules/
 .next/
 out/
 dist/
+.test-out/
 package-lock.json
 .env*.local
 .DS_Store

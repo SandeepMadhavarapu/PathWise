@@ -58,12 +58,45 @@ export type DocType =
   | 'I-20' | 'EAD' | 'I-797' | 'lease' | 'tax_return' | 'license'
   | 'transcript' | 'offer_letter' | 'other';
 
+/**
+ * What PathWise genuinely learned by reading a file in the browser — and nothing more.
+ *
+ * These are facts about the FILE, never about the document's contents: PathWise reads the bytes,
+ * not the words. `sha256` is the proof of read, because a hash cannot be produced without passing
+ * over every byte, and it discloses nothing about what those bytes say. The file itself is never
+ * uploaded, never stored, and is released the moment this record is built.
+ */
+export interface LocalFileRead {
+  fileName: string;
+  sizeBytes: number;
+  mimeType: string;
+  lastModified?: ISODate;
+  /** Undefined only where SubtleCrypto is unavailable (an insecure origin) — never fabricated. */
+  sha256?: string;
+  /** When the read happened, ISO-8601. */
+  readAt: string;
+  /**
+   * Where the file came from. A sample generated for a walkthrough goes through the identical read
+   * path, so this flag is the only thing keeping it from ever reading as the student's own document.
+   */
+  origin: 'picked' | 'sample';
+}
+
 export interface Evidence {
   id: string;
   doc_type: DocType;
   file_ref: string;
   extracted: Record<string, { value: unknown; confidence: number; page?: number; bbox?: number[] }>;
   user_corrected: boolean;
+  /**
+   * Present when this evidence came from a file read on the student's own device. Its absence means
+   * the evidence was asserted without a file behind it — the two are deliberately distinguishable.
+   *
+   * These facts live here rather than in `extracted` on purpose: `extracted` is for document FIELDS
+   * pulled from content, and PathWise pulls none. Putting a filename there would claim an extraction
+   * that never happened.
+   */
+  local?: LocalFileRead;
 }
 
 export type FindingResult =

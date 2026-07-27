@@ -1,0 +1,21 @@
+/* Compiles the evidence-flow regression test to plain CommonJS so it runs under `node` with the
+   TypeScript already in node_modules — no test runner, no new dependency. The app's own tsconfig
+   targets a bundler and emits nothing, which is right for Next and wrong for this. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": ".test-out",
+    /* Pinned, so the emitted path stays put instead of tracking the common root of whatever the
+       test happens to import. */
+    "rootDir": ".",
+    "incremental": false,
+    "isolatedModules": false,
+    "jsx": "react-jsx",
+    "types": ["node"]
+  },
+  "include": ["lib/test/**/*.ts"],
+  "exclude": ["node_modules", ".next", ".test-out"]
+}
