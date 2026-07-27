@@ -17,8 +17,10 @@ import {
 } from "./icons";
 
 const RULES_VERIFIED_ON: string = (coverage as { verified_on?: string }).verified_on ?? "unknown";
-// Both parents of the pending UI merge. Becomes the merge commit's own sha once it is committed.
-const BUILD_SHA = "8ac1c3f+d2527d1";
+// Resolved at build time from the commit actually being built — see next.config.mjs. Not typed by
+// hand, because a stamp that says which build you are looking at is worthless the first time it is
+// wrong, and this one had already drifted two commits.
+const BUILD_SHA: string = process.env.NEXT_PUBLIC_BUILD_SHA ?? "dev";
 
 const PAGE_TITLES: Record<string, string> = {
   "/student": "Student overview",
