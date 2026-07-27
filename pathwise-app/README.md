@@ -17,13 +17,29 @@ npm run dev      # http://localhost:3000  — the Home screen renders the exampl
 ## Verify / build
 ```bash
 npm run typecheck   # tsc --noEmit (clean)
-npm run build       # next build (compiles + prerenders the Home screen)
+npm run build       # next build (compiles + prerenders all routes)
+npm test            # both regression suites (evidence flow + jurisdiction routing)
 ```
 
+`npm test` is the one that matters before a deploy: it locks the verified demo numbers
+(342 / 54 / 23 / 552) and asserts that no jurisdiction is ever shown another jurisdiction's
+citation.
+
 ## Deploy (gets us the judge-openable URL — deliverable #4)
-1. Push this folder to a GitHub repo.
-2. Import the repo at vercel.com (New Project). Framework auto-detected as Next.js.
-3. Deploy → you get a live `https://pathwise-*.vercel.app` URL. Keep it live from now on.
+The Next app is **`pathwise-app/`, a subfolder** of the `PathWise` repo — that one fact is the
+whole trick, and getting it wrong is the usual reason the first import fails to build.
+
+1. The repo is already on GitHub: `SandeepMadhavarapu/PathWise`.
+2. vercel.com → **Add New… → Project** → import `PathWise`.
+3. **Set Root Directory to `pathwise-app`.** Do this in the import screen, before deploying.
+   Framework then auto-detects as Next.js; leave the build and output settings alone.
+4. Deploy → a live `https://pathwise-*.vercel.app`. Keep it live from here on.
+
+Or from this folder, with the CLI:
+```bash
+npx vercel login       # interactive, one time
+npx vercel --prod      # run from pathwise-app/, so the root directory is implicit
+```
 
 ## What's here so far
 - `app/page.tsx` — the **Home screen**. Runs the real engines on Priya and renders:
