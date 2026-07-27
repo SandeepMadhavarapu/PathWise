@@ -4,22 +4,52 @@ Five artifacts. **All five are required for the entry to qualify.** Missing or b
 or zeroed.
 
 ## The five deliverables
-- [ ] **Title + category.** Title: "Standing". Category: **Overcoming Obstacles**.
-- [ ] **500-word write-up.** What we built, the problem, who it's for. Draft on day 1; finalize
-      days 26–27. Keep it under 500 — over-length can disqualify.
-- [ ] **Two-minute demo video** on YouTube / Vimeo / Loom. Hard cap 2:00. See `06-demo-script.md`.
-      Upload early — processing takes hours.
-- [ ] **A working link a judge can open** — live URL / Figma / GitHub. Must be live from day 2 and
-      never break. Test it cold, incognito, on a phone (days 26–27).
-- [ ] **A list of every tool used, AI included.** Keep a running list from day 1 (see below).
+- [x] **Title + category.** Title: **PathWise**. Category: **Overcoming Obstacles**.
+      (This file said "Standing" until the project was renamed; the app, the repo, `package.json`
+      and `11-submission-writeup.md` all say PathWise. Submit the name the judge sees on screen.)
+- [ ] **500-word write-up.** Drafted at 496 words in `11-submission-writeup.md`. Re-read it after
+      the final rule re-verification — if a number on screen moves, it moves there too.
+- [ ] **Two-minute demo video** on YouTube / Vimeo / Loom. Hard cap 2:00. Script is final in
+      `12-final-demo-script.md`. Upload early — processing takes hours.
+- [x] **A working link a judge can open** — **https://path-wise-amber.vercel.app**
+      Live, all 11 routes 200. Still to do on days 26–27: open it cold, incognito, on a phone.
+- [x] **A list of every tool used, AI included.** Below.
 
-## Tools-used running list (fill in as we go)
-- Claude (Claude Code / Claude API credits) — [what for]
-- [hosting/deploy platform] — [what for]
-- [framework, e.g. Next.js / React] — [what for]
-- [OCR/extraction library] — [what for]
-- [email + .ics library] — [what for]
-- [any public API] — [what for]
+## Tools used (deliverable #5)
+
+Complete and honest, derived from `pathwise-app/package.json` and the source rather than memory.
+
+**AI**
+- **Claude (Claude Code, Claude Opus)** — the whole build: rule-engine design and implementation,
+  the rule-pack schema, the regression and golden test suites, UI implementation, and the writing
+  in `pathwise-core/docs/`. Claimed via the Stellic × Anthropic partnership at registration.
+
+**Framework and language** — the only three runtime dependencies in the project.
+- **Next.js 14.2.5** (App Router) — routing and static prerendering; all 11 routes ship as static
+  HTML, which is why the judge link has no server to fall over.
+- **React 18.3.1 / react-dom 18.3.1** — UI.
+- **TypeScript 5.4.5** — every engine and rule-pack shape is typed; `npm run typecheck` gates a deploy.
+- **Node.js 20** — build and test runtime.
+
+**Hosting and source control**
+- **Vercel** — hosting and production deploys (root directory `pathwise-app`).
+- **GitHub** (`SandeepMadhavarapu/PathWise`) — source control.
+
+**Assets and browser APIs (no dependency added)**
+- **Inter** via `next/font/google` — self-hosted at build time, so the running app makes no
+  request to Google.
+- **Web Crypto `SubtleCrypto.digest`** — the SHA-256 fingerprint in the evidence flow. A browser
+  built-in, not a library.
+
+**Deliberately NOT used — worth stating, because the honest absence is the design**
+- **No OCR or extraction library.** PathWise reads a document's *bytes*, never its words, and says
+  so on screen. There is nothing to extract with because nothing is extracted.
+- **No email or `.ics` library.** `lib/ics.ts` is written by hand against RFC 5545 so the calendar
+  export runs entirely in the browser.
+- **No public API, no backend, no database, no analytics, no third-party script.** The app makes
+  zero network requests at runtime. That is what "nothing leaves this device" has to mean to be true.
+- **No UI or component library.** The design system is `app/globals.css` and `lib/tokens.ts`.
+- **No test framework.** The three suites compile with `tsc` and run under plain `node`.
 
 ## Pre-submission gate (day 28, morning)
 - [ ] Judge link opens in a fresh incognito window with no errors.
