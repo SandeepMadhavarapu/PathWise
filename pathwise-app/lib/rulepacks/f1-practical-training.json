@@ -59,7 +59,9 @@
     "qualifying_min_hours_per_week": 20,
     "abroad_still_counts": true,
     "no_grace_period_on_violation": true,
-    "cite": "SEVP OPT policy guidance"
+    "cite": "SEVP OPT policy guidance",
+    "clock_start_cite": "8 CFR 214.2(f)(10)(ii)",
+    "termination_cite": "8 CFR 214.2(f) · SEVP"
   },
   "reporting_obligations": [
     { "id": "stem_ead_receipt", "deadline_days": 10, "cite": "8 CFR 214.2(f)(12)" },

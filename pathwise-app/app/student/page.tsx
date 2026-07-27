@@ -2,11 +2,13 @@ import Link from "next/link";
 import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
 import { computeOptBudget, OPT_BUDGET_RULES } from "@/lib/engines/opt-budget";
-import { DOMICILE_DURATION_DAYS, runDomicileGate } from "@/lib/engines/domicile-gate";
-import { computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
+import { DOMICILE_DURATION_DAYS, GATE_DISPLAY_CITE, runDomicileGate } from "@/lib/engines/domicile-gate";
+import { AID_DISPLAY_CITE, computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
 import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
+import type { StepStatus } from "@/lib/engines/next-steps";
 import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget, priyaAid } from "@/lib/fixtures/priya";
-import { formatStatusCode } from "@/lib/status-display";
+import { formatDecidingOffice, formatImmigrationStatus } from "@/lib/format";
+import { statusFromBand, type StatusKey } from "@/lib/tokens";
 import { STATE_COUNT } from "@/lib/coverage";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
@@ -14,6 +16,21 @@ import { LedgerBar } from "@/components/LedgerBar";
 import { UnemploymentClock } from "@/components/UnemploymentClock";
 import { OptBudget } from "@/components/OptBudget";
 import { DeadlineExport } from "@/components/DeadlineExport";
+import { StatusGlyph } from "@/components/StatusGlyph";
+import { Callout } from "@/components/Callout";
+import { Tabs } from "@/components/Tabs";
+
+// Visual scale for the immigration card's mini-track only — how much track to draw. The cliff
+// itself is the rulepack's, and the ledger reads it; nothing regulatory is set here.
+const CLIFF_TRACK_DAYS = 400;
+
+// The app's one status vocabulary, mapped onto the design system's glyphs.
+const STEP_STATUS: Record<StepStatus, { glyph: StatusKey; word: string }> = {
+  verified: { glyph: "done", word: "On track" },
+  attention: { glyph: "warn", word: "Attention" },
+  blocked: { glyph: "blocked", word: "Blocked" },
+  unknown: { glyph: "idle", word: "Unable to verify" },
+};
 
 export default function StudentPage() {
   // ---- Everything below is computed live by the real engines. Nothing is hard-coded. ----
@@ -46,54 +63,42 @@ export default function StudentPage() {
     asOf: priyaOpt.asOf,
   });
   const firstStep = steps[0];
-  const stepWord: Record<string, string> = {
-    verified: "On track",
-    attention: "Attention",
-    blocked: "Blocked",
-    unknown: "Unable to verify",
-  };
-  const stepIcon: Record<string, string> = {
-    verified: "✓",
-    attention: "◐",
-    blocked: "●",
-    unknown: "?",
-  };
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">your standing across every system</span>
-        </div>
-        <div className="topnav">
-          <Link href="/" className="pill">
-            ← Home
-          </Link>
-          <span className="pill">Example student · Priya</span>
-        </div>
-      </div>
+    <>
+      <Tabs
+        activeId="overview"
+        tabs={[
+          { id: "overview", label: "Overview", href: "/student" },
+          { id: "journey", label: "My journey", href: "/student/journey" },
+        ]}
+      />
+
+      <Callout title="How to read this" dismissible>
+        Every card below is a live finding, not a summary — the status, the citation, and the
+        micro-label under each row are computed from the same events shown in{" "}
+        <Link href="/student/journey">Priya&apos;s journey</Link>. Nothing here is asserted without
+        a regulation attached to it.
+      </Callout>
 
       <HeroFinding
         studentName="Priya"
         statusLabel={priyaStudent.immigration.status}
-        residencyCite="SCHEV Pt II §03(A)"
-        aidCite="SCHEV VASA"
+        residencyCite={GATE_DISPLAY_CITE}
+        aidCite={AID_DISPLAY_CITE}
       />
 
       {firstStep ? (
-        <Link href="/student/next" className="nextcard">
+        <Link href="/student/next" className="nextcard surface">
           <div>
             <div className="nc-k">
               Your next steps · {steps.length} in order, first one first
             </div>
-            <div className="nc-v">{firstStep.title}</div>
+            <div className="nc-v t-row-title">{firstStep.title}</div>
             <div className="nc-when">
-              <span className={`statuschip ${firstStep.status}`}>
-                <span className="ic" aria-hidden="true">{stepIcon[firstStep.status]}</span>
-                {stepWord[firstStep.status]}
+              <span className="statuschip">
+                <StatusGlyph status={STEP_STATUS[firstStep.status].glyph} />
+                {STEP_STATUS[firstStep.status].word}
               </span>
               <span>
                 {firstStep.effectiveDeadline && firstStep.daysOfMargin !== undefined
@@ -108,7 +113,7 @@ export default function StudentPage() {
 
       <DeadlineExport steps={steps} asOf={priyaOpt.asOf} variant="inline" />
 
-      <Link href="/student/journey" className="memorystrip">
+      <Link href="/student/journey" className="memorystrip surface">
         <span>
           <span className="ms-k">PathWise remembers the whole journey.</span>{" "}
           {priyaStudent.institutions.length} institutions, {priyaEvents.length} events, nothing to
@@ -117,10 +122,11 @@ export default function StudentPage() {
         <span className="ms-go">View Priya&apos;s full journey →</span>
       </Link>
 
-      <div className="section-h">Her three offices, at a glance</div>
-      <div className="cards">
+      <div className="section-head">Her three offices, at a glance</div>
+      <div className="domain-cards">
         <DomainCard
           domain="Immigration (F-1)"
+          decidingOffice={formatDecidingOffice("SEVP")}
           status={masters ? `${masters.daysToCliff} days from the CPT cliff` : "No CPT on record"}
           band={masters ? masters.band : "green"}
           detail={
@@ -129,24 +135,36 @@ export default function StudentPage() {
               : ""
           }
           cite={SECTION_CITE}
+          progress={
+            masters
+              ? {
+                  segments: [
+                    { key: "used", status: statusFromBand(masters.band), value: masters.fullTimeDays },
+                    { key: "remaining", status: "idle", value: CLIFF_TRACK_DAYS - masters.fullTimeDays },
+                  ],
+                }
+              : undefined
+          }
         />
         <DomainCard
           domain="Residency (Virginia)"
+          decidingOffice={formatDecidingOffice(domicile.deciding_office)}
           status={isBlocked ? "Blocked by status" : "Under review"}
           band={isBlocked ? "red" : "amber"}
           detail="Not an error — a reasoned finding. Student-visa holders cannot establish domicile."
-          cite="SCHEV Pt II §03(A)"
+          cite={GATE_DISPLAY_CITE}
           detailHref="/student/finding/residency"
           detailLabel="See full reasoning →"
         />
         <DomainCard
           domain="Financial aid (Virginia)"
+          decidingOffice={formatDecidingOffice(aid.deciding_office)}
           status={aidBlocked ? "Blocked by status" : "Under review"}
           band={aidBlocked ? "red" : "amber"}
-          detail={`The same ${formatStatusCode(
+          detail={`The same ${formatImmigrationStatus(
             priyaStudent.immigration.status,
           )} fact makes her ineligible for Virginia state aid. File FAFSA path instead.`}
-          cite="SCHEV VASA"
+          cite={AID_DISPLAY_CITE}
           detailHref="/student/finding/aid"
           detailLabel="See full reasoning →"
         />
@@ -154,7 +172,7 @@ export default function StudentPage() {
 
       {/* The residency card above is a refusal, and a refusal is only half of an engine. This is the
           other half, on a student the same gate lets through. */}
-      <Link href="/student/finding/domicile" className="memorystrip">
+      <Link href="/student/finding/domicile" className="memorystrip surface">
         <span>
           <span className="ms-k">A refusal is not the whole engine.</span> On a student the gate lets
           through, residency runs the full determination — dependency, every intent factor and its
@@ -165,9 +183,9 @@ export default function StudentPage() {
 
       {masters ? (
         <>
-          <div className="section-h">The computation a chatbot can&apos;t do</div>
+          <div className="section-head">The computation a chatbot can&apos;t do</div>
           <LedgerBar ledger={masters} />
-          <Link href="/student/changed" className="memorystrip">
+          <Link href="/student/changed" className="memorystrip surface">
             <span>
               <span className="ms-k">One missing document decides this count.</span> Watch the ledger
               re-reason the moment it arrives.
@@ -177,12 +195,12 @@ export default function StudentPage() {
         </>
       ) : null}
 
-      <div className="section-h">
+      <div className="section-head">
         Immigration — the {OPT_BUDGET_RULES.budgetMonths} months she didn&apos;t know she was spending
       </div>
       <OptBudget input={priyaOptBudget} />
 
-      <div className="section-h">Immigration — the clock that runs while she waits</div>
+      <div className="section-head">Immigration — the clock that runs while she waits</div>
       <UnemploymentClock input={priyaOpt} />
 
       <Link href="/moment" className="cta">
@@ -193,7 +211,7 @@ export default function StudentPage() {
         <span className="cta-arrow">→</span>
       </Link>
 
-      <Link href="/coverage" className="memorystrip">
+      <Link href="/coverage" className="memorystrip surface">
         <span>
           <span className="ms-k">Priya&apos;s residency rules are a file, not a special case.</span>{" "}
           See how far the rule packs reach, and where they honestly don&apos;t yet.
@@ -206,6 +224,6 @@ export default function StudentPage() {
         your device. Every finding shows its regulation and the office that decides it. PathWise advises;
         the office decides.
       </div>
-    </main>
+    </>
   );
 }

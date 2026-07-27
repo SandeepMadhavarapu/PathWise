@@ -8,7 +8,6 @@
 // claim being made — that a jurisdiction is data, not code — is only worth anything if the screen
 // proving it is also reading the data.
 
-import Link from "next/link";
 import { useState } from "react";
 
 import {
@@ -28,13 +27,19 @@ import f1Pack from "@/lib/rulepacks/f1-practical-training.json";
 import vaDomicilePack from "@/lib/rulepacks/va-domicile.json";
 import vaAidPack from "@/lib/rulepacks/va-aid.json";
 import consequencePack from "@/lib/rulepacks/consequence-map.json";
+import { StatusGlyph } from "@/components/StatusGlyph";
+import type { StatusKey as GlyphStatus } from "@/lib/tokens";
 
 // The app's four-state vocabulary, applied to our own coverage. A state we haven't modelled is an
 // "unable to verify", not an error — the same honesty the engines use about a student's record.
-const STATUS: Record<CoverageStatus, { key: "verified" | "attention" | "unknown"; icon: string; word: string; count: string }> = {
-  implemented: { key: "verified", icon: "✓", word: "Modelled & verified", count: "fully modelled" },
-  schema_ready: { key: "attention", icon: "◐", word: "Schema ready", count: "schema-ready" },
-  not_yet: { key: "unknown", icon: "?", word: "Not yet modelled", count: "not yet" },
+// `glyph` is the shared design-system token so this page's status reads identically to every other.
+const STATUS: Record<
+  CoverageStatus,
+  { key: "verified" | "attention" | "unknown"; glyph: GlyphStatus; word: string; count: string }
+> = {
+  implemented: { key: "verified", glyph: "done", word: "Modelled & verified", count: "fully modelled" },
+  schema_ready: { key: "attention", glyph: "warn", word: "Schema ready", count: "schema-ready" },
+  not_yet: { key: "unknown", glyph: "idle", word: "Not yet modelled", count: "not yet" },
 };
 
 // The order the legend and the counts are read in — the confident state first, the honest one last.
@@ -107,9 +112,7 @@ function CoverageTile({ j }: { j: Jurisdiction }) {
   const body = (
     <>
       <span className="cov-top">
-        <span className={`cov-ic ${s.key}`} aria-hidden="true">
-          {s.icon}
-        </span>
+        <StatusGlyph status={s.glyph} />
         <span className="cov-code">{j.code}</span>
         {j.note ? (
           <span className="cov-more" aria-hidden="true">
@@ -174,7 +177,7 @@ function RulePackViewer() {
       </div>
 
       <section
-        className="rp-panel"
+        className="rp-panel surface"
         id="rp-panel"
         role="tabpanel"
         aria-labelledby={`rp-tab-${pack.tab}`}
@@ -234,20 +237,8 @@ function RulePackViewer() {
 
 export default function CoveragePage() {
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">the rules are data, not code</span>
-        </div>
-        <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-          ← Back to dashboard
-        </Link>
-      </div>
-
-      <div className="jintro">
+    <>
+      <div className="jintro surface">
         <div className="jintro-eyebrow">Coverage · {STATE_COUNT} states + DC</div>
         <h1>
           {IMPLEMENTED_COUNT === 1
@@ -272,9 +263,7 @@ export default function CoveragePage() {
                     ·
                   </span>
                 ) : null}
-                <span className={`cov-ic ${s.key}`} aria-hidden="true">
-                  {s.icon}
-                </span>
+                <StatusGlyph status={s.glyph} />
                 <strong>{COVERAGE_COUNTS[status] ?? 0}</strong> {s.count}
               </span>
             );
@@ -288,16 +277,14 @@ export default function CoveragePage() {
         </div>
       </div>
 
-      <div className="section-h">What each state of coverage means</div>
+      <div className="section-head">What each state of coverage means</div>
       <ul className="cov-legend">
         {STATUS_ORDER.map((status) => {
           const s = STATUS[status];
           return (
             <li key={status}>
               <span className={`cov-legend-k ${s.key}`}>
-                <span className={`cov-ic ${s.key}`} aria-hidden="true">
-                  {s.icon}
-                </span>
+                <StatusGlyph status={s.glyph} />
                 {s.word}
               </span>
               <span className="cov-legend-v">{COVERAGE_LEGEND[status]}</span>
@@ -306,7 +293,7 @@ export default function CoveragePage() {
         })}
       </ul>
 
-      <div className="section-h">
+      <div className="section-head">
         Every jurisdiction, in order — the ones we can&apos;t do yet included
       </div>
       <div className="cov-grid">
@@ -315,7 +302,7 @@ export default function CoveragePage() {
         ))}
       </div>
 
-      <div className="section-h">The rules themselves</div>
+      <div className="section-head">The rules themselves</div>
       <RulePackViewer />
 
       <div className="foot">
@@ -324,6 +311,6 @@ export default function CoveragePage() {
         the primary source and dates it. Until then PathWise says so rather than guessing. PathWise
         advises; the office decides.
       </div>
-    </main>
+    </>
   );
 }

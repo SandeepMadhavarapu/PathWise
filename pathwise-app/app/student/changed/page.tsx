@@ -29,15 +29,17 @@ import {
 } from "@/lib/engines/cpt-ledger";
 import { priyaEvents } from "@/lib/fixtures/priya";
 import type { Event } from "@/lib/types";
+import { StatusGlyph } from "@/components/StatusGlyph";
+import type { StatusKey as GlyphStatus } from "@/lib/tokens";
 
 type StatusKey = "verified" | "attention" | "blocked" | "unknown";
 
-// The one status vocabulary, same as every other screen: icon + word + color, never color alone.
-const STATUS: Record<StatusKey, { icon: string; word: string }> = {
-  verified: { icon: "✓", word: "On track" },
-  attention: { icon: "◐", word: "Attention" },
-  blocked: { icon: "●", word: "Blocked" },
-  unknown: { icon: "?", word: "Unable to verify" },
+// The one status vocabulary, same as every other screen: glyph + word + color, never color alone.
+const STATUS: Record<StatusKey, { glyph: GlyphStatus; word: string }> = {
+  verified: { glyph: "done", word: "On track" },
+  attention: { glyph: "warn", word: "Attention" },
+  blocked: { glyph: "blocked", word: "Blocked" },
+  unknown: { glyph: "idle", word: "Unable to verify" },
 };
 
 const BAND_STATUS: Record<LedgerBand, StatusKey> = {
@@ -126,9 +128,7 @@ const CHANGES: { k: string; v: string }[] = [
 function Chip({ status }: { status: StatusKey }) {
   return (
     <span className={`statuschip ${status}`}>
-      <span className="ic" aria-hidden="true">
-        {STATUS[status].icon}
-      </span>
+      <StatusGlyph status={STATUS[status].glyph} />
       {STATUS[status].word}
     </span>
   );
@@ -138,20 +138,8 @@ export default function ChangedPage() {
   const [added, setAdded] = useState(false);
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">what changed, and why</span>
-        </div>
-        <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-          ← Back to dashboard
-        </Link>
-      </div>
-
-      <div className="jintro">
+    <>
+      <div className="jintro surface">
         <div className="jintro-eyebrow">What changed?</div>
         <h1>One document arrives. Watch PathWise re-reason.</h1>
         <p>
@@ -173,7 +161,7 @@ export default function ChangedPage() {
         </div>
       </div>
 
-      <div className={`wc-gap${added ? " done" : ""}`}>
+      <div className={`wc-gap surface${added ? " done" : ""}`}>
         <div className="wc-gap-head">
           <div>
             <Chip status={added ? "verified" : "unknown"} />
@@ -216,10 +204,10 @@ export default function ChangedPage() {
         </div>
       </div>
 
-      <div className="section-h">Before → after</div>
+      <div className="section-head">Before → after</div>
 
       <div className="wc-grid">
-        <div className="wc-panel">
+        <div className="wc-panel surface">
           <div className="wc-when">Before</div>
           <div className="wc-panel-head">
             <Chip status={beforeStatus} />
@@ -259,7 +247,7 @@ export default function ChangedPage() {
         </div>
 
         {added ? (
-          <div className="wc-panel wc-fade">
+          <div className="wc-panel surface wc-fade">
             <div className="wc-when">After</div>
             <div className="wc-panel-head">
               <Chip status={afterStatus} />
@@ -296,7 +284,7 @@ export default function ChangedPage() {
             </div>
           </div>
         ) : (
-          <div className="wc-panel pending">
+          <div className="wc-panel surface pending">
             <div className="wc-when">After</div>
             <div className="wc-pending-note">
               Nothing to recompute yet. The count stays open until the evidence lands — PathWise holds
@@ -308,7 +296,7 @@ export default function ChangedPage() {
 
       {added ? (
         <div className="wc-fade">
-          <div className="section-h">What changed</div>
+          <div className="section-head">What changed</div>
           <ul className="wc-changes">
             {CHANGES.map((c) => (
               <li className="wc-change" key={c.k}>
@@ -357,6 +345,6 @@ export default function ChangedPage() {
         never uploaded anywhere — the re-computation runs on this device. Every finding shows its
         regulation and the office that decides it.
       </div>
-    </main>
+    </>
   );
 }

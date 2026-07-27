@@ -3,9 +3,10 @@ import Link from "next/link";
 import { runDomicileAnalysis } from "@/lib/engines/domicile";
 import { DOMICILE_DURATION_DAYS, GATE_CITE } from "@/lib/engines/domicile-gate";
 import { marcusDomicile, marcusStudent } from "@/lib/fixtures/marcus";
-import { formatStatusCode } from "@/lib/status-display";
+import { formatImmigrationStatus } from "@/lib/format";
 import { FindingDetail } from "@/components/FindingDetail";
 import { DomicileAnalysisDetail } from "@/components/DomicileAnalysis";
+import { Capsule } from "@/components/Capsule";
 
 // The other branch of Engine B. Priya's record ends at the gate; Marcus's passes it, and everything
 // past the gate — dependency, the intent factors and their weights, the durational clock, the rules
@@ -14,24 +15,11 @@ export default function DomicileAnalysisPage() {
   const analysis = runDomicileAnalysis(marcusDomicile);
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">the domicile analysis in full</span>
+    <>
+      <div className="jintro surface">
+        <div className="jintro-eyebrow">
+          Residency · past the gate <Capsule>Example student · Marcus</Capsule>
         </div>
-        <div className="topnav">
-          <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-            ← Back
-          </Link>
-          <span className="pill">Example student · Marcus</span>
-        </div>
-      </div>
-
-      <div className="jintro">
-        <div className="jintro-eyebrow">Residency · past the gate</div>
         <h1>
           The same gate that refuses Priya lets Marcus through — and then Engine B has nine sections
           of work to do.
@@ -48,7 +36,7 @@ export default function DomicileAnalysisPage() {
         </p>
         <div className="jstats">
           <span className="jstat">
-            <strong>{formatStatusCode(marcusStudent.immigration.status)}</strong> status — the gate
+            <strong>{formatImmigrationStatus(marcusStudent.immigration.status)}</strong> status — the gate
             does not fire
           </span>
           <span className="jstat">
@@ -82,6 +70,6 @@ export default function DomicileAnalysisPage() {
         threshold, exception and section reference on this page is read from{" "}
         <code>lib/rulepacks/va-domicile.json</code>. PathWise advises; the office decides.
       </div>
-    </main>
+    </>
   );
 }

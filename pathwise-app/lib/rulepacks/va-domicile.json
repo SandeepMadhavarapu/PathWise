@@ -14,6 +14,7 @@
     {
       "id": "eligible_alien_gate",
       "cite": "Part II, Section 03(A) & Section 02(4)",
+      "display_cite": "SCHEV Pt II §03(A)",
       "when": "immigration.status in ['F1','J1','M1']",
       "result": "ineligible",
       "headline": "F-1 status blocks domicile in Virginia",

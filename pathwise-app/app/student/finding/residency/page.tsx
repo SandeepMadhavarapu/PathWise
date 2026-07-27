@@ -13,24 +13,16 @@ export default function ResidencyFindingPage() {
   });
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">the full reasoning behind one finding</span>
-        </div>
-        <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-          ← Back
-        </Link>
-      </div>
+    <>
+      <Link href="/student" className="back-link">
+        ← Back to overview
+      </Link>
 
       <FindingDetail finding={domicile} />
 
       {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the
           engine has. The sibling route runs the rest of Engine B on a student it lets through. */}
-      <Link href="/student/finding/domicile" className="memorystrip">
+      <Link href="/student/finding/domicile" className="memorystrip surface">
         <span>
           <span className="ms-k">This is where the analysis stops, not where the engine does.</span>{" "}
           Past the gate there are nine more sections of it — dependency, the intent factors and their
@@ -38,6 +30,6 @@ export default function ResidencyFindingPage() {
         </span>
         <span className="ms-go">See the full domicile analysis →</span>
       </Link>
-    </main>
+    </>
   );
 }

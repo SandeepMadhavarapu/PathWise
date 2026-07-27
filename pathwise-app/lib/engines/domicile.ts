@@ -20,7 +20,7 @@
 // honestly when it cannot tell.
 
 import type { Event, Finding, ISODate, ProgramLevel, Student } from '../types';
-import { formatStatusCode } from '../status-display';
+import { formatImmigrationStatus } from '../format';
 import pack from '../rulepacks/va-domicile.json';
 import {
   CLOCK_ANCHOR_DEFINITION,
@@ -401,7 +401,7 @@ export function analyseIntentFactors(input: DomicileInput): IntentAnalysis {
       const inapplicable = evaluateStatusClause(factor.inapplicable_when, student);
       if (inapplicable) {
         row.state = 'inapplicable';
-        row.inapplicableBecause = `${formatStatusCode(student.immigration.status)} status: the pack's own condition on this factor excludes it.`;
+        row.inapplicableBecause = `${formatImmigrationStatus(student.immigration.status)} status: the pack's own condition on this factor excludes it.`;
         return row;
       }
     }
@@ -562,8 +562,8 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
   }
 
   const { student, allegedEntitlementDate } = input;
-  const statusText = formatStatusCode(student.immigration.status);
-  const gatedList = list([...GATE_STATUSES].map(formatStatusCode));
+  const statusText = formatImmigrationStatus(student.immigration.status);
+  const gatedList = list([...GATE_STATUSES].map(formatImmigrationStatus));
 
   // ---- §09(C)(1) dependency, then §06(B) the factors, then §05(C)(1) the clock ----
   const dependency = determineDependency(input);

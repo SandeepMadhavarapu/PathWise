@@ -13,7 +13,7 @@
 // earliest-of rule, and the confidentiality note. Nothing here restates a rule the pack owns.
 
 import type { Student, Finding, ISODate } from '../types';
-import { formatStatusCode } from '../status-display';
+import { formatImmigrationStatus } from '../format';
 import pack from '../rulepacks/va-aid.json';
 
 // ---- pack shapes (a JSON import can't carry the optional fields we branch on) ----
@@ -22,6 +22,11 @@ type RawProvision = { id: string; note: string; requires: string[]; volatility?:
 
 const BLOCKS: RawBlock[] = pack.form_selection.fafsa_blocks;
 const PROVISIONS: RawProvision[] = pack.va_student_provisions;
+
+// The aid pack's authority, abbreviated for a compact chip. `authority` is the full attribution
+// the findings carry; this is the same source written short enough for a card, and it is the pack's
+// own spelling rather than one retyped into a component. Display only — no condition reads it.
+export const AID_DISPLAY_CITE = pack.display_cite;
 
 export interface AidEligibilityInput {
   student: Student;
@@ -243,7 +248,7 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
 
   const steps: Finding['reasoning_steps'] = [
     // Display form only — `status` itself is what the pack's conditions are matched against.
-    { claim: `The student holds ${formatStatusCode(status)} status.`, from_events: [], from_evidence: [] },
+    { claim: `The student holds ${formatImmigrationStatus(status)} status.`, from_events: [], from_evidence: [] },
   ];
 
   if (block) {

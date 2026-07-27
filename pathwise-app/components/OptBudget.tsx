@@ -6,6 +6,8 @@ import {
   type OptBudgetInput,
   type OptUsageLine,
 } from "@/lib/engines/opt-budget";
+import { statusFromBand } from "@/lib/tokens";
+import { SegmentedProgress, type ProgressLegendItem } from "./SegmentedProgress";
 
 function fmtMonths(n: number) {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
@@ -46,11 +48,30 @@ export function OptBudget({
   const second = voice === "second";
   const subject = second ? "you" : "she";
   const possessive = second ? "your" : "her";
+  const status = statusFromBand(level.band);
 
-  const usedPct = Math.min(100, (level.monthsUsed / level.budgetMonths) * 100);
-  // Where the amber zone starts — the engine's own band margin, so the zone and the colour of the
-  // fill can never disagree about which month the budget starts running short.
-  const amberPct = ((level.budgetMonths - AMBER_MARGIN_MONTHS) / level.budgetMonths) * 100;
+  const trackTotal = Math.max(level.budgetMonths, level.monthsUsed);
+  const capPct = (level.budgetMonths / trackTotal) * 100;
+
+  // The tail of the track that the engine's own band margin calls amber, drawn as a segment rather
+  // than asserted: the zone and the colour of the fill can never disagree about which month the
+  // budget starts running short, because both are read off AMBER_MARGIN_MONTHS.
+  const remaining = Math.max(0, level.monthsRemaining);
+  const amberZone = Math.min(remaining, AMBER_MARGIN_MONTHS);
+  const safeRemaining = remaining - amberZone;
+
+  const legend: ProgressLegendItem[] = [
+    { status, label: "months used", value: level.monthsUsed },
+  ];
+  if (level.overByMonths > 0) {
+    legend.push({ status: "blocked", label: "months over the cap", value: level.overByMonths });
+  } else if (amberZone > 0) {
+    legend.push({
+      status: "warn",
+      label: "months where the budget bands amber",
+      value: amberZone,
+    });
+  }
 
   // The half-rate line is the insight: what the part-time blocks were authorized for vs. what they
   // actually cost. Computed from the engine's lines, never asserted.
@@ -59,26 +80,31 @@ export function OptBudget({
   const halfCharged = halfRate.reduce((s, l) => s + l.chargedMonths, 0);
 
   return (
-    <div className="optbudget">
-      <div className="head">
-        <span className="title">
+    <div className="optbudget gauge-card surface">
+      <div className="gauge-head">
+        <span className="gauge-title t-card-title">
           OPT budget — {level.level} · {fmtMonths(level.monthsUsed)} of {level.budgetMonths} months used
         </span>
-        <span className={`sub ${level.band}`}>
+        <span className={`gauge-sub ${status}`}>
           {level.overByMonths > 0
             ? `${plural(level.overByMonths, "month")} over the cap`
             : `${plural(level.monthsRemaining, "month")} remaining`}
         </span>
       </div>
 
-      <div className="track-wrap">
-        <div className="track">
-          <div className="zone green" style={{ width: `${amberPct}%` }} />
-          <div className="zone amber" style={{ left: `${amberPct}%`, right: 0 }} />
-          <div className={`fill ${level.band}`} style={{ width: `${usedPct}%` }} />
-        </div>
-        {/* Outside the track: the track clips its fill, and would clip this label with it. */}
-        <div className="cap-mark">
+      <div className="gauge-track-wrap">
+        <SegmentedProgress
+          ariaLabel={`OPT budget, ${level.level} level`}
+          total={trackTotal}
+          segments={[
+            { key: "used", status, value: Math.min(level.monthsUsed, level.budgetMonths) },
+            { key: "over", status: "blocked", value: level.overByMonths },
+            { key: "remaining", status: "idle", value: safeRemaining },
+            { key: "amber", status: "warn", value: amberZone },
+          ]}
+          legend={legend}
+        />
+        <div className="gauge-marker" style={{ left: `${capPct}%` }}>
           <span className="lbl">{level.budgetMonths}-month cap</span>
         </div>
       </div>
@@ -108,7 +134,7 @@ export function OptBudget({
         ) : null}
       </ul>
 
-      <div className="note">
+      <div className="gauge-note">
         {halfRate.length > 0 ? (
           <>
             <strong>Part-time pre-completion OPT is deducted at half rate</strong> —{" "}
@@ -128,7 +154,7 @@ export function OptBudget({
         )}
       </div>
 
-      <div className={`consequence ${level.band}`}>
+      <div className={`gauge-consequence ${status}`}>
         {level.monthsRemaining <= 0 ? (
           <>
             Every one of the {level.budgetMonths} months at this level is committed — {subject}{" "}

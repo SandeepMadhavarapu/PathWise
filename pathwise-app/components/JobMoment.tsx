@@ -3,15 +3,18 @@
 import { useState } from "react";
 import { applyLifeEvent } from "@/lib/engines/consequence-engine";
 import { priyaStudent, priyaJobOffer } from "@/lib/fixtures/priya";
+import type { StatusKey } from "@/lib/tokens";
+import { StatusGlyph } from "./StatusGlyph";
+import { Capsule } from "./Capsule";
 
-const toneIcon: Record<string, string> = { warn: "⚠", ok: "✓", info: "◆" };
+const TONE_STATUS: Record<string, StatusKey> = { warn: "warn", ok: "done", info: "active" };
 
 export function JobMoment() {
   const [revealed, setRevealed] = useState(false);
   const consequences = applyLifeEvent(priyaStudent, priyaJobOffer);
 
   return (
-    <div className="moment">
+    <div className="moment surface">
       <div className="moment-head">
         <div>
           <div className="moment-eyebrow">The life-event test</div>
@@ -35,32 +38,43 @@ export function JobMoment() {
             offices.
           </div>
           <ol className="conseq">
-            {consequences.map((c, i) => (
-              <li key={i} className={`conseq-item ${c.tone}`}>
-                <span className="ci-icon">{toneIcon[c.tone]}</span>
-                <div className="ci-body">
-                  <div className="ci-top">
-                    <span className="ci-domain">{c.domain}</span>
-                    {c.counterintuitive && <span className="ci-flag">counter-intuitive</span>}
-                    {!c.applies && <span className="ci-flag muted">does not apply</span>}
-                  </div>
-                  <div className="ci-effect">{c.effect}</div>
-                  {c.newDeadline && (
-                    <div className="ci-deadline">
-                      <strong>Deadline{c.newDeadline.date ? ` ${c.newDeadline.date}` : ""}</strong>
-                      <span className="ci-derivation"> — {c.newDeadline.derivation}</span>
-                      <div className="ci-miss">If missed: {c.newDeadline.consequenceOfMissing}</div>
+            {consequences.map((c, i) => {
+              const status = TONE_STATUS[c.tone] ?? "active";
+              return (
+                <li
+                  key={i}
+                  className="conseq-item in"
+                  style={{ animationDelay: `${i * 80}ms` }}
+                >
+                  <StatusGlyph status={status} />
+                  <div className="ci-body">
+                    <div className="ci-top">
+                      <span className="t-micro">{c.domain}</span>
+                      {c.counterintuitive && (
+                        <Capsule variant="tinted" status="blocked">
+                          counter-intuitive
+                        </Capsule>
+                      )}
+                      {!c.applies && <Capsule variant="neutral">does not apply</Capsule>}
                     </div>
-                  )}
-                  {c.supersedes && (
-                    <div className="ci-stale">Re-run needed · supersedes: {c.supersedes.join(", ")}</div>
-                  )}
-                  <div className="ci-cite">
-                    <span className="cite">{c.cite.authority}</span>
+                    <div className="ci-effect">{c.effect}</div>
+                    {c.newDeadline && (
+                      <div className="ci-deadline">
+                        <strong>Deadline{c.newDeadline.date ? ` ${c.newDeadline.date}` : ""}</strong>
+                        <span className="ci-derivation"> — {c.newDeadline.derivation}</span>
+                        <div className="ci-miss">If missed: {c.newDeadline.consequenceOfMissing}</div>
+                      </div>
+                    )}
+                    {c.supersedes && (
+                      <div className="ci-stale">Re-run needed · supersedes: {c.supersedes.join(", ")}</div>
+                    )}
+                    <div className="ci-cite">
+                      <span className="cite">{c.cite.authority}</span>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ol>
           <p className="moment-foot">
             None of Priya&apos;s three offices would have caught all four. That is the whole point of

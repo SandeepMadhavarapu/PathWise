@@ -12,15 +12,20 @@ import {
   SECTION_CITE,
   type LedgerResult,
 } from "@/lib/engines/cpt-ledger";
-import { formatStatusCode } from "@/lib/status-display";
+import { CLOCK_START_CITE } from "@/lib/engines/unemployment-clock";
+import { GATE_DISPLAY_CITE } from "@/lib/engines/domicile-gate";
+import { formatImmigrationStatus } from "@/lib/format";
+import type { StatusKey as GlyphStatus } from "@/lib/tokens";
+import { StatusGlyph } from "./StatusGlyph";
+import { Capsule } from "./Capsule";
 
 type StatusKey = "verified" | "attention" | "blocked" | "unknown";
 
-const STATUS: Record<StatusKey, { icon: string; word: string }> = {
-  verified: { icon: "✓", word: "On track" },
-  attention: { icon: "◐", word: "Attention" },
-  blocked: { icon: "●", word: "Blocked" },
-  unknown: { icon: "?", word: "Unable to verify" },
+const STATUS: Record<StatusKey, { glyph: GlyphStatus; word: string }> = {
+  verified: { glyph: "done", word: "On track" },
+  attention: { glyph: "warn", word: "Attention" },
+  blocked: { glyph: "blocked", word: "Blocked" },
+  unknown: { glyph: "idle", word: "Unable to verify" },
 };
 
 interface Row {
@@ -77,7 +82,7 @@ function levelLabel(level?: ProgramLevel): string {
   return "Other";
 }
 
-const statusLabel = formatStatusCode;
+const statusLabel = formatImmigrationStatus;
 
 function titleFor(type: string): string {
   switch (type) {
@@ -164,7 +169,7 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
     statusLine = "The completion date every post-completion clock is measured from.";
     why =
       "Starts the post-completion OPT window — and the unemployment clock that runs while she job-hunts. Days without qualifying employment accumulate against the cap from here, not from the day she starts looking.";
-    cite = "8 CFR 214.2(f)(10)(ii)";
+    cite = CLOCK_START_CITE;
   }
 
   return {
@@ -216,7 +221,7 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
       evidenceNote: "No document linked — this rests on the student record alone.",
       why:
         "The one fact both blocked findings are built on: a student-visa holder cannot establish Virginia domicile, and without domicile there is no Virginia state aid. It also sets which practical-training rules apply at all.",
-      cite: "SCHEV Pt II §03(A)",
+      cite: GATE_DISPLAY_CITE,
     });
   }
 
@@ -286,8 +291,8 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
 function StatusChip({ status }: { status: StatusKey }) {
   const s = STATUS[status];
   return (
-    <span className={`statuschip ${status}`}>
-      <span className="ic" aria-hidden="true">{s.icon}</span>
+    <span className="statuschip">
+      <StatusGlyph status={s.glyph} />
       {s.word}
     </span>
   );
@@ -305,7 +310,7 @@ function JourneyRow({
   const panelId = `jd-${row.key}`;
   return (
     <li className={`jitem${open ? " open" : ""}${row.inferred ? " inferred" : ""}`}>
-      <span className={`jdot ${row.status}`} aria-hidden="true" />
+      <span className={`jdot ${STATUS[row.status].glyph}`} aria-hidden="true" />
       <div className="jcard">
         <button className="jrow" type="button" aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
           <span className="jrow-top">
@@ -334,7 +339,7 @@ function JourneyRow({
               <div className="jfact">
                 <div className="k">Type</div>
                 <div className="v">
-                  {row.title} <span className="reason-tag">{row.typeLabel}</span>
+                  {row.title} <Capsule>{row.typeLabel}</Capsule>
                 </div>
               </div>
               <div className="jfact">
@@ -377,7 +382,7 @@ function JourneyRow({
             <div className="jwhy">
               <div className="k">Why this matters</div>
               <div className="v">
-                {row.why} {row.cite ? <span className="cite">{row.cite}</span> : null}
+                {row.why} {row.cite ? <span className="cite wrap">{row.cite}</span> : null}
               </div>
             </div>
           </div>

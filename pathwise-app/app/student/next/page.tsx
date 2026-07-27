@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { DecidingOffice, Finding } from "@/lib/types";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
@@ -15,13 +14,16 @@ import {
   priyaAid,
 } from "@/lib/fixtures/priya";
 import { DeadlineExport } from "@/components/DeadlineExport";
+import { StatusGlyph } from "@/components/StatusGlyph";
+import type { StatusKey } from "@/lib/tokens";
 
-// The app's one status vocabulary — icon + word + colour, never colour alone.
-const STATUS: Record<StepStatus, { icon: string; word: string }> = {
-  verified: { icon: "✓", word: "On track" },
-  attention: { icon: "◐", word: "Attention" },
-  blocked: { icon: "●", word: "Blocked" },
-  unknown: { icon: "?", word: "Unable to verify" },
+// The app's one status vocabulary — glyph + word + colour, never colour alone. Same mapping the
+// dashboard uses, so a step cannot read one way here and another way there.
+const STATUS: Record<StepStatus, { glyph: StatusKey; word: string }> = {
+  verified: { glyph: "done", word: "On track" },
+  attention: { glyph: "warn", word: "Attention" },
+  blocked: { glyph: "blocked", word: "Blocked" },
+  unknown: { glyph: "idle", word: "Unable to verify" },
 };
 
 const DOMAIN_LABEL: Record<Finding["domain"], string> = {
@@ -51,9 +53,7 @@ function StatusChip({ status }: { status: StepStatus }) {
   const s = STATUS[status];
   return (
     <span className={`statuschip ${status}`}>
-      <span className="ic" aria-hidden="true">
-        {s.icon}
-      </span>
+      <StatusGlyph status={s.glyph} />
       {s.word}
     </span>
   );
@@ -72,7 +72,7 @@ function StepCard({ step }: { step: NextStep }) {
       <span className={`nsnum ${step.status}`} aria-hidden="true">
         {step.order}
       </span>
-      <article className="nscard">
+      <article className="nscard surface">
         <div className="nshead">
           <span className="nsdomain">{DOMAIN_LABEL[step.domain]}</span>
           <StatusChip status={step.status} />
@@ -117,7 +117,9 @@ function StepCard({ step }: { step: NextStep }) {
         ) : null}
 
         <div className="nsfoot">
-          <span className="cite">{step.cite}</span> Decided by {OFFICE_LABEL[step.office]} — PathWise
+          {/* Data-driven: a step can carry a full SCHEV authority line, far past what a nowrap
+              chip can hold on a phone. `wrap` lets those break instead of widening the page. */}
+          <span className="cite wrap">{step.cite}</span> Decided by {OFFICE_LABEL[step.office]} — PathWise
           advises, the office decides.
         </div>
       </article>
@@ -160,20 +162,8 @@ export default function NextStepsPage() {
   const openQuestions = steps.filter((s) => s.tier === "unknown").length;
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">what to do, in order</span>
-        </div>
-        <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-          ← Back to dashboard
-        </Link>
-      </div>
-
-      <div className="jintro">
+    <>
+      <div className="jintro surface">
         <div className="jintro-eyebrow">Next steps</div>
         <h1>Priya has {steps.length} things to do. This is the order they matter in.</h1>
         <p>
@@ -207,7 +197,7 @@ export default function NextStepsPage() {
         if (group.length === 0) return null;
         return (
           <section key={key}>
-            <div className="section-h">{heading}</div>
+            <div className="section-head">{heading}</div>
             <ol className="nslist">
               {group.map((step) => (
                 <StepCard key={step.id} step={step} />
@@ -217,7 +207,7 @@ export default function NextStepsPage() {
         );
       })}
 
-      <div className="section-h">Last — put the plan somewhere it will find you</div>
+      <div className="section-head">Last — put the plan somewhere it will find you</div>
       <DeadlineExport steps={steps} asOf={asOf} />
 
       <div className="foot">
@@ -225,6 +215,6 @@ export default function NextStepsPage() {
         recomputed from the record every time it is opened, so a new document or a signed offer
         reorders it on the spot. PathWise advises; the office decides.
       </div>
-    </main>
+    </>
   );
 }

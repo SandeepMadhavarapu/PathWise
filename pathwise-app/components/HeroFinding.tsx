@@ -1,4 +1,4 @@
-import { formatStatusCode } from "@/lib/status-display";
+import { formatImmigrationStatus } from "@/lib/format";
 
 export function HeroFinding({
   studentName,
@@ -14,10 +14,10 @@ export function HeroFinding({
   voice?: "second" | "third";
 }) {
   const second = voice === "second";
-  const statusDisplay = formatStatusCode(statusLabel);
+  const statusDisplay = formatImmigrationStatus(statusLabel);
 
   return (
-    <div className="hero">
+    <div className="hero surface">
       <div className="eyebrow">The cross-domain finding</div>
       <h1>
         One fact —{" "}

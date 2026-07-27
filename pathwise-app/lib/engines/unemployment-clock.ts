@@ -28,6 +28,13 @@ export const QUALIFYING_MIN_HOURS_PER_WEEK = uc.qualifying_min_hours_per_week;
 // on cannot be read off the result and would otherwise be retyped into the sentence.
 export const STEM_ADDITIONAL_DAYS = uc.stem_additional_days;
 
+// The two authorities this clock is read under, exported for the same reason as the numbers above:
+// a citation retyped into a component is a citation that can drift from the pack it claims to cite.
+// CLOCK_START_CITE is the provision the post-completion window (and so this clock) runs from;
+// TERMINATION_CITE is the one the auto-termination consequence is stated under.
+export const CLOCK_START_CITE = uc.clock_start_cite;
+export const TERMINATION_CITE = uc.termination_cite;
+
 // Display-only band margins (not regulatory). Same convention as AMBER_MARGIN_DAYS in cpt-ledger.
 const RED_MARGIN_DAYS = 15;   // 15 or fewer days remaining => red
 const AMBER_MARGIN_DAYS = 30; // 30 or fewer days remaining => amber

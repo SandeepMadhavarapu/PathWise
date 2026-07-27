@@ -47,7 +47,7 @@ export function AidDeadline({ deadline }: { deadline: AidDeadlineModel }) {
 
       <p className="dl-consequence">{deadline.consequenceOfMissing}</p>
       <div className="dl-foot">
-        {deadline.rule} <span className="cite">{deadline.cite}</span>
+        {deadline.rule} <span className="cite wrap">{deadline.cite}</span>
       </div>
     </section>
   );

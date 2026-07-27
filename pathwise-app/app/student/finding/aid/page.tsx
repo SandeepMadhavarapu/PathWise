@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
 import { priyaAid } from "@/lib/fixtures/priya";
 import { FindingDetail } from "@/components/FindingDetail";
@@ -12,23 +11,11 @@ export default function AidFindingPage() {
   const deadline = resolveAidDeadline(priyaAid);
 
   return (
-    <main className="wrap">
-      <div className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" style={{ textDecoration: "none" }}>
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">the full reasoning behind one finding</span>
-        </div>
-        <Link href="/student" className="pill" style={{ textDecoration: "none" }}>
-          ← Back to dashboard
-        </Link>
-      </div>
-
+    <>
       <FindingDetail finding={finding} />
 
-      <div className="section-h">Three dates, one that counts</div>
+      <div className="section-head">Three dates, one that counts</div>
       <AidDeadline deadline={deadline} />
-    </main>
+    </>
   );
 }

@@ -13,7 +13,7 @@
 // another state's gate is a different pack, not different code.
 
 import type { Student, Event, Finding, DecidingOffice, ISODate } from '../types';
-import { formatStatusCode } from '../status-display';
+import { formatImmigrationStatus } from '../format';
 import pack from '../rulepacks/va-domicile.json';
 
 // The pack owns the condition as a clause. Same deliberately small reader as aid-eligibility's
@@ -45,6 +45,9 @@ export const DOMICILE_OFFICE = eligibleAlienGate.deciding_office as DecidingOffi
 // The pack's own section references. Nothing in the app types a "§" by hand — a citation that can
 // drift from the file it came from is one that will.
 export const GATE_CITE = eligibleAlienGate.cite;
+// The same gate, abbreviated for a compact chip. The full form does not fit a domain card or a
+// hero line, so the pack carries both spellings rather than letting the UI invent the short one.
+export const GATE_DISPLAY_CITE = eligibleAlienGate.display_cite;
 export const CLOCK_CITE = pack.clock.start_rule_cite;
 export const CLOCK_START_RULE_NOTE = pack.clock.start_rule_note;
 export const CLOCK_ANCHOR_DEFINITION = pack.clock.anchor_definition;
@@ -112,7 +115,7 @@ export function checkEligibleAlienGate(student: Student): Finding | undefined {
   if (!GATE_STATUSES.has(status)) return undefined;
 
   // The code is what the gate matches on; this is only how it gets written for a reader.
-  const statusText = formatStatusCode(status);
+  const statusText = formatImmigrationStatus(status);
 
   return {
     rule_id: `${pack.pack_id}:${eligibleAlienGate.id}`,
