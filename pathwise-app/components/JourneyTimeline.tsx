@@ -13,7 +13,8 @@ import {
   type LedgerResult,
 } from "@/lib/engines/cpt-ledger";
 import { CLOCK_START_CITE } from "@/lib/engines/unemployment-clock";
-import { GATE_DISPLAY_CITE } from "@/lib/engines/domicile-gate";
+import { jurisdictionFor } from "@/lib/engines/jurisdiction";
+import { domicileView, lowerLabel } from "@/lib/engines/domicile-gate";
 import { formatImmigrationStatus } from "@/lib/format";
 import type { StatusKey as GlyphStatus } from "@/lib/tokens";
 import { StatusGlyph } from "./StatusGlyph";
@@ -197,6 +198,13 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
 
 export function buildJourney(student: Student, events: Event[], ledger: LedgerResult): Group[] {
   const instById = new Map(student.institutions.map((i) => [i.id, i]));
+  // The status row below names the state whose door the status closes, so it needs to know which
+  // state that is. Resolved from the student's own record; absent cite for a state with no pack.
+  const jx = jurisdictionFor(student);
+  // And whether that state's gate is actually what this status trips — the difference between
+  // quoting a rule and inventing one for a jurisdiction PathWise has never read.
+  const view = jx.packs ? domicileView(jx.packs.domicile) : undefined;
+  const gate = view?.gateStatuses.has(student.immigration.status) ? view : undefined;
 
   const rows: Row[] = [...events]
     .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
@@ -219,9 +227,14 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
       statusLine: "On the student record and unchanged since — no prior status on file.",
       evidence: [],
       evidenceNote: "No document linked — this rests on the student record alone.",
-      why:
-        "The one fact both blocked findings are built on: a student-visa holder cannot establish Virginia domicile, and without domicile there is no Virginia state aid. It also sets which practical-training rules apply at all.",
-      cite: GATE_DISPLAY_CITE,
+      // What this status DOES is a rule, and a rule belongs to a jurisdiction. With a pack whose
+      // gate this status trips, the pack's own words say why; without one, PathWise has no gate to
+      // reason from and says only what is true everywhere — that the status is federal, and the
+      // state question is open. It must not name a state and then assert a rule for it.
+      why: gate
+        ? `The one fact both blocked findings are built on: ${lowerLabel(gate.gateExplain)} Without domicile there is no ${jx.name} state aid. It also sets which practical-training rules apply at all.`
+        : `The single fact the federal findings below are built on. What it means for ${jx.name} residency and state aid depends on ${jx.name}'s own rules, which PathWise has not modelled.`,
+      cite: jx.display?.residencyCite,
     });
   }
 

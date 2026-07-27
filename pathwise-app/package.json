@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test:evidence": "tsc -p tsconfig.test.json && node .test-out/lib/test/evidence-flow.test.js",
     "test:jurisdiction": "tsc -p tsconfig.test.json && node .test-out/lib/test/jurisdiction-routing.test.js",
-    "test": "npm run test:evidence && npm run test:jurisdiction"
+    "test:golden": "tsc -p tsconfig.test.json && node .test-out/lib/test/golden-virginia.test.js",
+    "test": "npm run test:evidence && npm run test:jurisdiction && npm run test:golden",
+    "golden:capture": "tsc -p tsconfig.test.json && node .test-out/lib/test/capture-golden.js"
   },
   "dependencies": {
     "next": "14.2.5",

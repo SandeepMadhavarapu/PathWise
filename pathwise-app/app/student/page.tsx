@@ -2,8 +2,13 @@ import Link from "next/link";
 import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
 import { computeOptBudget, OPT_BUDGET_RULES } from "@/lib/engines/opt-budget";
-import { DOMICILE_DURATION_DAYS, GATE_DISPLAY_CITE, runDomicileGate } from "@/lib/engines/domicile-gate";
-import { AID_DISPLAY_CITE, computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
+import {
+  aidDeadlineFor,
+  aidFindingFor,
+  aidFormFor,
+  jurisdictionFor,
+  residencyFindingFor,
+} from "@/lib/engines/jurisdiction";
 import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
 import type { StepStatus } from "@/lib/engines/next-steps";
 import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget, priyaAid } from "@/lib/fixtures/priya";
@@ -37,7 +42,11 @@ export default function StudentPage() {
   const ledger = computeCptLedger(priyaEvents);
   const masters = ledger.forLevel("masters");
 
-  const domicile = runDomicileGate({
+  // Priya's jurisdiction, resolved from her own record rather than assumed. Every citation this
+  // page prints comes from the packs this resolves to, so the screen cannot outlive its own rules.
+  const jx = jurisdictionFor(priyaStudent);
+
+  const domicile = residencyFindingFor(jx, {
     student: priyaStudent,
     events: priyaEvents,
     intentFactors: [],
@@ -47,8 +56,12 @@ export default function StudentPage() {
   const isBlocked = domicile.result === "ineligible";
 
   // The aid card reads the same verdict the /student/finding/aid screen shows, so the two can't drift.
-  const aid = computeAidEligibility(priyaAid);
+  const aid = aidFindingFor(jx, priyaAid);
   const aidBlocked = aid.result === "ineligible";
+  // ...and the same form selection, which is the part this card used to answer on its own. It said
+  // "File FAFSA path instead" — advice the engine one click away flatly contradicts, because the
+  // block sits inside the form-selection rule and closes the FAFSA route with it.
+  const aidForm = aidFormFor(jx, priyaStudent);
 
   // The plan, from the same engine outputs as everything else on this page. Only the first step is
   // shown here — the whole point of /student/next is that the order is computed, not editorial.
@@ -59,7 +72,7 @@ export default function StudentPage() {
     optBudget: computeOptBudget(priyaOptBudget),
     domicile,
     aid,
-    aidDeadline: resolveAidDeadline(priyaAid),
+    aidDeadline: aidDeadlineFor(jx, priyaAid),
     asOf: priyaOpt.asOf,
   });
   const firstStep = steps[0];
@@ -84,8 +97,10 @@ export default function StudentPage() {
       <HeroFinding
         studentName="Priya"
         statusLabel={priyaStudent.immigration.status}
-        residencyCite={GATE_DISPLAY_CITE}
-        aidCite={AID_DISPLAY_CITE}
+        jurisdictionName={jx.name}
+        residencyText={domicile.rule_citation.text}
+        residencyCite={jx.display?.residencyCite ?? ""}
+        aidCite={jx.display?.aidCite ?? ""}
       />
 
       {firstStep ? (
@@ -147,24 +162,37 @@ export default function StudentPage() {
           }
         />
         <DomainCard
-          domain="Residency (Virginia)"
+          domain={`Residency (${jx.name})`}
           decidingOffice={formatDecidingOffice(domicile.deciding_office)}
           status={isBlocked ? "Blocked by status" : "Under review"}
           band={isBlocked ? "red" : "amber"}
-          detail="Not an error — a reasoned finding. Student-visa holders cannot establish domicile."
-          cite={GATE_DISPLAY_CITE}
+          // The reason is the pack's, carried on the finding. This card used to assert the rule
+          // itself, which made it true only for as long as Virginia was the only pack.
+          detail={`Not an error — a reasoned finding. ${domicile.rule_citation.text}`}
+          cite={jx.display?.residencyCite}
           detailHref="/student/finding/residency"
           detailLabel="See full reasoning →"
         />
         <DomainCard
-          domain="Financial aid (Virginia)"
+          domain={`Financial aid (${jx.name})`}
           decidingOffice={formatDecidingOffice(aid.deciding_office)}
           status={aidBlocked ? "Blocked by status" : "Under review"}
           band={aidBlocked ? "red" : "amber"}
-          detail={`The same ${formatImmigrationStatus(
-            priyaStudent.immigration.status,
-          )} fact makes her ineligible for Virginia state aid. File FAFSA path instead.`}
-          cite={AID_DISPLAY_CITE}
+          // "The same fact" is the hero's cross-domain framing and belongs to the screen. What
+          // follows it does not: the form verdict and the route it leaves open are the engine's
+          // words, so the card and the full reasoning can no longer say opposite things.
+          detail={[
+            aidBlocked
+              ? `The same ${formatImmigrationStatus(
+                  priyaStudent.immigration.status,
+                )} fact closes this door too.`
+              : aid.headline + ".",
+            aidForm ? `${aidForm.label}.` : "",
+            aidForm?.remains ?? "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          cite={jx.display?.aidCite}
           detailHref="/student/finding/aid"
           detailLabel="See full reasoning →"
         />
@@ -176,7 +204,7 @@ export default function StudentPage() {
         <span>
           <span className="ms-k">A refusal is not the whole engine.</span> On a student the gate lets
           through, residency runs the full determination — dependency, every intent factor and its
-          weight, and the {DOMICILE_DURATION_DAYS}-day clock.
+          weight, and the {jx.display?.durationDays}-day clock.
         </span>
         <span className="ms-go">See Engine B do the work →</span>
       </Link>

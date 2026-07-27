@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
-import { GATE_DISPLAY_CITE, runDomicileGate } from "@/lib/engines/domicile-gate";
-import { AID_DISPLAY_CITE } from "@/lib/engines/aid-eligibility";
 import type {
   Event,
   Finding,
@@ -17,12 +15,14 @@ import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { FindingDetail } from "@/components/FindingDetail";
 import { formatDecidingOffice } from "@/lib/format";
-import { describeUnmodelled } from "@/lib/rulepacks";
 import {
-  unmodelledAidFinding,
-  unmodelledResidencyFinding,
-} from "@/lib/engines/unmodelled-jurisdiction";
+  aidFindingFor,
+  aidFormFor,
+  jurisdictionFor,
+  residencyFindingFor,
+} from "@/lib/engines/jurisdiction";
 import { JURISDICTIONS } from "@/lib/coverage";
+import { MODELLED_CODES } from "@/lib/rulepacks";
 
 // The statuses this flow offers (a curated subset of ImmigrationStatus).
 const STATUS_OPTIONS: { value: ImmigrationStatus; label: string }[] = [
@@ -37,11 +37,15 @@ const STATUS_OPTIONS: { value: ImmigrationStatus; label: string }[] = [
 // Every jurisdiction in the coverage file, not a curated handful. A student can now pick their own
 // state and get a truthful answer about it — which for most states is "PathWise has not modelled
 // this", said plainly, with the office that does decide and a link where one has been verified.
-// Virginia stays the default because it is the one with a rule pack behind it.
 const STATE_OPTIONS: { code: string; name: string }[] = JURISDICTIONS.map((j) => ({
   code: j.code,
   name: j.name,
 }));
+
+// The form opens on a jurisdiction that has a pack behind it, so the first thing a visitor sees is
+// the engine doing real work. Which one that is comes from the registry — "the modelled one", not
+// "Virginia". Register a second pack and this keeps meaning what it says.
+const DEFAULT_STATE = MODELLED_CODES[0] ?? JURISDICTIONS[0].code;
 
 // finding.result -> a DomainCard band (green | amber | red). DomainCard has no "gray",
 // so unable_to_verify collapses to amber for the summary card.
@@ -66,7 +70,7 @@ function blankRow(): CptRow {
 
 export default function CheckPage() {
   const [status, setStatus] = useState<ImmigrationStatus>("F1");
-  const [state, setState] = useState<string>("VA");
+  const [state, setState] = useState<string>(DEFAULT_STATE);
   const [rows, setRows] = useState<CptRow[]>([blankRow()]);
   const [submitted, setSubmitted] = useState(false);
   const [showReasoning, setShowReasoning] = useState(false);
@@ -115,36 +119,51 @@ export default function CheckPage() {
   // gates it on the state.
   const ledger = computeCptLedger(events);
 
-  // JURISDICTION ROUTING — asked before any residency reasoning happens.
+  // JURISDICTION ROUTING — resolved once, from the student, before any reasoning happens.
   //
-  // `describeUnmodelled` returns a jurisdiction only when PathWise has NO rule pack for it. When it
-  // does return one, the Virginia engines are not called at all: running them here is exactly how a
-  // SCHEV citation used to end up printed under a Texas heading.
-  const unmodelled = describeUnmodelled(state);
+  // This page used to make the routing decision itself, with a local `if` that chose whether to call
+  // the Virginia engines. That guard was correct and it was the only one in the app. It now lives in
+  // the router, where every caller gets it: `jurisdictionFor` returns packs or it does not, and the
+  // engines cannot run without them. Below, every card reads its state, band and citation off the
+  // finding it was given — nothing on this screen asks which jurisdiction was picked.
+  const jx = jurisdictionFor(student);
+  const unmodelled = jx.unmodelled;
 
-  const finding: Finding = unmodelled
-    ? unmodelledResidencyFinding(unmodelled)
-    : runDomicileGate({
-        student,
-        events,
-        intentFactors: [],
-        allegedEntitlementDate: today,
-      });
+  const finding: Finding = residencyFindingFor(jx, {
+    student,
+    events,
+    intentFactors: [],
+    allegedEntitlementDate: today,
+  });
 
-  // The aid side of the same question. For a modelled jurisdiction this stays the status-gate
-  // reading the page has always shown; for an unmodelled one it is its own honest finding.
-  const aidFinding: Finding | undefined = unmodelled ? unmodelledAidFinding(unmodelled) : undefined;
+  // The aid side of the same question, asked the same way. This used to run only for unmodelled
+  // jurisdictions, with hand-written copy standing in for the finding everywhere else — the last
+  // place on this page where the screen, not the router, decided whether an engine ran.
+  const aidFinding: Finding = aidFindingFor(jx, {
+    student,
+    deadlines: { asOf: today },
+  });
 
-  // `ineligible` is a determinate answer from a real pack. An unmodelled jurisdiction can never
-  // reach it, so the cross-domain hero — which cites SCHEV by name — cannot render off it.
+  // Which form to file, from the same pack that decided the finding. The card below used to answer
+  // this itself with "File the FAFSA path instead" — wrong for exactly the student it was shown to,
+  // since the block that closes state aid sits inside the form-selection rule and closes the FAFSA
+  // route with it. Undefined for an unmodelled state, which has no forms for PathWise to recommend.
+  const aidForm = aidFormFor(jx, student);
+
+  // The hero's whole claim is that ONE fact closed BOTH doors, so it renders when both findings
+  // actually say so — and `ineligible` is a determinate answer only a real pack can reach. That is
+  // the condition, rather than a check on which state was picked.
   const isBlocked = finding.result === "ineligible";
+  const bothDoorsClosed = isBlocked && aidFinding.result === "ineligible";
 
   // Immigration summary: the level closest to the 365-day cliff.
   const closestLevel = ledger.byLevel.length
     ? ledger.byLevel.reduce((a, b) => (b.daysToCliff < a.daysToCliff ? b : a))
     : undefined;
 
-  const stateName = STATE_OPTIONS.find((s) => s.code === state)?.name ?? state;
+  // The resolver already spelled the jurisdiction's name; looking it up a second time from the
+  // dropdown list is a second source of truth for the same fact.
+  const stateName = jx.name;
 
   return (
     <>
@@ -246,12 +265,14 @@ export default function CheckPage() {
 
       {submitted ? (
         <>
-          {isBlocked ? (
+          {bothDoorsClosed ? (
             <HeroFinding
               studentName="You"
               statusLabel={status}
-              residencyCite={GATE_DISPLAY_CITE}
-              aidCite={AID_DISPLAY_CITE}
+              jurisdictionName={jx.name}
+              residencyText={finding.rule_citation.text}
+              residencyCite={jx.display?.residencyCite ?? ""}
+              aidCite={jx.display?.aidCite ?? ""}
               voice="second"
             />
           ) : null}
@@ -291,33 +312,38 @@ export default function CheckPage() {
                         : "PathWise has not yet verified an official source to link."
                     }`
                   : isBlocked
-                    ? "Not an error — a reasoned finding. Student-visa holders cannot establish domicile."
+                    ? // Not an error — a reasoned finding, in the pack's own words rather than a
+                      // rule this page restates on every jurisdiction's behalf.
+                      `Not an error — a reasoned finding. ${finding.rule_citation.text}`
                     : finding.headline
               }
-              // The citation is the jurisdiction's own or none at all. Never a borrowed one.
-              cite={unmodelled ? undefined : GATE_DISPLAY_CITE}
+              // The citation is the jurisdiction's own or none at all. Never a borrowed one — and
+              // now that is the type's doing, not this line's: `display` is absent without a pack.
+              cite={jx.display?.residencyCite}
               detailHref={unmodelled?.source_url}
               detailLabel={unmodelled ? `Official ${stateName} source →` : undefined}
             />
             <DomainCard
               domain={`Financial aid (${stateName})`}
               decidingOffice={formatDecidingOffice("financial_aid")}
-              status={
-                unmodelled
-                  ? "Not modelled by PathWise"
-                  : isBlocked
-                    ? "Blocked by status"
-                    : "Not blocked by your status"
-              }
-              band={aidFinding ? RESULT_CARD_BAND[aidFinding.result] : isBlocked ? "red" : "green"}
+              status={unmodelled ? "Not modelled by PathWise" : aidFinding.headline}
+              band={RESULT_CARD_BAND[aidFinding.result]}
               detail={
                 unmodelled
                   ? `State aid usually rides on the state's own residency determination, which PathWise has not modelled for ${stateName}. This says nothing either way about federal aid.`
-                  : isBlocked
-                    ? `The same status fact makes you ineligible for ${stateName} state aid. File the FAFSA path instead.`
-                    : "Your status does not block state aid — other eligibility rules still apply."
+                  : aidFinding.result === "ineligible"
+                    ? // Everything after the cross-domain framing is the engine's, so this card
+                      // cannot recommend a form the finding behind it says is closed.
+                      [
+                        `The same status fact closes this door too.`,
+                        aidForm ? `${aidForm.label}.` : "",
+                        aidForm?.remains ?? "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")
+                    : `${aidForm?.label ?? "Your status does not block state aid"} — but PathWise has none of your deadlines or evidence on record, so this is not a clearance. See the full reasoning for what is still open.`
               }
-              cite={unmodelled ? undefined : AID_DISPLAY_CITE}
+              cite={jx.display?.aidCite}
             />
           </div>
 

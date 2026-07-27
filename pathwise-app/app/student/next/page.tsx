@@ -2,8 +2,12 @@ import type { DecidingOffice, Finding } from "@/lib/types";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
 import { computeOptBudget } from "@/lib/engines/opt-budget";
-import { runDomicileGate } from "@/lib/engines/domicile-gate";
-import { computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
+import {
+  aidDeadlineFor,
+  aidFindingFor,
+  jurisdictionFor,
+  residencyFindingFor,
+} from "@/lib/engines/jurisdiction";
 import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
 import type { NextStep, StepStatus, StepTier } from "@/lib/engines/next-steps";
 import {
@@ -26,11 +30,13 @@ const STATUS: Record<StepStatus, { glyph: StatusKey; word: string }> = {
   unknown: { glyph: "idle", word: "Unable to verify" },
 };
 
-const DOMAIN_LABEL: Record<Finding["domain"], string> = {
-  immigration: "Immigration (F-1)",
-  residency: "Residency (Virginia)",
-  aid: "Financial aid (Virginia)",
-};
+// Residency and aid are decided by a state; immigration is federal and is not. So the two state
+// domains take the resolved jurisdiction's name rather than a constant — this was a module-scope
+// record reading "Residency (Virginia)", which would have headed a Texas student's plan.
+function domainLabel(domain: Finding["domain"], jurisdictionName: string): string {
+  if (domain === "immigration") return "Immigration (F-1)";
+  return `${domain === "residency" ? "Residency" : "Financial aid"} (${jurisdictionName})`;
+}
 
 const OFFICE_LABEL: Record<DecidingOffice, string> = {
   DSO: "your DSO",
@@ -66,7 +72,7 @@ function marginPhrase(days: number): string {
   return `${days} ${days === 1 ? "day" : "days"} of margin`;
 }
 
-function StepCard({ step }: { step: NextStep }) {
+function StepCard({ step, jurisdictionName }: { step: NextStep; jurisdictionName: string }) {
   return (
     <li className="nsitem">
       <span className={`nsnum ${step.status}`} aria-hidden="true">
@@ -74,7 +80,7 @@ function StepCard({ step }: { step: NextStep }) {
       </span>
       <article className="nscard surface">
         <div className="nshead">
-          <span className="nsdomain">{DOMAIN_LABEL[step.domain]}</span>
+          <span className="nsdomain">{domainLabel(step.domain, jurisdictionName)}</span>
           <StatusChip status={step.status} />
         </div>
 
@@ -134,14 +140,15 @@ export default function NextStepsPage() {
   const ledger = computeCptLedger(priyaEvents);
   const clock = computeUnemploymentClock(priyaOpt);
   const optBudget = computeOptBudget(priyaOptBudget);
-  const domicile = runDomicileGate({
+  const jx = jurisdictionFor(priyaStudent);
+  const domicile = residencyFindingFor(jx, {
     student: priyaStudent,
     events: priyaEvents,
     intentFactors: [],
     allegedEntitlementDate: "2026-08-24",
   });
-  const aid = computeAidEligibility(priyaAid);
-  const aidDeadline = resolveAidDeadline(priyaAid);
+  const aid = aidFindingFor(jx, priyaAid);
+  const aidDeadline = aidDeadlineFor(jx, priyaAid);
 
   const steps = computeNextSteps({
     level: "masters",
@@ -200,7 +207,7 @@ export default function NextStepsPage() {
             <div className="section-head">{heading}</div>
             <ol className="nslist">
               {group.map((step) => (
-                <StepCard key={step.id} step={step} />
+                <StepCard key={step.id} step={step} jurisdictionName={jx.name} />
               ))}
             </ol>
           </section>

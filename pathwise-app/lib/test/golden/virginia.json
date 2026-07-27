@@ -1,0 +1,690 @@
+{
+  "priya:domicile-gate": {
+    "rule_id": "va-domicile:eligible_alien_gate",
+    "domain": "residency",
+    "result": "ineligible",
+    "headline": "F-1 status blocks domicile in Virginia",
+    "reasoning_steps": [
+      {
+        "claim": "The student holds F-1 status, a temporary (student) visa.",
+        "from_events": [],
+        "from_evidence": []
+      },
+      {
+        "claim": "Holders of student or temporary visas do not have the capacity to establish domicile in Virginia. No further domicile analysis is performed.",
+        "from_events": [],
+        "from_evidence": []
+      }
+    ],
+    "rule_citation": {
+      "text": "Holders of student or temporary visas do not have the capacity to establish domicile in Virginia.",
+      "authority": "Part II, Section 03(A) & Section 02(4); SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D)",
+      "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college/determining-domicile",
+      "verified_on": "2026-07-24"
+    },
+    "unknowns": [],
+    "deciding_office": "domicile_officer",
+    "volatility": {
+      "status": "under_litigation",
+      "note": "Tuition equity provision subject to DOJ challenge; re-verify before submission."
+    }
+  },
+  "marcus:domicile-analysis": {
+    "finding": {
+      "rule_id": "va-domicile:analysis",
+      "domain": "residency",
+      "result": "potential_risk",
+      "headline": "Domicile clock started 8 Jun 2026 — the earliest in-state term begins 8 Jun 2027",
+      "reasoning_steps": [
+        {
+          "claim": "The student holds LPR status, which is not one of the statuses that close domicile in Virginia (F-1, J-1 and M-1). The gate does not fire, so the analysis continues — Part II, Section 03(A) & Section 02(4).",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "At the date of alleged entitlement the student is 22, under the pack's threshold of 24, so dependency is rebuttably presumed. It is rebutted: the \"graduate or professional student\" exception is established by the record itself. The timeline carries a masters-level program starting 24 Aug 2026 at School Z, on or before the date of alleged entitlement. The student's own acts are therefore what the intent analysis reads — Section 09(C)(1).",
+          "from_events": [
+            "prog-start-z"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "Of the 6 intent factors the guidelines weigh, 3 are satisfied and count: continuous residence (primary), drivers license (secondary) and VA job offer accepted (primary); 1 is satisfied but does not count: employment — \"Co-op employment confers no domicile.\"; 1 cannot apply to this student: voter registration (immigration.status != 'citizen'); 1 is not on the record: VA income tax filed (primary) — SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D).",
+          "from_events": [
+            "mv-va",
+            "lease-va-signed",
+            "lic-va",
+            "offer-va"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "1 of the qualifying factors is named in the pack's auxiliary-acts warning — drivers license (secondary). \"Acts auxiliary to educational objectives, or routinely performed by temporary residents, carry little weight.\" They support the case; they do not carry it. — Section 06(B).",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "The last qualifying factor is VA job offer accepted on 8 Jun 2026, and the clock starts there. The clock does NOT start on arrival; look at the date on which the LAST of the qualifying factors occurred. Counting from the earliest factor instead (continuous residence, 1 Aug 2024) is the mistake this rule exists to prevent. — Section 05(C)(1).",
+          "from_events": [
+            "offer-va"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "365 days from 8 Jun 2026 is 8 Jun 2027 — the earliest date of alleged entitlement that satisfies the duration requirement. The date claimed here is 24 Aug 2026 (first official day of class of the term), which falls 288 days short.",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "In complex cases, construe the facts in the light most favorable to the student. This record is not a simple one: 1 satisfied factor that a pack caveat takes back out, 1 factor that cannot apply to this status, 1 earlier immigration status on the record and 1 open question. Every reading above that could go either way has gone the student's way, and the officer is directed to do the same. — SCHEV guidance",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "A prior determination by one institution is not binding on another. The record spans 2 institutions. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status.",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "No student shall be denied in-state tuition solely because of parental status. The age presumption applied and was rebutted by the graduate or professional student exception — so the student's own acts are what is weighed, and their parents' domicile is not by itself a reason to deny in-state status.",
+          "from_events": [],
+          "from_evidence": []
+        }
+      ],
+      "rule_citation": {
+        "text": "The clock does NOT start on arrival; look at the date on which the LAST of the qualifying factors occurred.",
+        "authority": "Part II, Section 03(A) & Section 02(4); Section 09(C)(1); Section 05(C)(1); SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D)",
+        "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college/determining-domicile",
+        "verified_on": "2026-07-24"
+      },
+      "unknowns": [
+        {
+          "what": "1 intent factor the guidelines weigh is not on the record: VA income tax filed (primary).",
+          "why_it_matters": "A factor the officer cannot see is a factor that does not help — and because the clock starts at the LAST qualifying factor, one of these dated after 8 Jun 2026 would move the earliest date of entitlement later, not earlier.",
+          "how_to_resolve": "Collect the date and the document for each one, including any that are deliberately absent — an act that never happened is an answer too."
+        }
+      ],
+      "deciding_office": "domicile_officer",
+      "volatility": {
+        "status": "under_litigation",
+        "note": "Tuition equity provision subject to DOJ challenge; re-verify before submission."
+      }
+    },
+    "gated": false,
+    "dependency": {
+      "ageAtEntitlement": 22,
+      "thresholdAge": 24,
+      "presumptionApplies": true,
+      "status": "independent",
+      "exception": {
+        "id": "graduate_or_professional_student",
+        "label": "Graduate or professional student",
+        "basis": "The timeline carries a masters-level program starting 24 Aug 2026 at School Z, on or before the date of alleged entitlement.",
+        "derived": true,
+        "eventIds": [
+          "prog-start-z"
+        ]
+      },
+      "openExceptions": [],
+      "cite": "Section 09(C)(1)"
+    },
+    "intent": {
+      "rows": [
+        {
+          "id": "continuous_residence",
+          "label": "Continuous residence",
+          "weight": "primary",
+          "state": "satisfied",
+          "date": "2024-08-01",
+          "eventIds": [
+            "mv-va",
+            "lease-va-signed"
+          ],
+          "auxiliary": false,
+          "counts": true
+        },
+        {
+          "id": "va_income_tax_filed",
+          "label": "VA income tax filed",
+          "weight": "primary",
+          "state": "not_on_record",
+          "eventIds": [],
+          "auxiliary": true,
+          "auxiliaryAct": "va_tax_filing",
+          "counts": false
+        },
+        {
+          "id": "drivers_license",
+          "label": "Drivers license",
+          "weight": "secondary",
+          "state": "satisfied",
+          "date": "2024-09-12",
+          "eventIds": [
+            "lic-va"
+          ],
+          "auxiliary": true,
+          "auxiliaryAct": "drivers_license",
+          "counts": true
+        },
+        {
+          "id": "voter_registration",
+          "label": "Voter registration",
+          "weight": "secondary",
+          "state": "inapplicable",
+          "eventIds": [],
+          "auxiliary": false,
+          "inapplicableWhen": "immigration.status != 'citizen'",
+          "counts": false,
+          "inapplicableBecause": "LPR status: the pack's own condition on this factor excludes it."
+        },
+        {
+          "id": "employment",
+          "label": "Employment",
+          "weight": "primary",
+          "state": "does_not_count",
+          "date": "2025-05-19",
+          "eventIds": [
+            "emp-coop"
+          ],
+          "auxiliary": false,
+          "caveat": "Co-op employment confers no domicile.",
+          "counts": false,
+          "caveatResolution": "applies"
+        },
+        {
+          "id": "va_job_offer_accepted",
+          "label": "VA job offer accepted",
+          "weight": "primary",
+          "state": "satisfied",
+          "date": "2026-06-08",
+          "eventIds": [
+            "offer-va"
+          ],
+          "auxiliary": false,
+          "counts": true
+        }
+      ],
+      "qualifying": [
+        {
+          "id": "continuous_residence",
+          "label": "Continuous residence",
+          "weight": "primary",
+          "state": "satisfied",
+          "date": "2024-08-01",
+          "eventIds": [
+            "mv-va",
+            "lease-va-signed"
+          ],
+          "auxiliary": false,
+          "counts": true
+        },
+        {
+          "id": "drivers_license",
+          "label": "Drivers license",
+          "weight": "secondary",
+          "state": "satisfied",
+          "date": "2024-09-12",
+          "eventIds": [
+            "lic-va"
+          ],
+          "auxiliary": true,
+          "auxiliaryAct": "drivers_license",
+          "counts": true
+        },
+        {
+          "id": "va_job_offer_accepted",
+          "label": "VA job offer accepted",
+          "weight": "primary",
+          "state": "satisfied",
+          "date": "2026-06-08",
+          "eventIds": [
+            "offer-va"
+          ],
+          "auxiliary": false,
+          "counts": true
+        }
+      ],
+      "auxiliaryQualifying": [
+        {
+          "id": "drivers_license",
+          "label": "Drivers license",
+          "weight": "secondary",
+          "state": "satisfied",
+          "date": "2024-09-12",
+          "eventIds": [
+            "lic-va"
+          ],
+          "auxiliary": true,
+          "auxiliaryAct": "drivers_license",
+          "counts": true
+        }
+      ],
+      "auxiliaryOnly": false,
+      "inapplicable": [
+        {
+          "id": "voter_registration",
+          "label": "Voter registration",
+          "weight": "secondary",
+          "state": "inapplicable",
+          "eventIds": [],
+          "auxiliary": false,
+          "inapplicableWhen": "immigration.status != 'citizen'",
+          "counts": false,
+          "inapplicableBecause": "LPR status: the pack's own condition on this factor excludes it."
+        }
+      ],
+      "disqualified": [
+        {
+          "id": "employment",
+          "label": "Employment",
+          "weight": "primary",
+          "state": "does_not_count",
+          "date": "2025-05-19",
+          "eventIds": [
+            "emp-coop"
+          ],
+          "auxiliary": false,
+          "caveat": "Co-op employment confers no domicile.",
+          "counts": false,
+          "caveatResolution": "applies"
+        }
+      ],
+      "notOnRecord": [
+        {
+          "id": "va_income_tax_filed",
+          "label": "VA income tax filed",
+          "weight": "primary",
+          "state": "not_on_record",
+          "eventIds": [],
+          "auxiliary": true,
+          "auxiliaryAct": "va_tax_filing",
+          "counts": false
+        }
+      ],
+      "warning": {
+        "cite": "Section 06(B)",
+        "note": "Acts auxiliary to educational objectives, or routinely performed by temporary residents, carry little weight.",
+        "acts": [
+          "drivers_license",
+          "vehicle_registration",
+          "post_admission_employment",
+          "va_tax_filing"
+        ]
+      },
+      "cite": "SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D)",
+      "unresolvedMilestones": []
+    },
+    "clock": {
+      "durationDays": 365,
+      "allegedEntitlementDate": "2026-08-24",
+      "startFactor": {
+        "id": "va_job_offer_accepted",
+        "date": "2026-06-08"
+      },
+      "clockStart": "2026-06-08",
+      "earliestEntitlement": "2027-06-08",
+      "meetsDuration": false,
+      "daysShort": 288
+    },
+    "construction": [
+      {
+        "id": "favor_student_in_complex_cases",
+        "cite": "SCHEV guidance",
+        "note": "In complex cases, construe the facts in the light most favorable to the student.",
+        "label": "Favor student in complex cases",
+        "relevant": true,
+        "relevance": "This record is not a simple one: 1 satisfied factor that a pack caveat takes back out, 1 factor that cannot apply to this status, 1 earlier immigration status on the record and 1 open question. Every reading above that could go either way has gone the student's way, and the officer is directed to do the same."
+      },
+      {
+        "id": "determinations_not_transferable",
+        "note": "A prior determination by one institution is not binding on another.",
+        "label": "Determinations not transferable",
+        "relevant": true,
+        "relevance": "The record spans 2 institutions. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status."
+      },
+      {
+        "id": "parental_status_alone_insufficient",
+        "note": "No student shall be denied in-state tuition solely because of parental status.",
+        "label": "Parental status alone insufficient",
+        "relevant": true,
+        "relevance": "The age presumption applied and was rebutted by the graduate or professional student exception — so the student's own acts are what is weighed, and their parents' domicile is not by itself a reason to deny in-state status."
+      }
+    ],
+    "clockRule": {
+      "startRuleNote": "The clock does NOT start on arrival; look at the date on which the LAST of the qualifying factors occurred.",
+      "anchorDefinition": "First official day of class of the term.",
+      "cite": "Section 05(C)(1)"
+    }
+  },
+  "priya:aid-eligibility": {
+    "rule_id": "va-aid:eligibility",
+    "domain": "aid",
+    "result": "ineligible",
+    "headline": "F-1 status blocks Virginia state financial aid",
+    "reasoning_steps": [
+      {
+        "claim": "The student holds F-1 status.",
+        "from_events": [],
+        "from_evidence": []
+      },
+      {
+        "claim": "F-1 status blocks Virginia state financial aid. Virginia state aid is closed by that one fact, before any question of need, merit or paperwork is reached.",
+        "from_events": [],
+        "from_evidence": []
+      },
+      {
+        "claim": "F-1 status blocks Virginia state financial aid, and that block sits inside the form-selection rule itself — so the FAFSA route is closed too. The state alternative is only for students who cannot file the FAFSA, but it applies for the very aid this status blocks, so filing it would not reopen the door. What remains is institutional and private aid, which the financial aid office administers directly.",
+        "from_events": [],
+        "from_evidence": []
+      },
+      {
+        "claim": "Domicile provision — Qualifies via VA domicile (see va-domicile pack). none of its one required item on record yet; still missing: Domicile established.",
+        "from_events": [],
+        "from_evidence": []
+      },
+      {
+        "claim": "Tuition equity provision — Qualifies under tuition-equity provision. 1 of 3 required items on record: Tax filing evidence; still missing: VA high school attendance, VA high school graduation.",
+        "from_events": [],
+        "from_evidence": [
+          "tax_filing_evidence"
+        ]
+      },
+      {
+        "claim": "The deadline that binds is 1 Feb 2027 (college priority date) — the earliest of the three, ahead of state deadline 1 Mar 2027, federal deadline 30 Jun 2027. 192 days of margin from today.",
+        "from_events": [],
+        "from_evidence": []
+      },
+      {
+        "claim": "Campuses are legally prohibited from sharing VASA application information for immigration enforcement. Underpins the no-account / no-store privacy posture.",
+        "from_events": [],
+        "from_evidence": []
+      }
+    ],
+    "rule_citation": {
+      "text": "Students eligible for FAFSA should file FAFSA (covers both federal and state aid). VASA is for students who cannot file FAFSA (e.g., undocumented / tuition-equity students).",
+      "authority": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
+      "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college",
+      "verified_on": "2026-07-24"
+    },
+    "unknowns": [
+      {
+        "what": "Domicile established — required for the domicile provision.",
+        "why_it_matters": "That provision rests on this one item. Without it, PathWise cannot establish it as a route to Virginia state aid.",
+        "how_to_resolve": "Upload the document that establishes it, or ask the financial aid office which proof they accept."
+      },
+      {
+        "what": "VA high school attendance — required for the tuition equity provision.",
+        "why_it_matters": "That provision needs all 3 of its required items. Without it, PathWise cannot establish it as a route to Virginia state aid, and the provision itself is under litigation.",
+        "how_to_resolve": "Upload the document that establishes it, or ask the financial aid office which proof they accept."
+      },
+      {
+        "what": "VA high school graduation — required for the tuition equity provision.",
+        "why_it_matters": "That provision needs all 3 of its required items. Without it, PathWise cannot establish it as a route to Virginia state aid, and the provision itself is under litigation.",
+        "how_to_resolve": "Upload the document that establishes it, or ask the financial aid office which proof they accept."
+      }
+    ],
+    "deciding_office": "financial_aid",
+    "volatility": {
+      "status": "under_litigation",
+      "note": "The tuition equity provision is under litigation. State aid application landscape changing; re-verify VASA rules and dates before submission."
+    }
+  },
+  "priya:aid-deadline": {
+    "candidates": [
+      {
+        "id": "college_priority",
+        "label": "College priority date",
+        "date": "2027-02-01",
+        "binding": true,
+        "note": "The earliest of the three — this is the one that binds."
+      },
+      {
+        "id": "state",
+        "label": "State deadline",
+        "date": "2027-03-01",
+        "binding": false,
+        "note": "28 days later — waiting for this one forfeits the aid the earlier date controls."
+      },
+      {
+        "id": "federal",
+        "label": "Federal deadline",
+        "date": "2027-06-30",
+        "binding": false,
+        "note": "149 days later — waiting for this one forfeits the aid the earlier date controls."
+      }
+    ],
+    "binding": {
+      "id": "college_priority",
+      "label": "College priority date",
+      "date": "2027-02-01",
+      "binding": true,
+      "note": "The earliest of the three — this is the one that binds."
+    },
+    "daysOfMargin": 192,
+    "marginBand": "green",
+    "consequenceOfMissing": "Miss 1 Feb 2027 and the aid that date controls is allocated without this student — the federal deadline on 30 Jun 2027 is 149 days later and does not rescue it.",
+    "rule": "A student's true deadline is the EARLIEST of {college priority date, state deadline, federal deadline}. Surface the earliest, not the federal fallback.",
+    "cite": "SCHEV VASA guidance; institutional priority dates"
+  },
+  "priya:job-offer-consequences": [
+    {
+      "domain": "immigration",
+      "kind": "clock_not_paused",
+      "effect": "Unemployment counter does NOT stop. A signed offer with a future start date does not stop the clock; days between now and the start date still count.",
+      "counterintuitive": true,
+      "applies": true,
+      "tone": "warn",
+      "cite": {
+        "text": "Days are cumulative; future start dates count.",
+        "authority": "SEVP OPT guidance"
+      }
+    },
+    {
+      "domain": "immigration",
+      "kind": "obligation_created",
+      "effect": "New 10-day SEVIS reporting obligation once employment begins.",
+      "counterintuitive": false,
+      "applies": true,
+      "tone": "warn",
+      "newDeadline": {
+        "date": "2026-09-25",
+        "derivation": "employment_start_date + 10 days",
+        "consequenceOfMissing": "Failure to report can lead toward the 90-day no-report auto-termination."
+      },
+      "cite": {
+        "text": "Report employment within 10 days.",
+        "authority": "8 CFR 214.2(f)(12)"
+      }
+    },
+    {
+      "domain": "residency",
+      "kind": "eligibility_changed",
+      "effect": "You might expect a job to help your residency case — but F-1 status blocks Virginia domicile entirely, so this changes nothing for residency.",
+      "counterintuitive": true,
+      "applies": false,
+      "tone": "info",
+      "cite": {
+        "text": "Holders of a student visa cannot establish domicile in Virginia.",
+        "authority": "SCHEV Domicile Guidelines Pt II §03(A)",
+        "verified_on": "2026-07-24"
+      }
+    },
+    {
+      "domain": "immigration",
+      "kind": "finding_invalidated",
+      "effect": "An earlier finding is now stale. \"No immediate OPT risk\" was computed before this offer and must be recomputed.",
+      "counterintuitive": false,
+      "applies": true,
+      "tone": "warn",
+      "supersedes": [
+        "opt_risk_finding",
+        "unemployment_finding"
+      ],
+      "cite": {
+        "text": "Findings are re-derived when the timeline changes.",
+        "authority": "PathWise reasoning model"
+      }
+    }
+  ],
+  "priya:next-steps": [
+    {
+      "id": "opt-unemployment-clock",
+      "tier": "cliff",
+      "title": "Report a qualifying job before your unemployment cap runs out",
+      "why": "70 of 90 unemployment days are already spent, and the count is cumulative — every day of the gap counts, not just the longest one. The STEM extension is not adding days, because no qualifying employment is on record yet.",
+      "domain": "immigration",
+      "status": "attention",
+      "office": "SEVP",
+      "deadline": "2026-08-13",
+      "deadlineLabel": "last day inside the 90-day cap",
+      "leadTimeDays": 10,
+      "leadTimeReason": "SEVIS reporting has its own 10-day window, and a job that starts on the final day leaves no room to report it — the job has to start, and be reported, before the cap.",
+      "effectiveDeadline": "2026-08-03",
+      "daysOfMargin": 10,
+      "headroomDays": 20,
+      "consequenceOfMissing": "If the gap continues, SEVIS auto-terminates the F-1 record on 14 Aug 2026. There is no grace period and no reinstatement.",
+      "cite": "SEVP OPT policy guidance",
+      "order": 1
+    },
+    {
+      "id": "cpt-confirm-total",
+      "tier": "cliff",
+      "title": "Confirm your CPT total with your DSO",
+      "why": "PathWise counts 342 full-time CPT days at the master's level, and 54 of them exist only because 2 part-time authorizations overlapped into a full-time day — 23 short of the 365-day cliff.",
+      "domain": "immigration",
+      "status": "attention",
+      "office": "DSO",
+      "leadTimeDays": 14,
+      "leadTimeReason": "This has to be settled BEFORE the next authorization is signed, not after — and a DSO appointment is not same-day.",
+      "headroomDays": 23,
+      "consequenceOfMissing": "365 or more days of full-time CPT removes OPT eligibility entirely. Usage runs on authorized periods, not hours actually worked. Overtime and unemployment are not recomputed. A single authorization signed without checking the total can cross the cliff on paper alone.",
+      "cite": "8 CFR 214.2(f)(10)(i)",
+      "order": 2
+    },
+    {
+      "id": "opt-end-of-authorization",
+      "tier": "deadline",
+      "title": "Decide what follows your OPT before the authorization ends",
+      "why": "Work authorization at the master's level runs to 15 Feb 2027, and all 12 months at this level are committed — there is nothing left to extend.",
+      "domain": "immigration",
+      "status": "blocked",
+      "office": "USCIS",
+      "deadline": "2027-02-15",
+      "deadlineLabel": "last day of work authorization at this level",
+      "leadTimeDays": 90,
+      "leadTimeReason": "The filing window for practical training opens 90 days ahead — treat that as the runway for arranging whatever comes next, too.",
+      "effectiveDeadline": "2026-11-17",
+      "daysOfMargin": 116,
+      "headroomDays": 116,
+      "consequenceOfMissing": "After 15 Feb 2027 the only cushion is the 60-day grace period, and it requires a qualifying action taken BEFORE the authorization expires — not after.",
+      "cite": "8 CFR 214.2(f)(11)",
+      "order": 3
+    },
+    {
+      "id": "aid-binding-deadline",
+      "tier": "deadline",
+      "title": "Submit your aid application before the college priority date",
+      "why": "State aid is closed by status, but this date still controls the institutional and private aid the same office administers, and it lands 149 days before the deadline most guidance quotes.",
+      "domain": "aid",
+      "status": "verified",
+      "office": "financial_aid",
+      "deadline": "2027-02-01",
+      "deadlineLabel": "college priority date",
+      "leadTimeDays": 30,
+      "leadTimeReason": "Aid offices ask for supporting documents after they read the form, and that request has to fit inside the window too.",
+      "effectiveDeadline": "2027-01-02",
+      "daysOfMargin": 162,
+      "headroomDays": 162,
+      "consequenceOfMissing": "Miss 1 Feb 2027 and the aid that date controls is allocated without this student — the federal deadline on 30 Jun 2027 is 149 days later and does not rescue it.",
+      "cite": "SCHEV VASA guidance; institutional priority dates",
+      "order": 4
+    },
+    {
+      "id": "va-aid:eligibility:unknown-0",
+      "tier": "unknown",
+      "title": "Get domicile established on record",
+      "why": "That provision rests on this one item. Without it, PathWise cannot establish it as a route to Virginia state aid.",
+      "domain": "aid",
+      "status": "unknown",
+      "office": "financial_aid",
+      "leadTimeDays": 30,
+      "leadTimeReason": "The document usually has to come from someone else — a school, a county, a former employer — and their timeline is not yours.",
+      "consequenceOfMissing": "While this is missing it stays an open question in the state financial aid finding, and the financial aid office decides on the record as it stands — not on what is true but undocumented.",
+      "cite": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
+      "howToResolve": "Upload the document that establishes it, or ask the financial aid office which proof they accept.",
+      "order": 5
+    },
+    {
+      "id": "va-aid:eligibility:unknown-1",
+      "tier": "unknown",
+      "title": "Get VA high school attendance on record",
+      "why": "That provision needs all 3 of its required items. Without it, PathWise cannot establish it as a route to Virginia state aid, and the provision itself is under litigation.",
+      "domain": "aid",
+      "status": "unknown",
+      "office": "financial_aid",
+      "leadTimeDays": 30,
+      "leadTimeReason": "The document usually has to come from someone else — a school, a county, a former employer — and their timeline is not yours.",
+      "consequenceOfMissing": "While this is missing it stays an open question in the state financial aid finding, and the financial aid office decides on the record as it stands — not on what is true but undocumented.",
+      "cite": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
+      "howToResolve": "Upload the document that establishes it, or ask the financial aid office which proof they accept.",
+      "order": 6
+    },
+    {
+      "id": "va-aid:eligibility:unknown-2",
+      "tier": "unknown",
+      "title": "Get VA high school graduation on record",
+      "why": "That provision needs all 3 of its required items. Without it, PathWise cannot establish it as a route to Virginia state aid, and the provision itself is under litigation.",
+      "domain": "aid",
+      "status": "unknown",
+      "office": "financial_aid",
+      "leadTimeDays": 30,
+      "leadTimeReason": "The document usually has to come from someone else — a school, a county, a former employer — and their timeline is not yours.",
+      "consequenceOfMissing": "While this is missing it stays an open question in the state financial aid finding, and the financial aid office decides on the record as it stands — not on what is true but undocumented.",
+      "cite": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
+      "howToResolve": "Upload the document that establishes it, or ask the financial aid office which proof they accept.",
+      "order": 7
+    },
+    {
+      "id": "va-domicile:eligible_alien_gate:standing",
+      "tier": "standing",
+      "title": "Confirm with the domicile officer that in-state residency is closed on your current status",
+      "why": "F-1 status blocks domicile in Virginia — one status fact decides it, before need, merit or paperwork is reached.",
+      "domain": "residency",
+      "status": "blocked",
+      "office": "domicile_officer",
+      "leadTimeDays": 14,
+      "leadTimeReason": "Getting in front of the domicile officer is a conversation, not a form — and it is worth having before the choice it affects is made.",
+      "consequenceOfMissing": "Applying on the assumption it is open spends an application cycle and changes nothing. Tuition equity provision subject to DOJ challenge; re-verify before submission.",
+      "cite": "Part II, Section 03(A) & Section 02(4); SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D)",
+      "order": 8
+    },
+    {
+      "id": "va-aid:eligibility:standing",
+      "tier": "standing",
+      "title": "Confirm with the financial aid office that state financial aid is closed on your current status",
+      "why": "F-1 status blocks Virginia state financial aid — one status fact decides it, before need, merit or paperwork is reached.",
+      "domain": "aid",
+      "status": "blocked",
+      "office": "financial_aid",
+      "leadTimeDays": 14,
+      "leadTimeReason": "Getting in front of the financial aid office is a conversation, not a form — and it is worth having before the choice it affects is made.",
+      "consequenceOfMissing": "Applying on the assumption it is open spends an application cycle and changes nothing. The tuition equity provision is under litigation. State aid application landscape changing; re-verify VASA rules and dates before submission.",
+      "cite": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
+      "order": 9
+    },
+    {
+      "id": "opt-recommendation-length",
+      "tier": "standing",
+      "title": "Ask your DSO to confirm how many OPT months you have left",
+      "why": "6 months of pre-completion OPT spent 3 months of the same 12-month budget, which is why the post-completion grant is shorter than a full year.",
+      "domain": "immigration",
+      "status": "attention",
+      "office": "DSO",
+      "leadTimeDays": 14,
+      "leadTimeReason": "The DSO reads this off the authorized dates already on file, and those have to be pulled before anyone can answer.",
+      "consequenceOfMissing": "The recommendation on the I-20 is shortened without explanation, and the 12 months are per level — nothing at the master's level refills them.",
+      "cite": "8 CFR 214.2(f)(11)",
+      "order": 10
+    }
+  ]
+}

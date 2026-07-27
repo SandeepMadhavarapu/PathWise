@@ -4,14 +4,22 @@
 //
 // It reads rulepacks/consequence-map.json (declarative), evaluates each consequence's
 // condition against the event, computes derived deadline DATES from the derivation strings,
-// and is DOMICILE-GATE-AWARE: for a student whose status trips the domicile gate (the gated set is
-// imported from domicile-gate.ts, which reads it from rulepacks/va-domicile.json), residency-domain
+// and is DOMICILE-GATE-AWARE: for a student whose status trips the domicile gate (read from the
+// jurisdiction context the caller resolved, not from any pack this file imports), residency-domain
 // consequences are transformed into an honest "does not apply — blocked by status" note,
 // which reinforces the cross-domain thesis instead of contradicting it.
+//
+// The map is the one rulepack an engine still binds at module scope, and that is only safe because
+// it is jurisdiction-agnostic. It was not: its residency entries used to carry SCHEV section
+// references, which every state would have worn the moment a second pack was registered — the
+// original bug, hiding one file outside the seam. Residency authorities are now resolved from the
+// student's own domicile pack via `cite_from`. See lib/test/jurisdiction-routing.test.ts, which
+// fails if a state's name or authority reappears in this map.
 
 import type { LifeEvent, Student, RuleCitation } from '../types';
 import { formatImmigrationStatus } from '../format';
-import { GATE_STATUSES, DOMICILE_VERIFIED_ON } from './domicile-gate';
+import { domicileView, type DomicileView } from './domicile-gate';
+import type { JurisdictionContext } from './jurisdiction';
 import map from '../rulepacks/consequence-map.json';
 
 export interface DerivedConsequence {
@@ -102,39 +110,93 @@ type RawConsequence = {
   condition?: string;
   new_deadline?: { derivation: string; consequence_of_missing: string };
   supersedes?: string[];
+  /** Which section of the student's domicile pack a residency consequence rests on. */
+  cite_from?: 'clock' | 'dependency';
   cite: RuleCitation;
 };
 
 /**
- * Apply a life event to a student and return the derived consequences across all domains.
+ * The citation for one consequence.
+ *
+ * Immigration and aid entries carry their own: 8 CFR and SEVP guidance answer for every student.
+ * A residency entry does not and must not — the rule it states is general, but the authority for it
+ * belongs to whichever state is deciding. So the map names the pack SECTION (`cite_from`) and the
+ * pack supplies the reference, the source link and the verification date.
  */
-export function applyLifeEvent(student: Student, event: LifeEvent): DerivedConsequence[] {
+function citeFor(c: RawConsequence, v: DomicileView | undefined): RuleCitation {
+  if (c.domain !== 'residency' || !v) return c.cite;
+  const section =
+    c.cite_from === 'clock' ? v.clockCite : c.cite_from === 'dependency' ? v.dependencyCite : undefined;
+  return {
+    text: c.cite.text,
+    // No section named means the pack has no reference for this one; its own authority line stands
+    // alone rather than being padded with a section it does not say.
+    authority: section ? v.authority(section) : v.authority(),
+    source_url: v.sourceUrl,
+    verified_on: v.verifiedOn,
+  };
+}
+
+/**
+ * Apply a life event to a student and return the derived consequences across all domains.
+ *
+ * The immigration and aid consequences are federal or pack-driven and answer for any student. The
+ * residency ones depend on a state's gate, so they need the jurisdiction context: with a pack, the
+ * gate's own statuses and citation decide; without one, PathWise has no gate to reason from and
+ * says so rather than borrowing another state's.
+ */
+export function applyLifeEvent(
+  student: Student,
+  event: LifeEvent,
+  ctx: JurisdictionContext,
+): DerivedConsequence[] {
   const events = (map as any).events as Record<string, { consequences: RawConsequence[] }>;
   const entry = events[event.type];
   if (!entry) return [];
 
-  const gated = GATE_STATUSES.has(student.immigration.status);
+  // No pack means no gate: `undefined`, not `false`. The distinction matters below — "the gate does
+  // not fire" and "there is no gate" are different answers and must not collapse into each other.
+  const v = ctx.packs ? domicileView(ctx.packs.domicile) : undefined;
+  const gated = v ? v.gateStatuses.has(student.immigration.status) : undefined;
+  const statusText = formatImmigrationStatus(student.immigration.status);
   const out: DerivedConsequence[] = [];
 
   for (const c of entry.consequences) {
     if (!evalCondition(c.condition, event)) continue;
 
     // Gate awareness: residency consequences don't fire for a status-blocked student.
-    if (c.domain === 'residency' && gated) {
+    if (c.domain === 'residency' && gated && v) {
       out.push({
         domain: 'residency',
         kind: 'eligibility_changed',
-        effect:
-          `You might expect a job to help your residency case — but ${formatImmigrationStatus(student.immigration.status)} status blocks Virginia domicile entirely, so this changes nothing for residency.`,
+        effect: `You might expect a job to help your residency case — but ${statusText} status blocks ${v.jurisdictionName} domicile entirely, so this changes nothing for residency.`,
         counterintuitive: true,
         applies: false,
         tone: 'info',
         cite: {
-          text: 'Holders of a student visa cannot establish domicile in Virginia.',
-          authority: 'SCHEV Domicile Guidelines Pt II §03(A)',
-          // The gate this suppression rests on is the domicile pack's, so its verification date is
-          // the domicile pack's too — read from the same module the gated statuses come from.
-          verified_on: DOMICILE_VERIFIED_ON,
+          // The gate's own words and section reference, not a sentence retyped beside them.
+          text: v.gateExplain,
+          authority: v.authority(v.gateCite),
+          verified_on: v.verifiedOn,
+        },
+      });
+      continue;
+    }
+
+    // No pack for this state: PathWise cannot say whether the residency door is open, so it will
+    // not say that this event moved it. No citation is attached, because there is none to attach.
+    if (c.domain === 'residency' && gated === undefined) {
+      out.push({
+        domain: 'residency',
+        kind: 'eligibility_changed',
+        effect: `What this means for residency depends on ${ctx.name}'s own rules, which PathWise has not modelled. It will not guess at them from another state's.`,
+        counterintuitive: false,
+        applies: false,
+        tone: 'info',
+        cite: {
+          text: `PathWise has not authored and verified a residency rule pack for ${ctx.name}.`,
+          authority: ctx.unmodelled?.authority ?? `${ctx.name} residency rules — no source verified by PathWise yet`,
+          source_url: ctx.unmodelled?.source_url,
         },
       });
       continue;
@@ -164,7 +226,7 @@ export function applyLifeEvent(student: Student, event: LifeEvent): DerivedConse
       tone,
       newDeadline: nd,
       supersedes: c.supersedes,
-      cite: c.cite,
+      cite: citeFor(c, v),
     });
   }
 

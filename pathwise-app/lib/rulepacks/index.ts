@@ -11,20 +11,27 @@
 // without one gets `unable_to_verify` and a link to the body that actually decides — never
 // Virginia's rules wearing another state's name. See ./unmodelled-jurisdiction.ts for that half.
 //
-// Adding a jurisdiction is authoring a pack and registering it in REGISTRY below. The engines still
-// import the Virginia packs directly (see domicile-gate.ts, domicile.ts, aid-eligibility.ts), so
-// the second pack will also need those three imports parameterised — this file is the seam that
-// makes that a mechanical change instead of an archaeological one, and the honest statement of
-// where the work stands is in ARCHITECTURE_NOTE at the bottom.
+// Adding a jurisdiction is authoring a pack and registering it in REGISTRY below. Nothing else:
+// the engines take their pack as a parameter (see engines/jurisdiction.ts, which is the only thing
+// that calls resolveJurisdiction), so a second pack reaches the screens without an engine edit.
 
 import vaDomicile from './va-domicile.json';
 import vaAid from './va-aid.json';
 import { JURISDICTIONS, jurisdictionByCode, type Jurisdiction } from '../coverage';
 
+/**
+ * The shape of a rule pack, taken from the Virginia packs because they are the worked example every
+ * later pack is authored against. A `typeof` on the JSON rather than a hand-written interface is
+ * deliberate: the pack file is the source of truth for its own shape, and a type retyped beside it
+ * is one that can quietly disagree with it.
+ */
+export type DomicilePack = typeof vaDomicile;
+export type AidPack = typeof vaAid;
+
 /** The packs that decide one jurisdiction's residency and aid questions. */
 export interface JurisdictionPacks {
-  domicile: typeof vaDomicile;
-  aid: typeof vaAid;
+  domicile: DomicilePack;
+  aid: AidPack;
 }
 
 /**
@@ -98,15 +105,8 @@ export const COVERAGE_DISAGREEMENTS: readonly string[] = JURISDICTIONS.flatMap((
   return [];
 });
 
-/**
- * The honest statement of how far "adding a jurisdiction is one file" actually goes today, kept
- * next to the code it describes so it cannot drift into a claim we have stopped earning.
- *
- * True today: which jurisdictions PathWise will reason about, and what a student sees when it will
- * not, are both decided by data — REGISTRY and coverage.json — and no screen decides it privately.
- * NOT yet true: the domicile and aid engines still import the Virginia packs at module scope, so a
- * second pack needs those imports parameterised before it can reach a screen. That is the next
- * change, and it is deliberately not this one.
- */
-export const ARCHITECTURE_NOTE =
-  'Jurisdiction routing is data-driven; the domicile and aid engines still bind the Virginia packs at import and must be parameterised before a second pack can run.';
+// ARCHITECTURE_NOTE used to live here, recording that the engines still bound the Virginia packs at
+// import and had to be parameterised before a second pack could run. That is no longer true, so the
+// note is gone rather than reworded — see engines/jurisdiction.ts. What keeps it true is not this
+// comment but lib/test/jurisdiction-routing.test.ts, which fails if any engine imports a
+// jurisdiction pack again.

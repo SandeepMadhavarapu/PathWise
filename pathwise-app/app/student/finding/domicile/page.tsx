@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { runDomicileAnalysis } from "@/lib/engines/domicile";
-import { DOMICILE_DURATION_DAYS, GATE_CITE } from "@/lib/engines/domicile-gate";
+import { domicileAnalysisFor, jurisdictionFor } from "@/lib/engines/jurisdiction";
 import { marcusDomicile, marcusStudent } from "@/lib/fixtures/marcus";
 import { formatImmigrationStatus } from "@/lib/format";
 import { FindingDetail } from "@/components/FindingDetail";
@@ -12,7 +11,10 @@ import { Capsule } from "@/components/Capsule";
 // past the gate — dependency, the intent factors and their weights, the durational clock, the rules
 // of construction — is computed here by the same engine reading the same rulepack.
 export default function DomicileAnalysisPage() {
-  const analysis = runDomicileAnalysis(marcusDomicile);
+  // Marcus moved Maryland → Virginia; the resolver reads that history and picks the state he is
+  // actually claiming in, rather than the page asserting one.
+  const jx = jurisdictionFor(marcusStudent);
+  const analysis = domicileAnalysisFor(jx, marcusDomicile);
 
   return (
     <>
@@ -30,9 +32,9 @@ export default function DomicileAnalysisPage() {
           the analysis carries on past it. What follows is the whole determination: whether his own
           acts or his parents&apos; are the ones weighed, which factors the guidelines credit and what
           each is worth, which cannot apply to him at all, which ones the guidelines themselves warn
-          carry little weight — and the {DOMICILE_DURATION_DAYS}-day clock, started where the rule
+          carry little weight — and the {jx.display?.durationDays}-day clock, started where the rule
           says it starts rather than where a student would assume.{" "}
-          <span className="cite wrap">{GATE_CITE}</span>
+          <span className="cite wrap">{jx.display?.residencyFullCite}</span>
         </p>
         <div className="jstats">
           <span className="jstat">
@@ -54,7 +56,7 @@ export default function DomicileAnalysisPage() {
 
       <FindingDetail
         finding={analysis.finding}
-        analysis={<DomicileAnalysisDetail analysis={analysis} />}
+        analysis={<DomicileAnalysisDetail analysis={analysis} jurisdictionCode={jx.code} />}
       />
 
       <Link href="/student/finding/residency" className="memorystrip">
@@ -68,7 +70,8 @@ export default function DomicileAnalysisPage() {
       <div className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · Every weight,
         threshold, exception and section reference on this page is read from{" "}
-        <code>lib/rulepacks/va-domicile.json</code>. PathWise advises; the office decides.
+        <code>lib/rulepacks/{jx.packs?.domicile.pack_id ?? "—"}.json</code>. PathWise advises; the
+        office decides.
       </div>
     </>
   );

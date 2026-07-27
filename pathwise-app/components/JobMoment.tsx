@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { applyLifeEvent } from "@/lib/engines/consequence-engine";
+import { jurisdictionFor } from "@/lib/engines/jurisdiction";
 import { priyaStudent, priyaJobOffer } from "@/lib/fixtures/priya";
 import type { StatusKey } from "@/lib/tokens";
 import { StatusGlyph } from "./StatusGlyph";
@@ -11,7 +12,9 @@ const TONE_STATUS: Record<string, StatusKey> = { warn: "warn", ok: "done", info:
 
 export function JobMoment() {
   const [revealed, setRevealed] = useState(false);
-  const consequences = applyLifeEvent(priyaStudent, priyaJobOffer);
+  // The residency consequence turns on a state's gate, so the event is read under the rules of the
+  // state Priya's record puts her in — not under whichever pack the engine happened to import.
+  const consequences = applyLifeEvent(priyaStudent, priyaJobOffer, jurisdictionFor(priyaStudent));
 
   return (
     <div className="moment surface">
@@ -70,6 +73,17 @@ export function JobMoment() {
                     )}
                     <div className="ci-cite">
                       <span className="cite">{c.cite.authority}</span>
+                      {/* An unmodelled jurisdiction's consequence carries the official source the
+                          engine found for it. This component was computing that link and then
+                          dropping it, which is the one case where the link matters most. */}
+                      {c.cite.source_url && (
+                        <>
+                          {" "}
+                          <a href={c.cite.source_url} target="_blank" rel="noreferrer noopener">
+                            Official source →
+                          </a>
+                        </>
+                      )}
                     </div>
                   </div>
                 </li>

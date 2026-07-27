@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { runDomicileGate } from "@/lib/engines/domicile-gate";
+import { jurisdictionFor, residencyFindingFor } from "@/lib/engines/jurisdiction";
 import { priyaStudent, priyaEvents } from "@/lib/fixtures/priya";
 import { FindingDetail } from "@/components/FindingDetail";
 
 export default function ResidencyFindingPage() {
   // Same inputs as the /student dashboard — the finding shown here IS the finding shown there.
-  const domicile = runDomicileGate({
+  const domicile = residencyFindingFor(jurisdictionFor(priyaStudent), {
     student: priyaStudent,
     events: priyaEvents,
     intentFactors: [],

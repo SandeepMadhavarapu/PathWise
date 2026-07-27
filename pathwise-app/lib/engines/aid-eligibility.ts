@@ -1,32 +1,76 @@
 // aid-eligibility.ts — Engine C: the financial-aid reader of the same student record.
 //
 // Four questions, one Finding:
-//   1. Which form does this student file — FAFSA or the state alternative (VASA)?
-//   2. Does their immigration status close the Virginia state-aid door outright?
-//   3. For each Virginia-student provision they might qualify under, what evidence is on record
-//      and what is still missing? (Missing items become honest `unknowns`, never a guess.)
+//   1. Which form does this student file — FAFSA or the state's own alternative?
+//   2. Does their immigration status close that state's aid door outright?
+//   3. For each state provision they might qualify under, what evidence is on record and what is
+//      still missing? (Missing items become honest `unknowns`, never a guess.)
 //   4. What is their REAL deadline — the earliest of {college priority, state, federal}, not the
 //      federal fallback everybody quotes.
 //
-// Everything rule-shaped is read from rulepacks/va-aid.json: the blocked statuses, the
-// form-selection rule, the provisions and their required evidence, the VASA priority date, the
-// earliest-of rule, and the confidentiality note. Nothing here restates a rule the pack owns.
+// Everything rule-shaped is read from the aid pack the caller supplies: the blocked statuses, the
+// form-selection rule, the provisions and their required evidence, the state priority date, the
+// earliest-of rule, and the confidentiality note. Nothing here restates a rule the pack owns, and
+// nothing here names a jurisdiction — see engines/jurisdiction.ts for where a pack comes from.
 
 import type { Student, Finding, ISODate } from '../types';
+import type { AidPack, JurisdictionPacks } from '../rulepacks';
 import { formatImmigrationStatus } from '../format';
-import pack from '../rulepacks/va-aid.json';
+import { jurisdictionByCode } from '../coverage';
 
 // ---- pack shapes (a JSON import can't carry the optional fields we branch on) ----
 type RawBlock = { when: string; result: string; headline: string; cite: string };
 type RawProvision = { id: string; note: string; requires: string[]; volatility?: string };
 
-const BLOCKS: RawBlock[] = pack.form_selection.fafsa_blocks;
-const PROVISIONS: RawProvision[] = pack.va_student_provisions;
+/**
+ * One aid pack, read once, in the vocabulary this engine uses. Same values the module constants
+ * held when the Virginia pack was imported at the top of this file — the change is only that the
+ * pack now arrives with the student instead of being assumed.
+ */
+export interface AidView {
+  packId: string;
+  blocks: RawBlock[];
+  provisions: RawProvision[];
+  jurisdictionCode: string;
+  jurisdictionName: string;
+  /**
+   * The pack's authority abbreviated for a compact chip. `authority` is the full attribution the
+   * findings carry; this is the same source written short enough for a card, in the pack's own
+   * spelling rather than one retyped into a component. Display only — no condition reads it.
+   */
+  displayCite: string;
+  authority: string;
+  sourceUrl: string;
+  verifiedOn: string;
+  formSelectionRule: string;
+  priorityDate: string;
+  deadlineRule: string;
+  deadlineCite: string;
+  confidentialityNote: string;
+  confidentialityConsequence: string;
+  volatility: { status: string; note: string };
+}
 
-// The aid pack's authority, abbreviated for a compact chip. `authority` is the full attribution
-// the findings carry; this is the same source written short enough for a card, and it is the pack's
-// own spelling rather than one retyped into a component. Display only — no condition reads it.
-export const AID_DISPLAY_CITE = pack.display_cite;
+export function aidView(pack: AidPack): AidView {
+  return {
+    packId: pack.pack_id,
+    blocks: pack.form_selection.fafsa_blocks,
+    provisions: pack.state_provisions,
+    jurisdictionCode: pack.jurisdiction,
+    jurisdictionName: jurisdictionByCode(pack.jurisdiction)?.name ?? pack.jurisdiction,
+    displayCite: pack.display_cite,
+    authority: pack.authority,
+    sourceUrl: pack.source_url,
+    verifiedOn: pack.verified_on,
+    formSelectionRule: pack.form_selection.rule,
+    priorityDate: pack.deadlines.priority_date,
+    deadlineRule: pack.deadlines.rule,
+    deadlineCite: pack.deadlines.cite,
+    confidentialityNote: pack.confidentiality.note,
+    confidentialityConsequence: pack.confidentiality.product_consequence,
+    volatility: { status: pack.volatility.status, note: pack.volatility.note },
+  };
+}
 
 export interface AidEligibilityInput {
   student: Student;
@@ -37,7 +81,7 @@ export interface AidEligibilityInput {
   deadlines: {
     /** The college's own priority date. Often the earliest — and the one students never hear about. */
     collegePriority?: ISODate;
-    /** The state deadline. Omit and it is derived from the pack's VASA priority date. */
+    /** The state deadline. Omit and it is derived from the pack's own priority date. */
     state?: ISODate;
     /** The federal deadline (the late fallback most guidance quotes). */
     federal?: ISODate;
@@ -46,13 +90,43 @@ export interface AidEligibilityInput {
   };
 }
 
-export type AidForm = 'FAFSA' | 'VASA' | 'none';
+/**
+ * An AidEligibilityInput with the packs that decide it attached. The jurisdiction router injects
+ * `packs`; callers build the pack-free input, so a fixture stays a record of facts rather than a
+ * claim about whose rules apply.
+ */
+export type AidEligibilityRun = AidEligibilityInput & { packs: JurisdictionPacks };
+
+/**
+ * The form a student files. `state_alternative` is deliberately generic: every state that has one
+ * calls it something different (Virginia's is VASA), and the pack's own `form_selection.rule` is
+ * where that name belongs. A union member spelled in one state's vocabulary is a Virginia binding
+ * in a type every jurisdiction has to share.
+ */
+export type AidForm = 'FAFSA' | 'state_alternative' | 'none';
 
 export interface AidFormSelection {
   form: AidForm;
   label: string;
   reason: string;
+  /**
+   * What the student still has when neither form opens state aid. Present iff `form` is `'none'`.
+   *
+   * It is a field rather than a sentence a screen retypes because a card has no room for the full
+   * `reason` and the alternative — a screen summarising it in its own words — is how "File the FAFSA
+   * path instead" came to sit on the dashboard directly contradicting this engine. The same string
+   * is what `reason` ends with, so the two cannot drift.
+   */
+  remains?: string;
 }
+
+/**
+ * The route a status block leaves open. Stated once, here, and read by both the reasoning step and
+ * the dashboard card — it names an office rather than a form, because the office is what a student
+ * blocked out of both forms can actually still walk into.
+ */
+const REMAINING_ROUTE =
+  'What remains is institutional and private aid, which the financial aid office administers directly.';
 
 export interface ProvisionChecklist {
   id: string;
@@ -108,11 +182,20 @@ function nextOccurrence(mmdd: string, asOf: ISODate): ISODate {
   return toOrdinal(thisYear) >= toOrdinal(asOf) ? thisYear : `${year + 1}-${mmdd}`;
 }
 
-/** Turn an evidence/provision id into readable prose without a hardcoded label table. */
-function humanize(id: string): string {
-  const words = id.split('_').map((w) => (w === 'va' ? 'VA' : w));
+/**
+ * Turn an evidence/provision id into readable prose without a hardcoded label table.
+ *
+ * A pack names some of its ids after its own state ("va_high_school_attendance"), and that token is
+ * an initialism rather than a word. Which token counts is the PACK's jurisdiction code, not a
+ * literal: "id", "in", "or" and "me" are all state codes and all plausible id fragments, so
+ * uppercasing any two-letter token would mangle ids the pack never meant as abbreviations.
+ */
+function humanize(id: string, jurisdictionCode?: string): string {
+  const code = jurisdictionCode?.toLowerCase();
+  const words = id.split('_').map((w) => (code && w === code ? w.toUpperCase() : w));
   const first = words[0];
-  return [first === 'VA' ? first : first.charAt(0).toUpperCase() + first.slice(1), ...words.slice(1)].join(' ');
+  const isInitialism = /^[A-Z]{2,}$/.test(first);
+  return [isInitialism ? first : first.charAt(0).toUpperCase() + first.slice(1), ...words.slice(1)].join(' ');
 }
 
 // A deliberately small, safe evaluator for the one condition shape the pack uses —
@@ -125,17 +208,18 @@ function matchesWhen(when: string, student: Student): boolean {
   return statuses.includes(student.immigration.status);
 }
 
-/** The status block that closes Virginia state aid, if one applies. */
-export function findStatusBlock(student: Student): RawBlock | undefined {
-  return BLOCKS.find((b) => b.result === 'ineligible' && matchesWhen(b.when, student));
+/** The status block that closes this jurisdiction's state aid, if one applies. */
+export function findStatusBlock(student: Student, v: AidView): RawBlock | undefined {
+  return v.blocks.find((b) => b.result === 'ineligible' && matchesWhen(b.when, student));
 }
 
 /**
  * Which form to file. Straight from the pack's form-selection rule: FAFSA covers both federal and
- * state aid, so anyone who can file it should; VASA exists only for students who cannot.
+ * state aid, so anyone who can file it should; the state alternative exists only for students who
+ * cannot.
  */
-export function selectAidForm(student: Student): AidFormSelection {
-  const block = findStatusBlock(student);
+export function selectAidForm(student: Student, v: AidView): AidFormSelection {
+  const block = findStatusBlock(student, v);
   if (!block) {
     return {
       form: 'FAFSA',
@@ -148,16 +232,17 @@ export function selectAidForm(student: Student): AidFormSelection {
   // door it names. VASA cannot reopen a door that status has already closed.
   return {
     form: 'none',
-    label: 'Neither form opens Virginia state aid',
-    reason: `${block.headline}, and that block sits inside the form-selection rule itself — so the FAFSA route is closed too. The state alternative is only for students who cannot file the FAFSA, but it applies for the very aid this status blocks, so filing it would not reopen the door. What remains is institutional and private aid, which the financial aid office administers directly.`,
+    label: `Neither form opens ${v.jurisdictionName} state aid`,
+    reason: `${block.headline}, and that block sits inside the form-selection rule itself — so the FAFSA route is closed too. The state alternative is only for students who cannot file the FAFSA, but it applies for the very aid this status blocks, so filing it would not reopen the door. ${REMAINING_ROUTE}`,
+    remains: REMAINING_ROUTE,
   };
 }
 
 /** Per-provision evidence checklist: what is on record, what is still missing. */
-export function buildProvisionChecklists(input: AidEligibilityInput): ProvisionChecklist[] {
+export function buildProvisionChecklists(input: AidEligibilityRun): ProvisionChecklist[] {
   const have = new Set(input.evidence ?? []);
   const wanted = input.provisions ?? [];
-  return PROVISIONS.filter((p) => wanted.includes(p.id)).map((p) => {
+  return aidView(input.packs.aid).provisions.filter((p) => wanted.includes(p.id)).map((p) => {
     const present = p.requires.filter((r) => have.has(r));
     const missing = p.requires.filter((r) => !have.has(r));
     return {
@@ -176,19 +261,20 @@ export function buildProvisionChecklists(input: AidEligibilityInput): ProvisionC
  * The pack's rule names the three candidates; the labels below are matched to it by keyword, so
  * reordering the rule text cannot mislabel a date.
  */
-export function resolveAidDeadline(input: AidEligibilityInput): AidDeadline {
+export function resolveAidDeadline(input: AidEligibilityRun): AidDeadline {
   const { asOf } = input.deadlines;
+  const v = aidView(input.packs.aid);
 
   // Pull the candidate names out of the rule's own "{a, b, c}" set, so the screen speaks the
   // rulepack's vocabulary. Fall back to plain labels if the rule is ever rewritten without a set.
-  const setText = pack.deadlines.rule.match(/\{([^}]*)\}/)?.[1] ?? '';
+  const setText = v.deadlineRule.match(/\{([^}]*)\}/)?.[1] ?? '';
   const names = setText.split(',').map((s) => s.trim()).filter(Boolean);
   const labelFor = (keyword: string, fallback: string): string => {
     const hit = names.find((n) => n.toLowerCase().includes(keyword));
     return hit ? hit.charAt(0).toUpperCase() + hit.slice(1) : fallback;
   };
 
-  const stateDate = input.deadlines.state ?? nextOccurrence(pack.deadlines.vasa_priority_date, asOf);
+  const stateDate = input.deadlines.state ?? nextOccurrence(v.priorityDate, asOf);
 
   const candidates: DeadlineCandidate[] = [
     { id: 'college_priority', label: labelFor('college', 'College priority date'), date: input.deadlines.collegePriority, binding: false, note: '' },
@@ -228,23 +314,29 @@ export function resolveAidDeadline(input: AidEligibilityInput): AidDeadline {
     daysOfMargin,
     marginBand,
     consequenceOfMissing,
-    rule: pack.deadlines.rule,
-    cite: pack.deadlines.cite,
+    rule: v.deadlineRule,
+    cite: v.deadlineCite,
   };
 }
 
 /**
- * Run the Virginia aid analysis. Returns a Finding, the same shape runDomicileGate returns —
- * one record, three readers.
+ * Run the aid analysis for whichever jurisdiction's pack was injected. Returns a Finding, the same
+ * shape runDomicileGate returns — one record, three readers.
  */
-export function computeAidEligibility(input: AidEligibilityInput): Finding {
+export function computeAidEligibility(input: AidEligibilityRun): Finding {
   const { student } = input;
   const status = student.immigration.status;
+  const v = aidView(input.packs.aid);
 
-  const block = findStatusBlock(student);
-  const form = selectAidForm(student);
+  const block = findStatusBlock(student, v);
+  const form = selectAidForm(student, v);
   const checklists = buildProvisionChecklists(input);
   const deadline = resolveAidDeadline(input);
+
+  // Bound to this pack's own code, so an id the pack abbreviates after itself reads as an
+  // initialism and one it does not stays a word. Never passed to `.map` bare — the index would
+  // arrive as the jurisdiction code.
+  const label = (id: string): string => humanize(id, v.jurisdictionCode);
 
   const steps: Finding['reasoning_steps'] = [
     // Display form only — `status` itself is what the pack's conditions are matched against.
@@ -253,7 +345,7 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
 
   if (block) {
     steps.push({
-      claim: `${block.headline}. Virginia state aid is closed by that one fact, before any question of need, merit or paperwork is reached.`,
+      claim: `${block.headline}. ${v.jurisdictionName} state aid is closed by that one fact, before any question of need, merit or paperwork is reached.`,
       from_events: [],
       from_evidence: [],
     });
@@ -271,11 +363,11 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
     const total = c.present.length + c.missing.length;
     const items = total === 1 ? 'required item' : `of ${total} required items`;
     const tally = c.present.length
-      ? `${c.present.length} ${items} on record: ${c.present.map(humanize).join(', ')}`
+      ? `${c.present.length} ${items} on record: ${c.present.map(label).join(', ')}`
       : `none ${total === 1 ? 'of its one required item' : items} on record yet`;
-    const missingText = c.missing.length ? `; still missing: ${c.missing.map(humanize).join(', ')}` : '';
+    const missingText = c.missing.length ? `; still missing: ${c.missing.map(label).join(', ')}` : '';
     steps.push({
-      claim: `${humanize(c.id)} provision — ${c.note} ${tally}${missingText}.`,
+      claim: `${label(c.id)} provision — ${c.note} ${tally}${missingText}.`,
       from_events: [],
       from_evidence: c.present,
     });
@@ -298,7 +390,7 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
   }
 
   steps.push({
-    claim: `${pack.confidentiality.note} ${pack.confidentiality.product_consequence}`,
+    claim: `${v.confidentialityNote} ${v.confidentialityConsequence}`,
     from_events: [],
     from_evidence: [],
   });
@@ -309,10 +401,10 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
     const total = c.present.length + c.missing.length;
     for (const item of c.missing) {
       unknowns.push({
-        what: `${humanize(item)} — required for the ${humanize(c.id).toLowerCase()} provision.`,
+        what: `${label(item)} — required for the ${label(c.id).toLowerCase()} provision.`,
         why_it_matters: `${
           total === 1 ? 'That provision rests on this one item.' : `That provision needs all ${total} of its required items.`
-        } Without it, PathWise cannot establish it as a route to Virginia state aid${
+        } Without it, PathWise cannot establish it as a route to ${v.jurisdictionName} state aid${
           c.volatility ? `, and the provision itself is ${c.volatility.replace(/_/g, ' ')}` : ''
         }.`,
         how_to_resolve:
@@ -337,7 +429,9 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
     ? 'review_recommended'
     : 'no_issue';
 
-  const headline = block ? block.headline : `${form.label} — Virginia state aid is not blocked by status`;
+  const headline = block
+    ? block.headline
+    : `${form.label} — ${v.jurisdictionName} state aid is not blocked by status`;
 
   // A provision under litigation is more specific to this student than the pack-wide note, so it
   // wins when one is actually in play.
@@ -345,26 +439,26 @@ export function computeAidEligibility(input: AidEligibilityInput): Finding {
   const volatility: Finding['volatility'] = litigated
     ? {
         status: 'under_litigation',
-        note: `The ${humanize(litigated.id).toLowerCase()} provision is under litigation. ${pack.volatility.note}`,
+        note: `The ${label(litigated.id).toLowerCase()} provision is under litigation. ${v.volatility.note}`,
       }
     : {
-        status: pack.volatility.status as NonNullable<Finding['volatility']>['status'],
-        note: pack.volatility.note,
+        status: v.volatility.status as NonNullable<Finding['volatility']>['status'],
+        note: v.volatility.note,
       };
 
   return {
-    rule_id: 'va-aid:eligibility',
+    rule_id: `${v.packId}:eligibility`,
     domain: 'aid',
     result,
     headline,
     reasoning_steps: steps,
     rule_citation: {
-      text: pack.form_selection.rule,
+      text: v.formSelectionRule,
       // The pack's authority line may already name the block's cite; don't say it twice.
       authority:
-        block && !pack.authority.includes(block.cite) ? `${block.cite}; ${pack.authority}` : pack.authority,
-      source_url: pack.source_url,
-      verified_on: pack.verified_on,
+        block && !v.authority.includes(block.cite) ? `${block.cite}; ${v.authority}` : v.authority,
+      source_url: v.sourceUrl,
+      verified_on: v.verifiedOn,
     },
     unknowns,
     deciding_office: 'financial_aid',

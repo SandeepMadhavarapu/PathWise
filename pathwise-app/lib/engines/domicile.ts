@@ -13,32 +13,25 @@
 // Dependency comes before the factors even though its section number is higher: until it is settled
 // the analysis does not know whose acts it is reading — the student's own, or their parents'.
 //
-// Every threshold, weight, exception, caveat, warning and section reference is read from
-// rulepacks/va-domicile.json. This file states no regulatory value of its own; where the pack
-// speaks in prose (a caveat, a warning, a rule of construction), the prose is carried through
-// verbatim and the engine's job is only to decide whether the record engages it — and to say so
-// honestly when it cannot tell.
+// Every threshold, weight, exception, caveat, warning and section reference is read from the
+// domicile pack the caller supplies. This file states no regulatory value of its own and names no
+// jurisdiction; where the pack speaks in prose (a caveat, a warning, a rule of construction), the
+// prose is carried through verbatim and the engine's job is only to decide whether the record
+// engages it — and to say so honestly when it cannot tell.
 
 import type { Event, Finding, ISODate, ProgramLevel, Student } from '../types';
+import type { DomicilePack } from '../rulepacks';
 import { formatImmigrationStatus } from '../format';
-import pack from '../rulepacks/va-domicile.json';
 import {
-  CLOCK_ANCHOR_DEFINITION,
-  CLOCK_CITE,
-  CLOCK_START_RULE_NOTE,
-  DOMICILE_DURATION_DAYS,
-  DOMICILE_OFFICE,
-  DOMICILE_SOURCE_URL,
-  DOMICILE_VERIFIED_ON,
-  DOMICILE_VOLATILITY,
-  GATE_CITE,
-  GATE_STATUSES,
   checkEligibleAlienGate,
   computeDomicileClock,
-  domicileAuthority,
+  domicileView,
+  humanizeId,
+  lowerLabel,
   toOrdinal,
   type DomicileClock,
-  type DomicileInput,
+  type DomicileRun,
+  type DomicileView,
   type IntentFactorFact,
 } from './domicile-gate';
 
@@ -47,22 +40,44 @@ import {
 type RawIntentFactor = { id: string; weight: string; inapplicable_when?: string; caveat?: string };
 type RawConstructionRule = { id: string; note: string; cite?: string };
 
-const INTENT_FACTORS: RawIntentFactor[] = pack.intent_factors;
-const CONSTRUCTION_RULES: RawConstructionRule[] = pack.construction_rules;
-const AUX = pack.auxiliary_acts_warning;
-const DEPENDENCY = pack.dependency;
+/**
+ * The parts of a domicile pack this file reads, resolved once per run.
+ *
+ * These were module constants back when the Virginia pack was imported at the top of this file.
+ * Same values, same reads — the difference is that the pack now arrives with the student, so an
+ * analysis cannot be run without someone having said whose rules it is under.
+ */
+interface DomicileRules {
+  intentFactors: RawIntentFactor[];
+  constructionRules: RawConstructionRule[];
+  auxiliaryCite: string;
+  auxiliaryNote: string;
+  auxiliaryActs: readonly string[];
+  dependencyAgeThreshold: number;
+  dependencyCite: string;
+  dependencyExceptions: readonly string[];
+  // The pack gives a section reference to the auxiliary-acts warning but not to the factor list
+  // itself, so the factor analysis is cited to the pack's own authority line rather than to a
+  // section number PathWise would be inventing for it.
+  intentFactorsAuthority: string;
+  /** The pack's own code, so `humanizeId` knows which token this pack abbreviates itself with. */
+  jurisdictionCode: string;
+}
 
-/** Exported so the screen prints the pack's own numbers, words and section references. */
-export const DEPENDENCY_AGE_THRESHOLD = DEPENDENCY.presumed_dependent_under_age;
-export const DEPENDENCY_CITE = DEPENDENCY.cite;
-export const DEPENDENCY_EXCEPTIONS: readonly string[] = DEPENDENCY.exceptions;
-export const AUXILIARY_CITE = AUX.cite;
-export const AUXILIARY_NOTE = AUX.note;
-export const AUXILIARY_ACTS: readonly string[] = AUX.acts;
-// The pack gives a section reference to the auxiliary-acts warning but not to the factor list
-// itself, so the factor analysis is cited to the pack's own authority line rather than to a
-// section number PathWise would be inventing for it.
-export const INTENT_FACTORS_AUTHORITY = pack.authority;
+function domicileRules(pack: DomicilePack): DomicileRules {
+  return {
+    jurisdictionCode: pack.jurisdiction,
+    intentFactors: pack.intent_factors,
+    constructionRules: pack.construction_rules,
+    auxiliaryCite: pack.auxiliary_acts_warning.cite,
+    auxiliaryNote: pack.auxiliary_acts_warning.note,
+    auxiliaryActs: pack.auxiliary_acts_warning.acts,
+    dependencyAgeThreshold: pack.dependency.presumed_dependent_under_age,
+    dependencyCite: pack.dependency.cite,
+    dependencyExceptions: pack.dependency.exceptions,
+    intentFactorsAuthority: pack.authority,
+  };
+}
 
 // ---- prose helpers -----------------------------------------------------------------------------
 
@@ -74,12 +89,9 @@ export function formatDomicileDate(iso: ISODate): string {
   return `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`;
 }
 
-/** Turn a pack id into readable prose without a hardcoded label table. */
-export function humanizeId(id: string): string {
-  const words = id.split('_').map((w) => (w === 'va' ? 'VA' : w));
-  const first = words[0];
-  return [first === 'VA' ? first : first.charAt(0).toUpperCase() + first.slice(1), ...words.slice(1)].join(' ');
-}
+// `humanizeId` lives in domicile-gate.ts, which the gate's own unknowns also need it for, and is
+// re-exported here because this is where every screen already imports it from.
+export { humanizeId };
 
 function list(items: string[]): string {
   if (items.length <= 1) return items[0] ?? '';
@@ -94,11 +106,6 @@ function isAre(n: number): string {
   return n === 1 ? 'is' : 'are';
 }
 
-/** A label inside a sentence. An initialism is left alone — "VA income tax filed" must not become "vA…". */
-function lowerLabel(s: string): string {
-  if (/^[A-Z]{2,}/.test(s)) return s;
-  return s.charAt(0).toLowerCase() + s.slice(1);
-}
 
 // A few English inflections, stripped so the pack's own two spellings of one act resolve to each
 // other: the warning calls it `va_tax_filing`, the factor list calls it `va_income_tax_filed`.
@@ -203,23 +210,24 @@ function deriveGraduateException(
   return undefined;
 }
 
-export function determineDependency(input: DomicileInput): DependencyDetermination {
+export function determineDependency(input: DomicileRun): DependencyDetermination {
   const { student, events, allegedEntitlementDate } = input;
+  const R = domicileRules(input.packs.domicile);
   const age = ageOn(student.dob, allegedEntitlementDate);
-  const presumptionApplies = age < DEPENDENCY_AGE_THRESHOLD;
+  const presumptionApplies = age < R.dependencyAgeThreshold;
 
   // Only exception ids the pack actually lists are honoured; anything else on the input is not a
   // rule this jurisdiction has.
-  const asserted = (input.dependencyExceptions ?? []).filter((id) => DEPENDENCY_EXCEPTIONS.includes(id));
+  const asserted = (input.dependencyExceptions ?? []).filter((id) => R.dependencyExceptions.includes(id));
 
   const graduateId = 'graduate_or_professional_student';
-  const derived = DEPENDENCY_EXCEPTIONS.includes(graduateId)
+  const derived = R.dependencyExceptions.includes(graduateId)
     ? deriveGraduateException(events, student.institutions, allegedEntitlementDate)
     : undefined;
 
   // Pack order is the guidelines' order, so the first exception the pack lists that this record
   // establishes is the one named — and a derived fact is preferred over an asserted one.
-  const establishedIds = DEPENDENCY_EXCEPTIONS.filter(
+  const establishedIds = R.dependencyExceptions.filter(
     (id) => asserted.includes(id) || (id === graduateId && derived),
   );
   const firedId = establishedIds[0];
@@ -227,7 +235,7 @@ export function determineDependency(input: DomicileInput): DependencyDeterminati
   const exception = firedId
     ? {
         id: firedId,
-        label: humanizeId(firedId),
+        label: humanizeId(firedId, R.jurisdictionCode),
         basis:
           firedId === graduateId && derived
             ? derived.basis
@@ -245,12 +253,12 @@ export function determineDependency(input: DomicileInput): DependencyDeterminati
 
   return {
     ageAtEntitlement: age,
-    thresholdAge: DEPENDENCY_AGE_THRESHOLD,
+    thresholdAge: R.dependencyAgeThreshold,
     presumptionApplies,
     status,
     exception,
-    openExceptions: presumptionApplies && !exception ? DEPENDENCY_EXCEPTIONS : [],
-    cite: DEPENDENCY_CITE,
+    openExceptions: presumptionApplies && !exception ? R.dependencyExceptions : [],
+    cite: R.dependencyCite,
   };
 }
 
@@ -344,10 +352,11 @@ function matchAuxiliaryAct(
   factor: RawIntentFactor,
   fact: IntentFactorFact | undefined,
   events: Event[],
+  auxiliaryActs: readonly string[],
 ): AuxMatch | undefined {
   const factorStems = stems(factor.id);
 
-  for (const act of AUXILIARY_ACTS) {
+  for (const act of auxiliaryActs) {
     const words = act.split('_');
     // A temporal qualifier is followed by the milestone it qualifies — "post_admission_employment"
     // is the act `employment`, qualified as after `admission`. Everything else is the act itself,
@@ -372,19 +381,20 @@ function matchAuxiliaryAct(
   return undefined;
 }
 
-export function analyseIntentFactors(input: DomicileInput): IntentAnalysis {
+export function analyseIntentFactors(input: DomicileRun): IntentAnalysis {
   const { student, events } = input;
+  const R = domicileRules(input.packs.domicile);
   const byId = new Map(input.intentFactors.map((f) => [f.id, f]));
   const unresolvedMilestones = new Set<string>();
 
-  const rows: IntentFactorRow[] = INTENT_FACTORS.map((factor) => {
+  const rows: IntentFactorRow[] = R.intentFactors.map((factor) => {
     const fact = byId.get(factor.id);
-    const aux = matchAuxiliaryAct(factor, fact, events);
+    const aux = matchAuxiliaryAct(factor, fact, events, R.auxiliaryActs);
     if (aux?.unresolvedMilestone && fact) unresolvedMilestones.add(aux.unresolvedMilestone);
 
     const row: IntentFactorRow = {
       id: factor.id,
-      label: humanizeId(factor.id),
+      label: humanizeId(factor.id, R.jurisdictionCode),
       weight: factor.weight,
       state: 'not_on_record',
       date: fact?.date,
@@ -440,8 +450,8 @@ export function analyseIntentFactors(input: DomicileInput): IntentAnalysis {
     inapplicable: rows.filter((r) => r.state === 'inapplicable'),
     disqualified: rows.filter((r) => r.state === 'does_not_count'),
     notOnRecord: rows.filter((r) => r.state === 'not_on_record'),
-    warning: { cite: AUXILIARY_CITE, note: AUXILIARY_NOTE, acts: AUXILIARY_ACTS },
-    cite: INTENT_FACTORS_AUTHORITY,
+    warning: { cite: R.auxiliaryCite, note: R.auxiliaryNote, acts: R.auxiliaryActs },
+    cite: R.intentFactorsAuthority,
     unresolvedMilestones: [...unresolvedMilestones],
   };
 }
@@ -460,11 +470,12 @@ export interface ConstructionRuleApplied {
 }
 
 function applyConstructionRules(
-  input: DomicileInput,
+  input: DomicileRun,
   dependency: DependencyDetermination,
   intent: IntentAnalysis,
   openQuestions: number,
 ): ConstructionRuleApplied[] {
+  const R = domicileRules(input.packs.domicile);
   // What makes this record a "complex case" — stated as the things an officer actually has to
   // weigh, so the rule is never invoked as decoration.
   const complications: string[] = [];
@@ -488,12 +499,12 @@ function applyConstructionRules(
   const transferred =
     institutionCount > 1 || input.events.some((e) => e.type === 'transfer');
 
-  return CONSTRUCTION_RULES.map((rule) => {
+  return R.constructionRules.map((rule) => {
     switch (rule.id) {
       case 'favor_student_in_complex_cases':
         return {
           ...rule,
-          label: humanizeId(rule.id),
+          label: humanizeId(rule.id, R.jurisdictionCode),
           relevant: complications.length > 0,
           relevance: complications.length
             ? `This record is not a simple one: ${list(complications)}. Every reading above that could go either way has gone the student's way, and the officer is directed to do the same.`
@@ -502,7 +513,7 @@ function applyConstructionRules(
       case 'determinations_not_transferable':
         return {
           ...rule,
-          label: humanizeId(rule.id),
+          label: humanizeId(rule.id, R.jurisdictionCode),
           relevant: transferred,
           relevance: transferred
             ? `The record spans ${count(institutionCount, 'institution')}. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status.`
@@ -511,7 +522,7 @@ function applyConstructionRules(
       case 'parental_status_alone_insufficient':
         return {
           ...rule,
-          label: humanizeId(rule.id),
+          label: humanizeId(rule.id, R.jurisdictionCode),
           relevant: dependency.presumptionApplies,
           relevance: dependency.presumptionApplies
             ? dependency.exception
@@ -524,7 +535,7 @@ function applyConstructionRules(
         // than dropping it.
         return {
           ...rule,
-          label: humanizeId(rule.id),
+          label: humanizeId(rule.id, R.jurisdictionCode),
           relevant: true,
           relevance: 'A rule of construction the pack applies to every determination.',
         };
@@ -554,30 +565,37 @@ export interface DomicileAnalysis {
  * exactly as SCHEV Part II §03(A) prescribes. Everything after it is the analysis a student who
  * CAN establish domicile is owed.
  */
-export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
+export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
+  const v = domicileView(input.packs.domicile);
+  const R = domicileRules(input.packs.domicile);
+
   // ---- §03(A) the gate. First, and final if it fires. ----
-  const gated = checkEligibleAlienGate(input.student);
+  const gated = checkEligibleAlienGate(input.student, v);
   if (gated) {
     return { finding: gated, gated: true, construction: [] };
   }
 
   const { student, allegedEntitlementDate } = input;
   const statusText = formatImmigrationStatus(student.immigration.status);
-  const gatedList = list([...GATE_STATUSES].map(formatImmigrationStatus));
+  const gatedList = list([...v.gateStatuses].map(formatImmigrationStatus));
 
   // ---- §09(C)(1) dependency, then §06(B) the factors, then §05(C)(1) the clock ----
   const dependency = determineDependency(input);
   const intent = analyseIntentFactors(input);
-  const clock = computeDomicileClock(intent.qualifying.map((r) => ({ id: r.id, date: r.date! })), allegedEntitlementDate);
+  const clock = computeDomicileClock(
+    intent.qualifying.map((r) => ({ id: r.id, date: r.date! })),
+    allegedEntitlementDate,
+    v.durationDays,
+  );
 
   const unknowns: Finding['unknowns'] = [];
 
   if (dependency.status === 'presumed_dependent') {
     unknowns.push({
-      what: `Does any of the ${DEPENDENCY_EXCEPTIONS.length} exceptions to the dependency presumption apply — ${list(
-        DEPENDENCY_EXCEPTIONS.map((id) => lowerLabel(humanizeId(id))),
+      what: `Does any of the ${R.dependencyExceptions.length} exceptions to the dependency presumption apply — ${list(
+        R.dependencyExceptions.map((id) => lowerLabel(humanizeId(id, R.jurisdictionCode))),
       )}?`,
-      why_it_matters: `Under ${DEPENDENCY_AGE_THRESHOLD} the student is rebuttably presumed dependent, which means the domicile examined is the parents', not the student's own. One established exception moves the whole analysis onto the student's own acts.`,
+      why_it_matters: `Under ${R.dependencyAgeThreshold} the student is rebuttably presumed dependent, which means the domicile examined is the parents', not the student's own. One established exception moves the whole analysis onto the student's own acts.`,
       how_to_resolve:
         'Confirm which of the exceptions the record can evidence, and give the domicile officer the document for it.',
     });
@@ -610,7 +628,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
   }
 
   for (const milestone of intent.unresolvedMilestones) {
-    const name = lowerLabel(humanizeId(milestone));
+    const name = lowerLabel(humanizeId(milestone, R.jurisdictionCode));
     unknowns.push({
       what: `When did ${name} happen?`,
       why_it_matters: `The auxiliary-acts warning qualifies one of its acts against ${name}, so without that date PathWise cannot say whether the act carries little weight or full weight.`,
@@ -625,7 +643,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
   const steps: Finding['reasoning_steps'] = [];
 
   steps.push({
-    claim: `The student holds ${statusText} status, which is not one of the statuses that close domicile in Virginia (${gatedList}). The gate does not fire, so the analysis continues — ${GATE_CITE}.`,
+    claim: `The student holds ${statusText} status, which is not one of the statuses that close domicile in ${v.jurisdictionName} (${gatedList}). The gate does not fire, so the analysis continues — ${v.gateCite}.`,
     from_events: [],
     from_evidence: [],
   });
@@ -636,7 +654,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
         ? `At the date of alleged entitlement the student is ${dependency.ageAtEntitlement}, under the pack's threshold of ${dependency.thresholdAge}, so dependency is rebuttably presumed. It is rebutted: the "${lowerLabel(dependency.exception.label)}" exception is ${
             dependency.exception.derived ? 'established by the record itself' : 'asserted on the record'
           }. ${dependency.exception.basis} The student's own acts are therefore what the intent analysis reads — ${dependency.cite}.`
-        : `At the date of alleged entitlement the student is ${dependency.ageAtEntitlement}, under the pack's threshold of ${dependency.thresholdAge}, so dependency is rebuttably presumed and none of the ${DEPENDENCY_EXCEPTIONS.length} exceptions is established on this record. Until one is, the domicile examined is the parents' — ${dependency.cite}.`
+        : `At the date of alleged entitlement the student is ${dependency.ageAtEntitlement}, under the pack's threshold of ${dependency.thresholdAge}, so dependency is rebuttably presumed and none of the ${R.dependencyExceptions.length} exceptions is established on this record. Until one is, the domicile examined is the parents' — ${dependency.cite}.`
       : `At the date of alleged entitlement the student is ${dependency.ageAtEntitlement}, at or over the pack's threshold of ${dependency.thresholdAge}, so no dependency presumption applies and the student's own acts are what the intent analysis reads — ${dependency.cite}.`,
     from_events: dependency.exception?.eventIds ?? [],
     from_evidence: [],
@@ -674,7 +692,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
   steps.push({
     // Semicolons, not the usual comma-and: each part carries its own comma-separated list of
     // factors inside it, and two levels of comma is unreadable.
-    claim: `Of the ${INTENT_FACTORS.length} intent factors the guidelines weigh, ${factorParts.join(
+    claim: `Of the ${R.intentFactors.length} intent factors the guidelines weigh, ${factorParts.join(
       '; ',
     )} — ${intent.cite}.`,
     from_events: intent.qualifying.flatMap((r) => r.eventIds),
@@ -705,7 +723,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
     steps.push({
       claim: `The last qualifying factor is ${lowerLabel(startRow.label)} on ${formatDomicileDate(
         clock.clockStart,
-      )}, and the clock starts there. ${CLOCK_START_RULE_NOTE}${
+      )}, and the clock starts there. ${v.clockStartRuleNote}${
         earliest && earliest.id !== startRow.id
           ? ` Counting from the earliest factor instead (${lowerLabel(earliest.label)}, ${formatDomicileDate(
               earliest.date!,
@@ -715,7 +733,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
         startRow.auxiliary
           ? ` Note what starts it: an act the warning names as carrying little weight, so the date the whole clock turns on is the weakest kind of act on this record.`
           : ''
-      } — ${CLOCK_CITE}.`,
+      } — ${v.clockCite}.`,
       from_events: startRow.eventIds,
       from_evidence: [],
     });
@@ -725,7 +743,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
         clock.earliestEntitlement!,
       )} — the earliest date of alleged entitlement that satisfies the duration requirement. The date claimed here is ${formatDomicileDate(
         clock.allegedEntitlementDate,
-      )} (${CLOCK_ANCHOR_DEFINITION.toLowerCase().replace(/\.$/, '')}), which ${
+      )} (${v.clockAnchorDefinition.toLowerCase().replace(/\.$/, '')}), which ${
         clock.meetsDuration
           ? 'is on or after it, so the duration requirement is met on the record as it stands.'
           : `falls ${count(clock.daysShort, 'day')} short.`
@@ -735,7 +753,7 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
     });
   } else {
     steps.push({
-      claim: `No factor on this record both applies and counts, so the ${clock.durationDays}-day clock has no start date yet. ${CLOCK_START_RULE_NOTE} — ${CLOCK_CITE}.`,
+      claim: `No factor on this record both applies and counts, so the ${clock.durationDays}-day clock has no start date yet. ${v.clockStartRuleNote} — ${v.clockCite}.`,
       from_events: [],
       from_evidence: [],
     });
@@ -764,20 +782,20 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
         )}`;
 
   const finding: Finding = {
-    rule_id: `${pack.pack_id}:analysis`,
+    rule_id: `${v.packId}:analysis`,
     domain: 'residency',
     result,
     headline,
     reasoning_steps: steps,
     rule_citation: {
-      text: CLOCK_START_RULE_NOTE,
-      authority: domicileAuthority(GATE_CITE, dependency.cite, intent.cite, CLOCK_CITE),
-      source_url: DOMICILE_SOURCE_URL,
-      verified_on: DOMICILE_VERIFIED_ON,
+      text: v.clockStartRuleNote,
+      authority: v.authority(v.gateCite, dependency.cite, intent.cite, v.clockCite),
+      source_url: v.sourceUrl,
+      verified_on: v.verifiedOn,
     },
     unknowns,
-    deciding_office: DOMICILE_OFFICE,
-    volatility: DOMICILE_VOLATILITY,
+    deciding_office: v.office,
+    volatility: v.volatility,
   };
 
   return {
@@ -788,9 +806,9 @@ export function runDomicileAnalysis(input: DomicileInput): DomicileAnalysis {
     clock,
     construction,
     clockRule: {
-      startRuleNote: CLOCK_START_RULE_NOTE,
-      anchorDefinition: CLOCK_ANCHOR_DEFINITION,
-      cite: CLOCK_CITE,
+      startRuleNote: v.clockStartRuleNote,
+      anchorDefinition: v.clockAnchorDefinition,
+      cite: v.clockCite,
     },
   };
 }

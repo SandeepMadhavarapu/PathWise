@@ -1,21 +1,30 @@
-import { computeAidEligibility, resolveAidDeadline } from "@/lib/engines/aid-eligibility";
-import { priyaAid } from "@/lib/fixtures/priya";
+import { aidDeadlineFor, aidFindingFor, jurisdictionFor } from "@/lib/engines/jurisdiction";
+import { priyaAid, priyaStudent } from "@/lib/fixtures/priya";
 import { FindingDetail } from "@/components/FindingDetail";
 import { AidDeadline } from "@/components/AidDeadline";
 
 export default function AidFindingPage() {
+  // Resolved from the student's own record, so this screen answers under the rules of the state she
+  // is actually in rather than the one whose pack happened to be imported.
+  const jx = jurisdictionFor(priyaStudent);
+
   // Same input the /student dashboard reads — the finding shown here IS the finding shown there.
-  const finding = computeAidEligibility(priyaAid);
+  const finding = aidFindingFor(jx, priyaAid);
   // The Finding carries the deadline as prose in its reasoning; the panel below shows the same
-  // arithmetic as structure, so the earliest-of rule is visible and not just asserted.
-  const deadline = resolveAidDeadline(priyaAid);
+  // arithmetic as structure, so the earliest-of rule is visible and not just asserted. An unmodelled
+  // jurisdiction has no priority date to compute from, so there is no panel to show.
+  const deadline = aidDeadlineFor(jx, priyaAid);
 
   return (
     <>
       <FindingDetail finding={finding} />
 
-      <div className="section-head">Three dates, one that counts</div>
-      <AidDeadline deadline={deadline} />
+      {deadline ? (
+        <>
+          <div className="section-head">Three dates, one that counts</div>
+          <AidDeadline deadline={deadline} />
+        </>
+      ) : null}
     </>
   );
 }

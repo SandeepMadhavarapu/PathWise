@@ -1,6 +1,7 @@
 {
   "pack_id": "consequence-map",
   "description": "The Event Consequence Engine's core table. One life event -> consequences across all three domains. This is the product's central originality: it is why PathWise is one product, not three.",
+  "authority_rule": "This map applies to every jurisdiction, so no entry may carry a state's authority. Immigration-domain entries cite federal law, which does not vary. Residency-domain entries state the rule in general terms and name the domicile pack section they rest on in `cite_from` ('clock' | 'dependency'); the engine resolves that against whichever pack the router supplied, so the authority line is always the deciding state's own. An entry with no `cite_from` falls back to that pack's top-level authority.",
   "verified_on": "2026-07-24",
   "events": {
     "job_offer_signed": {
@@ -28,7 +29,8 @@
           "kind": "clock_started",
           "effect": "A job can be a domicile intent factor; if it were the last qualifying factor, the one-year clock would start today.",
           "condition": "attrs.is_coop != true",
-          "cite": { "text": "The clock starts at the date of the last qualifying intent factor.", "authority": "SCHEV Domicile Guidelines §05(C)(1)" }
+          "cite_from": "clock",
+          "cite": { "text": "The clock starts at the date of the last qualifying intent factor." }
         },
         {
           "domain": "immigration",
@@ -61,7 +63,8 @@
           "kind": "clock_started",
           "effect": "May start or advance the domicile clock as an intent factor (unless co-op, which confers no domicile). If it is the last qualifying factor, the one-year clock starts today.",
           "condition": "attrs.is_coop != true",
-          "cite": { "text": "Clock starts at the last qualifying intent factor.", "authority": "SCHEV Section 05(C)(1)" }
+          "cite_from": "clock",
+          "cite": { "text": "Clock starts at the last qualifying intent factor." }
         },
         {
           "domain": "immigration",
@@ -108,7 +111,7 @@
           "domain": "residency",
           "kind": "eligibility_changed",
           "effect": "Domicile analysis switches to the new state's rule pack; a prior determination does not transfer.",
-          "cite": { "text": "Determinations are not transferable.", "authority": "SCHEV guidance" }
+          "cite": { "text": "Determinations are not transferable." }
         }
       ]
     },
@@ -119,7 +122,8 @@
           "domain": "residency",
           "kind": "eligibility_changed",
           "effect": "Rebuttable dependency presumption no longer applies; student is evaluated on their own factors.",
-          "cite": { "text": "Presumed dependent under 24.", "authority": "SCHEV Section 09(C)(1)" }
+          "cite_from": "dependency",
+          "cite": { "text": "Presumed dependent under 24." }
         }
       ]
     }

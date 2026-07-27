@@ -3,7 +3,8 @@
 // It renders inside FindingDetail (as its `analysis` slot), not beside it: the numbered claims are
 // the answer, and these are the tables, weights and arithmetic those claims are read off. Every
 // number, weight word, clause and section reference on screen arrives from the engine, which reads
-// it from rulepacks/va-domicile.json — nothing here is typed by hand, including the citations.
+// it from whichever domicile pack the router resolved for this student — nothing here is typed by
+// hand, including the citations, and nothing here names a jurisdiction.
 //
 // Vocabulary is the app's four states (icon + word + colour, never colour alone). A factor that
 // simply cannot apply to this student is deliberately NOT given a status chip: it is not an
@@ -11,7 +12,6 @@
 // words.
 
 import {
-  AUXILIARY_CITE,
   formatDomicileDate,
   humanizeId,
   type DependencyDetermination,
@@ -82,10 +82,22 @@ function BlockHead({ title, cite }: { title: string; cite?: string }) {
   );
 }
 
-export function DomicileAnalysisDetail({ analysis }: { analysis: DomicileAnalysis }) {
+export function DomicileAnalysisDetail({
+  analysis,
+  jurisdictionCode,
+}: {
+  analysis: DomicileAnalysis;
+  /**
+   * The resolved jurisdiction's code, from the router. `humanizeId` needs it to know which token a
+   * pack abbreviates itself with; without it an id is still readable, just not initialised. The
+   * component takes it as a prop rather than reaching for a pack, same as every other screen.
+   */
+  jurisdictionCode?: string;
+}) {
   const { dependency, intent, clock, clockRule, construction, gated } = analysis;
+  const label = (id: string): string => humanizeId(id, jurisdictionCode);
 
-  // The gate fired: SCHEV Part II §03(A) stops the analysis, so there is nothing deeper to show.
+  // The gate fired and stopped the analysis, so there is nothing deeper to show.
   // Inventing a table here would be inventing an analysis that was never performed.
   if (gated || !dependency || !intent || !clock || !clockRule) return null;
 
@@ -123,7 +135,7 @@ export function DomicileAnalysisDetail({ analysis }: { analysis: DomicileAnalysi
             </div>
             <ul className="dm-inline">
               {dependency.openExceptions.map((id) => (
-                <li key={id}>{humanizeId(id)}</li>
+                <li key={id}>{label(id)}</li>
               ))}
             </ul>
             <div className="dm-sub-v">
@@ -182,8 +194,10 @@ export function DomicileAnalysisDetail({ analysis }: { analysis: DomicileAnalysi
 
               {row.auxiliary ? (
                 <div className="dm-row-note">
-                  The warning names this act — {humanizeId(row.auxiliaryAct ?? row.id)}{" "}
-                  <span className="cite wrap">{AUXILIARY_CITE}</span>
+                  The warning names this act — {label(row.auxiliaryAct ?? row.id)}{" "}
+                  {/* The warning's own cite, carried on the analysis the engine returned, so it is
+                      this jurisdiction's section reference and not one imported from elsewhere. */}
+                  <span className="cite wrap">{intent.warning.cite}</span>
                 </div>
               ) : null}
 
@@ -208,7 +222,7 @@ export function DomicileAnalysisDetail({ analysis }: { analysis: DomicileAnalysi
             const hit = intent.rows.find((r) => r.auxiliaryAct === act);
             return (
               <li className={`dm-act ${hit ? "hit" : "off"}`} key={act}>
-                <span className="dm-act-k">{humanizeId(act)}</span>
+                <span className="dm-act-k">{label(act)}</span>
                 <span className="dm-act-v">
                   {hit ? `on this record as ${hit.label}` : "not among this student's factors"}
                 </span>
@@ -236,7 +250,7 @@ export function DomicileAnalysisDetail({ analysis }: { analysis: DomicileAnalysi
               {clock.startFactor
                 ? `the LAST qualifying factor: ${
                     intent.rows.find((r) => r.id === clock.startFactor!.id)?.label ??
-                    humanizeId(clock.startFactor.id)
+                    label(clock.startFactor.id)
                   }`
                 : "no factor on this record both applies and counts"}
             </span>
