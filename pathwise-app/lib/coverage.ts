@@ -50,6 +50,13 @@ export const STATE_COUNT = JURISDICTIONS.filter((j) => !NON_STATE_CODES.has(j.co
 
 /** Fully modelled and verified against the primary source. */
 export const IMPLEMENTED_COUNT = COVERAGE_COUNTS.implemented ?? 0;
+/**
+ * The names of those jurisdictions, so a screen can say WHICH one is modelled without typing
+ * "Virginia" into copy. The landing page names it; author a second pack and the sentence follows.
+ */
+export const MODELLED_NAMES = JURISDICTIONS.filter((j) => j.status === 'implemented').map(
+  (j) => j.name,
+);
 /** Everything that is not yet fully modelled — the honest remainder. */
 export const UNMODELLED_COUNT = JURISDICTION_COUNT - IMPLEMENTED_COUNT;
 /** Not modelled at all: no rule pack, and the UI links to the official source instead. */
