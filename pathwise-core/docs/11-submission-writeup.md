@@ -3,7 +3,7 @@
 **Title:** PathWise
 **Category:** Overcoming Obstacles
 
-> Paste the text between the lines into the submission form. Word count: **496.**
+> Paste the text between the lines into the submission form. Word count: **497.**
 
 ---
 
@@ -43,9 +43,10 @@ cliff, the finding sits in "unable to verify" — and adding the document makes 
 It requires no account and sends nothing to a server. For a population that reasonably fears data
 collection, that is not a feature; it is the difference between using the tool and closing the tab.
 
-Fifty states and DC are present with honest coverage status. Virginia is fully modelled. Adding a
-jurisdiction is authoring one file, not writing code — which is how this scales past the students we
-built it for.
+Virginia is fully modelled; all fifty states and DC are listed with an honest coverage status,
+including the forty-five where the answer is still "not yet". Adding a jurisdiction means authoring
+one more rule pack, not writing code — and a regression test asserts that no state is ever shown
+another state's citation.
 
 Students shouldn't need to become paralegals to keep their status. PathWise holds the history,
 does the arithmetic, shows its work, and says what to do next.
@@ -53,7 +54,7 @@ does the arithmetic, shows its work, and says what to do next.
 ---
 
 ## Notes for submitting
-- **Word count is 496** — do not add sentences without cutting others; over-length can disqualify.
+- **Word count is 497** — do not add sentences without cutting others; over-length can disqualify.
 - Category to select: **Overcoming Obstacles**.
 - Keep the tools list separate (deliverable #5): Claude Code / Claude API, Next.js, React,
   TypeScript, Vercel, GitHub — plus anything else actually used.
