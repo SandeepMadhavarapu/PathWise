@@ -46,7 +46,8 @@ import { humanizeId } from '../engines/domicile-gate';
 import { UNLISTED_REGISTRATIONS } from '../jurisdiction-coverage';
 import { JURISDICTIONS, jurisdictionByCode } from '../coverage';
 import { priyaJobOffer } from '../fixtures/priya';
-import type { Student } from '../types';
+import type { Finding, Student } from '../types';
+import type { IntentFactorFact } from '../engines/domicile-gate';
 
 // Virginia's abbreviated gate cite, read from the resolver rather than imported from the engine —
 // the engine no longer has one to import, which is the point of the whole change.
@@ -904,6 +905,180 @@ assert(
       allegedEntitlementDate: ENTITLEMENT,
     });
     assert('Tennessee still has no clock even when given the fact', tn.clock === undefined, tn.clock);
+  }
+}
+
+
+// ---------------------------------------------------------------------------------------------
+console.log('');
+console.log('Phase 7 — the presentation layer cannot claim more than the engines established');
+// ---------------------------------------------------------------------------------------------
+
+// ---- A. No negative aid claim without an aid pack behind it ----
+//
+// /check guarded its aid card on `jx.unmodelled`, which is set only when a jurisdiction has NO
+// packs. Phase 6 made `aid` optional per jurisdiction, so Tennessee and Texas — residency modelled,
+// aid not — fell through the gap and the card printed "PathWise has not modelled Tennessee state
+// aid rules" as its status and "Your status does not block state aid" as its detail, together. A
+// negative regulatory claim about a rule PathWise has never read, with no citation attached.
+{
+  const FORBIDDEN = [
+    'does not block state aid',
+    'status does not block',
+    'not blocked by status',
+  ];
+  const problems: string[] = [];
+
+  for (const { code, packs } of REGISTERED_PACKS) {
+    if (packs.aid) continue; // has aid rules — a claim about them is earned
+    const s: Student = {
+      id: code,
+      immigration: { status: 'F1', prior_statuses: [] },
+      dob: '2000-01-01',
+      institutions: [],
+      jurisdiction_history: [{ state: code, from: '2026-07-28' }],
+    };
+    const jx = jurisdictionFor(s);
+    const aid = aidFindingFor(jx, { student: s, deadlines: { asOf: '2026-07-28' } });
+
+    // The card's own inputs: with no aid pack there is no form selection to recommend, and the
+    // headline must say the rules are not modelled rather than describing them.
+    if (aidFormFor(jx, s) !== undefined) problems.push(`${code}: aidFormFor returned a form with no aid pack`);
+    if (aid.result !== 'unable_to_verify') problems.push(`${code}: aid result is ${aid.result}, expected unable_to_verify`);
+    for (const phrase of FORBIDDEN) {
+      if (aid.headline.toLowerCase().includes(phrase)) problems.push(`${code}: headline claims "${phrase}"`);
+    }
+    if (!aid.headline.includes(jx.name)) problems.push(`${code}: headline does not name the jurisdiction`);
+  }
+  assert(
+    'a jurisdiction with no aid pack makes no claim about whether status blocks aid',
+    problems.length === 0,
+    problems,
+  );
+
+  // The status line and the detail branch are driven by the same condition, so they cannot
+  // contradict. This asserts the condition itself is per-DOMAIN, not per-jurisdiction.
+  const tn = jurisdictionForCode('TN');
+  if (tn.packs) {
+    assert(
+      'Tennessee has residency rules but no aid rules — the case the guard must distinguish',
+      tn.packs.domicile !== undefined && tn.packs.aid === undefined,
+    );
+    assert(
+      'and jx.unmodelled is NOT set for it, which is why a per-jurisdiction guard missed it',
+      tn.unmodelled === undefined,
+    );
+  }
+}
+
+// ---- E. Every registered jurisdiction can link the source it was authored against ----
+for (const { code, packs } of REGISTERED_PACKS) {
+  assert(
+    `${code}: its domicile pack carries the source it was authored against`,
+    packs.domicile.source_url.startsWith('https://'),
+    packs.domicile.source_url,
+  );
+}
+
+// ---- B. Factor validation, and gate/analysis parity ----
+//
+// runDomicileGate handed `intentFactors` straight to the clock with no check, so any id started it:
+// `{ id: 'i_simply_declare_myself_a_resident' }` returned "Domicile duration of 365 days appears
+// satisfied". The full analysis had always refused the same input. One pack and one record produced
+// two contradictory answers depending only on which entry point was used.
+{
+  const mk = (code: string, status: 'LPR' | 'citizen' = 'LPR'): Student => ({
+    id: code,
+    immigration: { status, prior_statuses: [] },
+    dob: '2000-01-01',
+    institutions: [],
+    jurisdiction_history: [{ state: code, from: '2023-01-01' }],
+  });
+  const E = '2026-08-24';
+  const started = (f: Finding) => /duration|clock started|earliest/.test(f.headline);
+
+  // An invented id counts for nothing, on every registered pack.
+  for (const { code, packs } of REGISTERED_PACKS) {
+    if (!packs.domicile.clock) continue; // no clock to start
+    const f = residencyFindingFor(jurisdictionForCode(code), {
+      student: mk(code),
+      events: [],
+      intentFactors: [{ id: 'i_simply_declare_myself_a_resident', date: '2024-01-01' }],
+      allegedEntitlementDate: E,
+    });
+    assert(`${code}: an invented factor id does not start the clock`, !started(f), f.headline);
+    assert(
+      `${code}: and the ignored factor is surfaced rather than dropped in silence`,
+      JSON.stringify(f).includes('i_simply_declare_myself_a_resident'),
+    );
+  }
+
+  // Parity across every class of factor a pack can define.
+  const CASES: { label: string; code: string; status: 'LPR' | 'citizen'; factors: IntentFactorFact[] }[] = [
+    { label: 'invented id', code: 'VA', status: 'LPR', factors: [{ id: 'nope', date: '2024-01-01' }] },
+    { label: 'genuine factor', code: 'VA', status: 'LPR', factors: [{ id: 'continuous_residence', date: '2024-01-01' }] },
+    { label: 'inapplicable factor (non-citizen)', code: 'VA', status: 'LPR', factors: [{ id: 'voter_registration', date: '2024-01-01' }] },
+    { label: 'same factor, applicable (citizen)', code: 'VA', status: 'citizen', factors: [{ id: 'voter_registration', date: '2024-01-01' }] },
+    { label: 'caveat engaged', code: 'VA', status: 'LPR', factors: [{ id: 'employment', date: '2024-01-01', attrs: { is_coop: true } }] },
+    { label: 'caveat not engaged', code: 'VA', status: 'LPR', factors: [{ id: 'employment', date: '2024-01-01', attrs: { is_coop: false } }] },
+    { label: 'caveat UNRESOLVED', code: 'VA', status: 'LPR', factors: [{ id: 'employment', date: '2024-01-01' }] },
+    { label: 'mixed good + invented', code: 'VA', status: 'LPR', factors: [{ id: 'continuous_residence', date: '2024-01-01' }, { id: 'nope', date: '2025-01-01' }] },
+    { label: 'genuine factor', code: 'TX', status: 'LPR', factors: [{ id: 'continuous_residence', date: '2024-01-01' }] },
+    { label: 'invented id', code: 'TX', status: 'LPR', factors: [{ id: 'nope', date: '2024-01-01' }] },
+  ];
+
+  const divergences: string[] = [];
+  for (const c of CASES) {
+    if (!isModelled(c.code)) continue;
+    const jx = jurisdictionForCode(c.code);
+    const gate = residencyFindingFor(jx, {
+      student: mk(c.code, c.status), events: [], intentFactors: c.factors, allegedEntitlementDate: E,
+    });
+    const analysis = domicileAnalysisFor(jx, {
+      student: mk(c.code, c.status), events: [], intentFactors: c.factors, allegedEntitlementDate: E,
+    });
+    const gateStarted = started(gate);
+    const analysisStarted = Boolean(analysis.clock?.clockStart);
+    if (gateStarted !== analysisStarted) {
+      divergences.push(`${c.code} ${c.label}: gate=${gateStarted} analysis=${analysisStarted}`);
+    }
+  }
+  assert(
+    `gate and analysis agree on all ${CASES.length} factor cases — one pack, one record, one answer`,
+    divergences.length === 0,
+    divergences,
+  );
+
+  // The specific correction that mattered: an UNRESOLVED caveat must still count. Fail-closed is
+  // about not asserting more than the rules support, not about refusing everything uncertain —
+  // dropping it would understate a student's case on a fact nobody has established either way.
+  const unresolved = domicileAnalysisFor(jurisdictionForCode('VA'), {
+    student: mk('VA'), events: [],
+    intentFactors: [{ id: 'employment', date: '2024-01-01' }],
+    allegedEntitlementDate: E,
+  });
+  assert(
+    'an unresolved caveat still counts toward the clock rather than being dropped',
+    unresolved.clock?.clockStart === '2024-01-01',
+    unresolved.clock?.clockStart,
+  );
+
+  // And the jurisdictions that must be unaffected by any of it.
+  if (isModelled('TN')) {
+    const tn = residencyFindingFor(jurisdictionForCode('TN'), {
+      student: mk('TN'), events: [],
+      intentFactors: [{ id: 'continuous_residence', date: '2024-01-01' }],
+      allegedEntitlementDate: E,
+    });
+    assert('Tennessee stays gateless and clockless whatever is supplied', !/\d{2,4}[- ]day/.test(JSON.stringify(tn)));
+  }
+  if (isModelled('TX')) {
+    const tx = domicileAnalysisFor(jurisdictionForCode('TX'), {
+      student: mk('TX'), events: [],
+      intentFactors: [{ id: 'continuous_residence', date: '2024-01-01' }],
+      allegedEntitlementDate: E,
+    });
+    assert('Texas still accepts continuous_residence and runs its clock', tx.clock?.clockStart === '2024-01-01', tx.clock?.clockStart);
   }
 }
 

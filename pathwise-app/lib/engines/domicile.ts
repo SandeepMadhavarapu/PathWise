@@ -23,9 +23,11 @@ import type { Event, Finding, ISODate, ProgramLevel, Student } from '../types';
 import type { DomicilePack } from '../rulepacks';
 import { formatImmigrationStatus } from '../format';
 import {
+  CAVEAT_FACTS,
   checkEligibleAlienGate,
   computeDomicileClock,
   domicileView,
+  evaluateStatusClause,
   humanizeId,
   lowerLabel,
   toOrdinal,
@@ -132,30 +134,9 @@ function stems(id: string): Set<string> {
 
 // ---- the one condition shape the pack's clauses use ---------------------------------------------
 
-/**
- * Evaluate a pack clause about immigration status — `in ['F1','J1']`, `== 'citizen'`, `!= 'citizen'`.
- * Returns undefined for a shape this reader does not understand, so an unreadable rule is declined
- * rather than guessed at (the same discipline as the gate and the aid engine).
- */
-function evaluateStatusClause(clause: string, student: Student): boolean | undefined {
-  const status = student.immigration.status;
-
-  const inMatch = clause.match(/immigration\.status\s+in\s+\[([^\]]*)\]/);
-  if (inMatch) {
-    return inMatch[1]
-      .split(',')
-      .map((s) => s.trim().replace(/^['"]|['"]$/g, ''))
-      .includes(status);
-  }
-
-  const cmp = clause.match(/immigration\.status\s*(!==|!=|===|==|=)\s*['"]?([A-Za-z0-9_-]+)['"]?/);
-  if (cmp) {
-    const [, op, value] = cmp;
-    return op.startsWith('!') ? status !== value : status === value;
-  }
-
-  return undefined;
-}
+// evaluateStatusClause and CAVEAT_FACTS moved to domicile-gate.ts so the GATE path applies the
+// same disqualifications this file does. Two implementations of one rule is how the paths came
+// to disagree; there is one now, imported above.
 
 // ---- dependency (§09(C)(1)) ---------------------------------------------------------------------
 
@@ -323,7 +304,7 @@ export interface IntentAnalysis {
 // timeline actually carries, matched against the pack's own words. A caveat whose fact is not
 // recognised is surfaced verbatim as a question for the officer — never silently applied, never
 // silently dropped.
-const CAVEAT_FACTS: { attr: string; matches: RegExp }[] = [{ attr: 'is_coop', matches: /co-?op/i }];
+// CAVEAT_FACTS moved to domicile-gate.ts — see the note above.
 
 // An auxiliary act id may carry a temporal qualifier ("post_admission_employment"): the act is only
 // auxiliary if it happened after a milestone the timeline can date. The milestone is resolved

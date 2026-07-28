@@ -451,10 +451,19 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
+/* The width is set inline, server-side and correct. `width: 0%` used to be the base here and the
+   real width arrived from JavaScript, so with JS off every bar in the product was empty — the CPT
+   ledger, the OPT budget and the unemployment clock all rendered as blank rails. The animation
+   below grows the bar FROM zero TO the width it already has, so the motion is decoration on a
+   correct state rather than the thing that produces it. Under prefers-reduced-motion the global
+   reset drops the animation and the bar sits at its true width immediately. */
 .segprog-seg {
   height: 100%;
-  width: 0%;
-  transition: width 500ms var(--ease);
+  animation: segGrow 500ms var(--ease) backwards;
+}
+@keyframes segGrow {
+  from { width: 0%; }
+  to { width: var(--seg-w, 0%); }
 }
 .segprog-seg.done { background: var(--status-done); }
 .segprog-seg.active { background: var(--status-active); }
@@ -604,6 +613,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .domain-card { padding: var(--space-4); display: flex; flex-direction: column; }
 .domain-card-head { display: flex; align-items: flex-start; gap: var(--space-2); }
 .domain-card-head-text { min-width: 0; }
+/* The card title can carry a short qualifier capsule ("partial rules") beside it — see DomainCard. */
+.domain-card-head-text .t-card-title { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
 .domain-card-progress { margin-top: var(--space-3); }
 .domain-card-findings { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: flex; flex-direction: column; }
 .domain-card-finding-row {

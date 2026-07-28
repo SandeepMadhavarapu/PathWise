@@ -21,6 +21,8 @@ import {
   jurisdictionFor,
   residencyFindingFor,
 } from "@/lib/engines/jurisdiction";
+import type { StatusKey } from "@/lib/tokens";
+import type { CapabilityLevel } from "@/lib/rulepacks/schema";
 import { JURISDICTIONS } from "@/lib/coverage";
 import { MODELLED_NAMES } from "@/lib/jurisdiction-coverage";
 import { assertDefaultIsRegistered, DEFAULT_CHECK_JURISDICTION } from "@/lib/rulepacks";
@@ -169,6 +171,40 @@ export default function CheckPage() {
   // since the block that closes state aid sits inside the form-selection rule and closes the FAFSA
   // route with it. Undefined for an unmodelled state, which has no forms for PathWise to recommend.
   const aidForm = aidFormFor(jx, student);
+
+  // Whether PathWise has AID rules for this jurisdiction, as opposed to any rules at all.
+  //
+  // `jx.unmodelled` is set only when a jurisdiction has NO packs, and every branch on this page used
+  // it as though it meant "no aid rules". Phase 6 made `aid` optional per jurisdiction — Tennessee
+  // and Texas ship residency rules and no aid rules — and those two fell straight through the gap:
+  // the card printed "PathWise has not modelled Tennessee state aid rules" as its status and
+  // "Your status does not block state aid" as its detail, on the same card. A negative regulatory
+  // claim about a rule PathWise has never read is the worst thing this product can say, and it was
+  // saying it with no citation attached.
+  const aidModelled = Boolean(jx.packs?.aid);
+
+  // How far each domain has actually been carried here, read off the pack's own declared capability.
+  // Nothing below names a state: a jurisdiction that declares `partial` says so on its own card, and
+  // one that declares `modelled` says nothing extra.
+  const levelFor = (domain: "residency" | "aid"): CapabilityLevel | undefined => {
+    const packs = jx.packs;
+    if (!packs) return undefined;
+    const source = domain === "residency" ? packs.domicile : packs.aid;
+    return source?.capabilities.find((c) => c.domain === domain)?.level;
+  };
+  const qualifierFor = (domain: "residency" | "aid"): string | undefined =>
+    levelFor(domain) === "partial" ? "partial rules" : undefined;
+
+  // Not knowing is not a warning. A finding PathWise could not settle is shown neutral rather than
+  // amber, so the colour does not claim more than the finding does.
+  const toneFor = (f: Finding): StatusKey | undefined =>
+    f.result === "unable_to_verify" ? "idle" : undefined;
+
+  // The official source for each domain, from the pack that decides it. Only ever a source PathWise
+  // has actually recorded: a registered jurisdiction links its pack's, an unmodelled one links the
+  // index entry's where a verified one exists, and neither is invented to fill a gap.
+  const residencySource = jx.packs?.domicile.source_url ?? unmodelled?.source_url;
+  const aidSource = jx.packs?.aid?.source_url ?? unmodelled?.source_url;
 
   // The hero's whole claim is that ONE fact closed BOTH doors, so it renders when both findings
   // actually say so — and `ineligible` is a determinate answer only a real pack can reach. That is
@@ -375,6 +411,8 @@ export default function CheckPage() {
                 unmodelled ? "Not modelled by PathWise" : isBlocked ? "Blocked by status" : finding.headline
               }
               band={RESULT_CARD_BAND[finding.result]}
+              tone={toneFor(finding)}
+              qualifier={qualifierFor("residency")}
               detail={
                 unmodelled
                   ? `PathWise will not run another state's rules under a ${stateName} heading. ${
@@ -391,17 +429,33 @@ export default function CheckPage() {
               // The citation is the jurisdiction's own or none at all. Never a borrowed one — and
               // now that is the type's doing, not this line's: `display` is absent without a pack.
               cite={jx.display?.residencyCite}
-              detailHref={unmodelled?.source_url}
-              detailLabel={unmodelled ? `Official ${stateName} source →` : undefined}
+              // Linked for every jurisdiction PathWise has a recorded source for, not only the ones
+              // it has no rules for. A registered pack carries the source it was authored against,
+              // and a reader who wants to check the citation should not have to leave the page to
+              // find where it came from.
+              detailHref={residencySource}
+              detailLabel={residencySource ? `Official ${stateName} source →` : undefined}
             />
             <DomainCard
               domain={`Financial aid (${stateName})`}
               decidingOffice={formatDecidingOffice("financial_aid")}
-              status={unmodelled ? "Not modelled by PathWise" : aidFinding.headline}
+              // The finding's own headline in every case. It already says the right thing for all
+              // three — the block, or that the rules are not modelled, naming the state — so there
+              // is no branch here to get wrong.
+              status={aidFinding.headline}
               band={RESULT_CARD_BAND[aidFinding.result]}
+              tone={toneFor(aidFinding)}
+              qualifier={qualifierFor("aid")}
               detail={
-                unmodelled
-                  ? `State aid usually rides on the state's own residency determination, which PathWise has not modelled for ${stateName}. This says nothing either way about federal aid.`
+                // Three states, because there are three. The middle one is the one that was missing.
+                !aidModelled
+                  ? [
+                      `PathWise has not read ${stateName}'s state-aid rules, so it cannot say whether your status opens or closes that door — in either direction.`,
+                      unmodelled
+                        ? `State aid usually rides on the state's own residency determination, which PathWise has not modelled for ${stateName}.`
+                        : `Residency in ${stateName} is modelled; state aid is not, and the two are decided separately.`,
+                      `This says nothing either way about federal aid.`,
+                    ].join(" ")
                   : aidFinding.result === "ineligible"
                     ? // Everything after the cross-domain framing is the engine's, so this card
                       // cannot recommend a form the finding behind it says is closed.
@@ -412,9 +466,14 @@ export default function CheckPage() {
                       ]
                         .filter(Boolean)
                         .join(" ")
-                    : `${aidForm?.label ?? "Your status does not block state aid"} — but PathWise has none of your deadlines or evidence on record, so this is not a clearance. See the full reasoning for what is still open.`
+                    : // Reachable only with an aid pack behind it, so `aidForm` is always present
+                      // here and the old "Your status does not block state aid" fallback — which is
+                      // what leaked out for Tennessee and Texas — has nothing left to fall back to.
+                      `${aidForm?.label ?? aidFinding.headline} — but PathWise has none of your deadlines or evidence on record, so this is not a clearance. See the full reasoning for what is still open.`
               }
               cite={jx.display?.aidCite}
+              detailHref={aidSource}
+              detailLabel={aidSource ? `Official ${stateName} aid source →` : undefined}
             />
           </div>
 

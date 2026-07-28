@@ -118,6 +118,66 @@ export interface DomicileView {
   authority: (...cites: string[]) => string;
 }
 
+
+// ---------------------------------------------------------------------------------------------
+// Shared factor qualification. Used by BOTH this file's gate path and the full analysis in
+// domicile.ts, because one pack and one record must not produce two different answers depending on
+// which entry point the caller happened to use.
+//
+// These lived in domicile.ts and were reachable only from the full analysis, so the gate path
+// counted factors the analysis disqualified: a non-citizen's voter registration (excluded by the
+// pack's own `inapplicable_when`) and co-op employment (excluded by the pack's own caveat) both
+// started the durational clock on one path and not on the other. Moved rather than reimplemented —
+// a second implementation of a rule is a second thing to keep in sync, which is how the divergence
+// started.
+// ---------------------------------------------------------------------------------------------
+
+/**
+ * Evaluate a pack clause about immigration status — `in ['F1','J1']`, `== 'citizen'`,
+ * `!= 'citizen'`. Returns undefined for a shape this reader does not understand, so an unreadable
+ * rule is declined rather than guessed at (the same discipline as the gate and the aid engine).
+ */
+export function evaluateStatusClause(clause: string, student: Student): boolean | undefined {
+  const status = student.immigration.status;
+
+  const inMatch = clause.match(/immigration\.status\s+in\s+\[([^\]]*)\]/);
+  if (inMatch) {
+    return inMatch[1]
+      .split(',')
+      .map((s) => s.trim().replace(/^['"]|['"]$/g, ''))
+      .includes(status);
+  }
+
+  const cmp = clause.match(/immigration\.status\s*(!==|!=|===|==|=)\s*['"]?([A-Za-z0-9_-]+)['"]?/);
+  if (cmp) {
+    const [, op, value] = cmp;
+    return op.startsWith('!') ? status !== value : status === value;
+  }
+
+  return undefined;
+}
+
+/**
+ * The facts a pack's caveats turn on. Each entry names a fact the timeline actually carries, matched
+ * against the pack's own words — a caveat whose fact is not recognised is never silently applied and
+ * never silently dropped.
+ */
+export const CAVEAT_FACTS: { attr: string; matches: RegExp }[] = [
+  { attr: 'is_coop', matches: /co-?op/i },
+];
+
+/** Whether a pack's caveat on a factor is ENGAGED by this record. Undefined when unresolvable. */
+export function caveatApplies(
+  caveat: string | undefined,
+  attrs: Record<string, unknown> | undefined,
+): boolean | undefined {
+  if (!caveat) return false;
+  const recogniser = CAVEAT_FACTS.find((c) => c.matches.test(caveat));
+  const value = recogniser ? attrs?.[recogniser.attr] : undefined;
+  if (!recogniser || value === undefined) return undefined;
+  return value === true;
+}
+
 /** Read a domicile pack into the view above. Pure; no pack is imported to build it. */
 export function domicileView(pack: DomicilePack): DomicileView {
   // The primary gate — for jurisdiction-level DISPLAY only ("the clause that closes this door").
@@ -318,12 +378,53 @@ export {
  * full one, and it starts by calling the same gate.
  */
 export function runDomicileGate(run: DomicileRun): Finding {
-  const { student, intentFactors, allegedEntitlementDate } = run;
+  const { student, allegedEntitlementDate } = run;
   const v = domicileView(run.packs.domicile);
 
   // GATE — runs first, stops analysis if it fires.
   const gated = checkEligibleAlienGate(student, v);
   if (gated) return gated;
+
+  // Only factors this pack actually weighs can start this pack's clock.
+  //
+  // This path used to hand `run.intentFactors` straight to the clock with no check, so ANY id
+  // started it — `{ id: 'i_simply_declare_myself_a_resident' }` returned "Domicile duration of 365
+  // days appears satisfied". The full analysis in domicile.ts has always matched supplied factors
+  // against `pack.intent_factors` and rejected the same input, so one pack and one record produced
+  // two contradictory answers depending only on which entry point the caller used. That divergence
+  // was the defect; a wrong answer from the permissive half was how it showed up.
+  //
+  // Dropped rather than thrown, which is what every other reader in this codebase does with input
+  // it cannot account for: the gate declines a clause it cannot parse, the consequence engine
+  // declines a condition it cannot evaluate. An id the pack does not know is not an error by the
+  // caller, it is a fact PathWise has no rule for — and the honest response is to not count it and
+  // to say so, which `ignoredFactors` below does through the finding's own `unknowns`.
+  //
+  // Three disqualifications, and all three are the PACK's own: the factor must be one this
+  // jurisdiction weighs, its `inapplicable_when` clause must not exclude this student, and its
+  // caveat must not be engaged by this record. The full analysis has always applied all three; this
+  // path applied none of them, so a non-citizen's voter registration and co-op employment each
+  // started the clock here and were correctly refused there.
+  const declared = new Map((run.packs.domicile.intent_factors ?? []).map((f) => [f.id, f]));
+  const counts = (f: IntentFactorFact): boolean => {
+    const factor = declared.get(f.id);
+    if (!factor) return false;
+    if (factor.inapplicable_when && evaluateStatusClause(factor.inapplicable_when, student) === true) {
+      return false;
+    }
+    // Disqualified only when the caveat DEFINITELY applies. `undefined` means the record cannot
+    // settle whether it does, and the analysis counts such a factor while raising the caveat as an
+    // open question — so `!== true` rather than `=== false`, which would drop it.
+    //
+    // Worth stating plainly, because the first version of this line got it backwards: fail-closed
+    // is about not asserting more than the rules support, NOT about refusing everything uncertain.
+    // Dropping an unresolved factor would have understated a student's own case on the strength of
+    // a fact nobody has established either way, which is its own kind of wrong answer.
+    return caveatApplies(factor.caveat, f.attrs) !== true;
+  };
+
+  const intentFactors = run.intentFactors.filter(counts);
+  const ignoredFactors = run.intentFactors.filter((f) => !counts(f));
 
   // A jurisdiction with no durational requirement has no clock to run, and inventing one of zero
   // days would be inventing a rule. The honest answer names what PathWise does model here.
@@ -366,6 +467,22 @@ export function runDomicileGate(run: DomicileRun): Finding {
       headline: 'No qualifying intent factors on record',
       reasoning_steps: [
         { claim: 'The domicile clock starts at the last qualifying intent factor; none are recorded.', from_events: [], from_evidence: [] },
+        // Only when something WAS supplied and none of it counted. Saying so is the difference
+        // between "you told me nothing" and "what you told me is not a factor this state weighs",
+        // and a reader who supplied a date deserves to know which of those happened.
+        ...(ignoredFactors.length > 0
+          ? [
+              {
+                claim: `${ignoredFactors.length} supplied ${
+                  ignoredFactors.length === 1 ? 'factor does' : 'factors do'
+                } not count toward ${v.jurisdictionName}'s clock — either not weighed by this jurisdiction, excluded by the pack's own condition on the factor, or caught by its caveat: ${ignoredFactors
+                  .map((f) => f.id)
+                  .join(', ')}.`,
+                from_events: [],
+                from_evidence: [],
+              },
+            ]
+          : []),
       ],
       rule_citation: {
         text: v.clockStartRuleNote,
@@ -395,6 +512,14 @@ export function runDomicileGate(run: DomicileRun): Finding {
     allegedEntitlementDate,
   });
 
+  // Anything supplied and not counted is surfaced as an open question rather than dropped in
+  // silence, so "I gave PathWise a date and nothing happened" is never a mystery.
+  const ignoredUnknowns: Finding['unknowns'] = ignoredFactors.map((f) => ({
+    what: `"${f.id}" did not count toward ${v.jurisdictionName}'s durational clock.`,
+    why_it_matters: `It was supplied with this record and was not counted — either ${v.jurisdictionName} does not weigh it, or the pack's own condition on that factor excludes this student, or its caveat is engaged. PathWise will not start a clock on a factor the jurisdiction's own rules do not credit.`,
+    how_to_resolve: `Check it against the ${v.intentFactorIds.length} factors ${v.jurisdictionName} weighs, or ask its deciding office how this fact is treated.`,
+  }));
+
   return {
     rule_id: `${v.packId}:clock`,
     domain: 'residency',
@@ -420,7 +545,7 @@ export function runDomicileGate(run: DomicileRun): Finding {
       source_url: v.sourceUrl,
       verified_on: v.verifiedOn,
     },
-    unknowns: [],
+    unknowns: ignoredUnknowns,
     deciding_office: v.office,
   };
 }
