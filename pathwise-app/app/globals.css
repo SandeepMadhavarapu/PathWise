@@ -822,17 +822,29 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sh-fact-v { margin: 0; font-size: 17px; line-height: 1.35; color: var(--text); letter-spacing: -0.01em; }
 .sh-fact-v strong { font-weight: 600; }
 
-/* The connector. A hairline, a caption, a hairline — the "one thing becomes three" beat, drawn
-   rather than described, and cheap enough that it costs nothing to render. */
+/* The connector: a hairline, a caption, a hairline. The "one thing becomes three" beat, drawn
+   rather than described, and cheap enough that it costs nothing to render.
+   The two lines scale out from the caption when the page loads — see the choreography below. */
 .sh-flow { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; }
 .sh-flow-line { flex: 1; height: 1px; background: var(--border-strong); }
+.sh-flow-line:first-child { transform-origin: right center; }
+.sh-flow-line:last-child { transform-origin: left center; }
 .sh-flow-note { flex: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
   font-weight: 700; color: var(--text-muted); text-align: center; }
 
-.sh-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+/* `perspective` on the parent is what makes the settle below a real depth move rather than a scale:
+   the cards come forward along Z toward the reader, which is the difference between "three things
+   appeared" and "three things resolved". 1200px is shallow on purpose — enough to read as depth,
+   not enough to read as a trick. */
+.sh-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column;
+  gap: var(--space-2); perspective: 1200px; }
 .sh-row { display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4);
   background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border-strong);
-  border-radius: var(--radius-input); }
+  border-radius: var(--radius-input);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+/* Each system is its own plane, and lifting one says so. A finding, not a button — no cursor
+   change, no colour change, just the depth that distinguishes it from the two beside it. */
+.sh-row:hover { transform: translateZ(6px); box-shadow: 0 4px 14px rgba(16, 24, 40, 0.07); }
 .sh-row.blocked { border-left-color: var(--status-blocked); background: var(--blocked-soft); }
 .sh-row.warn { border-left-color: var(--status-warn); background: var(--warn-soft); }
 .sh-row.done { border-left-color: var(--status-done); background: var(--done-soft); }
@@ -1582,4 +1594,92 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    changes a measure — a 2560px screen shows the same line lengths as a 1600px one, with more air. */
 @media (min-width: 1920px) {
   :root { --gutter: 64px; }
+}
+
+/* =============================================================================
+   The landing hero's choreography.
+
+   This is the one place in the product where motion is doing explanatory work, so it is worth being
+   exact about what each beat is FOR. The claim the hero makes is that a single fact about a student
+   is read, independently, by three bodies that never speak to each other. Rendered flat, that reads
+   as a list — one thing after another. The sequence below makes it read as a distribution:
+
+     1  the fact settles first, alone. It is the input; everything under it is derived.
+     2  the connector scales out from its caption, left and right. One thing becoming several.
+     3  the three systems settle FORWARD along Z, staggered 90ms apart, so they arrive as three
+        separate planes resolving rather than one block appearing.
+     4  each system's citation arrives LAST, after its own card. That ordering is the argument:
+        an answer is not trustworthy until its authority is attached, and the animation says so
+        without a sentence.
+
+   ---- why there is no JavaScript here ----
+
+   The hero is above the fold, so there is nothing to wait for — no scroll trigger, no
+   IntersectionObserver, no client component, no hydration. The landing stays a server component at
+   ~1.2 kB of page JS.
+
+   `animation-fill-mode: backwards` is what makes this safe. It applies the `from` frame during the
+   delay only; once the animation ends the element falls back to its ordinary styles. So:
+     · content is VISIBLE in the served HTML and needs no JS to become visible;
+     · there is no flash of hidden content, because nothing is hidden by a rule that JS must undo;
+     · `:hover` still works afterwards, which `forwards` would have blocked;
+     · and under `prefers-reduced-motion` the global reset at the top of this file sets
+       `animation: none`, which lands every element on its ordinary styles — fully visible, in
+       place, instantly. The reduced-motion path is the no-animation path, not a shorter one.
+   ============================================================================= */
+
+@keyframes shFactIn {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+}
+@keyframes shLineIn {
+  from { transform: scaleX(0); }
+}
+@keyframes shNoteIn {
+  from { opacity: 0; }
+}
+/* Back along Z and slightly down, coming forward into place. */
+@keyframes shRowIn {
+  from { opacity: 0; transform: translate3d(0, 10px, -48px); }
+}
+@keyframes shCiteIn {
+  from { opacity: 0; transform: translate3d(-4px, 0, 0); }
+}
+
+.sh-fact { animation: shFactIn 420ms var(--ease) backwards; }
+.sh-flow-line { animation: shLineIn 480ms var(--ease) 220ms backwards; }
+.sh-flow-note { animation: shNoteIn 360ms var(--ease) 300ms backwards; }
+
+/* One delay per row, declared once and reused by the row and by its citation, so the two can never
+   drift out of order. */
+.sh-row { --row-delay: 0ms; animation: shRowIn 560ms var(--ease) calc(420ms + var(--row-delay)) backwards; }
+.sh-row:nth-child(2) { --row-delay: 90ms; }
+.sh-row:nth-child(3) { --row-delay: 180ms; }
+/* The citation lands after its own card has settled — 320ms later, not on a shared clock. */
+.sh-row .cite { animation: shCiteIn 380ms var(--ease) calc(740ms + var(--row-delay)) backwards; }
+
+/* A stem draws downward, so it scales on Y — scaleX would collapse a 1px line sideways. */
+@keyframes shStemIn {
+  from { transform: scaleY(0); }
+}
+
+/* At three columns the connector reads as a distribution bar: the caption's lines span the full
+   width and each column drops a short stem up to it. One fact, three branches, drawn rather than
+   captioned. Below 1280 the rows are stacked and a stem would point at nothing, so it only exists
+   where the columns do. */
+@media (min-width: 1280px) {
+  .sh-rows { margin-top: 20px; }
+  .sh-row { position: relative; }
+  .sh-row::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 1px;
+    height: 20px;
+    background: var(--border-strong);
+    transform-origin: top center;
+    animation: shStemIn 380ms var(--ease) calc(360ms + var(--row-delay)) backwards;
+  }
+  /* The stem belongs to the card, so it lifts with it. */
+  .sh-row:hover::before { background: var(--border-strong); }
 }
