@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { applyLifeEvent } from "@/lib/engines/consequence-engine";
+import type { DerivedConsequence } from "@/lib/engines/consequence-engine";
 import { jurisdictionFor } from "@/lib/engines/jurisdiction";
 import { priyaStudent, priyaJobOffer } from "@/lib/fixtures/priya";
 import type { StatusKey } from "@/lib/tokens";
@@ -10,11 +11,45 @@ import { Capsule } from "./Capsule";
 
 const TONE_STATUS: Record<string, StatusKey> = { warn: "warn", ok: "done", info: "active" };
 
+// PathWise's three domains, and the office language a student would use for each. Named here so the
+// sentence below can be COUNTED rather than asserted: this panel used to read "4 things changed
+// across your three offices" while the engine returned consequences in two of the three, which is
+// the one kind of error this product cannot afford. Nothing below is a literal count — add an aid
+// consequence to the map and every number and name in this component follows it.
+type Domain = DerivedConsequence["domain"];
+
+const DOMAINS: { key: Domain; office: string }[] = [
+  { key: "immigration", office: "immigration" },
+  { key: "residency", office: "residency" },
+  { key: "aid", office: "financial aid" },
+];
+
+/** ["a", "b", "c"] → "a, b and c". */
+function listPhrase(items: string[]): string {
+  if (items.length <= 1) return items.join("");
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 export function JobMoment() {
   const [revealed, setRevealed] = useState(false);
   // The residency consequence turns on a state's gate, so the event is read under the rules of the
   // state Priya's record puts her in — not under whichever pack the engine happened to import.
   const consequences = applyLifeEvent(priyaStudent, priyaJobOffer, jurisdictionFor(priyaStudent));
+
+  const touched = DOMAINS.filter((d) => consequences.some((c) => c.domain === d.key));
+  const untouched = DOMAINS.filter((d) => !consequences.some((c) => c.domain === d.key));
+  // A consequence that fires as "does not apply" is still the engine answering — and on this event
+  // it is the counter-intuitive answer. Worth counting separately from a domain nothing reached.
+  const reasonedNegatives = consequences.filter((c) => !c.applies).length;
 
   return (
     <div className="moment surface">
@@ -23,7 +58,7 @@ export function JobMoment() {
           <div className="moment-eyebrow">The life-event test</div>
           <h2>Priya does something good — she signs a job offer.</h2>
           <p className="moment-sub">
-            Start date {String(priyaJobOffer.attrs.start_date)}. A calendar app would say
+            Start date {formatDate(String(priyaJobOffer.attrs.start_date))}. A calendar app would say
             &ldquo;congrats.&rdquo; Watch what a reasoning engine says instead.
           </p>
         </div>
@@ -37,8 +72,21 @@ export function JobMoment() {
       {revealed && (
         <>
           <div className="moment-count">
-            You reported a job. <strong>{consequences.length} things changed</strong> across your three
-            offices.
+            <span className="mc-lead">
+              Priya reported a job. <strong>{consequences.length} consequences</strong>, in{" "}
+              {touched.length} of her {DOMAINS.length} offices —{" "}
+              {listPhrase(touched.map((d) => d.office))}.
+            </span>
+            <span className="mc-sub">
+              {untouched.length > 0
+                ? `No rule for this event reaches ${listPhrase(
+                    untouched.map((d) => d.office),
+                  )}, so that office is untouched. `
+                : ""}
+              {reasonedNegatives > 0
+                ? `And ${reasonedNegatives} of the ${consequences.length} is a reasoned "this changes nothing" rather than a blank — it is the counter-intuitive one.`
+                : ""}
+            </span>
           </div>
           <ol className="conseq">
             {consequences.map((c, i) => {
@@ -52,7 +100,9 @@ export function JobMoment() {
                   <StatusGlyph status={status} />
                   <div className="ci-body">
                     <div className="ci-top">
-                      <span className="t-micro">{c.domain}</span>
+                      <span className="t-micro">
+                        {DOMAINS.find((d) => d.key === c.domain)?.office ?? c.domain}
+                      </span>
                       {c.counterintuitive && (
                         <Capsule variant="tinted" status="blocked">
                           counter-intuitive

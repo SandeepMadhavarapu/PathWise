@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import type { Finding, FindingResult } from "@/lib/types";
+import type { Event, Finding, FindingResult } from "@/lib/types";
 import { statusFromFindingResult, type StatusKey } from "@/lib/tokens";
 import { formatDecidingOffice } from "@/lib/format";
+import { describeEvent, describeEvidence } from "@/lib/labels";
 import { StatusGlyph } from "./StatusGlyph";
 import { Capsule } from "./Capsule";
 import { ReasoningTree, type ReasoningTreeNode } from "./ReasoningTree";
@@ -14,18 +15,28 @@ const RESULT_LABEL: Record<FindingResult, string> = {
   unable_to_verify: "Unable to verify",
 };
 
-const VOLATILITY_LABEL: Record<
-  NonNullable<Finding["volatility"]>["status"],
-  string
-> = {
-  stable: "stable",
-  under_litigation: "under litigation",
-  recently_changed: "recently changed",
+/**
+ * Volatility is a property of a RULE, and a finding's pack may carry a note about a rule that is
+ * not the one on screen. This panel used to open "This rule is {status}: …", which asserted that
+ * the note described the finding above it — and on the domicile gate it flatly did not: the pack's
+ * note was about the tuition-equity provision, which that pack does not even model.
+ *
+ * The note is self-describing (the aid engine names the provision it belongs to), so the fix is to
+ * stop putting a claim in front of it. What sits here now is a neutral micro-label that says what
+ * kind of information this is, and the note itself says what it is about.
+ */
+const VOLATILITY_LABEL = "What could still change";
+
+const VOLATILITY_STATUS: Record<NonNullable<Finding["volatility"]>["status"], string> = {
+  stable: "Stable",
+  under_litigation: "Under litigation",
+  recently_changed: "Recently changed",
 };
 
 export function FindingDetail({
   finding,
   analysis,
+  events = [],
 }: {
   finding: Finding;
   /**
@@ -34,6 +45,13 @@ export function FindingDetail({
    * rather than beside it, because it is the same answer at a lower altitude, not a second one.
    */
   analysis?: ReactNode;
+  /**
+   * The record the reasoning steps point into. A step cites events by id; with the events in hand
+   * this component can say what each one IS instead of printing the key it is filed under.
+   * Optional, and an unrecognised id degrades to a humanised form rather than disappearing —
+   * dropping a source silently would be worse than naming it awkwardly.
+   */
+  events?: readonly Event[];
 }) {
   const status: StatusKey = statusFromFindingResult(finding.result);
 
@@ -42,9 +60,13 @@ export function FindingDetail({
     status: "done",
     title: step.claim,
     tags: [
-      ...step.from_events.map((id) => `event · ${id}`),
-      ...step.from_evidence.map((id) => `doc · ${id}`),
+      ...step.from_events.map((id) => describeEvent(id, events)),
+      ...step.from_evidence.map((id) => describeEvidence(id)),
     ],
+    // The sources sit behind a disclosure. They are the proof that a claim is derived rather than
+    // written, and they should stay one click away — but expanded by default they put a row of
+    // internal keys between the reader and the next sentence of the argument.
+    defaultOpen: false,
   }));
 
   return (
@@ -52,7 +74,7 @@ export function FindingDetail({
       <div className="finding-head">
         <div className="finding-headline-row">
           <StatusGlyph status={status} />
-          <h1 className="finding-headline">{finding.headline}</h1>
+          <h2 className="finding-headline">{finding.headline}</h2>
         </div>
         <Capsule variant="tinted" status={status === "idle" ? undefined : status}>
           {RESULT_LABEL[finding.result]}
@@ -112,10 +134,18 @@ export function FindingDetail({
         advises, the office decides.
       </p>
 
-      {finding.volatility ? (
+      {/* A stable rule needs no warning — the citation block above already carries the date it was
+          verified on, which is the useful half of "stable". */}
+      {finding.volatility && finding.volatility.status !== "stable" ? (
         <div className="volatility">
-          This rule is {VOLATILITY_LABEL[finding.volatility.status]}:{" "}
-          {finding.volatility.note}
+          <span className="volatility-k">
+            {VOLATILITY_LABEL}
+            <span className="volatility-sep" aria-hidden="true">
+              ·
+            </span>
+            {VOLATILITY_STATUS[finding.volatility.status]}
+          </span>
+          <span className="volatility-v">{finding.volatility.note}</span>
         </div>
       ) : null}
     </article>

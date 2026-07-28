@@ -169,7 +169,10 @@ export function applyLifeEvent(
       out.push({
         domain: 'residency',
         kind: 'eligibility_changed',
-        effect: `You might expect a job to help your residency case — but ${statusText} status blocks ${v.jurisdictionName} domicile entirely, so this changes nothing for residency.`,
+        // Voice-neutral on purpose. This sentence is the engine's, and an engine has no business
+        // deciding whether the screen reading it is talking about "you" or about an example
+        // student — the second-person original read as a voice bug on the one screen that shows it.
+        effect: `A job offer looks like a residency intent factor — but ${statusText} status blocks ${v.jurisdictionName} domicile entirely, so this changes nothing for residency.`,
         counterintuitive: true,
         applies: false,
         tone: 'info',

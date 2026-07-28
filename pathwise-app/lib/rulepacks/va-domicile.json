@@ -7,8 +7,8 @@
   "guidelines_effective": "2021-01-11",
   "verified_on": "2026-07-24",
   "volatility": {
-    "status": "under_litigation",
-    "note": "Tuition equity provision subject to DOJ challenge; re-verify before submission."
+    "status": "stable",
+    "note": "SCHEV's statewide uniform criteria under Code of Virginia 23.1-510(D). The domicile provisions modelled in this pack were re-verified against the primary source on 2026-07-24."
   },
   "gates": [
     {

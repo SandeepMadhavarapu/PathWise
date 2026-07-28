@@ -396,19 +396,31 @@ export function computeAidEligibility(input: AidEligibilityRun): Finding {
   });
 
   // Missing evidence is stated as an open question, never resolved by assumption.
+  //
+  // What an open question MEANS, though, depends on whether anything is still open. When a status
+  // block has already closed this jurisdiction's aid, no provision below is an available route and
+  // no document makes one — so saying "without it, PathWise cannot establish it as a route to state
+  // aid" would invite the student to go and get a document that changes nothing. The gap is still
+  // reported (it is real, and a change of status would make it live again); what it is reported AS
+  // is different.
   const unknowns: Finding['unknowns'] = [];
   for (const c of checklists) {
     const total = c.present.length + c.missing.length;
+    const rests =
+      total === 1
+        ? 'That provision rests on this one item.'
+        : `That provision needs all ${total} of its required items.`;
+    const litigated = c.volatility ? ` The provision itself is ${c.volatility.replace(/_/g, ' ')}.` : '';
+
     for (const item of c.missing) {
       unknowns.push({
         what: `${label(item)} — required for the ${label(c.id).toLowerCase()} provision.`,
-        why_it_matters: `${
-          total === 1 ? 'That provision rests on this one item.' : `That provision needs all ${total} of its required items.`
-        } Without it, PathWise cannot establish it as a route to ${v.jurisdictionName} state aid${
-          c.volatility ? `, and the provision itself is ${c.volatility.replace(/_/g, ' ')}` : ''
-        }.`,
-        how_to_resolve:
-          'Upload the document that establishes it, or ask the financial aid office which proof they accept.',
+        why_it_matters: block
+          ? `${rests} It is moot for this student either way: ${block.headline}, so no provision below is an available route to ${v.jurisdictionName} state aid and no document reopens one. PathWise reports it because it is genuinely absent from the record, not because producing it would change this finding.${litigated}`
+          : `${rests} Without it, PathWise cannot establish it as a route to ${v.jurisdictionName} state aid.${litigated}`,
+        how_to_resolve: block
+          ? 'Nothing needs to be produced for this finding. Keep the document if you have it — it becomes relevant again only if the status this rests on changes.'
+          : 'Upload the document that establishes it, or ask the financial aid office which proof they accept.',
       });
     }
   }
