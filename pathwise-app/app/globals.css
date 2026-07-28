@@ -1311,6 +1311,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cov-detail-v { font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
 .cov-detail-v strong { color: var(--text); font-weight: 600; }
 .cov-detail-v a { display: inline-block; margin-top: 2px; }
+.cov-source { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+/* Deliberately quiet and deliberately present: the difference between a page PathWise read and a
+   host that merely answered is small, and rounding it off is how a product starts overclaiming. */
+.cov-check { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+  color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-pill);
+  padding: 1px 6px; cursor: help; }
 .cov-answers { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--space-2); }
 /* A research note is not a citation and is styled so it cannot be mistaken for one. */
 .cov-note-unverified em { display: block; margin-top: 3px; color: var(--text-muted); font-size: 11px; }

@@ -13,227 +13,501 @@
   "jurisdictions": [
     {
       "code": "AL",
-      "name": "Alabama"
+      "name": "Alabama",
+      "authority": "Alabama Commission on Higher Education",
+      "source_url": "https://www.ache.edu/",
+      "source_check": "fetched",
+      "aid_authority": "Alabama Commission on Higher Education",
+      "aid_source_url": "https://www.ache.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "AK",
       "name": "Alaska",
-      "note": "24-month duration; clock anchors to census/add-drop date."
+      "note": "24-month duration; clock anchors to census/add-drop date.",
+      "authority": "Alaska Commission on Postsecondary Education",
+      "source_url": "https://acpe.alaska.gov/",
+      "source_check": "serving_blocked",
+      "aid_authority": "Alaska Commission on Postsecondary Education",
+      "aid_source_url": "https://acpe.alaska.gov/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "AZ",
-      "name": "Arizona"
+      "name": "Arizona",
+      "authority": "Arizona Board of Regents",
+      "source_url": "https://azregents.edu/",
+      "source_check": "fetched",
+      "aid_authority": "Arizona Board of Regents",
+      "aid_source_url": "https://azregents.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "AR",
       "name": "Arkansas",
-      "note": "6-month duration requirement."
+      "note": "6-month duration requirement.",
+      "authority": "Arkansas Division of Higher Education",
+      "source_url": "https://adhe.edu/",
+      "source_check": "fetched",
+      "aid_authority": "Arkansas Division of Higher Education",
+      "aid_source_url": "https://adhe.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "CA",
       "name": "California",
       "note": "Uses a residency determination date; 1-year-plus-a-day durational.",
       "authority": "California Education Code § 68000 et seq.",
-      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=68000.&lawCode=EDC"
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=68000.&lawCode=EDC",
+      "source_check": "fetched",
+      "aid_authority": "California Student Aid Commission",
+      "aid_source_url": "https://www.csac.ca.gov/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "CO",
-      "name": "Colorado"
+      "name": "Colorado",
+      "authority": "Colorado Department of Higher Education",
+      "source_url": "https://highered.colorado.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Colorado Department of Higher Education",
+      "aid_source_url": "https://highered.colorado.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "CT",
-      "name": "Connecticut"
+      "name": "Connecticut",
+      "authority": "Connecticut Office of Higher Education",
+      "source_url": "https://www.ohe.ct.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Connecticut Office of Higher Education",
+      "aid_source_url": "https://www.ohe.ct.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "DE",
-      "name": "Delaware"
+      "name": "Delaware",
+      "authority": "Delaware Department of Education",
+      "source_url": "https://education.delaware.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Delaware Department of Education",
+      "aid_source_url": "https://education.delaware.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "DC",
       "name": "District of Columbia",
       "note": "90-day durational requirement; a Metro-area rate covers named MD and VA counties.",
       "authority": "University of the District of Columbia — Policy on Student Residency Classification",
-      "source_url": "https://www.udc.edu/admissions/enroll/establishing-dc-and-metro-residency"
+      "source_url": "https://www.udc.edu/admissions/enroll/establishing-dc-and-metro-residency",
+      "source_check": "fetched",
+      "aid_authority": "Office of the State Superintendent of Education",
+      "aid_source_url": "https://osse.dc.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "FL",
-      "name": "Florida"
+      "name": "Florida",
+      "unverifiable": "The Florida Office of Student Financial Assistance site did not respond when PathWise checked it on 28 Jul 2026. A source exists; PathWise has not confirmed one it can link, and will not link an unchecked address."
     },
     {
       "code": "GA",
-      "name": "Georgia"
+      "name": "Georgia",
+      "authority": "Georgia Student Finance Commission",
+      "source_url": "https://gsfc.georgia.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Georgia Student Finance Commission",
+      "aid_source_url": "https://gsfc.georgia.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "HI",
       "name": "Hawaii",
-      "note": "Uses a residency determination date."
+      "note": "Uses a residency determination date.",
+      "authority": "University of Hawaii System",
+      "source_url": "https://www.hawaii.edu/",
+      "source_check": "fetched",
+      "aid_authority": "University of Hawaii System",
+      "aid_source_url": "https://www.hawaii.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "ID",
-      "name": "Idaho"
+      "name": "Idaho",
+      "authority": "Idaho State Board of Education",
+      "source_url": "https://boardofed.idaho.gov/higher-education-public/",
+      "source_check": "fetched",
+      "aid_authority": "Idaho State Board of Education",
+      "aid_source_url": "https://boardofed.idaho.gov/higher-education-public/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "IL",
-      "name": "Illinois"
+      "name": "Illinois",
+      "authority": "Illinois Student Assistance Commission",
+      "source_url": "https://www.isac.org/",
+      "source_check": "serving_blocked",
+      "aid_authority": "Illinois Student Assistance Commission",
+      "aid_source_url": "https://www.isac.org/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "IN",
-      "name": "Indiana"
+      "name": "Indiana",
+      "unverifiable": "The Indiana Commission for Higher Education site refused the connection when PathWise checked it on 28 Jul 2026. A source exists; PathWise has not confirmed one it can link."
     },
     {
       "code": "IA",
-      "name": "Iowa"
+      "name": "Iowa",
+      "authority": "Iowa Department of Education",
+      "source_url": "https://educate.iowa.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Iowa Department of Education",
+      "aid_source_url": "https://educate.iowa.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "KS",
-      "name": "Kansas"
+      "name": "Kansas",
+      "authority": "Kansas Board of Regents",
+      "source_url": "https://kansasregents.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Kansas Board of Regents",
+      "aid_source_url": "https://kansasregents.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "KY",
-      "name": "Kentucky"
+      "name": "Kentucky",
+      "unverifiable": "The Kentucky Higher Education Assistance Authority site refused the connection when PathWise checked it on 28 Jul 2026. A source exists; PathWise has not confirmed one it can link."
     },
     {
       "code": "LA",
-      "name": "Louisiana"
+      "name": "Louisiana",
+      "authority": "Louisiana Office of Student Financial Assistance",
+      "source_url": "https://mylosfa.la.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Louisiana Office of Student Financial Assistance",
+      "aid_source_url": "https://mylosfa.la.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "ME",
-      "name": "Maine"
+      "name": "Maine",
+      "authority": "Finance Authority of Maine",
+      "source_url": "https://www.famemaine.com/",
+      "source_check": "fetched",
+      "aid_authority": "Finance Authority of Maine",
+      "aid_source_url": "https://www.famemaine.com/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "MD",
       "name": "Maryland",
-      "note": "Anchors to census/add-drop date."
+      "note": "Anchors to census/add-drop date.",
+      "authority": "Maryland Higher Education Commission",
+      "source_url": "https://mhec.maryland.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Maryland Higher Education Commission",
+      "aid_source_url": "https://mhec.maryland.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "MA",
-      "name": "Massachusetts"
+      "name": "Massachusetts",
+      "authority": "Massachusetts Office of Student Financial Assistance",
+      "source_url": "https://www.mass.edu/osfa/home/home.asp",
+      "source_check": "fetched",
+      "aid_authority": "Massachusetts Office of Student Financial Assistance",
+      "aid_source_url": "https://www.mass.edu/osfa/home/home.asp",
+      "aid_source_check": "fetched"
     },
     {
       "code": "MI",
-      "name": "Michigan"
+      "name": "Michigan",
+      "authority": "Michigan Student Aid",
+      "source_url": "https://www.michigan.gov/mistudentaid/",
+      "source_check": "serving_blocked",
+      "aid_authority": "Michigan Student Aid",
+      "aid_source_url": "https://www.michigan.gov/mistudentaid/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "MN",
       "name": "Minnesota",
-      "note": "Anchors to application date."
+      "note": "Anchors to application date.",
+      "authority": "Minnesota Office of Higher Education",
+      "source_url": "https://ohe.mn.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Minnesota Office of Higher Education",
+      "aid_source_url": "https://ohe.mn.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "MS",
-      "name": "Mississippi"
+      "name": "Mississippi",
+      "authority": "Mississippi Office of Student Financial Aid",
+      "source_url": "https://www.msfinancialaid.org/",
+      "source_check": "fetched",
+      "aid_authority": "Mississippi Office of Student Financial Aid",
+      "aid_source_url": "https://www.msfinancialaid.org/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "MO",
-      "name": "Missouri"
+      "name": "Missouri",
+      "authority": "Missouri Department of Higher Education and Workforce Development",
+      "source_url": "https://dhewd.mo.gov/",
+      "source_check": "serving_blocked",
+      "aid_authority": "Missouri Department of Higher Education and Workforce Development",
+      "aid_source_url": "https://dhewd.mo.gov/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "MT",
-      "name": "Montana"
+      "name": "Montana",
+      "authority": "Montana University System",
+      "source_url": "https://mus.edu/",
+      "source_check": "fetched",
+      "aid_authority": "Montana University System",
+      "aid_source_url": "https://mus.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "NE",
-      "name": "Nebraska"
+      "name": "Nebraska",
+      "authority": "Nebraska Coordinating Commission for Postsecondary Education",
+      "source_url": "https://ccpe.nebraska.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Nebraska Coordinating Commission for Postsecondary Education",
+      "aid_source_url": "https://ccpe.nebraska.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "NV",
-      "name": "Nevada"
+      "name": "Nevada",
+      "unverifiable": "The Nevada System of Higher Education site returned a server error when PathWise checked it on 28 Jul 2026. A source exists; PathWise has not confirmed one it can link."
     },
     {
       "code": "NH",
-      "name": "New Hampshire"
+      "name": "New Hampshire",
+      "authority": "New Hampshire Department of Education",
+      "source_url": "https://www.education.nh.gov/",
+      "source_check": "serving_blocked",
+      "aid_authority": "New Hampshire Department of Education",
+      "aid_source_url": "https://www.education.nh.gov/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "NJ",
-      "name": "New Jersey"
+      "name": "New Jersey",
+      "authority": "Higher Education Student Assistance Authority",
+      "source_url": "https://www.hesaa.org/",
+      "source_check": "fetched",
+      "aid_authority": "Higher Education Student Assistance Authority",
+      "aid_source_url": "https://www.hesaa.org/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "NM",
-      "name": "New Mexico"
+      "name": "New Mexico",
+      "authority": "New Mexico Higher Education Department",
+      "source_url": "https://hed.nm.gov/",
+      "source_check": "fetched",
+      "aid_authority": "New Mexico Higher Education Department",
+      "aid_source_url": "https://hed.nm.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "NY",
-      "name": "New York"
+      "name": "New York",
+      "authority": "New York State Higher Education Services Corporation",
+      "source_url": "https://www.hesc.ny.gov/",
+      "source_check": "serving_blocked",
+      "aid_authority": "New York State Higher Education Services Corporation",
+      "aid_source_url": "https://www.hesc.ny.gov/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "NC",
       "name": "North Carolina",
-      "note": "Determined centrally by the statewide Residency Determination Service, not per-institution; 12-month domicile.",
-      "authority": "North Carolina Residency Determination Service (RDS)",
-      "source_url": "https://residencync.cfnc.org/residencyInfo/"
+      "note": "A single statewide determination, binding on every NC institution — unlike states where each institution decides. RDS is the one body a student applies to.",
+      "authority": "North Carolina Residency Determination Service, operated by the NC State Education Assistance Authority under Session Law 2015-241; criteria at N.C.G.S. §§ 116-143.1–143.3B",
+      "source_url": "https://www.ncresidency.org/laws-and-policies/",
+      "source_check": "fetched",
+      "aid_authority": "North Carolina State Education Assistance Authority",
+      "aid_source_url": "https://www.ncseaa.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "ND",
-      "name": "North Dakota"
+      "name": "North Dakota",
+      "authority": "North Dakota University System",
+      "source_url": "https://ndus.edu/",
+      "source_check": "fetched",
+      "aid_authority": "North Dakota University System",
+      "aid_source_url": "https://ndus.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "OH",
-      "name": "Ohio"
+      "name": "Ohio",
+      "authority": "Ohio Department of Higher Education",
+      "source_url": "https://highered.ohio.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Ohio Department of Higher Education",
+      "aid_source_url": "https://highered.ohio.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "OK",
-      "name": "Oklahoma"
+      "name": "Oklahoma",
+      "authority": "Oklahoma State Regents for Higher Education",
+      "source_url": "https://okhighered.org/",
+      "source_check": "fetched",
+      "aid_authority": "Oklahoma State Regents for Higher Education",
+      "aid_source_url": "https://okhighered.org/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "OR",
-      "name": "Oregon"
+      "name": "Oregon",
+      "authority": "Oregon Office of Student Access and Completion",
+      "source_url": "https://oregonstudentaid.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Oregon Office of Student Access and Completion",
+      "aid_source_url": "https://oregonstudentaid.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "PA",
-      "name": "Pennsylvania"
+      "name": "Pennsylvania",
+      "authority": "Pennsylvania Higher Education Assistance Authority",
+      "source_url": "https://www.pheaa.org/",
+      "source_check": "fetched",
+      "aid_authority": "Pennsylvania Higher Education Assistance Authority",
+      "aid_source_url": "https://www.pheaa.org/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "RI",
-      "name": "Rhode Island"
+      "name": "Rhode Island",
+      "authority": "Rhode Island Office of the Postsecondary Commissioner",
+      "source_url": "https://riopc.edu/",
+      "source_check": "fetched",
+      "aid_authority": "Rhode Island Office of the Postsecondary Commissioner",
+      "aid_source_url": "https://riopc.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "SC",
-      "name": "South Carolina"
+      "name": "South Carolina",
+      "authority": "South Carolina Commission on Higher Education",
+      "source_url": "https://www.che.sc.gov/",
+      "source_check": "serving_blocked",
+      "aid_authority": "South Carolina Commission on Higher Education",
+      "aid_source_url": "https://www.che.sc.gov/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "SD",
-      "name": "South Dakota"
+      "name": "South Dakota",
+      "authority": "South Dakota Board of Regents",
+      "source_url": "https://sdbor.edu/",
+      "source_check": "fetched",
+      "aid_authority": "South Dakota Board of Regents",
+      "aid_source_url": "https://sdbor.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "TN",
       "name": "Tennessee",
-      "note": "No durational component; anchors to admission date."
+      "note": "No durational component; anchors to admission date.",
+      "authority": "Tennessee Student Assistance Corporation (a division of the Tennessee Higher Education Commission since 1 July 2025)",
+      "source_url": "https://www.tn.gov/thec/students-families/financial-aid/tsac.html",
+      "source_check": "fetched",
+      "aid_authority": "Tennessee Student Assistance Corporation (a division of the Tennessee Higher Education Commission since 1 July 2025)",
+      "aid_source_url": "https://www.tn.gov/thec/students-families/financial-aid/tsac.html",
+      "aid_source_check": "fetched"
     },
     {
       "code": "TX",
       "name": "Texas",
       "note": "Anchors to census/add-drop date; 12 consecutive months, and lawful presence is required.",
       "authority": "Texas Higher Education Coordinating Board; Texas Education Code § 54.052",
-      "source_url": "https://www.highered.texas.gov/texas-residency/"
+      "source_url": "https://www.highered.texas.gov/texas-residency/",
+      "source_check": "fetched",
+      "aid_authority": "Texas Higher Education Coordinating Board",
+      "aid_source_url": "https://www.highered.texas.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "UT",
-      "name": "Utah"
+      "name": "Utah",
+      "authority": "Utah System of Higher Education",
+      "source_url": "https://ushe.edu/",
+      "source_check": "fetched",
+      "aid_authority": "Utah System of Higher Education",
+      "aid_source_url": "https://ushe.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "VT",
-      "name": "Vermont"
+      "name": "Vermont",
+      "authority": "Vermont Student Assistance Corporation",
+      "source_url": "https://www.vsac.org/",
+      "source_check": "fetched",
+      "aid_authority": "Vermont Student Assistance Corporation",
+      "aid_source_url": "https://www.vsac.org/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "VA",
       "name": "Virginia",
-      "note": "SCHEV statewide uniform criteria under Code of Virginia 23.1-510(D)."
+      "note": "SCHEV statewide uniform criteria under Code of Virginia 23.1-510(D).",
+      "authority": "State Council of Higher Education for Virginia",
+      "source_url": "https://www.schev.edu/",
+      "source_check": "serving_blocked",
+      "aid_authority": "State Council of Higher Education for Virginia",
+      "aid_source_url": "https://www.schev.edu/",
+      "aid_source_check": "serving_blocked"
     },
     {
       "code": "WA",
-      "name": "Washington"
+      "name": "Washington",
+      "authority": "Washington Student Achievement Council",
+      "source_url": "https://wsac.wa.gov/",
+      "source_check": "fetched",
+      "aid_authority": "Washington Student Achievement Council",
+      "aid_source_url": "https://wsac.wa.gov/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "WV",
-      "name": "West Virginia"
+      "name": "West Virginia",
+      "authority": "West Virginia Higher Education Policy Commission",
+      "source_url": "https://www.wvhepc.edu/",
+      "source_check": "fetched",
+      "aid_authority": "West Virginia Higher Education Policy Commission",
+      "aid_source_url": "https://www.wvhepc.edu/",
+      "aid_source_check": "fetched"
     },
     {
       "code": "WI",
-      "name": "Wisconsin"
+      "name": "Wisconsin",
+      "unverifiable": "The Wisconsin Higher Educational Aids Board site did not resolve when PathWise checked it on 28 Jul 2026. A source exists; PathWise has not confirmed one it can link."
     },
     {
       "code": "WY",
-      "name": "Wyoming"
+      "name": "Wyoming",
+      "authority": "University of Wyoming",
+      "source_url": "https://www.uwyo.edu/",
+      "source_check": "fetched",
+      "aid_authority": "University of Wyoming",
+      "aid_source_url": "https://www.uwyo.edu/",
+      "aid_source_check": "fetched"
     }
   ],
-  "unverifiable_policy": "A jurisdiction carries `unverifiable` only when a source was actually sought and could not be confirmed, with the reason recorded. Absent means not yet looked for."
+  "unverifiable_policy": "A jurisdiction carries `unverifiable` only when a source was actually sought and could not be confirmed, with the reason recorded. Absent means not yet looked for.",
+  "sources_checked_on": "2026-07-28"
 }

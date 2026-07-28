@@ -21,6 +21,7 @@ import {
   COVERAGE_LEGEND,
   COVERAGE_VERIFIED_ON,
   JURISDICTION_COUNT,
+  SOURCES_CHECKED_ON,
   STATE_COUNT,
 } from "@/lib/coverage";
 import {
@@ -66,6 +67,18 @@ const LEVEL_ORDER: CapabilityLevel[] = [
 const DOMAIN_LABEL: Record<DomainCoverage["domain"], string> = {
   residency: "Residency",
   aid: "State aid",
+};
+
+// How a source link was confirmed, said out loud. "We checked" is a claim like any other, and a
+// page that was read and a host that merely answered are not the same evidence.
+const CHECK_LABEL: Record<"fetched" | "serving_blocked", string> = {
+  fetched: "page read",
+  serving_blocked: "host live, page not read",
+};
+const CHECK_TITLE: Record<"fetched" | "serving_blocked", string> = {
+  fetched: "PathWise retrieved this page and read it on the date the index was checked.",
+  serving_blocked:
+    "The host answered but refuses automated reads, so PathWise confirmed the address is live and is the agency's own without reading what is on it.",
 };
 
 /**
@@ -185,9 +198,16 @@ function CoverageTile({ j }: { j: JurisdictionCoverage }) {
                   </span>
                 ) : null}
                 {d.source_url ? (
-                  <a href={d.source_url} target="_blank" rel="noopener noreferrer">
-                    Official source →
-                  </a>
+                  <span className="cov-source">
+                    <a href={d.source_url} target="_blank" rel="noopener noreferrer">
+                      Official source →
+                    </a>
+                    {d.sourceCheck ? (
+                      <span className="cov-check" title={CHECK_TITLE[d.sourceCheck]}>
+                        {CHECK_LABEL[d.sourceCheck]}
+                      </span>
+                    ) : null}
+                  </span>
                 ) : null}
               </span>
             </div>
@@ -369,7 +389,7 @@ export default function CoveragePage() {
             <span className="cov-sep" aria-hidden="true">
               ·
             </span>
-            {JURISDICTION_COUNT} jurisdictions, index verified {COVERAGE_VERIFIED_ON}
+            {JURISDICTION_COUNT} jurisdictions · every source link checked {SOURCES_CHECKED_ON}
           </span>
         </div>
       </div>

@@ -37,6 +37,8 @@ export interface DomainCoverage {
   /** The body that decides this domain here, where PathWise knows it. */
   authority?: string;
   source_url?: string;
+  /** How that link was confirmed. See Jurisdiction.source_check. */
+  sourceCheck?: 'fetched' | 'serving_blocked';
   /** The pack behind this, where one is registered — so the UI can link to the file itself. */
   packId?: string;
 }
@@ -88,6 +90,7 @@ function fromIndex(j: Jurisdiction, domain: PackDomain): DomainCoverage {
   // overclaim that is invisible from the outside.
   const authority = domain === 'aid' ? j.aid_authority : j.authority;
   const sourceUrl = domain === 'aid' ? j.aid_source_url : j.source_url;
+  const sourceCheck = domain === 'aid' ? j.aid_source_check : j.source_check;
 
   if (j.unverifiable) {
     return { domain, level: 'unable_to_verify', reason: j.unverifiable };
@@ -96,10 +99,16 @@ function fromIndex(j: Jurisdiction, domain: PackDomain): DomainCoverage {
     return {
       domain,
       level: 'sourced_only',
+      // Worded to claim exactly what an agency link establishes and no more. For most states what
+      // is on record is the state higher-education agency and its published guidance — NOT a
+      // determination of who rules on an individual case, which in some states is the agency, in
+      // others the institution, and in North Carolina a dedicated service. Saying "the deciding
+      // body" flatly would be asserting something PathWise has not checked state by state.
       reason:
-        'The deciding body and its published rule are on record and linked. No rules have been authored against them yet, so PathWise can say who decides and where the rule is — and nothing more.',
+        'The state agency and its published guidance are on record and linked. Which body rules on an individual case — the agency, the institution, or a dedicated service — is not modelled, and no rule from this jurisdiction has been authored.',
       authority,
       source_url: sourceUrl,
+      sourceCheck,
     };
   }
   return {

@@ -35,6 +35,17 @@ export interface Jurisdiction {
   authority?: string;
   source_url?: string;
   /**
+   * HOW that source was confirmed, on `sources_checked_on`. Recorded because "we checked" is a
+   * claim like any other, and this product's whole posture is that a claim states its basis.
+   *
+   *   fetched          the page was retrieved and its content read.
+   *   serving_blocked  the host answered but refuses automated reads (403/405/406). The address is
+   *                    live and is the agency's own; PathWise did not read what is on it.
+   *
+   * A host that answered neither probe gets no source at all — see `unverifiable`.
+   */
+  source_check?: 'fetched' | 'serving_blocked';
+  /**
    * The same, for STATE AID — which is very often a different body: a residency determination is
    * made by a coordinating board or the institution, and grants by a separate commission.
    *
@@ -44,6 +55,7 @@ export interface Jurisdiction {
    */
   aid_authority?: string;
   aid_source_url?: string;
+  aid_source_check?: 'fetched' | 'serving_blocked';
   /**
    * Present only where a source was actually sought and could not be confirmed, with the reason.
    * This is what separates "unable to verify" from "not modelled": one is work done that failed,
@@ -62,6 +74,8 @@ export function jurisdictionByCode(code: string): Jurisdiction | undefined {
 /** The legend, keyed by capability level — the same vocabulary the packs declare. */
 export const COVERAGE_LEGEND = pack.legend as Record<string, string>;
 export const COVERAGE_VERIFIED_ON = pack.verified_on;
+/** The day every source link in the index was last checked, and the day the checks are dated to. */
+export const SOURCES_CHECKED_ON = (pack as { sources_checked_on?: string }).sources_checked_on ?? pack.verified_on;
 
 /** The jurisdictions in the file that are not states, so "N states + DC" counts states as states. */
 const NON_STATE_CODES = new Set(['DC']);

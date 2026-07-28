@@ -33,6 +33,37 @@ export interface ValidationProblem {
  */
 const OFFICIAL_HOST = /(^|\.)(gov|edu|us)$/i;
 
+/**
+ * State agencies that publish on a .org or .com domain.
+ *
+ * The host heuristic above approximates "this is the body's own publication" and it produces false
+ * negatives, because a number of genuine state agencies do not sit on a .gov: PHEAA, ISAC and HESAA
+ * are statutory state bodies in Pennsylvania, Illinois and New Jersey; FAME is Maine's; VSAC is
+ * Vermont's. Loosening the regex to admit .org would also admit every advocacy site and scraper
+ * that has ever written about financial aid, which is the thing it exists to keep out.
+ *
+ * So: an allowlist, one line per domain, each one a record that somebody checked this host belongs
+ * to that agency. It fails closed — a .org that is not on this list is still rejected — and it is
+ * greppable, which a regex exception would not be.
+ */
+const OFFICIAL_NON_GOV_HOSTS: ReadonlySet<string> = new Set([
+  'www.pheaa.org',       // Pennsylvania Higher Education Assistance Authority (state authority)
+  'www.isac.org',        // Illinois Student Assistance Commission (state commission)
+  'www.hesaa.org',       // NJ Higher Education Student Assistance Authority (state authority)
+  'okhighered.org',      // Oklahoma State Regents for Higher Education
+  'www.vsac.org',        // Vermont Student Assistance Corporation (public non-profit created by statute)
+  'www.famemaine.com',   // Finance Authority of Maine (state authority)
+  'www.msfinancialaid.org', // Mississippi Office of Student Financial Aid
+  // The NC Residency Determination Service's own domain. RDS is statutory — Session Law 2015-241
+  // authorises the NC State Education Assistance Authority to run a single centralised process
+  // under N.C.G.S. §§ 116-143.1–143.3B, and its determination binds every institution in the state.
+  'www.ncresidency.org',
+]);
+
+function isOfficialHost(host: string): boolean {
+  return OFFICIAL_HOST.test(host) || OFFICIAL_NON_GOV_HOSTS.has(host);
+}
+
 function hostOf(url: string): string | undefined {
   try {
     return new URL(url).hostname;
@@ -50,13 +81,15 @@ function checkSourceUrl(packId: string, label: string, url: string, out: Validat
   if (!url.startsWith('https://')) {
     out.push({ packId, severity: 'error', message: `${label} must be https: ${url}` });
   }
-  if (!OFFICIAL_HOST.test(host)) {
+  if (!isOfficialHost(host)) {
     out.push({
       packId,
       severity: 'error',
       message:
-        `${label} points at "${host}", which is not a .gov/.edu/.us host. A rule pack's authority ` +
-        `has to be the body's own publication — PathWise will not rest a finding on a secondary source.`,
+        `${label} points at "${host}", which is neither a .gov/.edu/.us host nor an allowlisted ` +
+        `state agency domain. An authority has to be the body's own publication — PathWise will not ` +
+        `rest a finding on a secondary source. If this host IS a state agency, add it to ` +
+        `OFFICIAL_NON_GOV_HOSTS with a comment naming the body.`,
     });
   }
 }
@@ -274,4 +307,65 @@ export function duplicateDomainClaims(
     }
   }
   return problems;
+}
+
+/**
+ * The jurisdiction index's own source links, held to the pack standard.
+ *
+ * These are rendered to a student as "Official source →" on /coverage, which makes them exactly as
+ * load-bearing as a pack's citation: a student who clicks one is being told this is where the rule
+ * lives. There is no reason for the index to be checked less carefully than the packs are.
+ */
+export function validateIndexSources(
+  jurisdictions: ReadonlyArray<{
+    code: string;
+    authority?: string;
+    source_url?: string;
+    source_check?: string;
+    aid_authority?: string;
+    aid_source_url?: string;
+    aid_source_check?: string;
+    unverifiable?: string;
+  }>,
+): ValidationProblem[] {
+  const out: ValidationProblem[] = [];
+  const CHECKS = new Set(['fetched', 'serving_blocked']);
+
+  for (const j of jurisdictions) {
+    for (const [label, url, authority, check] of [
+      ['source_url', j.source_url, j.authority, j.source_check],
+      ['aid_source_url', j.aid_source_url, j.aid_authority, j.aid_source_check],
+    ] as const) {
+      if (!url) {
+        // A named authority with no link is fine; a link is what needs the checking.
+        continue;
+      }
+      checkSourceUrl(j.code, label, url, out);
+      if (!authority) {
+        out.push({
+          packId: j.code,
+          severity: 'error',
+          message: `${label} is set but no authority is named — a link with no body behind it says nothing about who decides`,
+        });
+      }
+      if (!check || !CHECKS.has(check)) {
+        out.push({
+          packId: j.code,
+          severity: 'error',
+          message: `${label} is set but ${label.replace('_url', '_check')} does not record HOW it was confirmed`,
+        });
+      }
+    }
+
+    // The two are mutually exclusive by meaning: `unverifiable` says a source was sought and not
+    // confirmed, so carrying one alongside a confirmed link would be saying both at once.
+    if (j.unverifiable && (j.source_url || j.aid_source_url)) {
+      out.push({
+        packId: j.code,
+        severity: 'error',
+        message: 'is marked unverifiable but also carries a source link — one of the two is wrong',
+      });
+    }
+  }
+  return out;
 }

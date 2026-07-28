@@ -18,6 +18,7 @@ import { REGISTERED_PACKS } from '../rulepacks';
 import { parseAidPack, parseDomicilePack, PackSchemaError } from '../rulepacks/schema';
 import {
   duplicateDomainClaims,
+  validateIndexSources,
   validateAidPack,
   validateDomicilePack,
   type ValidationProblem,
@@ -155,21 +156,51 @@ assert(
   sourcedWithoutSource.map((c) => c.code),
 );
 
-// The overclaim this split exists to prevent: a verified residency source vouching for an aid
-// claim nobody checked. Each domain's source has to be that domain's own.
-const aidSourcedFromResidency = COVERAGE.filter(
-  (c) => c.aid.level === 'sourced_only' && c.aid.source_url && c.aid.source_url === c.residency.source_url && !c.aid.packId,
+// The overclaim the residency/aid split exists to prevent.
+//
+// One source may legitimately serve both domains — in many states one body genuinely decides both,
+// and Texas's coordinating board and Virginia's SCHEV are exactly that. What must not happen is two
+// DIFFERENT bodies being backed by one link, which would mean a check made against one of them
+// silently vouching for the other. So: sharing a URL is allowed, sharing a URL under two different
+// authority names is not.
+const mismatchedSharedSource = COVERAGE.filter(
+  (c) =>
+    c.residency.source_url &&
+    c.residency.source_url === c.aid.source_url &&
+    c.residency.authority !== c.aid.authority,
 );
 assert(
-  'no jurisdiction uses its residency source to vouch for state aid',
-  aidSourcedFromResidency.length === 0,
-  aidSourcedFromResidency.map((c) => c.code),
+  'no jurisdiction backs two different named authorities with one link',
+  mismatchedSharedSource.length === 0,
+  mismatchedSharedSource.map((c) => `${c.code}: "${c.residency.authority}" vs "${c.aid.authority}"`),
 );
 
 assert(
   'the level counts add up to every jurisdiction',
   Object.values(LEVEL_COUNTS).reduce((a, b) => a + b, 0) === COVERAGE.length,
   LEVEL_COUNTS,
+);
+
+// ---------------------------------------------------------------------------------------------
+console.log('');
+console.log('The jurisdiction index is held to the same standard as a pack');
+// ---------------------------------------------------------------------------------------------
+
+const indexProblems = validateIndexSources(JURISDICTIONS);
+const indexErrors = indexProblems.filter((p) => p.severity === 'error');
+assert(
+  `every source link in the index is official, attributed and records how it was checked (${JURISDICTIONS.length} jurisdictions)`,
+  indexErrors.length === 0,
+  indexErrors.map((e) => `
+    ${e.packId}: ${e.message}`).join(''),
+);
+
+// Nothing may be silent: a jurisdiction either has a source, or says why it does not.
+const silent = JURISDICTIONS.filter((j) => !j.source_url && !j.aid_source_url && !j.unverifiable);
+assert(
+  'no jurisdiction is silent — each has a source or a stated reason it has none',
+  silent.length === 0,
+  silent.map((j) => j.code),
 );
 
 // ---------------------------------------------------------------------------------------------
