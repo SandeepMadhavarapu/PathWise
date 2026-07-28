@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import type { Event, Finding, FindingResult } from "@/lib/types";
 import { statusFromFindingResult, type StatusKey } from "@/lib/tokens";
-import { formatDecidingOffice } from "@/lib/format";
+import { formatDecidingBody } from "@/lib/format";
+import type { Agency } from "@/lib/rulepacks/schema";
 import { describeEvent, describeEvidence } from "@/lib/labels";
 import { StatusGlyph } from "./StatusGlyph";
 import { Capsule } from "./Capsule";
@@ -37,6 +38,7 @@ export function FindingDetail({
   finding,
   analysis,
   events = [],
+  agencies,
 }: {
   finding: Finding;
   /**
@@ -52,6 +54,12 @@ export function FindingDetail({
    * dropping a source silently would be worse than naming it awkwardly.
    */
   events?: readonly Event[];
+  /**
+   * The deciding jurisdiction's agencies, where a pack names them. Used only to resolve the generic
+   * `state_higher_ed_agency` office to the body that actually decides — a named role such as
+   * "Domicile Officer" is never substituted. See formatDecidingBody.
+   */
+  agencies?: readonly Agency[];
 }) {
   const status: StatusKey = statusFromFindingResult(finding.result);
 
@@ -130,7 +138,7 @@ export function FindingDetail({
       ) : null}
 
       <p className="finding-foot">
-        Decided by: {formatDecidingOffice(finding.deciding_office)} — PathWise
+        Decided by: {formatDecidingBody(finding.deciding_office, agencies, finding.domain === 'aid' ? 'aid' : 'residency')} — PathWise
         advises, the office decides.
       </p>
 

@@ -20,11 +20,15 @@
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import {
+  assertDefaultIsRegistered,
+  DEFAULT_CHECK_JURISDICTION,
   describeUnmodelled,
   isModelled,
+  MODELLED_CODES,
   REGISTERED_PACKS,
   resolveJurisdiction,
 } from '../rulepacks';
+import { formatDecidingBody, formatDecidingOffice } from '../format';
 import {
   unmodelledAidFinding,
   unmodelledResidencyFinding,
@@ -683,6 +687,224 @@ if (isModelled('TN')) {
     !/\d{2,4}[- ]day/.test(JSON.stringify(f)),
     f.headline,
   );
+}
+
+
+// ---------------------------------------------------------------------------------------------
+console.log('');
+console.log('The five verification findings, each pinned so it cannot come back');
+// ---------------------------------------------------------------------------------------------
+
+// ---- 1. /check opens on Virginia, whatever else is registered ----
+//
+// The default was `MODELLED_CODES[0]`, which is coverage-file order — alphabetical — so registering
+// Tennessee and Texas moved it from Virginia to Tennessee without anyone touching /check, and a
+// visitor's first check went from the full cross-domain finding to "PathWise has not modelled
+// Tennessee state aid rules". These assertions exist so a fiftieth pack cannot do that again.
+assertDefaultIsRegistered();
+assert('the /check default is Virginia', DEFAULT_CHECK_JURISDICTION === 'VA', DEFAULT_CHECK_JURISDICTION);
+assert(
+  'the default is a jurisdiction the engines can actually answer for',
+  isModelled(DEFAULT_CHECK_JURISDICTION),
+);
+assert(
+  'and it does not track whatever sorts first among the modelled codes',
+  MODELLED_CODES.length === 1 || MODELLED_CODES[0] !== DEFAULT_CHECK_JURISDICTION,
+  { modelledOrder: [...MODELLED_CODES], default: DEFAULT_CHECK_JURISDICTION },
+);
+{
+  // Why Virginia: it is the only jurisdiction modelled in BOTH domains, which is what makes the
+  // cross-domain demonstration possible at all.
+  const s: Student = {
+    id: 'd',
+    immigration: { status: 'F1', prior_statuses: [] },
+    dob: '2000-01-01',
+    institutions: [],
+    jurisdiction_history: [{ state: DEFAULT_CHECK_JURISDICTION, from: '2026-07-28' }],
+  };
+  const jx = jurisdictionFor(s);
+  const res = residencyFindingFor(jx, {
+    student: s, events: [], intentFactors: [], allegedEntitlementDate: '2026-07-28',
+  });
+  const aid = aidFindingFor(jx, { student: s, deadlines: { asOf: '2026-07-28' } });
+  assert(
+    'the default jurisdiction still produces the cross-domain finding (both doors closed)',
+    res.result === 'ineligible' && aid.result === 'ineligible',
+    { residency: res.result, aid: aid.result },
+  );
+}
+
+// ---- 2. Every residency finding can show a citation, gated or not ----
+//
+// `display.residencyCite` came from `gates[0].display_cite`, so a gateless pack resolved to '' and
+// the residency card rendered NO citation chip — on a product whose promise is that every finding
+// shows its regulation.
+for (const { code, packs } of REGISTERED_PACKS) {
+  const jx = jurisdictionForCode(code);
+  assert(
+    `${code}: has an abbreviated residency citation to display (${packs.domicile.gates.length} gate(s))`,
+    (jx.display?.residencyCite ?? '').length > 0,
+    jx.display?.residencyCite,
+  );
+  const s: Student = {
+    id: code,
+    immigration: { status: 'LPR', prior_statuses: [] },
+    dob: '2000-01-01',
+    institutions: [],
+    jurisdiction_history: [{ state: code, from: '2023-01-01' }],
+  };
+  const f = residencyFindingFor(jx, {
+    student: s, events: [], intentFactors: [], allegedEntitlementDate: '2026-08-24',
+  });
+  assert(
+    `${code}: and its residency finding carries a full authority line`,
+    f.rule_citation.authority.length > 0,
+    f.rule_citation.authority,
+  );
+}
+assert(
+  'Virginia still shows its GATE abbreviation, not a pack-level fallback',
+  jurisdictionForCode('VA').display?.residencyCite === 'SCHEV Pt II §03(A)',
+  jurisdictionForCode('VA').display?.residencyCite,
+);
+
+// ---- 3 and 4. The deciding body is named as specifically as the pack allows ----
+{
+  // A named ROLE is never substituted, however specific the pack's agencies are. Virginia's pack
+  // names SCHEV, and SCHEV really does set Virginia's criteria — but the domicile officer is who
+  // rules on the student's case, and they are not the same body.
+  const vaPacks = resolveJurisdiction('VA')!;
+  assert(
+    'Virginia still reads "Domicile Officer" even though its pack names SCHEV',
+    formatDecidingBody('domicile_officer', vaPacks.domicile.agencies, 'residency') === 'Domicile Officer',
+    formatDecidingBody('domicile_officer', vaPacks.domicile.agencies, 'residency'),
+  );
+
+  const tnPacks = resolveJurisdiction('TN');
+  if (tnPacks) {
+    const tnFinding = residencyFindingFor(jurisdictionForCode('TN'), {
+      student: {
+        id: 'tn',
+        immigration: { status: 'LPR', prior_statuses: [] },
+        dob: '2000-01-01',
+        institutions: [],
+        jurisdiction_history: [{ state: 'TN', from: '2023-01-01' }],
+      },
+      events: [],
+      intentFactors: [],
+      allegedEntitlementDate: '2026-08-24',
+    });
+    assert(
+      'Tennessee carries the generic office in its DATA',
+      tnFinding.deciding_office === 'state_higher_ed_agency',
+      tnFinding.deciding_office,
+    );
+    const rendered = formatDecidingBody(tnFinding.deciding_office, tnPacks.domicile.agencies, 'residency');
+    assert(
+      'but RENDERS the body its own pack names',
+      rendered.includes('Tennessee Higher Education Commission') && rendered.includes('THEC'),
+      rendered,
+    );
+    assert(
+      'and no jurisdiction name is hardcoded in the label map',
+      formatDecidingOffice('state_higher_ed_agency') === 'State Higher-Education Agency',
+      formatDecidingOffice('state_higher_ed_agency'),
+    );
+  }
+
+  assert(
+    'with no agencies at all it falls back to the generic label',
+    formatDecidingBody('state_higher_ed_agency', undefined, 'residency') === 'State Higher-Education Agency',
+  );
+  assert(
+    'and when no agency decides this domain',
+    formatDecidingBody(
+      'state_higher_ed_agency',
+      [{ id: 'x', name: 'X Board', short_name: 'XB', decides: ['aid'] }],
+      'residency',
+    ) === 'State Higher-Education Agency',
+  );
+
+  // Label register: standalone labels are Title Case with no article. The SENTENCE register lives
+  // in OFFICE_PROSE (engines/next-steps.ts) and is deliberately different, because "decided by your
+  // DSO" needs the article that "Decided by: Domicile Officer" must not have.
+  const labels = (
+    ['DSO', 'registrar', 'domicile_officer', 'financial_aid', 'USCIS', 'SEVP', 'state_higher_ed_agency'] as const
+  ).map((o) => formatDecidingOffice(o));
+  assert(
+    'every standalone office label is Title Case with no leading article',
+    labels.every((l) => !/^(the|a|an) /.test(l) && /^[A-Z]/.test(l)),
+    labels,
+  );
+}
+
+// ---- 5. A jurisdiction that counts continuous presence can actually run its clock ----
+//
+// /check hardcoded `intentFactors: []`, so no durational clock could ever start there and Texas's
+// rule was unreachable through the UI. The fix adds ONE optional date, and it must stay fail-closed.
+{
+  const mk = (code: string): Student => ({
+    id: code,
+    immigration: { status: 'LPR', prior_statuses: [] },
+    dob: '2000-01-01',
+    institutions: [],
+    jurisdiction_history: [{ state: code, from: '2023-01-01' }],
+  });
+  const ENTITLEMENT = '2026-08-24';
+
+  if (isModelled('TX')) {
+    const none = residencyFindingFor(jurisdictionForCode('TX'), {
+      student: mk('TX'), events: [], intentFactors: [], allegedEntitlementDate: ENTITLEMENT,
+    });
+    assert(
+      'Texas with NO continuous-presence fact is unable_to_verify',
+      none.result === 'unable_to_verify',
+      none.result,
+    );
+
+    const withFact = domicileAnalysisFor(jurisdictionForCode('TX'), {
+      student: mk('TX'),
+      events: [],
+      intentFactors: [{ id: 'continuous_residence', date: '2024-01-01' }],
+      allegedEntitlementDate: ENTITLEMENT,
+    });
+    assert(
+      'Texas with the fact starts its clock at that date',
+      withFact.clock?.clockStart === '2024-01-01',
+      withFact.clock?.clockStart,
+    );
+    assert(
+      'and the duration is satisfied for a 2026 term',
+      withFact.clock?.meetsDuration === true,
+      withFact.clock,
+    );
+  }
+
+  if (isModelled('VA') && isModelled('TX')) {
+    const two = [
+      { id: 'continuous_residence', date: '2024-01-01' },
+      { id: 'drivers_license', date: '2025-06-01' },
+    ];
+    const va = domicileAnalysisFor(jurisdictionForCode('VA'), {
+      student: mk('VA'), events: [], intentFactors: two, allegedEntitlementDate: ENTITLEMENT,
+    });
+    const tx = domicileAnalysisFor(jurisdictionForCode('TX'), {
+      student: mk('TX'), events: [], intentFactors: two, allegedEntitlementDate: ENTITLEMENT,
+    });
+    assert('Virginia counts from the LAST qualifying factor', va.clock?.clockStart === '2025-06-01', va.clock?.clockStart);
+    assert('Texas counts from the START of continuous presence', tx.clock?.clockStart === '2024-01-01', tx.clock?.clockStart);
+    assert('the same record therefore gives two different answers', va.clock?.clockStart !== tx.clock?.clockStart);
+  }
+
+  if (isModelled('TN')) {
+    const tn = domicileAnalysisFor(jurisdictionForCode('TN'), {
+      student: mk('TN'),
+      events: [],
+      intentFactors: [{ id: 'continuous_residence', date: '2024-01-01' }],
+      allegedEntitlementDate: ENTITLEMENT,
+    });
+    assert('Tennessee still has no clock even when given the fact', tn.clock === undefined, tn.clock);
+  }
 }
 
 console.log('');

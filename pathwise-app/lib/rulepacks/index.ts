@@ -101,6 +101,39 @@ export const MODELLED_CODES: readonly string[] = JURISDICTIONS.filter((j) => j.c
 );
 
 /**
+ * The jurisdiction /check opens on.
+ *
+ * Named explicitly, and that is the whole point. This used to be `MODELLED_CODES[0]`, with a
+ * comment saying it meant "the modelled one" and would keep meaning that as packs were added. It
+ * did not: MODELLED_CODES is in coverage-file order, which is alphabetical, so registering Tennessee
+ * and Texas silently moved the default from Virginia to Tennessee — the least complete of the three.
+ * A visitor's first check went from the full cross-domain finding (one status fact closing both the
+ * residency and the aid door, each with its own citation) to "PathWise has not modelled Tennessee
+ * state aid rules". Nothing was broken; the weakest answer had simply become the first one.
+ *
+ * So the default is a deliberate product decision rather than an emergent property of sort order,
+ * and adding a fiftieth pack cannot change it. Virginia is chosen because it is the only
+ * jurisdiction modelled in BOTH domains, which is what makes the cross-domain demonstration
+ * possible at all.
+ *
+ * `assertDefaultIsRegistered` below fails loudly if this is ever pointed at a code with no pack.
+ */
+export const DEFAULT_CHECK_JURISDICTION = 'VA';
+
+/**
+ * A default pointing at an unregistered jurisdiction would open /check on a state the engines
+ * cannot answer for — silently, and only on that one screen. Checked rather than assumed.
+ */
+export function assertDefaultIsRegistered(): void {
+  if (!(DEFAULT_CHECK_JURISDICTION in REGISTRY)) {
+    throw new Error(
+      `DEFAULT_CHECK_JURISDICTION is "${DEFAULT_CHECK_JURISDICTION}", which has no registered rule ` +
+        `pack. /check would open on a jurisdiction PathWise cannot reason about.`,
+    );
+  }
+}
+
+/**
  * What a jurisdiction PathWise cannot reason about can still tell a student: who decides, and where
  * the rule lives. Both may be absent, and an absent one is reported as absent.
  */

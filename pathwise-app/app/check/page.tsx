@@ -14,7 +14,7 @@ import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { FindingDetail } from "@/components/FindingDetail";
-import { formatDecidingOffice } from "@/lib/format";
+import { formatDecidingBody, formatDecidingOffice } from "@/lib/format";
 import {
   aidFindingFor,
   aidFormFor,
@@ -23,7 +23,7 @@ import {
 } from "@/lib/engines/jurisdiction";
 import { JURISDICTIONS } from "@/lib/coverage";
 import { MODELLED_NAMES } from "@/lib/jurisdiction-coverage";
-import { MODELLED_CODES } from "@/lib/rulepacks";
+import { assertDefaultIsRegistered, DEFAULT_CHECK_JURISDICTION } from "@/lib/rulepacks";
 
 // The statuses this flow offers (a curated subset of ImmigrationStatus).
 const STATUS_OPTIONS: { value: ImmigrationStatus; label: string }[] = [
@@ -43,10 +43,13 @@ const STATE_OPTIONS: { code: string; name: string }[] = JURISDICTIONS.map((j) =>
   name: j.name,
 }));
 
-// The form opens on a jurisdiction that has a pack behind it, so the first thing a visitor sees is
-// the engine doing real work. Which one that is comes from the registry — "the modelled one", not
-// "Virginia". Register a second pack and this keeps meaning what it says.
-const DEFAULT_STATE = MODELLED_CODES[0] ?? JURISDICTIONS[0].code;
+// The form opens on the jurisdiction that gives the fullest demonstration, named explicitly in the
+// registry rather than picked off the front of a list. This was `MODELLED_CODES[0]`, which is
+// coverage-file order — alphabetical — so registering Tennessee and Texas silently moved the default
+// from Virginia to Tennessee, and a visitor's first check went from the cross-domain finding to
+// "PathWise has not modelled Tennessee state aid rules". See DEFAULT_CHECK_JURISDICTION.
+assertDefaultIsRegistered();
+const DEFAULT_STATE = DEFAULT_CHECK_JURISDICTION;
 
 // finding.result -> a DomainCard band (green | amber | red). DomainCard has no "gray",
 // so unable_to_verify collapses to amber for the summary card.
@@ -73,6 +76,11 @@ export default function CheckPage() {
   const [status, setStatus] = useState<ImmigrationStatus>("F1");
   const [state, setState] = useState<string>(DEFAULT_STATE);
   const [rows, setRows] = useState<CptRow[]>([blankRow()]);
+  // The date continuous presence in the chosen state began. Optional, and empty by default: absent
+  // means the durational clock has nothing to start from, which is the honest answer and the one
+  // the engines already give. Supplying it is what lets a state whose rule counts continuous
+  // presence actually run its clock — see the intentFactors note below.
+  const [presenceSince, setPresenceSince] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
   const [showReasoning, setShowReasoning] = useState(false);
 
@@ -133,7 +141,18 @@ export default function CheckPage() {
   const finding: Finding = residencyFindingFor(jx, {
     student,
     events,
-    intentFactors: [],
+    // The one intent fact this form can honestly collect.
+    //
+    // It was hardcoded to `[]`, which meant no jurisdiction's durational clock could ever start
+    // here: a state that counts from continuous presence returned "no qualifying intent factors on
+    // record" no matter what the visitor typed, so its rule was unreachable through the UI.
+    //
+    // `continuous_residence` is the id BOTH registered domicile packs weigh, so this is the pack's
+    // own vocabulary rather than a term coined for the form. It stays FAIL-CLOSED: an empty date
+    // contributes no factor at all, and a jurisdiction whose pack does not weigh continuous
+    // residence gets a factor it does not recognise, which changes nothing. Nothing is inferred and
+    // no date is defaulted.
+    intentFactors: presenceSince ? [{ id: "continuous_residence", date: presenceSince }] : [],
     allegedEntitlementDate: today,
   });
 
@@ -224,7 +243,26 @@ export default function CheckPage() {
               ))}
             </select>
           </div>
+          {/* Optional, and the only intent fact this form can honestly collect. States differ in
+              what they count it FROM — one counts from the last act showing intent, another from
+              the start of continuous presence — so the same date produces different answers and
+              PathWise dispatches on the jurisdiction's own rule rather than a shared one. Leave it
+              blank and no durational clock starts, which is the honest result and not a failure. */}
+          <div className="field">
+            <label htmlFor="presence">Continuous residence began (optional)</label>
+            <input
+              id="presence"
+              type="date"
+              value={presenceSince}
+              onChange={(e) => setPresenceSince(e.target.value)}
+            />
+          </div>
         </div>
+        <p className="field-note">
+          States count a durational requirement from different starting points, so that one date can
+          give different answers in different states. Left blank, no clock starts — PathWise reports
+          that rather than assuming a date.
+        </p>
 
         <div className="section-head">Your CPT authorizations</div>
         {rows.map((row, i) => (
@@ -303,9 +341,9 @@ export default function CheckPage() {
               jurisdictionName={jx.name}
               residencyText={finding.rule_citation.text}
               residencyCite={jx.display?.residencyCite ?? ""}
-              residencyOffice={formatDecidingOffice(finding.deciding_office)}
+              residencyOffice={formatDecidingBody(finding.deciding_office, jx.packs?.domicile.agencies, 'residency')}
               aidCite={jx.display?.aidCite ?? ""}
-              aidOffice={formatDecidingOffice(aidFinding.deciding_office)}
+              aidOffice={formatDecidingBody(aidFinding.deciding_office, jx.packs?.aid?.agencies, 'aid')}
               voice="second"
             />
           ) : null}
@@ -332,7 +370,7 @@ export default function CheckPage() {
             />
             <DomainCard
               domain={`Residency (${stateName})`}
-              decidingOffice={formatDecidingOffice(finding.deciding_office)}
+              decidingOffice={formatDecidingBody(finding.deciding_office, jx.packs?.domicile.agencies, 'residency')}
               status={
                 unmodelled ? "Not modelled by PathWise" : isBlocked ? "Blocked by status" : finding.headline
               }
@@ -393,7 +431,7 @@ export default function CheckPage() {
 
           <div className="section-head">The full reasoning</div>
           {showReasoning ? (
-            <FindingDetail finding={finding} events={events} />
+            <FindingDetail finding={finding} events={events} agencies={jx.packs?.domicile.agencies} />
           ) : (
             <button
               type="button"

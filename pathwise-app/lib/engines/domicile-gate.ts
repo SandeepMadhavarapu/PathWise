@@ -168,7 +168,9 @@ export function domicileView(pack: DomicilePack): DomicileView {
     // renders the empty string, which is the honest output: there is no clause to quote.
     gateId: gate?.id ?? '',
     gateCite: gate?.cite ?? '',
-    gateDisplayCite: gate?.display_cite ?? '',
+    // The gate's abbreviation where there is a gate; the pack's where there is not. Empty only
+    // when the pack states neither, which renders as no chip rather than an empty one.
+    gateDisplayCite: gate?.display_cite ?? pack.display_cite ?? '',
     gateExplain: gate?.explain ?? '',
     gateHeadlineFor: (statusText: string) =>
       gate ? gate.headline.replace(/^\S+(?=\s+status\b)/, statusText) : '',

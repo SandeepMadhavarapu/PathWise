@@ -246,6 +246,19 @@ export interface DomicilePack extends PackHeader {
    * quietly become PathWise's own opinion.
    */
   deciding_office?: DecidingOffice;
+  /**
+   * The jurisdiction's authority, abbreviated for a chip.
+   *
+   * A gated pack carries this per gate (`Gate.display_cite`), and that is what a screen shows for a
+   * student the gate closed. A GATELESS pack had nowhere to put it, so the chip resolved to an empty
+   * string and the residency card rendered no citation at all — on a product whose stated promise is
+   * that every finding shows its regulation.
+   *
+   * Optional and authored rather than derived: the abbreviation is an editorial choice about how the
+   * source names itself, and shortening a long authority line automatically would be PathWise
+   * inventing a citation format. `AidPack` has carried exactly this field from the start.
+   */
+  display_cite?: string;
   gates: Gate[];
   /**
    * Optional, and that is the whole point of it being optional: not every state has a durational
@@ -514,6 +527,11 @@ export function parseDomicilePack(raw: unknown): DomicilePack {
     };
   });
 
+  // The abbreviated authority. A gated pack carries one per gate; a gateless one states it here or
+  // has none, and "none" renders as no chip rather than as an empty one.
+  const packDisplayCite =
+    typeof raw.display_cite === 'string' ? c.str(raw, 'display_cite') : undefined;
+
   // Who decides. A gated pack carries it per gate; a gateless one must state it at the top, or no
   // finding it produces could name an office at all.
   let decidingOffice: DecidingOffice | undefined;
@@ -599,6 +617,7 @@ export function parseDomicilePack(raw: unknown): DomicilePack {
     ...header,
     domain: 'residency',
     deciding_office: decidingOffice,
+    display_cite: packDisplayCite,
     gates,
     clock,
     dependency,
