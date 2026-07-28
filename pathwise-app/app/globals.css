@@ -16,7 +16,10 @@
   /* Text */
   --text: #1f2328;
   --text-secondary: #5b6470;
-  --text-muted: #8a929c;
+  /* 4.75:1 on --surface. The previous #8a929c was 3.15:1 — under WCAG AA for normal text, and this
+     token carries every section heading, micro-label, citation date and footer in the product, so
+     the failure was the app's most widespread one rather than an edge case. */
+  --text-muted: #6b7480;
   --text-inverse: #ffffff;
 
   /* Status — the only chroma in the product */
@@ -30,8 +33,10 @@
   --callout-border: #f2d69b;
 
   /* Derived: --status-warn on its own fails text contrast on white, so warn-as-text
-     (not warn-as-fill) uses this darker mix of the same token instead of a second hex. */
-  --status-warn-text: color-mix(in srgb, var(--status-warn) 55%, var(--text));
+     (not warn-as-fill) uses this darker mix of the same token instead of a second hex.
+     At 55% warn this still only reached ~4.1:1 on --callout-bg, which is where it is most often
+     used; 45% takes it to ~5.2:1 there and ~5.6:1 on --surface. */
+  --status-warn-text: color-mix(in srgb, var(--status-warn) 45%, var(--text));
 
   /* Derived: the soft fill / hairline-border pair for each status and for --info. Every tinted
      panel in the app resolves to one of these rather than to a second hex, so a status can only
@@ -76,7 +81,9 @@
   --dur-slow: 220ms;
 
   /* Shell */
-  --sidebar-width: 208px;
+  /* 224 rather than 208 so the longest rail label ("Check your status", "When evidence lands")
+     fits without the ellipsis that made two destinations read as the same truncated word. */
+  --sidebar-width: 224px;
   --sidebar-width-collapsed: 64px;
   --topbar-height: 64px;
   --content-max: 1200px;
@@ -101,6 +108,27 @@ button, input, select, textarea { font-family: inherit; }
 ul, ol { margin: 0; }
 a { color: var(--info); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+/* =============================================================================
+   Focus. One treatment, declared once, for everything that takes focus.
+
+   Four selectors used to style this and everything else fell back to the user
+   agent ring — visible, but a different shape and colour per browser, and on the
+   near-black rail it landed at a contrast the rest of the product would not have
+   shipped. The keyboard path through the app is the same path a screen-reader
+   user takes and the same path a judge takes when the trackpad is not to hand,
+   so it gets a deliberate style rather than a default one.
+   ============================================================================= */
+:where(a, button, [role="tab"], summary, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
+  border-radius: var(--radius-input);
+}
+/* On the dark rail the accent blue is not the high-contrast choice against near-black; white is. */
+.sidebar :where(a, button):focus-visible {
+  outline-color: var(--text-inverse);
+  outline-offset: 1px;
+}
 
 /* =============================================================================
    Typography scale — utility classes, not one-off styles.
@@ -518,6 +546,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .rtree-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .rtree-body-top { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; }
 .rtree-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: var(--space-1) 0 var(--space-1) 34px; }
+/* The affordance for the disclosure beside it. aria-hidden and untabbable on purpose: the chevron
+   is the real control and already carries the accessible name, so this must not be a second stop
+   on the keyboard path announcing the same thing. */
+.rtree-sources { flex: none; background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-sans); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 700; color: var(--text-muted); }
+.rtree-sources:hover { color: var(--info); }
 
 /* =============================================================================
    Callout
@@ -549,29 +584,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .callout-close:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 
-/* =============================================================================
-   Tabs
-   ============================================================================= */
-.tabs { position: relative; display: flex; gap: var(--space-5); border-bottom: 1px solid var(--border); }
-.tab {
-  background: none;
-  border: none;
-  padding: var(--space-2) 0 var(--space-3);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease);
-}
-.tab:hover { color: var(--text); }
-.tab.active { color: var(--text); }
-.tabs-underline {
-  position: absolute;
-  bottom: -1px;
-  height: 2px;
-  background: var(--info);
-  transition: transform var(--dur-slow) var(--ease), width var(--dur-slow) var(--ease);
-}
+/* The Overview / My journey tab strip lived here. It navigated the same two routes the sidebar
+   already lists, at every viewport — a second competing affordance for one pair of destinations,
+   and the source of a one-frame underline pop, because the indicator could only be positioned
+   after a useEffect had measured the active tab. The rail is the single navigation now. */
 
 /* =============================================================================
    DomainCard
@@ -601,11 +617,47 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    Hero cross-domain finding
    ============================================================================= */
 .hero { padding: var(--space-5); margin-bottom: 0; }
-.hero .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
-.hero h1 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; color: var(--text); }
-.hero p { margin: 0 0 var(--space-3); color: var(--text-secondary); font-size: 14px; line-height: 1.55; }
-.hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-top: var(--space-1); }
-@media (max-width: 640px) { .hero .doors { grid-template-columns: 1fr; } }
+.hero .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-4); }
+
+/* The fact. It is the subject of the whole page, so it gets the page's largest type and the only
+   accent rule on the card. */
+.hero-fact { border-left: 3px solid var(--info); padding-left: var(--space-4); }
+.hero-fact-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 700; color: var(--info); margin-bottom: 2px; }
+.hero-fact-v { margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 500; color: var(--text); }
+.hero-fact-v strong { font-weight: 700; }
+
+/* One fact becoming two consequences, drawn once. Purely a connector: no colour of its own, so it
+   cannot be mistaken for a status. */
+.hero-split { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; }
+.hero-split-line { flex: 1; height: 1px; background: var(--border-strong); }
+.hero-split-note { flex: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 700; color: var(--text-muted); text-align: center; }
+
+.hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+
+/* A closed door now looks closed: the status fill and the 3px status border the rest of the app
+   uses, plus the glyph and the capsule, so the hero reads in the same vocabulary as every finding
+   behind it. */
+.door { border: 1px solid var(--border); border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-input); padding: var(--space-4); background: var(--surface); }
+.door.blocked { border-left-color: var(--status-blocked); background: var(--blocked-soft);
+  border-color: var(--blocked-border); }
+
+.door-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); }
+.door-system { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.door-why { margin: var(--space-2) 0 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.door-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); margin-top: var(--space-3);
+  padding-top: var(--space-3); border-top: 1px solid var(--blocked-border); }
+.door-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+
+.hero-foot { margin: var(--space-4) 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+
+@media (max-width: 640px) {
+  .hero .doors { grid-template-columns: 1fr; }
+  .hero-fact-v { font-size: 22px; }
+  .hero-split-note { font-size: 10px; }
+}
 .door { border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-3); background: var(--canvas); }
 .door .k { font-size: 11px; color: var(--status-blocked); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .door .v { font-size: 14px; color: var(--text); margin-top: 4px; line-height: 1.5; }
@@ -689,7 +741,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .btn:hover { background: color-mix(in srgb, var(--info) 85%, black); }
 
-.moment-count { margin: var(--space-5) 0 var(--space-2); font-size: 15px; color: var(--text); }
+/* The frozen-scenario label. Quiet by design — it is a caption on the record, not a status. */
+.scenario-note { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.scenario-note strong { color: var(--text-secondary); font-weight: 600; }
+.scenario-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+.scenario-sep { margin: 0 6px; }
+
+.moment-count { margin: var(--space-5) 0 var(--space-2); display: flex; flex-direction: column; gap: var(--space-1); }
+.mc-lead { font-size: 15px; color: var(--text); }
+.mc-sub { font-size: 13px; color: var(--text-secondary); max-width: 68ch; line-height: 1.5; }
 .conseq { list-style: none; padding: 0; margin: var(--space-2) 0 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .conseq-item {
   display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4);
@@ -723,8 +783,61 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .landing { padding: var(--space-6) var(--space-4); }
   .landing-line { font-size: 26px; }
 }
-.landing-cta-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4) 22px; margin-bottom: var(--space-5); }
+.landing-cta-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4) 22px; margin-top: var(--space-5); }
 .landing-cta-alt { font-size: 14px; font-weight: 600; color: var(--info); }
+
+.landing-refuse { padding: var(--space-7) 44px; margin-top: var(--space-4); }
+.landing-h2 { font-size: 24px; line-height: 1.25; margin: 0 0 var(--space-3); letter-spacing: -0.02em; font-weight: 600; color: var(--text); }
+.landing-guarantees { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: flex; flex-direction: column; }
+.landing-guarantees li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px var(--space-3);
+  padding: var(--space-3) 0; border-top: 1px solid var(--border); }
+.landing-guarantees li:first-child { border-top: none; }
+.lg-k { flex: none; min-width: 168px; font-size: 13px; font-weight: 600; color: var(--text); }
+.lg-v { flex: 1 1 240px; font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+/* =============================================================================
+   SystemsHero — one fact, read by three systems. Every value in it is engine output;
+   see components/SystemsHero.tsx.
+   ============================================================================= */
+.sh { margin-top: var(--space-5); padding: var(--space-5); background: var(--canvas); }
+
+.sh-fact { border-left: 3px solid var(--info); padding-left: var(--space-4); }
+.sh-fact-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 700; color: var(--info); margin-bottom: 2px; }
+.sh-fact-v { margin: 0; font-size: 17px; line-height: 1.35; color: var(--text); letter-spacing: -0.01em; }
+.sh-fact-v strong { font-weight: 600; }
+
+/* The connector. A hairline, a caption, a hairline — the "one thing becomes three" beat, drawn
+   rather than described, and cheap enough that it costs nothing to render. */
+.sh-flow { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; }
+.sh-flow-line { flex: 1; height: 1px; background: var(--border-strong); }
+.sh-flow-note { flex: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 700; color: var(--text-muted); text-align: center; }
+
+.sh-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.sh-row { display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4);
+  background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-input); }
+.sh-row.blocked { border-left-color: var(--status-blocked); background: var(--blocked-soft); }
+.sh-row.warn { border-left-color: var(--status-warn); background: var(--warn-soft); }
+.sh-row.done { border-left-color: var(--status-done); background: var(--done-soft); }
+
+.sh-row-body { flex: 1; min-width: 0; }
+.sh-row-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); }
+.sh-row-system { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.sh-row-finding { margin: var(--space-1) 0 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.sh-row-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); margin-top: var(--space-2); }
+.sh-row-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+
+.sh-foot { margin: var(--space-4) 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .landing-refuse { padding: var(--space-5); }
+  .landing-h2 { font-size: 20px; }
+  .lg-k { min-width: 0; }
+  .sh { padding: var(--space-4); }
+  .sh-flow-note { font-size: 10px; }
+}
 
 .landing-brand { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: var(--space-2); }
 .landing-brand .logo { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; color: var(--text); }
@@ -757,8 +870,14 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .finding-foot { margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-secondary); }
 
+/* The volatility panel states what KIND of information it is; the note itself states what it is
+   about. It deliberately does not open with a claim about the finding above it — see the comment
+   in FindingDetail.tsx for the mis-scoped warning that made that necessary. */
 .volatility { margin-top: var(--space-3); background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: var(--radius-input);
-  padding: var(--space-3); font-size: 13px; color: var(--status-warn-text); font-weight: 600; }
+  padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
+.volatility-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
+.volatility-sep { margin: 0 6px; opacity: 0.55; }
+.volatility-v { font-size: 13px; line-height: 1.5; color: var(--text); }
 
 /* =============================================================================
    "Check your own status" form
@@ -786,12 +905,21 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   padding-top: var(--space-4); border-top: 1px dashed var(--border); }
 .check-privacy { font-size: 13px; color: var(--status-done); font-weight: 600; }
 
+/* What the visitor gets back, stated before they are asked to type anything. */
+.check-expect { list-style: none; padding: 0; margin: var(--space-4) 0 var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-2); }
+.check-expect li { position: relative; padding-left: var(--space-5); font-size: 13px;
+  line-height: 1.5; color: var(--text-secondary); max-width: 74ch; }
+.check-expect li::before { content: ""; position: absolute; left: 6px; top: 8px; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--status-done); }
+.jintro .check-privacy { display: block; margin: 0; }
+
 /* =============================================================================
    My Journey — the persistent timeline
    ============================================================================= */
 .jintro { padding: var(--space-5); }
 .jintro-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
-.jintro h1 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; }
+.jintro h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; }
 .jintro p { margin: 0; color: var(--text-secondary); font-size: 14px; max-width: 62ch; line-height: 1.55; }
 .jstats { display: flex; flex-wrap: wrap; gap: 6px var(--space-5); margin-top: var(--space-4); padding-top: var(--space-3);
   border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-muted); }
@@ -867,7 +995,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 @media (max-width: 640px) {
   .jintro { padding: var(--space-4); }
-  .jintro h1 { font-size: 19px; }
+  .jintro h2 { font-size: 19px; }
   .jchev { display: none; }
 }
 
@@ -992,11 +1120,32 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .nshead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
 .nsdomain { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
 .nstitle { font-size: 17px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 44ch; color: var(--text); }
-.nswhy { margin: var(--space-1) 0 0; font-size: 14px; color: var(--text-secondary); max-width: 66ch; line-height: 1.55; }
+.nswhy { margin: 0; font-size: 14px; color: var(--text-secondary); max-width: 66ch; line-height: 1.55; }
+
+/* The collapsed card's one answer to "do I have to care about this today?". */
+.nswhen { margin-top: var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.nswhen.warn { color: var(--status-warn-text); }
+.nswhen.blocked { color: var(--status-blocked); }
+.nswhen.unknown { color: var(--text-secondary); font-weight: 500; }
+
+.nsmore { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3);
+  background: none; border: none; padding: var(--space-1) 0; cursor: pointer;
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--info); text-align: left; }
+.nsmore:hover { text-decoration: underline; text-underline-offset: 3px; }
+.nsmore-chev { flex: none; transition: transform var(--dur-fast) var(--ease); }
+.nscard.open .nsmore-chev { transform: rotate(90deg); }
+
+.nsdetail { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border);
+  display: flex; flex-direction: column; gap: var(--space-3); }
+
+/* A step that exists so the record stays complete, not so the student does something today. Muted
+   rather than coloured: it is not a status, and chroma in this product means status. */
+.nsitem.informational .nscard { background: transparent; box-shadow: none; border-style: dashed; }
+.nsitem.informational .nstitle { font-weight: 500; color: var(--text-secondary); }
 
 /* The deadline block. Never a bare date: the student's own date first, the office's date and the
    lead time that separates them second, the consequence last. */
-.nsdl { margin-top: var(--space-4); padding: var(--space-3); border-radius: var(--radius-input); background: var(--canvas); border: 1px solid var(--border); }
+.nsdl { padding: var(--space-3); border-radius: var(--radius-input); background: var(--canvas); border: 1px solid var(--border); }
 .nsdl.done { background: var(--done-soft); border-color: var(--done-border); }
 .nsdl.warn { background: var(--warn-soft); border-color: var(--warn-border); }
 .nsdl.blocked { background: var(--blocked-soft); border-color: var(--blocked-border); }
@@ -1039,10 +1188,25 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-result { font-size: 15px; color: var(--text); }
 .wc-sub { font-size: 12px; color: var(--text-muted); }
 .wc-pending-note { font-size: 14px; color: var(--text-muted); margin-top: var(--space-3); max-width: 36ch; }
-.wc-readings { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px dashed var(--border); }
-.wc-reading { border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-3); background: var(--canvas); }
-.wc-reading-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 12px; font-weight: 600; color: var(--text-muted); }
-.wc-reading-v { font-size: 13px; color: var(--text); margin-top: var(--space-1); }
+/* The two readings sit side by side down to a very narrow viewport, because the comparison IS the
+   finding: two numbers from one engine, on opposite sides of one cliff. Stacking them turns a
+   comparison into a list. */
+.wc-readings { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);
+  margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px dashed var(--border); }
+.wc-reading { border: 1px solid var(--border); border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius-input); padding: var(--space-3); background: var(--canvas); }
+.wc-reading.attention { border-left-color: var(--status-warn); background: var(--warn-soft); border-color: var(--warn-border); }
+.wc-reading.blocked { border-left-color: var(--status-blocked); background: var(--blocked-soft); border-color: var(--blocked-border); }
+.wc-reading.verified { border-left-color: var(--status-done); background: var(--done-soft); border-color: var(--done-border); }
+.wc-reading-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.wc-reading-n { margin-top: var(--space-2); font-size: 30px; line-height: 1.05; font-weight: 600;
+  letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; }
+.wc-reading-of { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-muted); }
+.wc-reading-v { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1); line-height: 1.4; }
+@media (max-width: 400px) { .wc-readings { grid-template-columns: 1fr; } }
+
+/* The two ways into the evidence flow, at equal weight. */
+.wc-ev-choose { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .wc-facts { list-style: none; padding: var(--space-3) 0 0; margin: var(--space-4) 0 0; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: var(--space-2); }
 .wc-fact { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); font-size: 13px; color: var(--text-secondary); }
 .wc-fact strong { color: var(--text); font-weight: 600; white-space: nowrap; }
@@ -1059,9 +1223,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    something PathWise did, the attestation is something the student did, and the surface says which
    is which rather than blending them into one confident-looking action. */
 .wc-ev-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.wc-ev-alt { font-size: 13px; color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; }
-.wc-ev-alt:hover { color: var(--info); }
-.wc-ev-alt:disabled { opacity: 0.5; cursor: default; }
+/* `.wc-ev-alt` styled the sample-document path as a de-emphasised text link beneath the file
+   picker. Both routes are primary actions now — see `.wc-ev-choose` — so the demoted variant is
+   gone rather than left behind to be reached for again. */
 
 /* What came back from the read — measured facts, so they are set like data, not like prose. */
 .wc-ev-read { display: flex; flex-direction: column; gap: var(--space-2); }
@@ -1200,7 +1364,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .dm-na { font-size: 12px; font-weight: 600; color: var(--text-muted); }
 .dm-row-top .statuschip, .dm-row-top .dm-na { margin-left: auto; }
 .dm-row-note { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2); }
-.dm-clause { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); background: var(--idle-soft); border: 1px solid var(--border); border-radius: var(--radius-input); padding: 1px 6px; overflow-wrap: anywhere; }
+.dm-clause-wrap { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-left: var(--space-2); }
+.dm-clause-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.dm-clause { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); background: var(--idle-soft); border: 1px solid var(--border); border-radius: var(--radius-input); padding: 1px 6px; overflow-wrap: anywhere; }
 .dm-row .dm-tags { margin-top: var(--space-2); }
 
 .dm-warn { margin-top: var(--space-3); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: var(--space-4); }
@@ -1246,22 +1412,36 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 
 /* =============================================================================
-   The shell on a phone. The sidebar is a fixed 208px column, which at 375px would
-   leave the content 167px wide and push the page sideways — below 900px it becomes
-   a horizontal icon rail instead, and the topbar lets its privacy line wrap.
+   The shell on a phone. The sidebar is a fixed column, which at 375px would leave
+   the content 151px wide and push the page sideways, so below 900px it becomes a
+   horizontal rail instead.
+
+   That rail used to drop `.sidebar-label`, which left eight unlabelled icons as the
+   entire navigation on the layout a judge opening the link on a phone actually gets
+   — and `display: none` takes the label out of the accessibility tree too, so the
+   only thing naming those links was the aria-label added for exactly this reason.
+   The labels stay now: the rail scrolls horizontally instead, every destination
+   keeps its name, and the targets reach 44px.
    ============================================================================= */
 @media (max-width: 900px) {
   .app-shell { flex-direction: column; }
   .sidebar {
-    width: 100%; flex-direction: row; align-items: center; flex-wrap: wrap;
-    gap: var(--space-2); padding: var(--space-3) var(--space-4); height: auto; overflow-x: auto;
+    width: 100%; flex-direction: row; align-items: center; flex-wrap: nowrap;
+    gap: var(--space-2); padding: var(--space-2) var(--space-3); height: auto;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scrollbar-width: thin; scrollbar-color: var(--sidebar-active) transparent;
   }
+  .sidebar::-webkit-scrollbar { height: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--sidebar-active); border-radius: var(--radius-pill); }
   .sidebar.collapsed { width: 100%; }
+  .sidebar-logo-row { flex: none; padding: 0 var(--space-2) 0 var(--space-1); }
   .sidebar-collapse-btn { display: none; }
-  .sidebar-nav, .sidebar-secondary { flex-direction: row; flex-wrap: wrap; gap: var(--space-1); }
-  .sidebar-divider, .sidebar-spacer, .sidebar-footer { display: none; }
-  .sidebar-label { display: none; }
-  .sidebar-item { padding: var(--space-2); }
+  .sidebar-nav, .sidebar-secondary { flex: none; flex-direction: row; flex-wrap: nowrap; gap: var(--space-1); }
+  .sidebar-divider { flex: none; height: 20px; width: 1px; margin: 0 var(--space-1); }
+  .sidebar-spacer, .sidebar-footer { display: none; }
+  /* 44px minimum target, and the label is what makes the target identifiable. */
+  .sidebar-item { flex: none; padding: 10px var(--space-3); min-height: 44px; }
+  .sidebar.collapsed .sidebar-label { display: block; }
   .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); height: auto; min-height: var(--topbar-height); flex-wrap: wrap; }
   /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
      rather than being dropped the way the search field it replaced was. */
