@@ -8,15 +8,14 @@
 //
 //   this file  is the editorial standard. Is the source URL an official one? Is the verification
 //              date real, and not in the future? Does a pack that claims `modelled` actually carry
-//              the rules that claim implies? Does the coverage map agree with the packs?
+//              the rules that claim implies?
 //
 // The second set is not a runtime concern — a pack that is structurally sound but under-verified
 // answers correctly, it is just not yet trustworthy enough to ship. So these run in `npm test`,
 // which is the gate before a deploy, and nothing here is imported by a page.
 
 import type { AidPack, Capability, DomicilePack } from './schema';
-import { DETERMINATE_LEVELS } from './schema';
-import { JURISDICTIONS, jurisdictionByCode } from '../coverage';
+import { jurisdictionByCode } from '../coverage';
 
 export interface ValidationProblem {
   packId: string;
@@ -255,32 +254,23 @@ export function validateAidPack(
 }
 
 /**
- * Where the coverage map and the packs disagree about what PathWise can do.
+ * A pack that speaks for a domain another pack in the same jurisdiction has already spoken for.
  *
- * `coverage.json` is a public claim; the packs are the truth. Once the coverage screen is derived
- * from capabilities this becomes structurally impossible, but the check stays: a derivation is only
- * as good as its inputs, and this is the assertion that the inputs agree.
+ * The coverage map is derived from these declarations, and the derivation takes the first pack to
+ * claim a domain — so two claims on one domain would make the map depend on registration order,
+ * which is not a fact about the jurisdiction.
  */
-export function coverageAgreesWithPacks(
+export function duplicateDomainClaims(
   registered: ReadonlyArray<{ code: string; capabilities: readonly Capability[] }>,
 ): string[] {
   const problems: string[] = [];
-  const byCode = new Map(registered.map((r) => [r.code, r.capabilities]));
-
-  for (const j of JURISDICTIONS) {
-    const caps = byCode.get(j.code);
-    const claimsModelled = j.status === 'implemented';
-    const packDecides = (caps ?? []).some((c) => DETERMINATE_LEVELS.includes(c.level));
-
-    if (claimsModelled && !packDecides) {
-      problems.push(
-        `${j.code}: coverage.json says "implemented" but no registered pack declares a determinate capability`,
-      );
-    }
-    if (packDecides && !claimsModelled) {
-      problems.push(
-        `${j.code}: a registered pack declares a determinate capability but coverage.json says "${j.status}"`,
-      );
+  for (const { code, capabilities } of registered) {
+    const seen = new Set<string>();
+    for (const cap of capabilities) {
+      if (seen.has(cap.domain)) {
+        problems.push(`${code}: more than one registered pack declares a "${cap.domain}" capability`);
+      }
+      seen.add(cap.domain);
     }
   }
   return problems;

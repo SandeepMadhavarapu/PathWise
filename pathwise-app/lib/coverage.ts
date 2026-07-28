@@ -1,30 +1,55 @@
-// coverage.ts — the reader for rulepacks/coverage.json.
+// coverage.ts — the jurisdiction INDEX.
 //
-// /coverage exists to say one thing: a jurisdiction is data, not code. A screen that hand-counted the
-// states it covers would be the single place that claim was untrue — so every count the UI quotes is
-// derived here, from the file itself. Add a state to coverage.json, or move one from "not yet" to
-// "implemented", and the landing page, the dashboard strip and the map headline all follow on their
-// own.
+// Every state and DC, with the body that decides residency there and the source PathWise actually
+// opened. It records what is KNOWN about a jurisdiction and deliberately says nothing about how far
+// PathWise has modelled one: that is a fact about the rule packs, and it is derived from them in
+// ./jurisdiction-coverage.ts.
+//
+// The separation is the point. This file used to carry a hand-written `status` per jurisdiction —
+// "implemented", "schema_ready", "not_yet" — maintained beside the packs that were the actual
+// truth. Two sources for one fact, and the one on screen was the one nobody's tests were reading.
+// There was a check that they agreed; it is better for them not to be two things.
+//
+// This module knows nothing about rule packs, and must not: lib/rulepacks/index.ts imports it, so
+// the arrow only ever points this way.
 
 import pack from './rulepacks/coverage.json';
-
-export type CoverageStatus = 'implemented' | 'schema_ready' | 'not_yet';
 
 export interface Jurisdiction {
   code: string;
   name: string;
-  status: CoverageStatus;
+  /**
+   * What PathWise has noted about how this jurisdiction's rules are shaped — the durational period,
+   * what its clock anchors to, whether lawful presence is required. Research, not a finding: it is
+   * why a state was picked as a stress test, and it is never cited.
+   */
   note?: string;
   /**
-   * The body or statute that actually decides residency in this jurisdiction, and a link to it.
+   * The body or statute that decides RESIDENCY here, and a link to it.
    *
    * Both are optional and deliberately so: they are present only where the source was opened and
-   * read on `verified_on`. An absent source_url means PathWise has not verified one — the UI says
-   * that in words rather than linking a plausible guess, which is the same discipline the engines
-   * apply to a rule they cannot read. See the pack's own `source_url_policy`.
+   * read. An absent source_url means PathWise has not verified one — the UI says that in words
+   * rather than linking a plausible guess, which is the same discipline the engines apply to a rule
+   * they cannot read. See the pack's own `source_url_policy`.
    */
   authority?: string;
   source_url?: string;
+  /**
+   * The same, for STATE AID — which is very often a different body: a residency determination is
+   * made by a coordinating board or the institution, and grants by a separate commission.
+   *
+   * Separate fields rather than one pair reused for both, because reusing them would let a verified
+   * residency source silently vouch for an aid claim nobody has checked. That is the precise shape
+   * of overclaim this product exists not to make, and it is invisible unless the fields are split.
+   */
+  aid_authority?: string;
+  aid_source_url?: string;
+  /**
+   * Present only where a source was actually sought and could not be confirmed, with the reason.
+   * This is what separates "unable to verify" from "not modelled": one is work done that failed,
+   * the other is work not yet done, and collapsing them would let an empty row look like an effort.
+   */
+  unverifiable?: string;
 }
 
 export const JURISDICTIONS = pack.jurisdictions as Jurisdiction[];
@@ -33,14 +58,10 @@ export const JURISDICTIONS = pack.jurisdictions as Jurisdiction[];
 export function jurisdictionByCode(code: string): Jurisdiction | undefined {
   return JURISDICTIONS.find((j) => j.code === code);
 }
-export const COVERAGE_LEGEND = pack.legend as Record<CoverageStatus, string>;
-export const COVERAGE_VERIFIED_ON = pack.verified_on;
 
-/** How many jurisdictions sit in each state of coverage. */
-export const COVERAGE_COUNTS = JURISDICTIONS.reduce(
-  (acc, j) => ({ ...acc, [j.status]: (acc[j.status] ?? 0) + 1 }),
-  {} as Record<CoverageStatus, number>,
-);
+/** The legend, keyed by capability level — the same vocabulary the packs declare. */
+export const COVERAGE_LEGEND = pack.legend as Record<string, string>;
+export const COVERAGE_VERIFIED_ON = pack.verified_on;
 
 /** The jurisdictions in the file that are not states, so "N states + DC" counts states as states. */
 const NON_STATE_CODES = new Set(['DC']);
@@ -48,16 +69,7 @@ const NON_STATE_CODES = new Set(['DC']);
 export const JURISDICTION_COUNT = JURISDICTIONS.length;
 export const STATE_COUNT = JURISDICTIONS.filter((j) => !NON_STATE_CODES.has(j.code)).length;
 
-/** Fully modelled and verified against the primary source. */
-export const IMPLEMENTED_COUNT = COVERAGE_COUNTS.implemented ?? 0;
-/**
- * The names of those jurisdictions, so a screen can say WHICH one is modelled without typing
- * "Virginia" into copy. The landing page names it; author a second pack and the sentence follows.
- */
-export const MODELLED_NAMES = JURISDICTIONS.filter((j) => j.status === 'implemented').map(
-  (j) => j.name,
-);
-/** Everything that is not yet fully modelled — the honest remainder. */
-export const UNMODELLED_COUNT = JURISDICTION_COUNT - IMPLEMENTED_COUNT;
-/** Not modelled at all: no rule pack, and the UI links to the official source instead. */
-export const NOT_YET_COUNT = COVERAGE_COUNTS.not_yet ?? 0;
+/** How many jurisdictions have a verified official RESIDENCY source on record, modelled or not. */
+export const RESIDENCY_SOURCED_COUNT = JURISDICTIONS.filter((j) => j.source_url).length;
+/** The same, for state aid — a separate body in most states, so a separate count. */
+export const AID_SOURCED_COUNT = JURISDICTIONS.filter((j) => j.aid_source_url).length;

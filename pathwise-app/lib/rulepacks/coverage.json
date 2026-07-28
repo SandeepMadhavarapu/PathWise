@@ -1,287 +1,239 @@
 {
   "pack_id": "coverage",
-  "description": "All 50 states + DC, each with an honest coverage status. Unimplemented states are shown honestly in the UI with a source link \u2014 the same 'unable to verify' philosophy applied to our own coverage.",
+  "description": "The jurisdiction index: every state and DC, with the body that decides residency there and the source PathWise verified. It records WHAT IS KNOWN about a jurisdiction, never how far PathWise has modelled it — that is derived from the registered rule packs' own declared capabilities (lib/jurisdiction-coverage.ts), so a claim on the coverage map cannot outrun the engines behind it.",
   "verified_on": "2026-07-24",
   "legend": {
-    "implemented": "Rule pack authored and verified against primary source.",
-    "schema_ready": "Structural facts captured; rule pack not yet fully authored/verified.",
-    "not_yet": "Not yet modelled. UI links to the official source."
+    "modelled": "Rules authored and verified against the primary source. The engines answer in full.",
+    "partial": "Some rules authored and verified. The pack says which; everything else answers “unable to verify”.",
+    "sourced_only": "The deciding body and its published rule are captured and linked. PathWise can say who decides and where the rule is — and nothing more.",
+    "not_modelled": "Nothing captured yet beyond the jurisdiction’s name.",
+    "unable_to_verify": "A source was sought and could not be confirmed. Deliberately distinct from “not modelled”: one is work not done, the other is work done that failed."
   },
-  "source_url_policy": "A jurisdiction's source_url is the official body or statute that decides residency there, and it is present ONLY where it was opened and read on verified_on. Where it is absent, PathWise says so on screen rather than linking a plausible guess — the same discipline the engines apply to a rule they cannot read.",
+  "source_url_policy": "A jurisdiction's `authority`/`source_url` name the body that decides RESIDENCY there; `aid_authority`/`aid_source_url` name the body that decides STATE AID, which in most states is a different one. Each is present ONLY where that source was opened and read on verified_on. Where one is absent, PathWise says so on screen rather than linking a plausible guess — and a verified residency source never stands in for an unverified aid one, because that would be one check vouching for another nobody made.",
   "jurisdictions": [
     {
       "code": "AL",
-      "name": "Alabama",
-      "status": "not_yet"
+      "name": "Alabama"
     },
     {
       "code": "AK",
       "name": "Alaska",
-      "status": "schema_ready",
       "note": "24-month duration; clock anchors to census/add-drop date."
     },
     {
       "code": "AZ",
-      "name": "Arizona",
-      "status": "not_yet"
+      "name": "Arizona"
     },
     {
       "code": "AR",
       "name": "Arkansas",
-      "status": "not_yet",
       "note": "6-month duration requirement."
     },
     {
       "code": "CA",
       "name": "California",
-      "status": "schema_ready",
       "note": "Uses a residency determination date; 1-year-plus-a-day durational.",
       "authority": "California Education Code § 68000 et seq.",
       "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=68000.&lawCode=EDC"
     },
     {
       "code": "CO",
-      "name": "Colorado",
-      "status": "not_yet"
+      "name": "Colorado"
     },
     {
       "code": "CT",
-      "name": "Connecticut",
-      "status": "not_yet"
+      "name": "Connecticut"
     },
     {
       "code": "DE",
-      "name": "Delaware",
-      "status": "not_yet"
+      "name": "Delaware"
     },
     {
       "code": "DC",
       "name": "District of Columbia",
-      "status": "not_yet",
       "note": "90-day durational requirement; a Metro-area rate covers named MD and VA counties.",
       "authority": "University of the District of Columbia — Policy on Student Residency Classification",
       "source_url": "https://www.udc.edu/admissions/enroll/establishing-dc-and-metro-residency"
     },
     {
       "code": "FL",
-      "name": "Florida",
-      "status": "not_yet"
+      "name": "Florida"
     },
     {
       "code": "GA",
-      "name": "Georgia",
-      "status": "not_yet"
+      "name": "Georgia"
     },
     {
       "code": "HI",
       "name": "Hawaii",
-      "status": "not_yet",
       "note": "Uses a residency determination date."
     },
     {
       "code": "ID",
-      "name": "Idaho",
-      "status": "not_yet"
+      "name": "Idaho"
     },
     {
       "code": "IL",
-      "name": "Illinois",
-      "status": "not_yet"
+      "name": "Illinois"
     },
     {
       "code": "IN",
-      "name": "Indiana",
-      "status": "not_yet"
+      "name": "Indiana"
     },
     {
       "code": "IA",
-      "name": "Iowa",
-      "status": "not_yet"
+      "name": "Iowa"
     },
     {
       "code": "KS",
-      "name": "Kansas",
-      "status": "not_yet"
+      "name": "Kansas"
     },
     {
       "code": "KY",
-      "name": "Kentucky",
-      "status": "not_yet"
+      "name": "Kentucky"
     },
     {
       "code": "LA",
-      "name": "Louisiana",
-      "status": "not_yet"
+      "name": "Louisiana"
     },
     {
       "code": "ME",
-      "name": "Maine",
-      "status": "not_yet"
+      "name": "Maine"
     },
     {
       "code": "MD",
       "name": "Maryland",
-      "status": "schema_ready",
       "note": "Anchors to census/add-drop date."
     },
     {
       "code": "MA",
-      "name": "Massachusetts",
-      "status": "not_yet"
+      "name": "Massachusetts"
     },
     {
       "code": "MI",
-      "name": "Michigan",
-      "status": "not_yet"
+      "name": "Michigan"
     },
     {
       "code": "MN",
       "name": "Minnesota",
-      "status": "not_yet",
       "note": "Anchors to application date."
     },
     {
       "code": "MS",
-      "name": "Mississippi",
-      "status": "not_yet"
+      "name": "Mississippi"
     },
     {
       "code": "MO",
-      "name": "Missouri",
-      "status": "not_yet"
+      "name": "Missouri"
     },
     {
       "code": "MT",
-      "name": "Montana",
-      "status": "not_yet"
+      "name": "Montana"
     },
     {
       "code": "NE",
-      "name": "Nebraska",
-      "status": "not_yet"
+      "name": "Nebraska"
     },
     {
       "code": "NV",
-      "name": "Nevada",
-      "status": "not_yet"
+      "name": "Nevada"
     },
     {
       "code": "NH",
-      "name": "New Hampshire",
-      "status": "not_yet"
+      "name": "New Hampshire"
     },
     {
       "code": "NJ",
-      "name": "New Jersey",
-      "status": "not_yet"
+      "name": "New Jersey"
     },
     {
       "code": "NM",
-      "name": "New Mexico",
-      "status": "not_yet"
+      "name": "New Mexico"
     },
     {
       "code": "NY",
-      "name": "New York",
-      "status": "not_yet"
+      "name": "New York"
     },
     {
       "code": "NC",
       "name": "North Carolina",
-      "status": "not_yet",
       "note": "Determined centrally by the statewide Residency Determination Service, not per-institution; 12-month domicile.",
       "authority": "North Carolina Residency Determination Service (RDS)",
       "source_url": "https://residencync.cfnc.org/residencyInfo/"
     },
     {
       "code": "ND",
-      "name": "North Dakota",
-      "status": "not_yet"
+      "name": "North Dakota"
     },
     {
       "code": "OH",
-      "name": "Ohio",
-      "status": "not_yet"
+      "name": "Ohio"
     },
     {
       "code": "OK",
-      "name": "Oklahoma",
-      "status": "not_yet"
+      "name": "Oklahoma"
     },
     {
       "code": "OR",
-      "name": "Oregon",
-      "status": "not_yet"
+      "name": "Oregon"
     },
     {
       "code": "PA",
-      "name": "Pennsylvania",
-      "status": "not_yet"
+      "name": "Pennsylvania"
     },
     {
       "code": "RI",
-      "name": "Rhode Island",
-      "status": "not_yet"
+      "name": "Rhode Island"
     },
     {
       "code": "SC",
-      "name": "South Carolina",
-      "status": "not_yet"
+      "name": "South Carolina"
     },
     {
       "code": "SD",
-      "name": "South Dakota",
-      "status": "not_yet"
+      "name": "South Dakota"
     },
     {
       "code": "TN",
       "name": "Tennessee",
-      "status": "schema_ready",
       "note": "No durational component; anchors to admission date."
     },
     {
       "code": "TX",
       "name": "Texas",
-      "status": "schema_ready",
       "note": "Anchors to census/add-drop date; 12 consecutive months, and lawful presence is required.",
       "authority": "Texas Higher Education Coordinating Board; Texas Education Code § 54.052",
       "source_url": "https://www.highered.texas.gov/texas-residency/"
     },
     {
       "code": "UT",
-      "name": "Utah",
-      "status": "not_yet"
+      "name": "Utah"
     },
     {
       "code": "VT",
-      "name": "Vermont",
-      "status": "not_yet"
+      "name": "Vermont"
     },
     {
       "code": "VA",
       "name": "Virginia",
-      "status": "implemented",
       "note": "SCHEV statewide uniform criteria under Code of Virginia 23.1-510(D)."
     },
     {
       "code": "WA",
-      "name": "Washington",
-      "status": "not_yet"
+      "name": "Washington"
     },
     {
       "code": "WV",
-      "name": "West Virginia",
-      "status": "not_yet"
+      "name": "West Virginia"
     },
     {
       "code": "WI",
-      "name": "Wisconsin",
-      "status": "not_yet"
+      "name": "Wisconsin"
     },
     {
       "code": "WY",
-      "name": "Wyoming",
-      "status": "not_yet"
+      "name": "Wyoming"
     }
-  ]
+  ],
+  "unverifiable_policy": "A jurisdiction carries `unverifiable` only when a source was actually sought and could not be confirmed, with the reason recorded. Absent means not yet looked for."
 }

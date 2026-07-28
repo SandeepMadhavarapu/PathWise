@@ -1,7 +1,8 @@
 import Link from "next/link";
 // The coverage claim in the strip below is a count out of rulepacks/coverage.json, not a boast typed
 // into a link label — the same file the /coverage map is drawn from.
-import { IMPLEMENTED_COUNT, MODELLED_NAMES, STATE_COUNT } from "@/lib/coverage";
+import { STATE_COUNT } from "@/lib/coverage";
+import { MODELLED_COUNT, MODELLED_NAMES } from "@/lib/jurisdiction-coverage";
 import { Callout } from "@/components/Callout";
 import { SystemsHero } from "@/components/SystemsHero";
 
@@ -84,9 +85,9 @@ export default function Landing() {
           <span>
             <span className="ms-k">The rules are data, not code.</span> Every rule is a cited, dated
             JSON file the engines read —{" "}
-            {IMPLEMENTED_COUNT === 1
+            {MODELLED_COUNT === 1
               ? `${MODELLED_NAMES[0]} is fully modelled`
-              : `${IMPLEMENTED_COUNT} states are fully modelled`}
+              : `${MODELLED_COUNT} states are fully modelled`}
             , and all {STATE_COUNT} states and DC are listed with an honest status, including the
             ones where the answer is still &ldquo;not yet&rdquo;.
           </span>

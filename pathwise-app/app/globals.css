@@ -1265,29 +1265,55 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cov-legend-v { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1); }
 
 /* The map itself — compact, quiet, one tile per jurisdiction. */
-.cov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: var(--space-2); align-items: start; }
-@media (max-width: 420px) { .cov-grid { grid-template-columns: 1fr 1fr; } }
+/* Wider tiles than before: each one now carries two domain badges rather than one word, and a
+   168px column would set them on top of each other. */
+.cov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(212px, 1fr)); gap: var(--space-2); align-items: start; }
+@media (max-width: 520px) { .cov-grid { grid-template-columns: 1fr; } }
+
 .cov-tile {
-  display: block; width: 100%; text-align: left; font-family: var(--font-sans); color: var(--text);
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-input);
-  padding: var(--space-3); transition: border-color var(--dur-fast) var(--ease);
+  transition: border-color var(--dur-fast) var(--ease);
 }
-/* Not-yet states are shown, never hidden — dashed and untinted, which is what "honestly absent"
-   looks like everywhere else in this app. */
-.cov-tile.idle { background: transparent; border-style: dashed; }
-.cov-tile.has-note { cursor: pointer; }
-.cov-tile.has-note:hover { border-color: var(--border-strong); }
-.cov-tile.has-note:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+/* A jurisdiction nobody has reached yet is shown, never hidden — dashed and untinted, which is what
+   "honestly absent" looks like everywhere else in this app. */
+.cov-tile.unknown { background: transparent; border-style: dashed; }
 .cov-tile.open { border-color: var(--border-strong); border-style: solid; background: var(--surface); }
+
+.cov-tile-head {
+  display: block; width: 100%; text-align: left; font-family: var(--font-sans); color: var(--text);
+  background: none; border: none; padding: var(--space-3); cursor: pointer;
+}
+.cov-tile-head:disabled { cursor: default; }
+.cov-tile-head:not(:disabled):hover { color: var(--text); }
+.cov-tile:has(.cov-tile-head:not(:disabled):hover) { border-color: var(--border-strong); }
+
 .cov-top { display: flex; align-items: center; gap: var(--space-2); }
 .cov-code { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.03em; }
 .cov-more { margin-left: auto; font-size: 13px; color: var(--text-muted); line-height: 1; }
 .cov-name { display: block; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; margin-top: var(--space-1); }
-.cov-word { display: block; font-size: 11px; font-weight: 600; margin-top: 2px; }
-.cov-word.done { color: var(--status-done); }
-.cov-word.warn { color: var(--status-warn-text); }
-.cov-word.idle { color: var(--text-muted); }
-.cov-note { display: block; font-size: 12px; color: var(--text-secondary); margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px dashed var(--border); }
+
+/* Residency and state aid, rated separately. One badge per domain, because one badge per
+   jurisdiction would have to round "modelled for residency, source captured for aid" to something
+   untrue in one direction or the other. */
+.cov-domains { display: flex; flex-direction: column; gap: 3px; margin-top: var(--space-2);
+  padding-top: var(--space-2); border-top: 1px dashed var(--border); }
+.cov-domain { display: flex; align-items: center; gap: 6px; font-size: 11px; line-height: 1.3; }
+.cov-domain .status-glyph { flex: none; transform: scale(0.72); transform-origin: center; margin: -4px; }
+.cov-domain-k { color: var(--text-secondary); font-weight: 600; min-width: 62px; }
+.cov-domain-v { font-weight: 600; }
+.cov-domain.verified .cov-domain-v { color: var(--status-done); }
+.cov-domain.attention .cov-domain-v { color: var(--status-warn-text); }
+.cov-domain.unknown .cov-domain-v { color: var(--text-muted); }
+
+.cov-detail { padding: 0 var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+.cov-detail-row { display: flex; flex-direction: column; gap: 2px; padding-top: var(--space-2); border-top: 1px dashed var(--border); }
+.cov-detail-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.cov-detail-v { font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
+.cov-detail-v strong { color: var(--text); font-weight: 600; }
+.cov-detail-v a { display: inline-block; margin-top: 2px; }
+.cov-answers { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--space-2); }
+/* A research note is not a citation and is styled so it cannot be mistaken for one. */
+.cov-note-unverified em { display: block; margin-top: 3px; color: var(--text-muted); font-size: 11px; }
 
 .rp-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .rp-tab {

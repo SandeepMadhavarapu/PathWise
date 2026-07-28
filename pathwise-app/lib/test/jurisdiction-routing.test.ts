@@ -17,7 +17,6 @@
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import {
-  COVERAGE_DISAGREEMENTS,
   describeUnmodelled,
   isModelled,
   resolveJurisdiction,
@@ -35,6 +34,7 @@ import {
 } from '../engines/jurisdiction';
 import { applyLifeEvent } from '../engines/consequence-engine';
 import { humanizeId } from '../engines/domicile-gate';
+import { UNLISTED_REGISTRATIONS } from '../jurisdiction-coverage';
 import { JURISDICTIONS } from '../coverage';
 import { priyaJobOffer } from '../fixtures/priya';
 import type { Student } from '../types';
@@ -67,11 +67,16 @@ function f1Student(state: string): Student {
 
 console.log('The registry and the coverage file agree');
 
+// The registry and the index are no longer two claims about the same thing — the coverage map is
+// DERIVED from what the packs declare (lib/jurisdiction-coverage.ts). The one disagreement still
+// possible is a pack registered for a code the index does not list, which would be a jurisdiction
+// the engines answer for and the map cannot show.
 assert(
-  'no jurisdiction is claimed in coverage.json without a pack behind it',
-  COVERAGE_DISAGREEMENTS.length === 0,
-  COVERAGE_DISAGREEMENTS,
+  'no pack is registered for a jurisdiction the index does not list',
+  UNLISTED_REGISTRATIONS.length === 0,
+  UNLISTED_REGISTRATIONS,
 );
+
 assert('Virginia resolves to a pack', resolveJurisdiction('VA') !== undefined);
 assert('Virginia is modelled', isModelled('VA'));
 assert('Texas is not modelled', !isModelled('TX'));

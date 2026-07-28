@@ -50,9 +50,9 @@ const vaAid = parseAidPack(vaAidRaw);
 /**
  * Every jurisdiction PathWise can actually reason about, keyed by the code coverage.json uses.
  *
- * This map is the truth. `coverage.json` is the public claim about the same thing, and
- * `COVERAGE_DISAGREEMENTS` below checks the two against each other, so the map on /coverage cannot
- * quietly promise a state the engines do not have.
+ * This map is the truth, and it is the ONLY truth: the coverage screen is derived from what these
+ * packs declare they can answer (lib/jurisdiction-coverage.ts), so a jurisdiction cannot be shown
+ * as modelled without a pack here saying so and passing the schema tests that check the claim.
  */
 const REGISTRY: Readonly<Record<string, JurisdictionPacks>> = {
   VA: { domicile: vaDomicile, aid: vaAid },
@@ -84,10 +84,11 @@ export const MODELLED_CODES: readonly string[] = JURISDICTIONS.filter((j) => j.c
 export interface UnmodelledJurisdiction {
   code: string;
   name: string;
-  status: Jurisdiction['status'];
   note?: string;
   authority?: string;
   source_url?: string;
+  /** Present where a source was sought and could not be confirmed, with the reason. */
+  unverifiable?: string;
 }
 
 /**
@@ -100,27 +101,19 @@ export function describeUnmodelled(code: string): UnmodelledJurisdiction | undef
   return {
     code: j.code,
     name: j.name,
-    status: j.status,
     note: j.note,
     authority: j.authority,
     source_url: j.source_url,
+    unverifiable: j.unverifiable,
   };
 }
 
-/**
- * Where the registry and the coverage file disagree. Empty is the only correct value.
- *
- * A jurisdiction marked `implemented` with no pack behind it is a promise the engines cannot keep;
- * a registered pack the coverage map calls unmodelled understates what PathWise can do. Computed
- * rather than asserted, so it stays true as either side changes.
- */
-export const COVERAGE_DISAGREEMENTS: readonly string[] = JURISDICTIONS.flatMap((j) => {
-  const claimed = j.status === 'implemented';
-  const registered = j.code in REGISTRY;
-  if (claimed && !registered) return [`${j.code}: coverage.json says "implemented" but no pack is registered`];
-  if (registered && !claimed) return [`${j.code}: a pack is registered but coverage.json says "${j.status}"`];
-  return [];
-});
+// COVERAGE_DISAGREEMENTS used to live here: the registry and coverage.json each carried a claim
+// about how far a jurisdiction had been modelled, and this checked that the two agreed. They are
+// not two things any more — coverage.json records what is KNOWN about a jurisdiction and the packs
+// declare what PathWise can ANSWER, and the map is derived from the second. See
+// lib/jurisdiction-coverage.ts, and UNLISTED_REGISTRATIONS there for the one disagreement that is
+// still possible: a pack registered for a code the index does not list.
 
 // ARCHITECTURE_NOTE used to live here, recording that the engines still bound the Virginia packs at
 // import and had to be parameterised before a second pack could run. That is no longer true, so the

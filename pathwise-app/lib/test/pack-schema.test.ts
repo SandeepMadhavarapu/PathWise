@@ -17,11 +17,13 @@
 import { REGISTERED_PACKS } from '../rulepacks';
 import { parseAidPack, parseDomicilePack, PackSchemaError } from '../rulepacks/schema';
 import {
-  coverageAgreesWithPacks,
+  duplicateDomainClaims,
   validateAidPack,
   validateDomicilePack,
   type ValidationProblem,
 } from '../rulepacks/validate';
+import { COVERAGE, LEVEL_COUNTS, UNLISTED_REGISTRATIONS } from '../jurisdiction-coverage';
+import { JURISDICTIONS } from '../coverage';
 import { clockAnchorFor, clockStartFor, ClockStrategyError } from '../engines/domicile-clock';
 import vaDomicileRaw from '../rulepacks/va-domicile.json';
 import vaAidRaw from '../rulepacks/va-aid.json';
@@ -89,13 +91,86 @@ if (warnings.length) {
   for (const w of warnings) console.log(`        ${w.packId}: ${w.message}`);
 }
 
-const disagreements = coverageAgreesWithPacks(
+const dupes = duplicateDomainClaims(
   REGISTERED_PACKS.map(({ code, packs }) => ({
     code,
     capabilities: [...packs.domicile.capabilities, ...packs.aid.capabilities],
   })),
 );
-assert('the coverage map and the registered packs agree', disagreements.length === 0, disagreements);
+assert('no jurisdiction has two packs claiming one domain', dupes.length === 0, dupes);
+assert(
+  'no pack is registered for a jurisdiction the index does not list',
+  UNLISTED_REGISTRATIONS.length === 0,
+  UNLISTED_REGISTRATIONS,
+);
+
+// ---------------------------------------------------------------------------------------------
+console.log('');
+console.log('Coverage is derived from the packs, and cannot be faked by editing the map');
+// ---------------------------------------------------------------------------------------------
+
+assert('every jurisdiction in the index has a derived coverage row', COVERAGE.length === JURISDICTIONS.length);
+
+// The load-bearing claim of the whole coverage screen. A jurisdiction shows as modelled if and only
+// if a registered pack says so — there is no field anywhere that could be edited to fake it.
+const registeredCodes = new Set(REGISTERED_PACKS.map((r) => r.code));
+const wronglyModelled = COVERAGE.filter((c) => c.decidesAnything && !registeredCodes.has(c.code));
+assert(
+  'no jurisdiction claims a determinate capability without a registered pack',
+  wronglyModelled.length === 0,
+  wronglyModelled.map((c) => c.code),
+);
+
+const wronglyUnmodelled = REGISTERED_PACKS.filter(
+  (r) => !COVERAGE.find((c) => c.code === r.code)?.decidesAnything,
+);
+assert(
+  'every registered pack is reflected in the coverage map',
+  wronglyUnmodelled.length === 0,
+  wronglyUnmodelled.map((r) => r.code),
+);
+
+// Per-domain, not per-jurisdiction: a state may be modelled for one domain and not the other, and
+// the map has to be able to say so.
+assert(
+  'coverage is rated per domain',
+  COVERAGE.every((c) => c.domains.length === 2 && c.residency.domain === 'residency' && c.aid.domain === 'aid'),
+);
+
+// Every jurisdiction with no pack must sit at a level that cannot decide anything.
+const unpackaged = COVERAGE.filter((c) => !registeredCodes.has(c.code));
+assert(
+  `all ${unpackaged.length} unregistered jurisdictions sit at a non-determinate level`,
+  unpackaged.every((c) => ['sourced_only', 'not_modelled', 'unable_to_verify'].includes(c.furthest)),
+  unpackaged.filter((c) => !['sourced_only', 'not_modelled', 'unable_to_verify'].includes(c.furthest)).map((c) => c.code),
+);
+
+// A jurisdiction with no verified source may not be shown as source-captured.
+const sourcedWithoutSource = COVERAGE.filter(
+  (c) => c.furthest === 'sourced_only' && !c.domains.some((d) => d.source_url),
+);
+assert(
+  'nothing is shown as "source captured" without a source', 
+  sourcedWithoutSource.length === 0,
+  sourcedWithoutSource.map((c) => c.code),
+);
+
+// The overclaim this split exists to prevent: a verified residency source vouching for an aid
+// claim nobody checked. Each domain's source has to be that domain's own.
+const aidSourcedFromResidency = COVERAGE.filter(
+  (c) => c.aid.level === 'sourced_only' && c.aid.source_url && c.aid.source_url === c.residency.source_url && !c.aid.packId,
+);
+assert(
+  'no jurisdiction uses its residency source to vouch for state aid',
+  aidSourcedFromResidency.length === 0,
+  aidSourcedFromResidency.map((c) => c.code),
+);
+
+assert(
+  'the level counts add up to every jurisdiction',
+  Object.values(LEVEL_COUNTS).reduce((a, b) => a + b, 0) === COVERAGE.length,
+  LEVEL_COUNTS,
+);
 
 // ---------------------------------------------------------------------------------------------
 console.log('');

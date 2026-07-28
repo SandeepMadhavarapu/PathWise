@@ -214,7 +214,6 @@ function unmodelledOf(ctx: JurisdictionContext): UnmodelledJurisdiction {
     ctx.unmodelled ?? {
       code: ctx.code,
       name: ctx.name || 'this jurisdiction',
-      status: 'not_yet',
     }
   );
 }

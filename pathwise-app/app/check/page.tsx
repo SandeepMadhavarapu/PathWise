@@ -21,7 +21,8 @@ import {
   jurisdictionFor,
   residencyFindingFor,
 } from "@/lib/engines/jurisdiction";
-import { JURISDICTIONS, MODELLED_NAMES } from "@/lib/coverage";
+import { JURISDICTIONS } from "@/lib/coverage";
+import { MODELLED_NAMES } from "@/lib/jurisdiction-coverage";
 import { MODELLED_CODES } from "@/lib/rulepacks";
 
 // The statuses this flow offers (a curated subset of ImmigrationStatus).

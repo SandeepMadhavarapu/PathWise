@@ -2,153 +2,215 @@
 
 // Coverage map + rule-pack viewer — the screen that answers "does this generalise?".
 //
-// Everything on this page is read out of the rule packs themselves: the jurisdiction list and its
-// counts come from rulepacks/coverage.json, the legend wording is the pack's own legend, and the
-// viewer below prints the real files byte for byte. Nothing here is typed by hand, because the
-// claim being made — that a jurisdiction is data, not code — is only worth anything if the screen
-// proving it is also reading the data.
+// Nothing on this page is typed by hand, and that is the whole argument it makes. The jurisdiction
+// list is the index; the LEVEL each jurisdiction sits at is derived from what its registered pack
+// declares it can answer; the legend is the pack file's own; and the viewer below prints the real
+// rule packs, enumerated from the registry rather than from a list somebody remembered to update.
+//
+// The pack list in this file used to be four hardcoded imports with hand-written titles. That made
+// this the one screen where adding a jurisdiction meant editing the UI — on the page whose entire
+// claim is that a jurisdiction is data.
+//
+// Status is per DOMAIN, because that is how coverage actually arrives. "Residency modelled, aid
+// sourced only" is a real and common state, and a single badge per jurisdiction would flatten it
+// into something untrue in one direction or the other.
 
 import { useState } from "react";
 
 import {
-  COVERAGE_COUNTS,
   COVERAGE_LEGEND,
   COVERAGE_VERIFIED_ON,
-  IMPLEMENTED_COUNT,
-  JURISDICTIONS,
   JURISDICTION_COUNT,
-  NOT_YET_COUNT,
   STATE_COUNT,
-  UNMODELLED_COUNT,
-  type CoverageStatus,
-  type Jurisdiction,
 } from "@/lib/coverage";
+import {
+  COVERAGE,
+  LEVEL_COUNTS,
+  MODELLED_COUNT,
+  MODELLED_NAMES,
+  SOURCED_ONLY_COUNT,
+  type DomainCoverage,
+  type JurisdictionCoverage,
+} from "@/lib/jurisdiction-coverage";
+import { REGISTERED_PACKS } from "@/lib/rulepacks";
+import type { CapabilityLevel } from "@/lib/rulepacks/schema";
 import f1Pack from "@/lib/rulepacks/f1-practical-training.json";
-import vaDomicilePack from "@/lib/rulepacks/va-domicile.json";
-import vaAidPack from "@/lib/rulepacks/va-aid.json";
 import consequencePack from "@/lib/rulepacks/consequence-map.json";
 import { StatusGlyph } from "@/components/StatusGlyph";
+import { Capsule } from "@/components/Capsule";
 import type { StatusKey as GlyphStatus } from "@/lib/tokens";
 
-// The app's four-state vocabulary, applied to our own coverage. A state we haven't modelled is an
-// "unable to verify", not an error — the same honesty the engines use about a student's record.
-// `glyph` is the shared design-system token so this page's status reads identically to every other.
-const STATUS: Record<
-  CoverageStatus,
-  { key: "verified" | "attention" | "unknown"; glyph: GlyphStatus; word: string; count: string }
+// The five levels, mapped onto the app's own status vocabulary. A jurisdiction PathWise has not
+// modelled is an "unable to verify", not an error — the same honesty the engines use about a
+// student's record, applied to our own coverage.
+const LEVEL: Record<
+  CapabilityLevel,
+  { key: "verified" | "attention" | "unknown"; glyph: GlyphStatus; word: string; short: string }
 > = {
-  implemented: { key: "verified", glyph: "done", word: "Modelled & verified", count: "fully modelled" },
-  schema_ready: { key: "attention", glyph: "warn", word: "Schema ready", count: "schema-ready" },
-  not_yet: { key: "unknown", glyph: "idle", word: "Not yet modelled", count: "not yet" },
+  modelled: { key: "verified", glyph: "done", word: "Modelled & verified", short: "modelled" },
+  partial: { key: "attention", glyph: "warn", word: "Partially modelled", short: "partial" },
+  sourced_only: { key: "attention", glyph: "warn", word: "Source captured", short: "source captured" },
+  unable_to_verify: { key: "unknown", glyph: "idle", word: "Unable to verify", short: "unable to verify" },
+  not_modelled: { key: "unknown", glyph: "idle", word: "Not modelled", short: "not modelled" },
 };
 
-// The order the legend and the counts are read in — the confident state first, the honest one last.
-const STATUS_ORDER: CoverageStatus[] = ["implemented", "schema_ready", "not_yet"];
+// Best first — the order a reader should meet them in.
+const LEVEL_ORDER: CapabilityLevel[] = [
+  "modelled",
+  "partial",
+  "sourced_only",
+  "unable_to_verify",
+  "not_modelled",
+];
 
-// Every count on this page — the header, the tallies, the "not yet" remainder — is derived from
-// coverage.json by lib/coverage.ts, never written down here.
+const DOMAIN_LABEL: Record<DomainCoverage["domain"], string> = {
+  residency: "Residency",
+  aid: "State aid",
+};
 
-// The header fields every pack is expected to carry. consequence-map.json deliberately has no
-// single external authority — each consequence inside it carries its own citation — so these are
-// optional and the UI says so rather than inventing a source.
+/**
+ * Every pack the app actually reads, enumerated.
+ *
+ * The jurisdiction packs come from the registry, so a state added in `lib/rulepacks/index.ts`
+ * appears here without this file being touched. The two federal packs are named explicitly because
+ * they are not jurisdiction packs and have no registry to come from — 8 CFR does not vary by state,
+ * which is exactly why the immigration engines bind them directly.
+ */
+function packEntries() {
+  const jurisdictionPacks = REGISTERED_PACKS.flatMap(({ packs }) => [
+    {
+      tab: packs.domicile.pack_id,
+      title: `${packs.domicile.agencies[0]?.short_name ?? packs.domicile.jurisdiction} residency`,
+      blurb: `The residency rules for ${packs.domicile.jurisdiction}: its gates, ${
+        packs.domicile.clock ? "its durational clock, " : "no durational clock, "
+      }and the intent factors it weighs. This is the file a second state is a copy of.`,
+      data: packs.domicile as unknown,
+    },
+    {
+      tab: packs.aid.pack_id,
+      title: `${packs.aid.agencies[0]?.short_name ?? packs.aid.jurisdiction} state aid`,
+      blurb: `Which form applies in ${packs.aid.jurisdiction}, what blocks state aid, and the deadlines the aid engine resolves an earliest-of over.`,
+      data: packs.aid as unknown,
+    },
+  ]);
+
+  return [
+    ...jurisdictionPacks,
+    {
+      tab: "f1-practical-training",
+      title: "F-1 practical training",
+      blurb:
+        "The CPT cliff, the OPT budget and the unemployment clock. Federal, so it is the one pack every jurisdiction shares — and the reason the immigration engines take no jurisdiction at all.",
+      data: f1Pack as unknown,
+    },
+    {
+      tab: "consequence-map",
+      title: "Event consequence map",
+      blurb:
+        "One life event → what it changes in every domain. The table that makes PathWise one product instead of three.",
+      data: consequencePack as unknown,
+    },
+  ];
+}
+
 interface PackMeta {
-  pack_id: string;
-  domain?: string;
-  jurisdiction?: string;
   authority?: string;
   source_url?: string;
   guidelines_effective?: string;
   verified_on?: string;
   volatility?: { status: string; note: string };
+  agencies?: { id: string; name: string; short_name: string; decides: string[] }[];
+  capabilities?: { domain: string; level: string; answers?: string[]; reason?: string }[];
 }
 
-interface PackEntry {
-  file: string;
-  tab: string;
-  title: string;
-  blurb: string;
-  data: unknown;
-}
-
-const PACKS: PackEntry[] = [
-  {
-    file: "f1-practical-training.json",
-    tab: "f1-practical-training",
-    title: "F-1 practical training",
-    blurb:
-      "The CPT cliff, the OPT budget and the unemployment clock. Federal, so it is the one pack every jurisdiction shares.",
-    data: f1Pack,
-  },
-  {
-    file: "va-domicile.json",
-    tab: "va-domicile",
-    title: "Virginia domicile",
-    blurb:
-      "The residency gates, the durational clock and the intent factors. This is the file a second state would be a copy of.",
-    data: vaDomicilePack,
-  },
-  {
-    file: "va-aid.json",
-    tab: "va-aid",
-    title: "Virginia financial aid",
-    blurb:
-      "Which form applies, what blocks state aid, and the deadlines the aid engine resolves an earliest-of over.",
-    data: vaAidPack,
-  },
-  {
-    file: "consequence-map.json",
-    tab: "consequence-map",
-    title: "Event consequence map",
-    blurb:
-      "One life event → what it changes in all three domains. The table that makes PathWise one product instead of three.",
-    data: consequencePack,
-  },
-];
-
-function CoverageTile({ j }: { j: Jurisdiction }) {
-  const [open, setOpen] = useState(false);
-  const s = STATUS[j.status];
-
-  const body = (
-    <>
-      <span className="cov-top">
-        <StatusGlyph status={s.glyph} />
-        <span className="cov-code">{j.code}</span>
-        {j.note ? (
-          <span className="cov-more" aria-hidden="true">
-            {open ? "−" : "+"}
-          </span>
-        ) : null}
-      </span>
-      <span className="cov-name">{j.name}</span>
-      <span className={`cov-word ${s.key}`}>{s.word}</span>
-      {j.note && open ? <span className="cov-note">{j.note}</span> : null}
-    </>
-  );
-
-  if (!j.note) {
-    return <div className={`cov-tile ${s.key}`}>{body}</div>;
-  }
-
-  // title carries the note on hover; the explicit aria-label keeps the spoken name complete,
-  // because a bare title would otherwise be announced in place of the state and its status.
+/** One domain's badge on a tile. */
+function DomainBadge({ d }: { d: DomainCoverage }) {
+  const l = LEVEL[d.level];
   return (
-    <button
-      type="button"
-      className={`cov-tile has-note ${s.key} ${open ? "open" : ""}`}
-      onClick={() => setOpen((v) => !v)}
-      aria-expanded={open}
-      title={j.note}
-      aria-label={`${j.name} — ${s.word}. ${j.note}`}
-    >
-      {body}
-    </button>
+    <span className={`cov-domain ${l.key}`}>
+      <StatusGlyph status={l.glyph} />
+      <span className="cov-domain-k">{DOMAIN_LABEL[d.domain]}</span>
+      <span className="cov-domain-v">{l.short}</span>
+    </span>
+  );
+}
+
+function CoverageTile({ j }: { j: JurisdictionCoverage }) {
+  const [open, setOpen] = useState(false);
+  const l = LEVEL[j.furthest];
+  const expandable = Boolean(j.note || j.domains.some((d) => d.reason || d.source_url));
+
+  return (
+    <div className={`cov-tile ${l.key}${open ? " open" : ""}`}>
+      <button
+        type="button"
+        className="cov-tile-head"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        disabled={!expandable}
+        aria-label={`${j.name} — residency ${LEVEL[j.residency.level].word}, state aid ${
+          LEVEL[j.aid.level].word
+        }`}
+      >
+        <span className="cov-top">
+          <span className="cov-code">{j.code}</span>
+          {expandable ? (
+            <span className="cov-more" aria-hidden="true">
+              {open ? "−" : "+"}
+            </span>
+          ) : null}
+        </span>
+        <span className="cov-name">{j.name}</span>
+        <span className="cov-domains">
+          {j.domains.map((d) => (
+            <DomainBadge key={d.domain} d={d} />
+          ))}
+        </span>
+      </button>
+
+      {open ? (
+        <div className="cov-detail">
+          {j.domains.map((d) => (
+            <div className="cov-detail-row" key={d.domain}>
+              <span className="cov-detail-k">{DOMAIN_LABEL[d.domain]}</span>
+              <span className="cov-detail-v">
+                {d.authority ? <strong>{d.authority}</strong> : null}
+                {d.authority ? " — " : null}
+                {d.reason}
+                {d.answers?.length ? (
+                  <span className="cov-answers">
+                    {d.answers.map((a) => (
+                      <Capsule key={a}>{a.replace(/_/g, " ")}</Capsule>
+                    ))}
+                  </span>
+                ) : null}
+                {d.source_url ? (
+                  <a href={d.source_url} target="_blank" rel="noopener noreferrer">
+                    Official source →
+                  </a>
+                ) : null}
+              </span>
+            </div>
+          ))}
+          {j.note ? (
+            <div className="cov-detail-row">
+              <span className="cov-detail-k">Noted</span>
+              <span className="cov-detail-v cov-note-unverified">
+                {j.note}{" "}
+                <em>Research note — not verified against a primary source, and never cited.</em>
+              </span>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
 function RulePackViewer() {
+  const packs = packEntries();
   const [active, setActive] = useState(0);
-  const pack = PACKS[active];
+  const pack = packs[Math.min(active, packs.length - 1)];
   const meta = pack.data as PackMeta;
   const json = JSON.stringify(pack.data, null, 2);
   const lines = json.split("\n").length;
@@ -156,13 +218,15 @@ function RulePackViewer() {
   return (
     <>
       <p className="rp-frame">
-        Adding a jurisdiction means authoring one of these files — not writing code.
+        Adding a jurisdiction means authoring one of these files and registering it — not writing
+        code. This list is the registry itself, so a state that is not here is a state the engines
+        genuinely cannot answer for.
       </p>
 
       <div className="rp-tabs" role="tablist" aria-label="Rule packs">
-        {PACKS.map((p, i) => (
+        {packs.map((p, i) => (
           <button
-            key={p.file}
+            key={p.tab}
             type="button"
             role="tab"
             id={`rp-tab-${p.tab}`}
@@ -189,7 +253,7 @@ function RulePackViewer() {
           <span className="rp-k">Authority</span>
           <span className={`rp-v ${meta.authority ? "" : "absent"}`}>
             {meta.authority ??
-              "No single external authority — every consequence in this file carries its own citation."}
+              "No single external authority — every entry in this file carries its own citation."}
           </span>
 
           <span className="rp-k">Source</span>
@@ -202,6 +266,33 @@ function RulePackViewer() {
               "Cited per entry, inside the file."
             )}
           </span>
+
+          {meta.agencies?.length ? (
+            <>
+              <span className="rp-k">Decided by</span>
+              <span className="rp-v">
+                {meta.agencies
+                  .map((a) => `${a.name} (${a.short_name}) — ${a.decides.join(", ")}`)
+                  .join("; ")}
+              </span>
+            </>
+          ) : null}
+
+          {meta.capabilities?.length ? (
+            <>
+              <span className="rp-k">Answers</span>
+              <span className="rp-v">
+                {meta.capabilities
+                  .map(
+                    (c) =>
+                      `${c.domain}: ${c.level}${
+                        c.answers?.length ? ` (${c.answers.length} rules)` : ""
+                      }`,
+                  )
+                  .join("; ")}
+              </span>
+            </>
+          ) : null}
 
           <span className="rp-k">Verified on</span>
           <span className="rp-v">
@@ -222,10 +313,8 @@ function RulePackViewer() {
         </div>
 
         <div className="rp-filebar">
-          <span className="rp-filename">lib/rulepacks/{pack.file}</span>
-          <span>
-            {lines} lines · read-only
-          </span>
+          <span className="rp-filename">lib/rulepacks/{pack.tab}.json</span>
+          <span>{lines} lines · read-only</span>
         </div>
         <pre className="rp-json" tabIndex={0}>
           {json}
@@ -236,35 +325,43 @@ function RulePackViewer() {
 }
 
 export default function CoveragePage() {
+  const modelled = MODELLED_NAMES.length === 1 ? MODELLED_NAMES[0] : `${MODELLED_COUNT} states`;
+  const notModelled = LEVEL_COUNTS.not_modelled;
+
   return (
     <>
       <div className="jintro surface">
         <div className="jintro-eyebrow">Coverage · {STATE_COUNT} states + DC</div>
         <h2>
-          {IMPLEMENTED_COUNT === 1
-            ? "One state is fully modelled."
-            : `${IMPLEMENTED_COUNT} states are fully modelled.`}{" "}
-          The other {UNMODELLED_COUNT} are the same shape of file.
+          {MODELLED_COUNT === 1
+            ? `${modelled} is fully modelled.`
+            : `${modelled} are fully modelled.`}{" "}
+          Every other jurisdiction says exactly how far PathWise has got.
         </h2>
         <p>
           Residency and state aid are decided state by state, so a system that only ever worked in
-          Virginia would not be a system. PathWise keeps every rule in a versioned rule pack — the
+          one of them would not be a system. PathWise keeps every rule in a versioned rule pack — the
           authority, the source URL, the date it was verified, and the conditions themselves — and
-          the engines read those files. Below is exactly how far that has been carried, including
-          the {NOT_YET_COUNT} states where the honest answer is &ldquo;not yet.&rdquo;
+          the engines read those files.{" "}
+          <strong>
+            Nothing below is typed into this page: each status is derived from what that
+            jurisdiction&apos;s registered pack declares it can answer.
+          </strong>{" "}
+          A state cannot be shown as modelled by editing the map — only by authoring a pack that says
+          so and passing the tests that check the claim.
         </p>
         <div className="cov-counts">
-          {STATUS_ORDER.map((status, i) => {
-            const s = STATUS[status];
+          {LEVEL_ORDER.filter((l) => LEVEL_COUNTS[l] > 0).map((level, i) => {
+            const s = LEVEL[level];
             return (
-              <span key={status} className="cov-count">
+              <span key={level} className="cov-count">
                 {i > 0 ? (
                   <span className="cov-sep" aria-hidden="true">
                     ·
                   </span>
                 ) : null}
                 <StatusGlyph status={s.glyph} />
-                <strong>{COVERAGE_COUNTS[status] ?? 0}</strong> {s.count}
+                <strong>{LEVEL_COUNTS[level]}</strong> {s.short}
               </span>
             );
           })}
@@ -272,32 +369,35 @@ export default function CoveragePage() {
             <span className="cov-sep" aria-hidden="true">
               ·
             </span>
-            {JURISDICTION_COUNT} jurisdictions, verified {COVERAGE_VERIFIED_ON}
+            {JURISDICTION_COUNT} jurisdictions, index verified {COVERAGE_VERIFIED_ON}
           </span>
         </div>
       </div>
 
-      <div className="section-head">What each state of coverage means</div>
+      <div className="section-head">What each level means</div>
       <ul className="cov-legend">
-        {STATUS_ORDER.map((status) => {
-          const s = STATUS[status];
+        {LEVEL_ORDER.map((level) => {
+          const s = LEVEL[level];
           return (
-            <li key={status}>
+            <li key={level}>
               <span className={`cov-legend-k ${s.key}`}>
                 <StatusGlyph status={s.glyph} />
                 {s.word}
               </span>
-              <span className="cov-legend-v">{COVERAGE_LEGEND[status]}</span>
+              <span className="cov-legend-v">{COVERAGE_LEGEND[level]}</span>
             </li>
           );
         })}
       </ul>
 
       <div className="section-head">
-        Every jurisdiction, in order — the ones we can&apos;t do yet included
+        Every jurisdiction, in order — residency and state aid rated separately
+        {notModelled > 0
+          ? `, including the ${notModelled} where the answer is still "not yet"`
+          : ""}
       </div>
       <div className="cov-grid">
-        {JURISDICTIONS.map((j) => (
+        {COVERAGE.map((j) => (
           <CoverageTile key={j.code} j={j} />
         ))}
       </div>
@@ -306,10 +406,16 @@ export default function CoveragePage() {
       <RulePackViewer />
 
       <div className="foot">
-        <span className="privacy">No account. Nothing stored on a server.</span> · A state moves from
-        &ldquo;not yet&rdquo; to &ldquo;modelled&rdquo; when someone authors its rule pack against
-        the primary source and dates it. Until then PathWise says so rather than guessing. PathWise
-        advises; the office decides.
+        <span className="privacy">No account. Nothing stored on a server.</span> · A jurisdiction
+        moves up this list when someone authors its rule pack against the primary source and dates
+        it — and the list moves with it, because it is read from the packs. Until then PathWise says
+        so rather than guessing.{" "}
+        {SOURCED_ONLY_COUNT > 0
+          ? `${SOURCED_ONLY_COUNT} jurisdiction${
+              SOURCED_ONLY_COUNT === 1 ? " has" : "s have"
+            } a verified official source but no authored rules — PathWise can name who decides and link the rule, and will not go further than that. `
+          : ""}
+        PathWise advises; the office decides.
       </div>
     </>
   );
