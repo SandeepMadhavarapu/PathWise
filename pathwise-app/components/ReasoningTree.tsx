@@ -18,8 +18,20 @@ export interface ReasoningTreeNode {
 }
 
 function Node({ node }: { node: ReasoningTreeNode }) {
-  const hasDetail = !!(node.tags?.length || node.children?.length);
+  const sourceCount = node.tags?.length ?? 0;
+  const hasDetail = !!(sourceCount || node.children?.length);
   const [open, setOpen] = useState(node.defaultOpen ?? true);
+
+  // "Expand"/"Collapse" told a screen-reader user that something opened, but never what. What is
+  // behind this disclosure is always the same thing: the events and documents the claim is derived
+  // from, which is the reason to open it.
+  const toggleLabel = sourceCount
+    ? `${open ? "Hide" : "Show"} the ${sourceCount} ${
+        sourceCount === 1 ? "source" : "sources"
+      } this step rests on`
+    : open
+      ? "Hide detail"
+      : "Show detail";
 
   return (
     <li className={`rtree-node${open ? " open" : ""}`}>
@@ -30,7 +42,7 @@ function Node({ node }: { node: ReasoningTreeNode }) {
             className="rtree-toggle"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
-            aria-label={open ? "Collapse" : "Expand"}
+            aria-label={toggleLabel}
           >
             <ChevronIcon className="icon-14" />
           </button>
@@ -41,6 +53,17 @@ function Node({ node }: { node: ReasoningTreeNode }) {
         <div className="rtree-body">
           <div className="rtree-body-top">
             <span className="t-row-title">{node.title}</span>
+            {sourceCount ? (
+              <button
+                type="button"
+                className="rtree-sources"
+                onClick={() => setOpen((o) => !o)}
+                aria-hidden="true"
+                tabIndex={-1}
+              >
+                {open ? "hide" : `${sourceCount} ${sourceCount === 1 ? "source" : "sources"}`}
+              </button>
+            ) : null}
             <MicroLabel parts={node.micro ?? []} />
           </div>
         </div>

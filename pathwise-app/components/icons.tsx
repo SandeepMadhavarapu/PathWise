@@ -58,6 +58,37 @@ export function SearchIcon({ className }: IconProps) {
   );
 }
 
+/**
+ * Coverage: a folded map. The coverage rail item used to wear SearchIcon, and a magnifying glass
+ * in a sidebar means "search" in every product a student has ever used — which on the layout where
+ * the label is hidden made it an invitation to tap a search box that does not exist.
+ */
+export function MapIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 6.5 L9 4 L15 6.5 L21 4 V17.5 L15 20 L9 17.5 L3 20 Z" />
+      <line x1="9" y1="4" x2="9" y2="17.5" />
+      <line x1="15" y1="6.5" x2="15" y2="20" />
+    </svg>
+  );
+}
+
+/**
+ * Two readings of one record, side by side with an arrow between them. Replaces CheckIcon on the
+ * "When evidence changes" item, where a tick read as "done" — the opposite of a screen whose whole
+ * subject is a question the record cannot yet settle.
+ */
+export function CompareIcon({ className }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2.5" y="5" width="7" height="14" rx="1.5" />
+      <rect x="14.5" y="5" width="7" height="14" rx="1.5" />
+      <line x1="10.5" y1="12" x2="13.5" y2="12" />
+      <polyline points="12 10.5 13.5 12 12 13.5" />
+    </svg>
+  );
+}
+
 export function GridIcon({ className }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

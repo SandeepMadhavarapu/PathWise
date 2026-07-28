@@ -10,10 +10,10 @@ import {
   ClipboardIcon,
   BoltIcon,
   ChevronIcon,
-  SearchIcon,
+  MapIcon,
+  CompareIcon,
   HomeIcon,
   CalendarIcon,
-  CheckIcon,
 } from "./icons";
 
 const RULES_VERIFIED_ON: string = (coverage as { verified_on?: string }).verified_on ?? "unknown";
@@ -29,13 +29,15 @@ const PAGE_TITLES: Record<string, string> = {
   "/student/finding/aid": "Finding detail",
   "/student/finding/domicile": "The domicile analysis in full",
   "/student/next": "Next steps",
-  "/student/changed": "What changed?",
-  "/coverage": "Coverage & rule packs",
+  "/student/changed": "When evidence lands",
+  "/coverage": "State coverage & rule packs",
   "/check": "Check your status",
-  "/moment": "The life-event test",
+  "/moment": "One event, many consequences",
 };
 
+// Home leads, because it is where the product explains itself and it is not a peer of a feature.
 const PRIMARY_NAV = [
+  { href: "/", label: "Home", icon: HomeIcon },
   { href: "/student", label: "Overview", icon: GridIcon },
   { href: "/student/journey", label: "My journey", icon: ClockIcon },
   { href: "/check", label: "Check your status", icon: ClipboardIcon },
@@ -43,16 +45,18 @@ const PRIMARY_NAV = [
 
 // The analysis screens. They read the same engines as the overview but answer a different
 // question — what to do next, what moved, and how far the rules themselves have been carried.
+//
+// The labels here are outcomes rather than internal names. "What changed" invited the question
+// "changed since when?" and wore a tick, which reads as "done" on the one screen whose subject is
+// a question the record cannot yet settle; "Coverage map" wore a magnifying glass and did not say
+// coverage of what.
 const ANALYSIS_NAV = [
   { href: "/student/next", label: "Next steps", icon: CalendarIcon },
-  { href: "/student/changed", label: "What changed", icon: CheckIcon },
-  { href: "/coverage", label: "Coverage map", icon: SearchIcon },
+  { href: "/student/changed", label: "When evidence lands", icon: CompareIcon },
+  { href: "/moment", label: "Event consequences", icon: BoltIcon },
 ];
 
-const SECONDARY_NAV = [
-  { href: "/moment", label: "Life-event test", icon: BoltIcon },
-  { href: "/", label: "Home", icon: HomeIcon },
-];
+const SECONDARY_NAV = [{ href: "/coverage", label: "State coverage", icon: MapIcon }];
 
 function formatVerifiedDate(iso: string): string {
   if (iso === "unknown") return iso;

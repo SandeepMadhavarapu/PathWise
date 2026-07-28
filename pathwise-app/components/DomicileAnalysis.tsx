@@ -19,6 +19,8 @@ import {
   type FactorState,
   type IntentFactorRow,
 } from "@/lib/engines/domicile";
+import { describeEvent } from "@/lib/labels";
+import type { Event } from "@/lib/types";
 
 type StateKey = "verified" | "attention" | "blocked" | "unknown";
 
@@ -60,13 +62,20 @@ const CAVEAT_WORD: Record<NonNullable<IntentFactorRow["caveatResolution"]>, stri
   unresolved: "cannot be resolved from this record",
 };
 
-function EvidenceTags({ ids }: { ids: string[] }) {
+/**
+ * The events a row rests on, named rather than keyed.
+ *
+ * These printed as `event · mv-va` and `event · prog-start-z`, which is the engine's addressing
+ * scheme leaking onto a student's screen. The id is still what the row is derived FROM and is still
+ * what `title` carries for anyone who wants it; what is read aloud is what the event was.
+ */
+function EvidenceTags({ ids, events }: { ids: string[]; events: readonly Event[] }) {
   if (ids.length === 0) return null;
   return (
     <div className="reason-tags">
       {ids.map((id) => (
-        <span className="reason-tag" key={id}>
-          event · {id}
+        <span className="reason-tag" key={id} title={id}>
+          {describeEvent(id, events)}
         </span>
       ))}
     </div>
@@ -85,6 +94,7 @@ function BlockHead({ title, cite }: { title: string; cite?: string }) {
 export function DomicileAnalysisDetail({
   analysis,
   jurisdictionCode,
+  events = [],
 }: {
   analysis: DomicileAnalysis;
   /**
@@ -93,6 +103,8 @@ export function DomicileAnalysisDetail({
    * component takes it as a prop rather than reaching for a pack, same as every other screen.
    */
   jurisdictionCode?: string;
+  /** The record the rows point into, so an event can be named instead of keyed. */
+  events?: readonly Event[];
 }) {
   const { dependency, intent, clock, clockRule, construction, gated } = analysis;
   const label = (id: string): string => humanizeId(id, jurisdictionCode);
@@ -126,7 +138,7 @@ export function DomicileAnalysisDetail({
               </span>
             </div>
             <div className="dm-sub-v">{dependency.exception.basis}</div>
-            <EvidenceTags ids={dependency.exception.eventIds} />
+            <EvidenceTags ids={dependency.exception.eventIds} events={events} />
           </div>
         ) : dependency.presumptionApplies ? (
           <div className="dm-sub pending">
@@ -180,9 +192,17 @@ export function DomicileAnalysisDetail({
               </div>
 
               {row.state === "inapplicable" ? (
+                /* The condition itself is the proof, and the pack really does say it in this form —
+                   so it stays. What it lacked was a name: bare, it read as an internal expression
+                   that had escaped onto the page. Labelled, it reads the way a citation reads. */
                 <div className="dm-row-note">
-                  {row.inapplicableBecause}{" "}
-                  <span className="dm-clause">{row.inapplicableWhen}</span>
+                  {row.inapplicableBecause}
+                  {row.inapplicableWhen ? (
+                    <span className="dm-clause-wrap">
+                      <span className="dm-clause-k">the pack&apos;s condition</span>
+                      <span className="dm-clause">{row.inapplicableWhen}</span>
+                    </span>
+                  ) : null}
                 </div>
               ) : null}
 
@@ -201,7 +221,7 @@ export function DomicileAnalysisDetail({
                 </div>
               ) : null}
 
-              <EvidenceTags ids={row.eventIds} />
+              <EvidenceTags ids={row.eventIds} events={events} />
             </li>
           );
         })}

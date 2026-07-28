@@ -3,7 +3,6 @@
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { priyaStudent, priyaEvents } from "@/lib/fixtures/priya";
 import { JourneyTimeline } from "@/components/JourneyTimeline";
-import { Tabs } from "@/components/Tabs";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -23,17 +22,9 @@ export default function JourneyPage() {
 
   return (
     <>
-      <Tabs
-        activeId="journey"
-        tabs={[
-          { id: "overview", label: "Overview", href: "/student" },
-          { id: "journey", label: "My journey", href: "/student/journey" },
-        ]}
-      />
-
       <div className="jintro surface">
         <div className="jintro-eyebrow">My journey</div>
-        <h1>Priya never has to explain her history again.</h1>
+        <h2>Priya never has to explain her history again.</h2>
         <p>
           Two institutions, two education levels, and every authorization in between — held as one
           record and read by all three offices. Open any event to see the evidence beneath it and the

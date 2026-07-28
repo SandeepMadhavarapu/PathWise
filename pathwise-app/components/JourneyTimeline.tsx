@@ -16,6 +16,7 @@ import { CLOCK_START_CITE } from "@/lib/engines/unemployment-clock";
 import { jurisdictionFor } from "@/lib/engines/jurisdiction";
 import { domicileView, lowerLabel } from "@/lib/engines/domicile-gate";
 import { formatImmigrationStatus } from "@/lib/format";
+import { eventTypeLabel, evidenceLabel } from "@/lib/labels";
 import type { StatusKey as GlyphStatus } from "@/lib/tokens";
 import { StatusGlyph } from "./StatusGlyph";
 import { Capsule } from "./Capsule";
@@ -85,31 +86,9 @@ function levelLabel(level?: ProgramLevel): string {
 
 const statusLabel = formatImmigrationStatus;
 
-function titleFor(type: string): string {
-  switch (type) {
-    case "program_start": return "Program start";
-    case "program_end": return "Program end";
-    case "cpt_auth": return "CPT authorization";
-    case "opt_auth": return "OPT authorization";
-    case "ead_issued": return "EAD issued";
-    case "i20_issued": return "I-20 issued";
-    case "enrollment": return "Enrollment";
-    case "transfer": return "Transfer";
-    case "level_change": return "Level change";
-    case "employment": return "Employment";
-    case "status_change": return "Status change";
-    default: return type.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
-  }
-}
-
-function evidenceLabel(id: string): string {
-  if (id.startsWith("i20")) return "Form I-20";
-  if (id.startsWith("ead")) return "EAD card";
-  if (id.startsWith("offer")) return "Offer letter";
-  if (id.startsWith("lease")) return "Lease";
-  if (id.startsWith("tax")) return "Tax return";
-  return "Document";
-}
+// Both label helpers moved to lib/labels.ts when the finding screens needed them too — the timeline
+// and the reasoning chain must not be able to call the same event two different things.
+const titleFor = eventTypeLabel;
 
 // ---- derivation ----
 

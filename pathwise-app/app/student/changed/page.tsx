@@ -258,8 +258,8 @@ export default function ChangedPage() {
   return (
     <>
       <div className="jintro surface">
-        <div className="jintro-eyebrow">What changed?</div>
-        <h1>One document arrives. Watch PathWise re-reason.</h1>
+        <div className="jintro-eyebrow">When evidence lands</div>
+        <h2>One document arrives. Watch PathWise re-reason.</h2>
         <p>
           Priya&apos;s bachelor&apos;s CPT at School X only stays out of her master&apos;s count if the
           level change between the two schools is established. The document that records it is
@@ -325,8 +325,9 @@ export default function ChangedPage() {
               </>
             ) : (
               <>
-                Choose the master&apos;s I-20 from this device, or ask her DSO to confirm the level
-                change in SEVIS.
+                Produce the master&apos;s I-20, or ask her DSO to confirm the level change in SEVIS.
+                Below, either read a sample document or pick a real file — PathWise treats them
+                identically.
               </>
             )}
           </div>
@@ -343,23 +344,37 @@ export default function ChangedPage() {
             />
 
             {!read ? (
+              /* Two ways in, at equal weight. The sample leads because it is the one a visitor can
+                 take without hunting through their own filesystem — and because "Choose the
+                 document…" as the sole primary action meant the only route through the best screen
+                 in the product ran through a native OS file dialog. Neither path skips anything:
+                 both read real bytes, both fingerprint them, and both still require the attestation
+                 below before a single number moves. */
               <>
-                <button
-                  type="button"
-                  className="btn"
-                  disabled={busy}
-                  onClick={() => fileInput.current?.click()}
-                >
-                  {busy ? "Reading…" : "Choose the document…"}
-                </button>
-                <button
-                  type="button"
-                  className="btn-link wc-ev-alt"
-                  disabled={busy}
-                  onClick={() => void ingest(makeSampleDocument(), "sample")}
-                >
-                  or use a sample document (generated here)
-                </button>
+                <div className="wc-ev-choose">
+                  <button
+                    type="button"
+                    className="btn"
+                    disabled={busy}
+                    onClick={() => void ingest(makeSampleDocument(), "sample")}
+                  >
+                    {busy ? "Reading…" : "Use a sample document →"}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn ghost"
+                    disabled={busy}
+                    onClick={() => fileInput.current?.click()}
+                  >
+                    Choose a file from this device
+                  </button>
+                </div>
+                <p className="wc-ev-note">
+                  Both do the same thing. The sample is generated in your browser, not downloaded;
+                  either way PathWise counts and fingerprints the bytes in this tab, nothing is
+                  uploaded, and the count below does not move until you say what the document
+                  records.
+                </p>
               </>
             ) : (
               <div className="wc-ev-attest">
@@ -412,24 +427,31 @@ export default function ChangedPage() {
           </div>
           <div className="wc-result">{beforeLine}</div>
 
+          {/* The two readings are the whole argument, so they are set side by side and the number
+              is given the size to carry it. Same engine, same authorizations, opposite sides of
+              the cliff — that has to be legible in one look, not assembled from prose. */}
           <div className="wc-readings">
-            <div className="wc-reading">
+            <div className={`wc-reading ${BAND_STATUS[settled.band]}`}>
               <div className="wc-reading-k">
                 If the level change holds
                 <Chip status={BAND_STATUS[settled.band]} />
               </div>
-              <div className="wc-reading-v">
-                {settled.fullTimeDays} / {CLIFF_DAYS} days · OPT at the master&apos;s level preserved
+              <div className="wc-reading-n">
+                {settled.fullTimeDays}
+                <span className="wc-reading-of"> / {CLIFF_DAYS} days</span>
               </div>
+              <div className="wc-reading-v">OPT at the master&apos;s level preserved</div>
             </div>
-            <div className="wc-reading">
+            <div className={`wc-reading ${BAND_STATUS[pooled.band]}`}>
               <div className="wc-reading-k">
                 If it can&apos;t be shown
                 <Chip status={BAND_STATUS[pooled.band]} />
               </div>
-              <div className="wc-reading-v">
-                {pooled.fullTimeDays} / {CLIFF_DAYS} days · OPT at this level would be gone
+              <div className="wc-reading-n">
+                {pooled.fullTimeDays}
+                <span className="wc-reading-of"> / {CLIFF_DAYS} days</span>
               </div>
+              <div className="wc-reading-v">OPT at this level would be gone</div>
             </div>
           </div>
 
