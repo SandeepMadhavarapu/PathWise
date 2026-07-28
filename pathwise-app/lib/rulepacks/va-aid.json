@@ -1,4 +1,5 @@
 {
+  "schema_version": 1,
   "pack_id": "va-aid",
   "domain": "aid",
   "jurisdiction": "VA",
@@ -7,6 +8,33 @@
   "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college",
   "guidelines_effective": "2022-07-01",
   "verified_on": "2026-07-24",
+  "agencies": [
+    {
+      "id": "schev",
+      "name": "State Council of Higher Education for Virginia",
+      "short_name": "SCHEV",
+      "decides": ["aid"],
+      "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college"
+    },
+    {
+      "id": "institution_financial_aid",
+      "name": "The institution's financial aid office",
+      "short_name": "Financial aid office",
+      "decides": ["aid"]
+    }
+  ],
+  "capabilities": [
+    {
+      "domain": "aid",
+      "level": "modelled",
+      "answers": [
+        "status_block",
+        "form_selection",
+        "state_provision_checklists",
+        "earliest_of_deadline"
+      ]
+    }
+  ],
   "volatility": {
     "status": "recently_changed",
     "note": "Virginia's state aid application landscape is changing; the forms and deadlines modelled here were verified on 2026-07-24 and should be confirmed with the financial aid office for the award year being applied for."

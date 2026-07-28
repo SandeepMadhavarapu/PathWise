@@ -15,24 +15,37 @@
 // the engines take their pack as a parameter (see engines/jurisdiction.ts, which is the only thing
 // that calls resolveJurisdiction), so a second pack reaches the screens without an engine edit.
 
-import vaDomicile from './va-domicile.json';
-import vaAid from './va-aid.json';
+import vaDomicileRaw from './va-domicile.json';
+import vaAidRaw from './va-aid.json';
 import { JURISDICTIONS, jurisdictionByCode, type Jurisdiction } from '../coverage';
+import { parseAidPack, parseDomicilePack, type AidPack, type DomicilePack } from './schema';
 
-/**
- * The shape of a rule pack, taken from the Virginia packs because they are the worked example every
- * later pack is authored against. A `typeof` on the JSON rather than a hand-written interface is
- * deliberate: the pack file is the source of truth for its own shape, and a type retyped beside it
- * is one that can quietly disagree with it.
- */
-export type DomicilePack = typeof vaDomicile;
-export type AidPack = typeof vaAid;
+// The pack shapes are declared by hand in ./schema.ts and re-exported here, which is where every
+// caller already imports them from.
+//
+// They used to be `typeof vaDomicile` — inferred from the Virginia file. That made one instance the
+// definition of the shape: a second pack had to carry every field Virginia carries and could carry
+// nothing Virginia lacks, `guidelines_effective` was required because Virginia happens to have one,
+// and every enum-ish field widened to `string`, so `deciding_office` was cast rather than checked.
+export type { AidPack, DomicilePack } from './schema';
 
 /** The packs that decide one jurisdiction's residency and aid questions. */
 export interface JurisdictionPacks {
   domicile: DomicilePack;
   aid: AidPack;
 }
+
+/**
+ * Parsed at module load, which means an invalid pack is a startup failure rather than a wrong
+ * answer someone reads later.
+ *
+ * `as DomicilePack` would have been one character of work and a promise from whoever typed it.
+ * These throw. Given that the whole product rests on a citation being attributable to the right
+ * statute, and that the failure mode of a mistyped `start_rule` is Virginia's arithmetic printed
+ * under another state's heading, the difference is not stylistic.
+ */
+const vaDomicile = parseDomicilePack(vaDomicileRaw);
+const vaAid = parseAidPack(vaAidRaw);
 
 /**
  * Every jurisdiction PathWise can actually reason about, keyed by the code coverage.json uses.
@@ -44,6 +57,10 @@ export interface JurisdictionPacks {
 const REGISTRY: Readonly<Record<string, JurisdictionPacks>> = {
   VA: { domicile: vaDomicile, aid: vaAid },
 };
+
+/** Every registered pack, for the tests and for the coverage screen that is derived from them. */
+export const REGISTERED_PACKS: ReadonlyArray<{ code: string; packs: JurisdictionPacks }> =
+  Object.entries(REGISTRY).map(([code, packs]) => ({ code, packs }));
 
 /** The packs for a jurisdiction, or undefined when PathWise has not modelled it. */
 export function resolveJurisdiction(code: string): JurisdictionPacks | undefined {

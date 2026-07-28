@@ -52,7 +52,12 @@ export interface JurisdictionDisplay {
   /** The same section reference written out in full. */
   residencyFullCite: string;
   aidCite: string;
-  durationDays: number;
+  /**
+   * The jurisdiction's durational requirement in days. Absent where it has none — Tennessee sets no
+   * durational component at all — so a screen quoting "the N-day clock" has nothing to quote rather
+   * than quoting zero, which would read as a rule and is not one.
+   */
+  durationDays?: number;
 }
 
 /** A student's jurisdiction, resolved: either PathWise has its rules, or it says so. */

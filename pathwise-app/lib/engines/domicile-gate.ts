@@ -14,7 +14,18 @@
 // Virginia, and nothing in it imports a pack — see engines/jurisdiction.ts for where one comes from.
 
 import type { Student, Event, Finding, DecidingOffice, ISODate } from '../types';
-import type { DomicilePack, JurisdictionPacks } from '../rulepacks';
+import type { JurisdictionPacks } from '../rulepacks';
+import type {
+  Agency,
+  Capability,
+  CapabilityLevel,
+  Clock,
+  DomicilePack,
+  Gate,
+  PackDomain,
+} from '../rulepacks/schema';
+import { DETERMINATE_LEVELS } from '../rulepacks/schema';
+import { computeDomicileClock, type IntentFactorFact } from './domicile-clock';
 import { formatImmigrationStatus } from '../format';
 import { jurisdictionByCode } from '../coverage';
 
@@ -40,11 +51,39 @@ export interface DomicileView {
   /** The pack's own jurisdiction, and that jurisdiction's name as the coverage file spells it. */
   jurisdictionCode: string;
   jurisdictionName: string;
-  /** Which statuses close the residency door, per this pack's gate clause. */
+  /**
+   * Every gate the pack states, in the order it states them — which is the order the source applies
+   * them in. `gates[0]` was the only one this view ever exposed, so a jurisdiction with two gates
+   * (Texas requires lawful presence AND a durational period) silently lost the second. A dropped
+   * gate is the worst shape of that bug, because the pack looks complete.
+   */
+  gates: readonly Gate[];
+  /**
+   * The gate that fires for a given status, or undefined if none does. This is what the engines
+   * ask; the singular `gate*` fields below are jurisdiction-level display and mean the FIRST gate.
+   * On a one-gate pack the two are the same gate, which is why Virginia's output is untouched.
+   */
+  statusGateFor: (status: string) => Gate | undefined;
+  /** The union of every status any gate in this pack closes the door on. */
   gateStatuses: ReadonlySet<string>;
-  durationDays: number;
+  /**
+   * The pack's durational clock, or undefined where the jurisdiction has none. Optional because
+   * some states genuinely have no durational component, and a missing clock must not be read as a
+   * clock of zero days.
+   */
+  clock?: Clock;
+  /** Convenience for the common case; undefined when there is no clock. */
+  durationDays?: number;
   verifiedOn: string;
   sourceUrl: string;
+  /** Every body this pack says decides something, with what each one decides. */
+  agencies: readonly Agency[];
+  /** What this pack claims to answer, per domain — authored, never inferred. */
+  capabilities: readonly Capability[];
+  /** How far this pack has been carried in one domain. `not_modelled` when it says nothing. */
+  levelFor: (domain: PackDomain) => CapabilityLevel;
+  /** Whether this pack may return a determinate answer in one domain. */
+  canDecide: (domain: PackDomain) => boolean;
   office: DecidingOffice;
   /** The gate's own section reference, and the abbreviated spelling the pack carries for chips. */
   gateId: string;
@@ -81,7 +120,17 @@ export interface DomicileView {
 
 /** Read a domicile pack into the view above. Pure; no pack is imported to build it. */
 export function domicileView(pack: DomicilePack): DomicileView {
+  // The primary gate. Jurisdiction-level display ("the clause that closes this door") reads from it;
+  // every ENGINE decision goes through `statusGateFor`, which considers all of them.
   const gate = pack.gates[0];
+
+  // Which statuses each gate closes, computed once. A gate whose clause this reader does not
+  // understand contributes nothing — it declines rather than guessing, same as everywhere else.
+  const byGate = pack.gates.map((g) => ({ gate: g, statuses: new Set(statusesFromWhen(g.when)) }));
+
+  const capabilityFor = (domain: PackDomain): Capability | undefined =>
+    pack.capabilities.find((c) => c.domain === domain);
+
   return {
     packId: pack.pack_id,
     jurisdictionCode: pack.jurisdiction,
@@ -89,29 +138,43 @@ export function domicileView(pack: DomicilePack): DomicileView {
     // back to the code keeps a pack whose jurisdiction is missing from coverage readable rather than
     // printing "undefined" into a finding.
     jurisdictionName: jurisdictionByCode(pack.jurisdiction)?.name ?? pack.jurisdiction,
-    gateStatuses: new Set(statusesFromWhen(gate.when)),
-    durationDays: pack.clock.duration_days,
+    gates: pack.gates,
+    // Pack order is the source's order, so the first gate that matches is the one that decides.
+    statusGateFor: (status) => byGate.find((g) => g.statuses.has(status))?.gate,
+    gateStatuses: new Set(byGate.flatMap((g) => [...g.statuses])),
+    clock: pack.clock,
+    durationDays: pack.clock?.duration_days,
+    agencies: pack.agencies,
+    capabilities: pack.capabilities,
+    levelFor: (domain) => capabilityFor(domain)?.level ?? 'not_modelled',
+    canDecide: (domain) => {
+      const level = capabilityFor(domain)?.level;
+      return level !== undefined && DETERMINATE_LEVELS.includes(level);
+    },
     // The verification date is rendered ("Verified on …"), so it is read from the pack every time
     // rather than copied anywhere a re-verified pack could leave it stale.
     verifiedOn: pack.verified_on,
     sourceUrl: pack.source_url,
-    // The pack names the deciding office once, on the gate; every domicile finding is decided by
-    // that same office, so every branch reads it from there rather than repeating the code.
-    office: gate.deciding_office as DecidingOffice,
+    // The pack names the deciding office on each gate; the primary one is the jurisdiction-level
+    // answer. Where gates disagree, the firing gate's own office travels on the finding.
+    office: gate.deciding_office,
     gateId: gate.id,
     gateCite: gate.cite,
     gateDisplayCite: gate.display_cite,
     gateExplain: gate.explain,
     gateHeadlineFor: (statusText: string) => gate.headline.replace(/^\S+(?=\s+status\b)/, statusText),
-    gateResult: gate.result as Finding['result'],
+    gateResult: gate.result,
     gateStopsAnalysis: gate.stops_analysis,
-    clockCite: pack.clock.start_rule_cite,
-    clockStartRuleNote: pack.clock.start_rule_note,
-    clockAnchorDefinition: pack.clock.anchor_definition,
-    dependencyCite: pack.dependency.cite,
-    intentFactorIds: pack.intent_factors.map((f) => f.id),
+    // Absent where the pack has no clock. Every consumer reads them through the optional `clock`
+    // above or guards on `durationDays`, so a clockless jurisdiction renders nothing rather than a
+    // blank citation.
+    clockCite: pack.clock?.start_rule_cite ?? '',
+    clockStartRuleNote: pack.clock?.start_rule_note ?? '',
+    clockAnchorDefinition: pack.clock?.anchor_definition ?? '',
+    dependencyCite: pack.dependency?.cite ?? '',
+    intentFactorIds: (pack.intent_factors ?? []).map((f) => f.id),
     volatility: {
-      status: pack.volatility.status as NonNullable<Finding['volatility']>['status'],
+      status: pack.volatility.status,
       note: pack.volatility.note,
     },
     authority: (...cites: string[]) => {
@@ -145,17 +208,6 @@ export function lowerLabel(s: string): string {
   return s.charAt(0).toLowerCase() + s.slice(1);
 }
 
-/** One satisfied intent factor: which of the pack's factors, and the date it occurred. */
-export interface IntentFactorFact {
-  /** Matches an `id` in the pack's intent_factors list. */
-  id: string;
-  date: ISODate;
-  /** Facts the pack's caveats turn on — e.g. `is_coop` for the employment factor. */
-  attrs?: Record<string, unknown>;
-  /** Timeline events this factor rests on, so a claim on screen can show its evidence chain. */
-  event_ids?: string[];
-}
-
 export interface DomicileInput {
   student: Student;
   events: Event[];
@@ -181,15 +233,6 @@ export interface DomicileInput {
  */
 export type DomicileRun = DomicileInput & { packs: JurisdictionPacks };
 
-/** Days since the epoch. Exported so every domicile screen does date maths one way. */
-export function toOrdinal(iso: string): number {
-  return Math.floor(Date.parse(iso + 'T00:00:00Z') / 86_400_000);
-}
-export function addDays(iso: string, n: number): ISODate {
-  const d = new Date(Date.parse(iso + 'T00:00:00Z') + n * 86_400_000);
-  return d.toISOString().slice(0, 10);
-}
-
 /**
  * The gate itself, as its own step: returns a Finding when the student's status closes domicile,
  * and undefined when it does not. Callers MUST run this before any other domicile reasoning —
@@ -198,16 +241,22 @@ export function addDays(iso: string, n: number): ISODate {
  */
 export function checkEligibleAlienGate(student: Student, v: DomicileView): Finding | undefined {
   const status = student.immigration.status;
-  if (!v.gateStatuses.has(status)) return undefined;
+
+  // ALL of the pack's gates are considered, in pack order, and the first that matches decides.
+  // This used to read `gates[0]` only. Every value below comes off the gate that actually fired —
+  // its own citation, its own office, its own headline — so a jurisdiction whose second gate closes
+  // the door cannot be cited to its first.
+  const gate = v.statusGateFor(status);
+  if (!gate) return undefined;
 
   // The code is what the gate matches on; this is only how it gets written for a reader.
   const statusText = formatImmigrationStatus(status);
 
   return {
-    rule_id: `${v.packId}:${v.gateId}`,
+    rule_id: `${v.packId}:${gate.id}`,
     domain: 'residency',
-    result: v.gateResult,
-    headline: v.gateHeadlineFor(statusText),
+    result: gate.result,
+    headline: gate.headline.replace(/^\S+(?=\s+status\b)/, statusText),
     reasoning_steps: [
       {
         claim: `The student holds ${statusText} status, a temporary (student) visa.`,
@@ -215,73 +264,40 @@ export function checkEligibleAlienGate(student: Student, v: DomicileView): Findi
         from_evidence: [],
       },
       {
-        claim: v.gateStopsAnalysis
-          ? `${v.gateExplain} No further domicile analysis is performed.`
-          : v.gateExplain,
+        claim: gate.stops_analysis
+          ? `${gate.explain} No further domicile analysis is performed.`
+          : gate.explain,
         from_events: [],
         from_evidence: [],
       },
     ],
     rule_citation: {
-      text: v.gateExplain,
-      authority: v.authority(v.gateCite),
+      text: gate.explain,
+      authority: v.authority(gate.cite),
       source_url: v.sourceUrl,
       verified_on: v.verifiedOn,
     },
     unknowns: [],
-    deciding_office: v.office,
+    deciding_office: gate.deciding_office,
     volatility: v.volatility,
   };
 }
 
-export interface DomicileClock {
-  /** The factor whose date starts the clock: the LAST qualifying one, never the earliest. */
-  startFactor?: IntentFactorFact;
-  /** Its date. */
-  clockStart?: ISODate;
-  durationDays: number;
-  /** The earliest date of alleged entitlement that satisfies the duration requirement. */
-  earliestEntitlement?: ISODate;
-  allegedEntitlementDate: ISODate;
-  meetsDuration: boolean;
-  /** How many days short the alleged date falls. 0 once the requirement is met. */
-  daysShort: number;
-}
-
-/**
- * The durational clock. Two rules, both the pack's: it runs for `duration_days` before the date of
- * alleged entitlement, and it starts on the date of the LAST qualifying factor — not on arrival,
- * which is the part every student gets wrong.
- */
-export function computeDomicileClock(
-  qualifying: IntentFactorFact[],
-  allegedEntitlementDate: ISODate,
-  durationDays: number,
-): DomicileClock {
-  const base = {
-    durationDays,
-    allegedEntitlementDate,
-  };
-  if (qualifying.length === 0) {
-    return { ...base, meetsDuration: false, daysShort: durationDays };
-  }
-
-  const startFactor = qualifying
-    .slice()
-    .sort((a, b) => toOrdinal(a.date) - toOrdinal(b.date))
-    .at(-1)!;
-  const clockStart = startFactor.date;
-  const daysHeld = toOrdinal(allegedEntitlementDate) - toOrdinal(clockStart);
-
-  return {
-    ...base,
-    startFactor,
-    clockStart,
-    earliestEntitlement: addDays(clockStart, durationDays),
-    meetsDuration: daysHeld >= durationDays,
-    daysShort: Math.max(0, durationDays - daysHeld),
-  };
-}
+// The clock, its two strategies and its result type now live in ./domicile-clock.ts — the anchor
+// and start rule were fields every pack wrote down and nothing read, with Virginia's arithmetic
+// hardcoded underneath them. Re-exported here because this is where every caller already imports
+// domicile vocabulary from.
+export {
+  computeDomicileClock,
+  clockStartFor,
+  clockAnchorFor,
+  ClockStrategyError,
+  toOrdinal,
+  addDays,
+  type DomicileClock,
+  type ClockContext,
+  type IntentFactorFact,
+} from './domicile-clock';
 
 /**
  * Run the supplied pack's domicile gate and, past it, the durational clock. Returns a Finding.
@@ -298,7 +314,39 @@ export function runDomicileGate(run: DomicileRun): Finding {
   const gated = checkEligibleAlienGate(student, v);
   if (gated) return gated;
 
-  // Past the gate: compute the clock start = date of the LAST qualifying intent factor (not arrival).
+  // A jurisdiction with no durational requirement has no clock to run, and inventing one of zero
+  // days would be inventing a rule. The honest answer names what PathWise does model here.
+  if (!v.clock) {
+    return {
+      rule_id: `${v.packId}:no-durational-clock`,
+      domain: 'residency',
+      result: 'review_recommended',
+      headline: `${v.jurisdictionName} sets no durational requirement PathWise can count`,
+      reasoning_steps: [
+        {
+          claim: `The gate does not close domicile for this student, and this jurisdiction's pack states no durational period — so there is no waiting clock to compute.`,
+          from_events: [],
+          from_evidence: [],
+        },
+        {
+          claim: `What remains is the officer's own determination on the record as it stands.`,
+          from_events: [],
+          from_evidence: [],
+        },
+      ],
+      rule_citation: {
+        text: v.gateExplain,
+        authority: v.authority(v.gateCite),
+        source_url: v.sourceUrl,
+        verified_on: v.verifiedOn,
+      },
+      unknowns: [],
+      deciding_office: v.office,
+    };
+  }
+
+  // Past the gate: the clock start comes from the PACK's own start rule, not from a rule this
+  // function knows. Same for the anchor it is measured to.
   if (intentFactors.length === 0) {
     return {
       rule_id: `${v.packId}:clock`,
@@ -330,18 +378,22 @@ export function runDomicileGate(run: DomicileRun): Finding {
     };
   }
 
-  const clock = computeDomicileClock(intentFactors, allegedEntitlementDate, v.durationDays);
+  const clock = computeDomicileClock(v.clock, {
+    qualifying: intentFactors,
+    events: run.events,
+    allegedEntitlementDate,
+  });
 
   return {
     rule_id: `${v.packId}:clock`,
     domain: 'residency',
     result: clock.meetsDuration ? 'review_recommended' : 'potential_risk',
     headline: clock.meetsDuration
-      ? `Domicile duration of ${v.durationDays} days appears satisfied (officer confirms)`
+      ? `Domicile duration of ${clock.durationDays} days appears satisfied (officer confirms)`
       : `Domicile clock is running; earliest eligibility ${clock.earliestEntitlement}`,
     reasoning_steps: [
       {
-        claim: `The last qualifying intent factor ("${clock.startFactor!.id}") occurred on ${clock.clockStart}; the ${v.durationDays}-day clock starts there, not on arrival.`,
+        claim: `The last qualifying intent factor ("${clock.startFactor!.id}") occurred on ${clock.clockStart}; the ${clock.durationDays}-day clock starts there, not on arrival.`,
         from_events: [],
         from_evidence: [],
       },

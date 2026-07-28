@@ -361,7 +361,11 @@ const noFactors = residencyFindingFor(jurisdictionFor(vaCitizen), {
   allegedEntitlementDate: '2024-08-26',
 });
 const factorQuestion = noFactors.unknowns.map((u) => u.what).join(' ');
-const vaFactorIds = resolveJurisdiction('VA')!.domicile.intent_factors.map((f) => f.id);
+// intent_factors is optional on the schema now — not every jurisdiction enumerates them. Virginia
+// does, and a Virginia pack that stopped would be a regression this assertion should catch.
+const vaIntentFactors = resolveJurisdiction('VA')!.domicile.intent_factors ?? [];
+assert('Virginia still enumerates intent factors', vaIntentFactors.length > 0);
+const vaFactorIds = vaIntentFactors.map((f) => f.id);
 assert(
   'the gate asks about the pack’s own intent factors',
   vaFactorIds.some((id) => factorQuestion.includes(humanizeId(id, 'VA'))),

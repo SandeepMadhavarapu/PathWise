@@ -37,8 +37,10 @@ import {
 
 // ---- pack shapes (a JSON import cannot carry the optional fields we branch on) ----
 
+// These mirror the schema's own shapes. They stay as local aliases rather than importing the schema
+// types directly because this file reads a narrowed projection of the pack, not the pack itself.
 type RawIntentFactor = { id: string; weight: string; inapplicable_when?: string; caveat?: string };
-type RawConstructionRule = { id: string; note: string; cite?: string };
+type RawConstructionRule = { id: string; note: string; cite?: string; kind?: string };
 
 /**
  * The parts of a domicile pack this file reads, resolved once per run.
@@ -64,17 +66,22 @@ interface DomicileRules {
   jurisdictionCode: string;
 }
 
+// Every block below is optional on the pack, because not every jurisdiction has every rule: a state
+// may weigh no enumerated intent factors, publish no auxiliary-acts warning, or state no rules of
+// construction. An absent block reads as "this jurisdiction has no such rule", which is why each
+// default is EMPTY rather than Virginia's — an empty list produces no claims, whereas a borrowed
+// one produces claims sourced to the wrong state.
 function domicileRules(pack: DomicilePack): DomicileRules {
   return {
     jurisdictionCode: pack.jurisdiction,
-    intentFactors: pack.intent_factors,
-    constructionRules: pack.construction_rules,
-    auxiliaryCite: pack.auxiliary_acts_warning.cite,
-    auxiliaryNote: pack.auxiliary_acts_warning.note,
-    auxiliaryActs: pack.auxiliary_acts_warning.acts,
-    dependencyAgeThreshold: pack.dependency.presumed_dependent_under_age,
-    dependencyCite: pack.dependency.cite,
-    dependencyExceptions: pack.dependency.exceptions,
+    intentFactors: pack.intent_factors ?? [],
+    constructionRules: pack.construction_rules ?? [],
+    auxiliaryCite: pack.auxiliary_acts_warning?.cite ?? '',
+    auxiliaryNote: pack.auxiliary_acts_warning?.note ?? '',
+    auxiliaryActs: pack.auxiliary_acts_warning?.acts ?? [],
+    dependencyAgeThreshold: pack.dependency?.presumed_dependent_under_age ?? 0,
+    dependencyCite: pack.dependency?.cite ?? '',
+    dependencyExceptions: pack.dependency?.exceptions ?? [],
     intentFactorsAuthority: pack.authority,
   };
 }
@@ -500,7 +507,15 @@ function applyConstructionRules(
     institutionCount > 1 || input.events.some((e) => e.type === 'transfer');
 
   return R.constructionRules.map((rule) => {
-    switch (rule.id) {
+    // Dispatch on the pack's declared `kind`, never on its `id`.
+    //
+    // This switched on the id, which is the pack's own name for its own rule — so any jurisdiction
+    // that happened to name a rule `favor_student_in_complex_cases` would have silently inherited
+    // the reasoning written against SCHEV's wording of it, and any jurisdiction that named the same
+    // rule differently would have lost that reasoning without either side saying so. `kind` is an
+    // explicit opt-in: a pack asks for a reasoner by name, and a rule that asks for none is
+    // surfaced verbatim rather than being fitted to the nearest one.
+    switch (rule.kind) {
       case 'favor_student_in_complex_cases':
         return {
           ...rule,
@@ -531,13 +546,15 @@ function applyConstructionRules(
             : 'The age presumption does not apply, so parental domicile is not the route being examined.',
         };
       default:
-        // A rule this engine does not recognise is still a rule the pack states. Surface it rather
-        // than dropping it.
+        // A rule with no reasoner — either it declares no `kind`, or a `kind` this engine has not
+        // been taught. Either way it is still a rule the pack states, so it is surfaced in the
+        // pack's own words with no relevance invented for it. Honest degradation: the rule is
+        // visible, and PathWise does not pretend to have applied it to this record.
         return {
           ...rule,
           label: humanizeId(rule.id, R.jurisdictionCode),
           relevant: true,
-          relevance: 'A rule of construction the pack applies to every determination.',
+          relevance: 'A rule of construction this jurisdiction applies to every determination.',
         };
     }
   });
@@ -582,11 +599,16 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
   // ---- §09(C)(1) dependency, then §06(B) the factors, then §05(C)(1) the clock ----
   const dependency = determineDependency(input);
   const intent = analyseIntentFactors(input);
-  const clock = computeDomicileClock(
-    intent.qualifying.map((r) => ({ id: r.id, date: r.date! })),
-    allegedEntitlementDate,
-    v.durationDays,
-  );
+  // The clock is the pack's: how long, where it starts, and what it is measured to are all read
+  // from the pack and dispatched, never assumed. A jurisdiction with no durational requirement has
+  // no clock, and the analysis below reports that rather than inventing one of zero days.
+  const clock = v.clock
+    ? computeDomicileClock(v.clock, {
+        qualifying: intent.qualifying.map((r) => ({ id: r.id, date: r.date! })),
+        events: input.events,
+        allegedEntitlementDate,
+      })
+    : undefined;
 
   const unknowns: Finding['unknowns'] = [];
 
@@ -607,7 +629,7 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
       what: `${count(intent.notOnRecord.length, 'intent factor')} the guidelines weigh ${isAre(
         intent.notOnRecord.length,
       )} not on the record: ${names}.`,
-      why_it_matters: clock.clockStart
+      why_it_matters: clock?.clockStart
         ? `A factor the officer cannot see is a factor that does not help — and because the clock starts at the LAST qualifying factor, one of these dated after ${formatDomicileDate(
             clock.clockStart,
           )} would move the earliest date of entitlement later, not earlier.`
@@ -621,7 +643,7 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
     unknowns.push({
       what: `Does the pack's caveat on ${lowerLabel(row.label)} apply — "${row.caveat}"?`,
       why_it_matters: `If it does, this factor stops counting${
-        clock.startFactor?.id === row.id ? ' and the clock start moves with it' : ''
+        clock?.startFactor?.id === row.id ? ' and the clock start moves with it' : ''
       }. PathWise will not decide it either way on a record that does not say.`,
       how_to_resolve: 'Confirm the nature of the arrangement with the employer or the DSO and record it.',
     });
@@ -715,7 +737,7 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
     });
   }
 
-  if (clock.startFactor && clock.clockStart) {
+  if (clock && clock.startFactor && clock.clockStart) {
     const earliest = intent.qualifying
       .slice()
       .sort((a, b) => toOrdinal(a.date!) - toOrdinal(b.date!))[0];
@@ -751,9 +773,17 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
       from_events: [],
       from_evidence: [],
     });
-  } else {
+  } else if (clock) {
     steps.push({
       claim: `No factor on this record both applies and counts, so the ${clock.durationDays}-day clock has no start date yet. ${v.clockStartRuleNote} — ${v.clockCite}.`,
+      from_events: [],
+      from_evidence: [],
+    });
+  } else {
+    // No clock at all — a different statement from a clock that has not started, and one that must
+    // not be told with a duration in it.
+    steps.push({
+      claim: `${v.jurisdictionName} states no durational period in the rules PathWise has modelled, so there is no waiting clock to run against this record.`,
       from_events: [],
       from_evidence: [],
     });
@@ -767,19 +797,26 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
     });
   }
 
-  const result: Finding['result'] = !clock.clockStart
-    ? 'unable_to_verify'
-    : clock.meetsDuration
-      ? 'review_recommended'
-      : 'potential_risk';
+  // A jurisdiction with no durational rule cannot be "short of" one, so its verdict rests on the
+  // factors and the officer rather than on a countdown — `review_recommended`, never `potential_risk`
+  // for a duration it does not impose.
+  const result: Finding['result'] = !clock
+    ? 'review_recommended'
+    : !clock.clockStart
+      ? 'unable_to_verify'
+      : clock.meetsDuration
+        ? 'review_recommended'
+        : 'potential_risk';
 
-  const headline = !clock.clockStart
-    ? 'No qualifying intent factors on record'
-    : clock.meetsDuration
-      ? `${clock.durationDays} days of domicile appear satisfied for ${formatDomicileDate(clock.allegedEntitlementDate)}`
-      : `Domicile clock started ${formatDomicileDate(clock.clockStart)} — the earliest in-state term begins ${formatDomicileDate(
-          clock.earliestEntitlement!,
-        )}`;
+  const headline = !clock
+    ? `No durational requirement to satisfy in ${v.jurisdictionName} — the officer decides on the record`
+    : !clock.clockStart
+      ? 'No qualifying intent factors on record'
+      : clock.meetsDuration
+        ? `${clock.durationDays} days of domicile appear satisfied for ${formatDomicileDate(clock.allegedEntitlementDate)}`
+        : `Domicile clock started ${formatDomicileDate(clock.clockStart)} — the earliest in-state term begins ${formatDomicileDate(
+            clock.earliestEntitlement!,
+          )}`;
 
   const finding: Finding = {
     rule_id: `${v.packId}:analysis`,
@@ -788,7 +825,7 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
     headline,
     reasoning_steps: steps,
     rule_citation: {
-      text: v.clockStartRuleNote,
+      text: clock ? v.clockStartRuleNote : v.gateExplain,
       authority: v.authority(v.gateCite, dependency.cite, intent.cite, v.clockCite),
       source_url: v.sourceUrl,
       verified_on: v.verifiedOn,

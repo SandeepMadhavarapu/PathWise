@@ -89,8 +89,8 @@ function differences(a: unknown, b: unknown, path: string, out: Difference[]): v
  *
  * Note what is NOT in here: not one number. The demo's arithmetic — 342, 552, 210, 288, 54, 23, the
  * 365-day cliff, the 12-month budget, the 90/150 unemployment caps, the aid deadline set, the step
- * ORDER and the step COUNT — is untouched by every change below. All thirty-four are prose,
- * citation scoping, or one added boolean.
+ * ORDER and the step COUNT — is untouched by every change below. All thirty-seven are prose,
+ * citation scoping, or two added fields.
  */
 const INTENDED_CHANGES: Difference[] = [
   // ---- 1. Volatility now describes the rule it is attached to. -------------------------------
@@ -313,6 +313,35 @@ const INTENDED_CHANGES: Difference[] = [
     path: "priya:aid-eligibility.unknowns[2].how_to_resolve",
     before: "Upload the document that establishes it, or ask the financial aid office which proof they accept.",
     after: "Nothing needs to be produced for this finding. Keep the document if you have it — it becomes relevant again only if the status this rests on changes.",
+  },
+
+  // ---- 7. Construction rules dispatch on a declared `kind`, not on Virginia's rule ids. -------
+  //
+  // applyConstructionRules switched on `rule.id` — the pack's own name for its own rule. That meant
+  // any jurisdiction naming a rule `favor_student_in_complex_cases` would silently inherit the
+  // reasoning written against SCHEV's wording of it, and any jurisdiction naming the same rule
+  // differently would lose that reasoning without either side saying so. Packs now ask for a
+  // reasoner by `kind`; a rule that asks for none is surfaced in the pack's own words with no
+  // relevance invented for it.
+  //
+  // Virginia declares the three kinds it was already getting, so every sentence it produces is
+  // unchanged. What appears below is the new field arriving on the analysis object — and it is the
+  // ONLY thing the whole Phase 1 architecture change moved in Virginia's output. Not one reasoning
+  // string, number, citation, headline or deciding office differs.
+  {
+    path: "marcus:domicile-analysis.construction[0].kind",
+    before: undefined,
+    after: "favor_student_in_complex_cases",
+  },
+  {
+    path: "marcus:domicile-analysis.construction[1].kind",
+    before: undefined,
+    after: "determinations_not_transferable",
+  },
+  {
+    path: "marcus:domicile-analysis.construction[2].kind",
+    before: undefined,
+    after: "parental_status_alone_insufficient",
   },
 ];
 
