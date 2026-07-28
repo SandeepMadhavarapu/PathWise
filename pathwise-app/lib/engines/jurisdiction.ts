@@ -109,6 +109,8 @@ export function jurisdictionForCode(code: string): JurisdictionContext {
     ['domicile', packs.domicile],
     ['aid', packs.aid],
   ] as const) {
+    // `aid` is optional — a jurisdiction may have residency authored and aid not.
+    if (!pack) continue;
     if (pack.jurisdiction !== code) {
       throw new Error(
         `Rulepack misregistration: the ${domain} pack "${pack.pack_id}" declares jurisdiction ` +
@@ -119,7 +121,9 @@ export function jurisdictionForCode(code: string): JurisdictionContext {
   }
 
   const d = domicileView(packs.domicile);
-  const a = aidView(packs.aid);
+  // No aid pack means no aid citation to render — the same discipline as an unmodelled jurisdiction
+  // having no `display` at all. A screen with nothing to cite shows nothing, never something borrowed.
+  const a = packs.aid ? aidView(packs.aid) : undefined;
   return {
     code,
     name,
@@ -127,7 +131,7 @@ export function jurisdictionForCode(code: string): JurisdictionContext {
     display: {
       residencyCite: d.gateDisplayCite,
       residencyFullCite: d.gateCite,
-      aidCite: a.displayCite,
+      aidCite: a?.displayCite ?? '',
       durationDays: d.durationDays,
     },
   };
@@ -153,8 +157,10 @@ export function residencyFindingFor(ctx: JurisdictionContext, input: DomicileInp
 
 /** The aid finding, same contract. */
 export function aidFindingFor(ctx: JurisdictionContext, input: AidEligibilityInput): Finding {
-  if (!ctx.packs) return unmodelledAidFinding(unmodelledOf(ctx));
-  return computeAidEligibility({ ...input, packs: ctx.packs });
+  // No jurisdiction pack at all, or one with no aid rules authored: either way PathWise has no aid
+  // rules for this state and says so, rather than reaching for the nearest pack that has some.
+  if (!ctx.packs?.aid) return unmodelledAidFinding(unmodelledOf(ctx));
+  return computeAidEligibility({ ...input, packs: { ...ctx.packs, aid: ctx.packs.aid } });
 }
 
 /**
@@ -188,7 +194,7 @@ export function aidFormFor(
   ctx: JurisdictionContext,
   student: Student,
 ): AidFormSelection | undefined {
-  if (!ctx.packs) return undefined;
+  if (!ctx.packs?.aid) return undefined;
   return selectAidForm(student, aidView(ctx.packs.aid));
 }
 
@@ -197,8 +203,8 @@ export function aidDeadlineFor(
   ctx: JurisdictionContext,
   input: AidEligibilityInput,
 ): AidDeadline | undefined {
-  if (!ctx.packs) return undefined;
-  return resolveAidDeadline({ ...input, packs: ctx.packs });
+  if (!ctx.packs?.aid) return undefined;
+  return resolveAidDeadline({ ...input, packs: { ...ctx.packs, aid: ctx.packs.aid } });
 }
 
 /**

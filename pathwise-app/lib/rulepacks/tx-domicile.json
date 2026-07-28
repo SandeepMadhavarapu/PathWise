@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "pack_id": "tx-domicile",
+  "domain": "residency",
+  "jurisdiction": "TX",
+  "authority": "Texas Higher Education Coordinating Board, Texas Residency guidance; Tex. Educ. Code § 54.052",
+  "source_url": "https://www.highered.texas.gov/texas-residency/",
+  "verified_on": "2026-07-28",
+  "verified_by": "THECB's published Texas Residency page read in full on this date. Every clause below is stated on that page; nothing is drawn from secondary sources.",
+  "volatility": {
+    "status": "recently_changed",
+    "note": "THECB records proof of lawful presence as a new requirement as of June 2025. Confirm the current rule with the institution's registrar for the term being claimed."
+  },
+  "agencies": [
+    {
+      "id": "thecb",
+      "name": "Texas Higher Education Coordinating Board",
+      "short_name": "THECB",
+      "decides": [
+        "residency"
+      ],
+      "source_url": "https://www.highered.texas.gov/texas-residency/"
+    },
+    {
+      "id": "institution_registrar",
+      "name": "The institution's registrar or admissions office",
+      "short_name": "Registrar",
+      "decides": [
+        "residency"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "domain": "residency",
+      "level": "partial",
+      "answers": [
+        "durational_clock"
+      ],
+      "reason": "Only the durational rule is modelled: THECB states twelve consecutive months of Texas residence immediately before the term, and PathWise counts it from the start of continuous presence. Three things are deliberately NOT modelled. THECB states that a student must be lawfully present in the U.S. to be a Texas resident, but the list of nonimmigrant visa types eligible to establish domicile lives in 19 TAC § 21.24 and PathWise has not read it — so this pack states NO status gate and cannot say what Texas would decide for an F-1 student. THECB's page does not name the date the twelve months are measured to, so the clock is anchored to the claimed term rather than to a census date PathWise cannot source. And the determination is made by each institution under THECB rules, so a finding here is a reading of the published criteria, not the registrar's decision."
+    }
+  ],
+  "deciding_office": "registrar",
+  "gates": [],
+  "clock": {
+    "duration_days": 365,
+    "anchor": "date_of_alleged_entitlement",
+    "anchor_definition": "The term the student is claiming resident status for. THECB describes the period as the twelve months 'right before the semester the student plans to enroll' and does not name a census date, so PathWise measures to the claimed term and says it has not sourced anything more precise.",
+    "start_rule": "start_of_continuous_presence",
+    "start_rule_note": "Texas counts twelve CONSECUTIVE months of residence immediately preceding the term, so the clock runs from the beginning of continuous presence rather than from a later act showing intent.",
+    "start_rule_cite": "Tex. Educ. Code § 54.052"
+  },
+  "construction_rules": [
+    {
+      "id": "lawful_presence_required",
+      "cite": "THECB Texas Residency guidance (requirement recorded as new in June 2025)",
+      "note": "A student must also be lawfully present in the U.S. to be considered a Texas resident."
+    },
+    {
+      "id": "dependent_presumed_parent_domicile",
+      "cite": "Tex. Educ. Code § 54.052(a)(3)",
+      "note": "A dependent student is presumed to be domiciled in the same state as the student's parent unless the student is eligible for resident tuition under Texas Education Code, 54.052(a)(3)."
+    },
+    {
+      "id": "institution_determines",
+      "cite": "THECB Texas Residency guidance",
+      "note": "The determination is made by the institution's registrar or admissions office, which is where a student takes the specific details of their case."
+    }
+  ],
+  "intent_factors": [
+    {
+      "id": "continuous_residence",
+      "weight": "required"
+    }
+  ]
+}

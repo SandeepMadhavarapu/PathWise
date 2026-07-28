@@ -95,7 +95,16 @@ export interface AidEligibilityInput {
  * `packs`; callers build the pack-free input, so a fixture stays a record of facts rather than a
  * claim about whose rules apply.
  */
-export type AidEligibilityRun = AidEligibilityInput & { packs: JurisdictionPacks };
+export type AidEligibilityRun = AidEligibilityInput & {
+  /**
+   * The aid pack that decides this run. Narrowed from `JurisdictionPacks` because `aid` is optional
+   * there — a jurisdiction may have residency rules authored and no aid rules — and the decision
+   * about whether an aid pack exists belongs to the router, not to this engine. An engine that
+   * accepted `undefined` would be an engine that had to decide what to do without rules, which is
+   * the question the whole seam exists to answer somewhere else.
+   */
+  packs: JurisdictionPacks & { aid: AidPack };
+};
 
 /**
  * The form a student files. `state_alternative` is deliberately generic: every state that has one

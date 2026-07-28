@@ -120,9 +120,14 @@ export interface DomicileView {
 
 /** Read a domicile pack into the view above. Pure; no pack is imported to build it. */
 export function domicileView(pack: DomicilePack): DomicileView {
-  // The primary gate. Jurisdiction-level display ("the clause that closes this door") reads from it;
-  // every ENGINE decision goes through `statusGateFor`, which considers all of them.
-  const gate = pack.gates[0];
+  // The primary gate — for jurisdiction-level DISPLAY only ("the clause that closes this door").
+  // Every engine decision goes through `statusGateFor`, which considers all of them.
+  //
+  // Optional, because a jurisdiction may state no gate at all: Tennessee classifies on domicile and
+  // nothing else. This used to be read as `pack.gates[0]` and dereferenced unconditionally, which
+  // crashed the moment such a pack was registered — the schema had made a gate mandatory, so no
+  // code had ever had to consider a pack without one.
+  const gate: Gate | undefined = pack.gates[0];
 
   // Which statuses each gate closes, computed once. A gate whose clause this reader does not
   // understand contributes nothing — it declines rather than guessing, same as everywhere else.
@@ -155,16 +160,20 @@ export function domicileView(pack: DomicilePack): DomicileView {
     // rather than copied anywhere a re-verified pack could leave it stale.
     verifiedOn: pack.verified_on,
     sourceUrl: pack.source_url,
-    // The pack names the deciding office on each gate; the primary one is the jurisdiction-level
-    // answer. Where gates disagree, the firing gate's own office travels on the finding.
-    office: gate.deciding_office,
-    gateId: gate.id,
-    gateCite: gate.cite,
-    gateDisplayCite: gate.display_cite,
-    gateExplain: gate.explain,
-    gateHeadlineFor: (statusText: string) => gate.headline.replace(/^\S+(?=\s+status\b)/, statusText),
-    gateResult: gate.result,
-    gateStopsAnalysis: gate.stops_analysis,
+    // A gated pack names the office on each gate; a gateless one states it at the top of the pack,
+    // which the parser requires precisely so this can never be undefined. Where gates disagree, the
+    // FIRING gate's own office travels on the finding — see checkEligibleAlienGate.
+    office: pack.deciding_office ?? gate?.deciding_office ?? 'registrar',
+    // All empty on a pack that states no gate. Every consumer either guards on `gates.length` or
+    // renders the empty string, which is the honest output: there is no clause to quote.
+    gateId: gate?.id ?? '',
+    gateCite: gate?.cite ?? '',
+    gateDisplayCite: gate?.display_cite ?? '',
+    gateExplain: gate?.explain ?? '',
+    gateHeadlineFor: (statusText: string) =>
+      gate ? gate.headline.replace(/^\S+(?=\s+status\b)/, statusText) : '',
+    gateResult: gate?.result ?? 'unable_to_verify',
+    gateStopsAnalysis: gate?.stops_analysis ?? false,
     // Absent where the pack has no clock. Every consumer reads them through the optional `clock`
     // above or guards on `durationDays`, so a clockless jurisdiction renders nothing rather than a
     // blank citation.

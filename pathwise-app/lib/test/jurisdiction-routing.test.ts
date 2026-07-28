@@ -8,6 +8,9 @@
 // Texas. A confident answer sourced to the wrong statute is the worst failure this product can
 // have, because the citation is the whole basis for trusting the answer.
 //
+// The unmodelled exemplar below is Ohio rather than Texas, because Texas is now one of the states
+// that IS modelled — which is itself the proof that the seam holds under more than one pack.
+//
 // So the assertions come in two halves that matter equally:
 //   1. An unmodelled jurisdiction yields `unable_to_verify`, names no other state's authority, and
 //      carries a source link wherever coverage.json has a verified one.
@@ -19,6 +22,7 @@ import { join } from 'path';
 import {
   describeUnmodelled,
   isModelled,
+  REGISTERED_PACKS,
   resolveJurisdiction,
 } from '../rulepacks';
 import {
@@ -28,6 +32,7 @@ import {
 import {
   aidFindingFor,
   aidFormFor,
+  domicileAnalysisFor,
   jurisdictionFor,
   jurisdictionForCode,
   residencyFindingFor,
@@ -35,7 +40,7 @@ import {
 import { applyLifeEvent } from '../engines/consequence-engine';
 import { humanizeId } from '../engines/domicile-gate';
 import { UNLISTED_REGISTRATIONS } from '../jurisdiction-coverage';
-import { JURISDICTIONS } from '../coverage';
+import { JURISDICTIONS, jurisdictionByCode } from '../coverage';
 import { priyaJobOffer } from '../fixtures/priya';
 import type { Student } from '../types';
 
@@ -79,44 +84,44 @@ assert(
 
 assert('Virginia resolves to a pack', resolveJurisdiction('VA') !== undefined);
 assert('Virginia is modelled', isModelled('VA'));
-assert('Texas is not modelled', !isModelled('TX'));
+assert('Ohio is not modelled', !isModelled('OH'));
 assert('an unknown code is not modelled', !isModelled('ZZ'));
 
 console.log('');
 console.log('An unmodelled jurisdiction gets an honest finding, not a borrowed one');
 
-const tx = describeUnmodelled('TX');
-assert('Texas is describable as unmodelled', tx !== undefined, tx);
+const oh = describeUnmodelled('OH');
+assert('Ohio is describable as unmodelled', oh !== undefined, oh);
 assert('a modelled jurisdiction is not describable as unmodelled', describeUnmodelled('VA') === undefined);
 assert('a code absent from coverage.json is distinguishable from a gap', describeUnmodelled('ZZ') === undefined);
 
-const txResidency = unmodelledResidencyFinding(tx!);
-const txAid = unmodelledAidFinding(tx!);
+const ohResidency = unmodelledResidencyFinding(oh!);
+const ohAid = unmodelledAidFinding(oh!);
 
-assert('Texas residency is unable_to_verify', txResidency.result === 'unable_to_verify', txResidency.result);
-assert('Texas aid is unable_to_verify', txAid.result === 'unable_to_verify', txAid.result);
+assert('Ohio residency is unable_to_verify', ohResidency.result === 'unable_to_verify', ohResidency.result);
+assert('Ohio aid is unable_to_verify', ohAid.result === 'unable_to_verify', ohAid.result);
 assert(
-  'Texas residency is never "ineligible" — only a real pack can reach a determinate answer',
-  txResidency.result !== 'ineligible',
+  'Ohio residency is never "ineligible" — only a real pack can reach a determinate answer',
+  ohResidency.result !== 'ineligible',
 );
-assert('Texas headline names Texas', txResidency.headline.includes('Texas'), txResidency.headline);
+assert('Ohio headline names Ohio', ohResidency.headline.includes('Ohio'), ohResidency.headline);
 assert(
-  'Texas carries the verified official source link',
-  txResidency.rule_citation.source_url === 'https://www.highered.texas.gov/texas-residency/',
-  txResidency.rule_citation.source_url,
+  'Ohio carries the verified official source link',
+  ohResidency.rule_citation.source_url === 'https://highered.ohio.gov/',
+  ohResidency.rule_citation.source_url,
 );
 assert(
-  'Texas still names the office that decides',
-  txResidency.deciding_office === 'domicile_officer',
-  txResidency.deciding_office,
+  'Ohio still names the office that decides',
+  ohResidency.deciding_office === 'domicile_officer',
+  ohResidency.deciding_office,
 );
-assert('Texas states what it does not know', txResidency.unknowns.length > 0);
+assert('Ohio states what it does not know', ohResidency.unknowns.length > 0);
 
-// The heart of it: no Virginia authority may appear anywhere in a Texas finding.
-const txText = JSON.stringify([txResidency, txAid]);
-assert('no SCHEV citation leaks into a Texas finding', !txText.includes('SCHEV'), txText.slice(0, 200));
-assert('no Virginia reference leaks into a Texas finding', !/Virginia/.test(txText));
-assert('the Virginia gate cite does not appear', !txText.includes(GATE_DISPLAY_CITE));
+// The heart of it: no Virginia authority may appear anywhere in a Ohio finding.
+const ohText = JSON.stringify([ohResidency, ohAid]);
+assert('no SCHEV citation leaks into a Ohio finding', !ohText.includes('SCHEV'), ohText.slice(0, 200));
+assert('no Virginia reference leaks into a Ohio finding', !/Virginia/.test(ohText));
+assert('the Virginia gate cite does not appear', !ohText.includes(GATE_DISPLAY_CITE));
 
 console.log('');
 console.log('Every jurisdiction in the coverage file behaves');
@@ -301,7 +306,7 @@ console.log('');
 console.log('A pack’s schema is not one jurisdiction’s vocabulary');
 
 // `AidPack` is `typeof vaAid`, so Virginia's KEY NAMES are the shape every later pack must match.
-// `va_student_provisions` and `vasa_priority_date` would have forced a Texas pack to file its
+// `va_student_provisions` and `vasa_priority_date` would have forced a Ohio pack to file its
 // provisions under a Virginia name. Values may say Virginia; keys are schema and may not.
 function keyPathsIn(value: unknown, trail: string[] = []): string[] {
   if (Array.isArray(value)) return value.flatMap((v) => keyPathsIn(v, trail));
@@ -344,8 +349,8 @@ assert(
 );
 assert(
   'another jurisdiction’s code is not',
-  humanizeId('va_income_tax_filed', 'TX') === 'Va income tax filed',
-  humanizeId('va_income_tax_filed', 'TX'),
+  humanizeId('va_income_tax_filed', 'OH') === 'Va income tax filed',
+  humanizeId('va_income_tax_filed', 'OH'),
 );
 assert(
   'an id that merely looks like a code is left alone',
@@ -354,7 +359,7 @@ assert(
 );
 
 // The gate's "no intent factors" unknown used to name Virginia's factors from inside the engine,
-// so it would have asked a Texas student about VA tax filing.
+// so it would have asked a Ohio student about VA tax filing.
 const vaCitizen: Student = {
   ...f1Student('VA'),
   immigration: { status: 'citizen', prior_statuses: [] },
@@ -422,15 +427,15 @@ assert(
 console.log('');
 console.log('Routing is a property of the engines, not of any screen');
 
-const txStudent = f1Student('TX');
+const txStudent = f1Student('OH');
 const txJx = jurisdictionFor(txStudent);
 const vaJx = jurisdictionFor(vaStudent);
 
-assert('a Texas student resolves to no packs', txJx.packs === undefined);
+assert('a Ohio student resolves to no packs', txJx.packs === undefined);
 assert('a Virginia student resolves to packs', vaJx.packs !== undefined);
 // The type-level guarantee: with no pack there is no cite to render, so a screen has nothing to
 // leak rather than merely being trusted not to leak it.
-assert('a Texas student carries no display citations at all', txJx.display === undefined, txJx.display);
+assert('a Ohio student carries no display citations at all', txJx.display === undefined, txJx.display);
 assert('a Virginia student does carry them', vaJx.display?.residencyCite === GATE_DISPLAY_CITE);
 assert('the resolved duration is the pack’s, not a constant', vaJx.display?.durationDays === 365);
 
@@ -447,15 +452,15 @@ const routedTxAid = aidFindingFor(txJx, {
   deadlines: { asOf: '2024-08-26' },
 });
 
-assert('routed Texas residency is unable_to_verify', routedTxResidency.result === 'unable_to_verify');
-assert('routed Texas aid is unable_to_verify', routedTxAid.result === 'unable_to_verify');
+assert('routed Ohio residency is unable_to_verify', routedTxResidency.result === 'unable_to_verify');
+assert('routed Ohio aid is unable_to_verify', routedTxAid.result === 'unable_to_verify');
 assert(
-  'no Virginia authority survives the routed Texas path',
-  borrowedAuthorityIn(JSON.stringify([routedTxResidency, routedTxAid]), 'Texas') === undefined,
+  'no Virginia authority survives the routed Ohio path',
+  borrowedAuthorityIn(JSON.stringify([routedTxResidency, routedTxAid]), 'Ohio') === undefined,
 );
 assert(
-  'the routed Texas finding still links the official THECB source',
-  routedTxResidency.rule_citation.source_url === 'https://www.highered.texas.gov/texas-residency/',
+  'the routed Ohio finding still links the official the Ohio Department of Higher Education source',
+  routedTxResidency.rule_citation.source_url === 'https://highered.ohio.gov/',
   routedTxResidency.rule_citation.source_url,
 );
 
@@ -546,6 +551,140 @@ assert(
   namingForms,
 );
 
+
+// ---------------------------------------------------------------------------------------------
+console.log('');
+console.log("N x N: no jurisdiction wears any other jurisdiction's name, authority or citation");
+// ---------------------------------------------------------------------------------------------
+//
+// The original single check compared one modelled state against one unmodelled one. With more than
+// one pack registered that is no longer enough: every pack has to be checked against every OTHER
+// pack, because the failure this guards against is symmetric and does not care which state was
+// added last.
+//
+// It caught a real one the first time it ran, and not in the engines: the Texas pack's
+// `start_rule_note` explained its clock BY CONTRASTING IT WITH VIRGINIA'S. That note is rendered as
+// `rule_citation.text`, so a Texas student would have read the word "Virginia" on their own
+// finding. The engines were routing perfectly; the leak was in the prose, which is exactly the
+// place a routing test would not normally look.
+
+const REGISTERED = REGISTERED_PACKS.map(({ code, packs }) => ({
+  code,
+  name: jurisdictionByCode(code)?.name ?? code,
+  packs,
+  // What this jurisdiction's own findings are ALLOWED to say — its name, its agencies, and the
+  // abbreviations its packs use. Anything from another jurisdiction's list is a leak.
+  marks: [
+    jurisdictionByCode(code)?.name ?? code,
+    ...packs.domicile.agencies.flatMap((a) => [a.name, a.short_name]),
+    ...(packs.aid?.agencies.flatMap((a) => [a.name, a.short_name]) ?? []),
+  ].filter((m) => m.length > 3),
+}));
+
+const nxnProblems: string[] = [];
+for (const subject of REGISTERED) {
+  const student: Student = {
+    id: subject.code,
+    immigration: { status: 'LPR', prior_statuses: [] },
+    dob: '2000-01-01',
+    institutions: [],
+    jurisdiction_history: [{ state: subject.code, from: '2023-01-01' }],
+  };
+  const jx = jurisdictionFor(student);
+  const findings = JSON.stringify([
+    residencyFindingFor(jx, {
+      student,
+      events: [],
+      intentFactors: [{ id: 'continuous_residence', date: '2024-01-01' }],
+      allegedEntitlementDate: '2026-08-24',
+    }),
+    aidFindingFor(jx, { student, deadlines: { asOf: '2026-07-28' } }),
+  ]);
+
+  // Remove this jurisdiction's OWN marks before looking, so "West Virginia" containing "Virginia"
+  // and "THECB" containing "THEC" cannot be reported as leaks.
+  let scrubbed = findings;
+  for (const own of subject.marks) scrubbed = scrubbed.split(own).join('«own»');
+
+  for (const other of REGISTERED) {
+    if (other.code === subject.code) continue;
+    for (const mark of other.marks) {
+      if (scrubbed.includes(mark)) {
+        nxnProblems.push(`${subject.code} finding contains ${other.code}'s "${mark}"`);
+      }
+    }
+  }
+}
+assert(
+  `all ${REGISTERED.length} registered jurisdictions x ${REGISTERED.length - 1} others: nothing borrowed`,
+  nxnProblems.length === 0,
+  nxnProblems,
+);
+
+// And the arithmetic is the pack's, not a shared constant. Virginia counts from the LAST qualifying
+// intent factor; Texas from the START of continuous presence. Same 365 days, different answer over
+// an identical record — which is the whole point of dispatching on the pack's own start rule.
+{
+  const factors = [
+    { id: 'continuous_residence', date: '2024-01-01' },
+    { id: 'drivers_license', date: '2025-06-01' },
+  ];
+  const starts: Record<string, string | undefined> = {};
+  for (const code of ['VA', 'TX']) {
+    if (!isModelled(code)) continue;
+    const student: Student = {
+      id: code,
+      immigration: { status: 'LPR', prior_statuses: [] },
+      dob: '2000-01-01',
+      institutions: [],
+      jurisdiction_history: [{ state: code, from: '2023-01-01' }],
+    };
+    const jx = jurisdictionFor(student);
+    starts[code] = domicileAnalysisFor(jx, {
+      student,
+      events: [],
+      intentFactors: factors,
+      allegedEntitlementDate: '2026-08-24',
+    }).clock?.clockStart;
+  }
+  assert(
+    'Virginia counts from the LAST qualifying factor',
+    starts.VA === '2025-06-01',
+    starts.VA,
+  );
+  assert(
+    'Texas counts from the START of continuous presence — a different answer on the same record',
+    starts.TX === '2024-01-01',
+    starts.TX,
+  );
+  assert('and the two genuinely differ', starts.VA !== starts.TX, starts);
+}
+
+// A jurisdiction with no durational rule gets no clock, and is never told it is short of a period
+// its own law does not impose.
+if (isModelled('TN')) {
+  const student: Student = {
+    id: 'TN',
+    immigration: { status: 'LPR', prior_statuses: [] },
+    dob: '2000-01-01',
+    institutions: [],
+    jurisdiction_history: [{ state: 'TN', from: '2023-01-01' }],
+  };
+  const jx = jurisdictionFor(student);
+  assert('Tennessee resolves to no durational requirement', jx.display?.durationDays === undefined);
+  const f = residencyFindingFor(jx, {
+    student,
+    events: [],
+    intentFactors: [],
+    allegedEntitlementDate: '2026-08-24',
+  });
+  assert(
+    'and its finding never quotes a day count',
+    !/\d{2,4}[- ]day/.test(JSON.stringify(f)),
+    f.headline,
+  );
+}
+
 console.log('');
 console.log('A misregistered pack is loud, not silently authoritative');
 
@@ -553,7 +692,10 @@ console.log('A misregistered pack is loud, not silently authoritative');
 // would make every engine below it confidently wrong about a state. The router refuses to build a
 // context for one rather than letting it reach a finding.
 const vaPacks = resolveJurisdiction('VA')!;
-assert('the Virginia packs declare Virginia', vaPacks.domicile.jurisdiction === 'VA' && vaPacks.aid.jurisdiction === 'VA');
+assert(
+  'the Virginia packs declare Virginia',
+  vaPacks.domicile.jurisdiction === 'VA' && vaPacks.aid?.jurisdiction === 'VA',
+);
 
 console.log('');
 if (failures === 0) {

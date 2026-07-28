@@ -105,7 +105,14 @@ export type FindingResult =
 
 export type DecidingOffice =
   | 'DSO' | 'registrar' | 'domicile_officer'
-  | 'financial_aid' | 'USCIS' | 'SEVP';
+  | 'financial_aid' | 'USCIS' | 'SEVP'
+  /**
+   * A state coordinating board or commission — the body that sets the criteria and, in some states,
+   * certifies the determination itself. Added when Tennessee was authored: Tenn. Comp. R. & Regs.
+   * 1540-01-01 is administered by THEC, and calling that "the registrar" would name the wrong body
+   * on every finding it produced.
+   */
+  | 'state_higher_ed_agency';
 
 export interface RuleCitation {
   text: string;

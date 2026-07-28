@@ -101,6 +101,7 @@ const DECIDING_OFFICES: readonly DecidingOffice[] = [
   'financial_aid',
   'USCIS',
   'SEVP',
+  'state_higher_ed_agency',
 ];
 
 const FINDING_RESULTS: readonly FindingResult[] = [
@@ -238,6 +239,13 @@ interface PackHeader {
 
 export interface DomicilePack extends PackHeader {
   domain: 'residency';
+  /**
+   * The body that rules on residency here. Optional only because a pack WITH gates states it on
+   * each gate; required when `gates` is empty, since there is then nothing else carrying it. The
+   * parser enforces exactly that, because a finding with no office named is a finding that has
+   * quietly become PathWise's own opinion.
+   */
+  deciding_office?: DecidingOffice;
   gates: Gate[];
   /**
    * Optional, and that is the whole point of it being optional: not every state has a durational
@@ -472,8 +480,12 @@ export function parseDomicilePack(raw: unknown): DomicilePack {
   const header = parseHeader(c, raw, 'residency');
   const agencyIds = new Set(header.agencies.map((a) => a.id));
 
+  // May be empty, and Tennessee is why. Tenn. Comp. R. & Regs. 1540-01-01-.03 classifies on
+  // domicile and nothing else: no status gate, no alien provision, nothing that closes the door
+  // outright. A schema that demanded a gate would have forced whoever authored that pack to invent
+  // one, and an invented gate is fabricated law wearing a citation. An empty list is a fact about
+  // the jurisdiction; `checkEligibleAlienGate` finds nothing to fire and the analysis continues.
   const rawGates = c.arr(raw, 'gates');
-  if (rawGates.length === 0) c.fail('gates must contain at least one gate');
 
   const gates: Gate[] = rawGates.map((entry, i) => {
     const gc = c.at(`gates[${i}]`);
@@ -501,6 +513,18 @@ export function parseDomicilePack(raw: unknown): DomicilePack {
       agency_id: agencyId,
     };
   });
+
+  // Who decides. A gated pack carries it per gate; a gateless one must state it at the top, or no
+  // finding it produces could name an office at all.
+  let decidingOffice: DecidingOffice | undefined;
+  if (raw.deciding_office !== undefined) {
+    decidingOffice = c.oneOf(raw, 'deciding_office', DECIDING_OFFICES);
+  } else if (gates.length === 0) {
+    c.fail(
+      'deciding_office is required when a pack states no gates — with no gate to carry it, nothing ' +
+        'else in the pack names the body that rules on residency',
+    );
+  }
 
   let clock: Clock | undefined;
   if (raw.clock !== undefined) {
@@ -574,6 +598,7 @@ export function parseDomicilePack(raw: unknown): DomicilePack {
   return {
     ...header,
     domain: 'residency',
+    deciding_office: decidingOffice,
     gates,
     clock,
     dependency,

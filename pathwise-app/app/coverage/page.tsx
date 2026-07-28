@@ -90,22 +90,35 @@ const CHECK_TITLE: Record<"fetched" | "serving_blocked", string> = {
  * which is exactly why the immigration engines bind them directly.
  */
 function packEntries() {
-  const jurisdictionPacks = REGISTERED_PACKS.flatMap(({ packs }) => [
-    {
-      tab: packs.domicile.pack_id,
-      title: `${packs.domicile.agencies[0]?.short_name ?? packs.domicile.jurisdiction} residency`,
-      blurb: `The residency rules for ${packs.domicile.jurisdiction}: its gates, ${
-        packs.domicile.clock ? "its durational clock, " : "no durational clock, "
-      }and the intent factors it weighs. This is the file a second state is a copy of.`,
-      data: packs.domicile as unknown,
-    },
-    {
-      tab: packs.aid.pack_id,
-      title: `${packs.aid.agencies[0]?.short_name ?? packs.aid.jurisdiction} state aid`,
-      blurb: `Which form applies in ${packs.aid.jurisdiction}, what blocks state aid, and the deadlines the aid engine resolves an earliest-of over.`,
-      data: packs.aid as unknown,
-    },
-  ]);
+  const jurisdictionPacks = REGISTERED_PACKS.flatMap(({ packs }) => {
+    const entries = [
+      {
+        tab: packs.domicile.pack_id,
+        title: `${packs.domicile.agencies[0]?.short_name ?? packs.domicile.jurisdiction} residency`,
+        blurb: `The residency rules for ${packs.domicile.jurisdiction}: ${
+          packs.domicile.gates.length
+            ? `${packs.domicile.gates.length} gate${packs.domicile.gates.length === 1 ? "" : "s"}, `
+            : "no status gate, "
+        }${
+          packs.domicile.clock
+            ? `a ${packs.domicile.clock.duration_days}-day clock counted from ${packs.domicile.clock.start_rule.replace(/_/g, " ")}, `
+            : "no durational clock at all, "
+        }and what it weighs.`,
+        data: packs.domicile as unknown,
+      },
+    ];
+    // Only where aid rules have actually been authored. A jurisdiction with residency modelled and
+    // aid not has one file here, not two — and the map beside it says which.
+    if (packs.aid) {
+      entries.push({
+        tab: packs.aid.pack_id,
+        title: `${packs.aid.agencies[0]?.short_name ?? packs.aid.jurisdiction} state aid`,
+        blurb: `Which form applies in ${packs.aid.jurisdiction}, what blocks state aid, and the deadlines the aid engine resolves an earliest-of over.`,
+        data: packs.aid as unknown,
+      });
+    }
+    return entries;
+  });
 
   return [
     ...jurisdictionPacks,

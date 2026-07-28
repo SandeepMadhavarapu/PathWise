@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "pack_id": "tn-domicile",
+  "domain": "residency",
+  "jurisdiction": "TN",
+  "authority": "Tenn. Comp. R. & Regs. 1540-01-01, promulgated by the Tennessee Higher Education Commission under T.C.A. §§ 49-4-704, 49-7-164 and 49-8-104",
+  "source_url": "https://www.law.cornell.edu/regulations/tennessee/title-1540/chapter-1540-01-01",
+  "verified_on": "2026-07-28",
+  "verified_by": "Rule text of 1540-01-01-.03 and -.06 read in full on this date; every clause encoded below is quoted from it.",
+  "volatility": {
+    "status": "stable",
+    "note": "Chapter 1540-01-01 was read in full on 2026-07-28. Tennessee classifies on domicile alone; confirm with the institution's registrar for the term being claimed."
+  },
+  "agencies": [
+    {
+      "id": "thec",
+      "name": "Tennessee Higher Education Commission",
+      "short_name": "THEC",
+      "decides": [
+        "residency"
+      ],
+      "source_url": "https://www.tn.gov/thec.html"
+    }
+  ],
+  "capabilities": [
+    {
+      "domain": "residency",
+      "level": "partial",
+      "answers": [
+        "domicile_classification",
+        "dependency_of_unemancipated_person"
+      ],
+      "reason": "Tennessee classifies on domicile and states NO durational period, so there is no waiting clock for PathWise to run — the absence is the rule, not a gap in the pack. Two things are deliberately not modelled. The presumption at 1540-01-01-.06(1) that a full-time student does not acquire domicile is rebuttable 'by clear and convincing evidence', which is a judgment on the whole record rather than a condition that can be evaluated from a timeline, so it is stated and never applied automatically. And the chapter contains no provision at all about immigration status or the capacity of non-citizens to establish domicile, so this pack states no such gate — PathWise does not know what Tennessee would decide for an F-1 student and does not pretend to."
+    }
+  ],
+  "deciding_office": "state_higher_ed_agency",
+  "gates": [],
+  "dependency": {
+    "presumed_dependent_under_age": 18,
+    "cite": "1540-01-01-.03(3)",
+    "exceptions": [
+      "emancipated"
+    ]
+  },
+  "construction_rules": [
+    {
+      "id": "domicile_is_the_whole_test",
+      "cite": "1540-01-01-.03(1)-(2)",
+      "note": "Every person having his domicile in this State shall be classified 'in-state'; every person not having his or her domicile in this State shall be classified 'out-of-state'."
+    },
+    {
+      "id": "unemancipated_takes_parent_domicile",
+      "cite": "1540-01-01-.03(3)",
+      "note": "The domicile of an unemancipated person is that of his or her parent."
+    },
+    {
+      "id": "spouse_domicile_is_independent",
+      "cite": "1540-01-01-.03(4)",
+      "note": "The domicile of a married person shall be determined independent of the domicile of the spouse."
+    },
+    {
+      "id": "full_time_student_presumed_not_domiciled",
+      "cite": "1540-01-01-.06(1)",
+      "note": "Unless the contrary appears from clear and convincing evidence, it shall be presumed that an emancipated person does not acquire domicile in this State while enrolled as a full-time student at any public or private higher education institution in this State."
+    },
+    {
+      "id": "military_or_out_of_state_study_does_not_move_domicile",
+      "cite": "1540-01-01-.06(2)",
+      "note": "A person does not gain or lose Tennessee resident status for reason of his presence in any state or county while a member of the armed forces of the United States, or while attending a college or university in any other state."
+    }
+  ]
+}

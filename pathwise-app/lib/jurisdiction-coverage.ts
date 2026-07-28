@@ -145,12 +145,13 @@ export const COVERAGE: readonly JurisdictionCoverage[] = JURISDICTIONS.map((j) =
 
   const byDomain = new Map<PackDomain, DomainCoverage>();
   if (registered) {
+    // `aid` is optional: a jurisdiction may have residency rules authored and no aid rules. The
+    // domain it says nothing about falls through to `fromIndex` below, so it is described by what
+    // the index can support rather than by silence.
     const { domicile, aid } = registered.packs;
-    for (const [pack, caps] of [
-      [domicile, domicile.capabilities],
-      [aid, aid.capabilities],
-    ] as const) {
-      for (const cap of caps) {
+    const authored = [domicile, aid].filter((p): p is NonNullable<typeof p> => p !== undefined);
+    for (const pack of authored) {
+      for (const cap of pack.capabilities) {
         const derived = fromCapability(cap, pack.authority, pack.source_url, pack.pack_id);
         // A pack may only speak for a domain it has not already been spoken for in. Two packs
         // claiming one domain is a registration bug, and the schema test is where it surfaces.

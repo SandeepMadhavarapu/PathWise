@@ -26,6 +26,7 @@ import {
 import { COVERAGE, LEVEL_COUNTS, UNLISTED_REGISTRATIONS } from '../jurisdiction-coverage';
 import { JURISDICTIONS } from '../coverage';
 import { clockAnchorFor, clockStartFor, ClockStrategyError } from '../engines/domicile-clock';
+import { checkEligibleAlienGate, domicileView } from '../engines/domicile-gate';
 import vaDomicileRaw from '../rulepacks/va-domicile.json';
 import vaAidRaw from '../rulepacks/va-aid.json';
 
@@ -60,10 +61,14 @@ assert('at least one jurisdiction is registered', REGISTERED_PACKS.length > 0);
 const problems: ValidationProblem[] = [];
 for (const { code, packs } of REGISTERED_PACKS) {
   validateDomicilePack(packs.domicile, TODAY, problems);
-  validateAidPack(packs.aid, TODAY, problems);
-
   assert(`${code}: domicile pack declares jurisdiction ${code}`, packs.domicile.jurisdiction === code);
-  assert(`${code}: aid pack declares jurisdiction ${code}`, packs.aid.jurisdiction === code);
+
+  // Aid rules are optional per jurisdiction — residency authored and aid not is a real state, and
+  // the one the capability system exists to express. Checked when present, not demanded.
+  if (packs.aid) {
+    validateAidPack(packs.aid, TODAY, problems);
+    assert(`${code}: aid pack declares jurisdiction ${code}`, packs.aid.jurisdiction === code);
+  }
 
   // Every clock strategy a pack names must resolve. This is the assertion that makes "fail closed"
   // real rather than aspirational — a lookup that throws is the whole mechanism.
@@ -95,7 +100,7 @@ if (warnings.length) {
 const dupes = duplicateDomainClaims(
   REGISTERED_PACKS.map(({ code, packs }) => ({
     code,
-    capabilities: [...packs.domicile.capabilities, ...packs.aid.capabilities],
+    capabilities: [...packs.domicile.capabilities, ...(packs.aid?.capabilities ?? [])],
   })),
 );
 assert('no jurisdiction has two packs claiming one domain', dupes.length === 0, dupes);
@@ -247,8 +252,30 @@ rejects(
   }),
   PackSchemaError,
 );
+// A pack with no gates is now LEGAL, and Tennessee is why: Tenn. Comp. R. & Regs. 1540-01-01-.03
+// classifies on domicile and nothing else — no status gate, no alien provision. The schema used to
+// demand at least one, which would have forced whoever authored that pack to invent one, and an
+// invented gate is fabricated law wearing a citation. This asserts the change deliberately rather
+// than leaving the old expectation to fail quietly.
+{
+  const copy = JSON.parse(JSON.stringify(vaDomicileRaw)) as Record<string, unknown>;
+  copy.gates = [];
+  copy.deciding_office = 'state_higher_ed_agency';
+  let parsed = false;
+  try {
+    parseDomicilePack(copy);
+    parsed = true;
+  } catch {
+    parsed = false;
+  }
+  assert('a pack with no gates is accepted — some jurisdictions genuinely have none', parsed);
+}
+
+// ...but only if it says who decides. `deciding_office` lived on the gate and nowhere else, so a
+// gateless pack had no way to name the body ruling on residency — and a finding with no office
+// named is a finding that has quietly become PathWise's own opinion.
 rejects(
-  'a pack with no gates is rejected',
+  'a gateless pack with no deciding_office is rejected — nothing would name who decides',
   brokenDomicile((p) => {
     p.gates = [];
   }),
@@ -352,6 +379,92 @@ assert(
   'the aid pack declares aid modelled',
   vaAid.capabilities.some((c) => c.domain === 'aid' && c.level === 'modelled'),
 );
+
+
+// ---------------------------------------------------------------------------------------------
+console.log('');
+console.log('Multi-gate: every gate is evaluated, and the FIRING gate is the one cited');
+// ---------------------------------------------------------------------------------------------
+//
+// No registered jurisdiction states two gates today, and none will be given one to satisfy a test:
+// Texas plainly requires lawful presence, but the list of visa types eligible to establish domicile
+// lives in 19 TAC § 21.24 and PathWise has not read it, so writing that gate would be inventing law.
+//
+// The code path is real regardless, and it is the one whose failure is worst — `gates[0]` was the
+// only gate ever read, so a second one was silently discarded and the pack still looked complete.
+// So it is exercised here with a SYNTHETIC pack, built in this file and registered nowhere. It is
+// a fixture for the engine, not a claim about any state.
+
+{
+  const synthetic = JSON.parse(JSON.stringify(vaDomicileRaw)) as Record<string, unknown>;
+  const firstGate = (synthetic.gates as Record<string, unknown>[])[0];
+  synthetic.gates = [
+    // Gate one matches J-1 only, so an F-1 student must fall through to gate two.
+    {
+      ...firstGate,
+      id: 'first_gate',
+      when: "immigration.status in ['J1']",
+      cite: 'FIRST GATE CITE',
+      display_cite: 'FIRST',
+      headline: 'J-1 status is closed by the first gate',
+      explain: 'The first gate closes for J-1.',
+      deciding_office: 'domicile_officer',
+    },
+    {
+      ...firstGate,
+      id: 'second_gate',
+      when: "immigration.status in ['F1']",
+      cite: 'SECOND GATE CITE',
+      display_cite: 'SECOND',
+      headline: 'F-1 status is closed by the second gate',
+      explain: 'The second gate closes for F-1.',
+      deciding_office: 'registrar',
+    },
+  ];
+
+  const pack = parseDomicilePack(synthetic);
+  assert('a two-gate pack parses', pack.gates.length === 2);
+
+  const view = domicileView(pack);
+  assert(
+    'both gates contribute to the status set',
+    view.gateStatuses.has('J1') && view.gateStatuses.has('F1'),
+    [...view.gateStatuses],
+  );
+  assert('the first gate is found for its own status', view.statusGateFor('J1')?.id === 'first_gate');
+  assert(
+    'the SECOND gate is found for F-1 — it would have been silently dropped before',
+    view.statusGateFor('F1')?.id === 'second_gate',
+    view.statusGateFor('F1')?.id,
+  );
+  assert('a status no gate names fires nothing', view.statusGateFor('citizen') === undefined);
+
+  const f1 = checkEligibleAlienGate(
+    {
+      id: 'x',
+      immigration: { status: 'F1', prior_statuses: [] },
+      dob: '2000-01-01',
+      institutions: [],
+      jurisdiction_history: [],
+    },
+    view,
+  );
+  // The whole point: the finding must carry the FIRING gate's citation and office, not the first
+  // gate's. Citing gate one for a student closed by gate two is the wrong-statute failure again,
+  // one level in.
+  assert('the F-1 finding comes from the second gate', f1?.rule_id.endsWith('second_gate') === true, f1?.rule_id);
+  assert(
+    'and cites the SECOND gate, not the first',
+    f1?.rule_citation.authority.includes('SECOND GATE CITE') === true &&
+      f1?.rule_citation.authority.includes('FIRST GATE CITE') === false,
+    f1?.rule_citation.authority,
+  );
+  assert(
+    "and carries the second gate's own deciding office",
+    f1?.deciding_office === 'registrar',
+    f1?.deciding_office,
+  );
+}
 
 console.log('');
 if (failures === 0) {

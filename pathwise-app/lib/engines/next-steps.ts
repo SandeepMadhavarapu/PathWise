@@ -165,6 +165,7 @@ export const OFFICE_PROSE: Record<DecidingOffice, string> = {
   financial_aid: 'the financial aid office',
   USCIS: 'USCIS',
   SEVP: 'SEVP',
+  state_higher_ed_agency: 'the state higher-education agency',
 };
 
 const DOMAIN_SUBJECT: Record<Finding['domain'], string> = {

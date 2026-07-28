@@ -17,6 +17,8 @@
 
 import vaDomicileRaw from './va-domicile.json';
 import vaAidRaw from './va-aid.json';
+import tnDomicileRaw from './tn-domicile.json';
+import txDomicileRaw from './tx-domicile.json';
 import { JURISDICTIONS, jurisdictionByCode, type Jurisdiction } from '../coverage';
 import { parseAidPack, parseDomicilePack, type AidPack, type DomicilePack } from './schema';
 
@@ -29,10 +31,21 @@ import { parseAidPack, parseDomicilePack, type AidPack, type DomicilePack } from
 // and every enum-ish field widened to `string`, so `deciding_office` was cast rather than checked.
 export type { AidPack, DomicilePack } from './schema';
 
-/** The packs that decide one jurisdiction's residency and aid questions. */
+/**
+ * The packs that decide one jurisdiction's residency and aid questions.
+ *
+ * `aid` is OPTIONAL, and that is the most important word in this file after Phase 6. Requiring both
+ * meant a jurisdiction could not be registered until someone had authored rules for BOTH domains —
+ * so a state whose residency rules were researched and verified could not be shipped at all until
+ * its aid rules were too. That is not a cautious constraint, it is one that pushes an author toward
+ * filling the gap with something plausible.
+ *
+ * With it optional, a jurisdiction can honestly be "residency authored, aid not", the aid engine
+ * routes to the unmodelled finding for that state, and the coverage map says so per domain.
+ */
 export interface JurisdictionPacks {
   domicile: DomicilePack;
-  aid: AidPack;
+  aid?: AidPack;
 }
 
 /**
@@ -46,6 +59,8 @@ export interface JurisdictionPacks {
  */
 const vaDomicile = parseDomicilePack(vaDomicileRaw);
 const vaAid = parseAidPack(vaAidRaw);
+const tnDomicile = parseDomicilePack(tnDomicileRaw);
+const txDomicile = parseDomicilePack(txDomicileRaw);
 
 /**
  * Every jurisdiction PathWise can actually reason about, keyed by the code coverage.json uses.
@@ -56,6 +71,14 @@ const vaAid = parseAidPack(vaAidRaw);
  */
 const REGISTRY: Readonly<Record<string, JurisdictionPacks>> = {
   VA: { domicile: vaDomicile, aid: vaAid },
+  // Tennessee: residency authored, aid NOT. Registered with one pack because Tennessee's aid rules
+  // have not been read against a primary source, and shipping a jurisdiction should not require
+  // inventing the half nobody has researched. The coverage map reports the two domains separately.
+  TN: { domicile: tnDomicile },
+  // Texas: residency authored, aid NOT. Its clock counts from the start of continuous presence
+  // rather than from the last act showing intent — the same 365 days as Virginia, reached by
+  // different arithmetic, which is the whole reason it was authored.
+  TX: { domicile: txDomicile },
 };
 
 /** Every registered pack, for the tests and for the coverage screen that is derived from them. */

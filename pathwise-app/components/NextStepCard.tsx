@@ -36,6 +36,7 @@ const OFFICE_LABEL: Record<DecidingOffice, string> = {
   financial_aid: "the financial aid office",
   USCIS: "USCIS",
   SEVP: "SEVP",
+  state_higher_ed_agency: "the state higher-education agency",
 };
 
 // Residency and aid are decided by a state; immigration is federal and is not.

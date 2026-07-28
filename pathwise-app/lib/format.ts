@@ -13,6 +13,7 @@ const DECIDING_OFFICE_LABEL: Record<DecidingOffice, string> = {
   financial_aid: "Financial Aid Office",
   USCIS: "USCIS",
   SEVP: "SEVP",
+  state_higher_ed_agency: "the state higher-education agency",
 };
 
 export function formatDecidingOffice(office: DecidingOffice): string {
