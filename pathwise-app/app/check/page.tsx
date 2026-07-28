@@ -206,6 +206,19 @@ export default function CheckPage() {
   const residencySource = jx.packs?.domicile.source_url ?? unmodelled?.source_url;
   const aidSource = jx.packs?.aid?.source_url ?? unmodelled?.source_url;
 
+  /**
+   * A registered pack that states no status gate at all.
+   *
+   * The engines now carry this as an open question on the finding itself, but this card renders
+   * `headline` and `rule_citation`, not `unknowns` — so without this the honest answer existed in
+   * the object and never reached the screen. That gap is the one this project keeps rediscovering,
+   * and it is worth stating plainly here: a correct engine is not a correct product.
+   *
+   * Read off pack STRUCTURE rather than matched against the unknown's wording, so rephrasing that
+   * sentence cannot silently switch this off. Empty for Virginia, which states a gate.
+   */
+  const statusGateUnmodelled = Boolean(jx.packs && jx.packs.domicile.gates.length === 0);
+
   // The hero's whole claim is that ONE fact closed BOTH doors, so it renders when both findings
   // actually say so — and `ineligible` is a determinate answer only a real pack can reach. That is
   // the condition, rather than a check on which state was picked.
@@ -424,7 +437,16 @@ export default function CheckPage() {
                     ? // Not an error — a reasoned finding, in the pack's own words rather than a
                       // rule this page restates on every jurisdiction's behalf.
                       `Not an error — a reasoned finding. ${finding.rule_citation.text}`
-                    : finding.headline
+                    : statusGateUnmodelled
+                      ? // Says what this reading did NOT check. Without it, a gateless jurisdiction
+                        // tells an F-1 student "duration appears satisfied" and says nothing at all
+                        // about visa status — while a gated one, on the same fact and the same
+                        // screen, says "blocked". The silence then reads as "status doesn't matter
+                        // here", a legal claim PathWise has never made and has no source for.
+                        `${finding.headline}. PathWise has not modelled whether immigration status ` +
+                        `affects domicile in ${stateName}, so this answers the durational and intent ` +
+                        `questions only — not whether your status itself bars it.`
+                      : finding.headline
               }
               // The citation is the jurisdiction's own or none at all. Never a borrowed one — and
               // now that is the type's doing, not this line's: `display` is absent without a pack.

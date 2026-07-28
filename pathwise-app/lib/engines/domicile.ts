@@ -31,6 +31,7 @@ import {
   humanizeId,
   lowerLabel,
   toOrdinal,
+  unmodelledStatusGateUnknowns,
   type DomicileClock,
   type DomicileRun,
   type DomicileView,
@@ -591,7 +592,11 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
       })
     : undefined;
 
-  const unknowns: Finding['unknowns'] = [];
+  // Seeded, not started empty. This is the same gap `runDomicileGate` declares, and the two entry
+  // points have to agree: a pack with no status gate reaches HERE past a check that never ran, so
+  // the full analysis would otherwise be the one reading that stays silent about it. Empty for every
+  // gated pack, so Virginia's unknowns are untouched.
+  const unknowns: Finding['unknowns'] = [...unmodelledStatusGateUnknowns(v)];
 
   if (dependency.status === 'presumed_dependent') {
     unknowns.push({

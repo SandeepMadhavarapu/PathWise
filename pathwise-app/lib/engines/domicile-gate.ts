@@ -371,6 +371,49 @@ export {
 } from './domicile-clock';
 
 /**
+ * What a pack that states NO status gate has not said.
+ *
+ * `checkEligibleAlienGate` returns undefined in two situations that mean opposite things, and
+ * downstream they were indistinguishable:
+ *
+ *   · the pack states gates and none closes on THIS student's status — a real finding. The
+ *     jurisdiction was asked and answered: that status is not barred here.
+ *   · the pack states no gates at all — PathWise has never read whether this jurisdiction bars any
+ *     status. Nobody has been asked anything.
+ *
+ * Collapsing the second into the first is how Texas came to return "Domicile duration of 365 days
+ * appears satisfied" for an F-1 student, with no mention of visa status, on the same screen where
+ * Virginia returns Blocked on that identical fact. Every sentence in the Texas finding was true.
+ * The SILENCE was not: a reader comparing the two states reads it as "F-1 doesn't matter in Texas",
+ * which is a legal claim PathWise has never made and has no source for.
+ *
+ * So the gap is declared as an open question. Deliberately not a block — inventing a bar is the
+ * same error pointed the other way, and asserting one without a source is precisely what this
+ * codebase refuses to do everywhere else. The pack's `partial` capability level already says this
+ * jurisdiction is half-read; this says WHICH half.
+ *
+ * Derived from pack STRUCTURE (`gates.length === 0`) and never from a judgement about the
+ * jurisdiction's law — which is why it needed no legal research to add, and why it disappears on
+ * its own the day someone authors a gate for that pack.
+ */
+export function unmodelledStatusGateUnknowns(v: DomicileView): Finding['unknowns'] {
+  if (v.gates.length > 0) return [];
+  return [
+    {
+      what: `Does immigration status affect domicile in ${v.jurisdictionName}?`,
+      why_it_matters:
+        `PathWise has not modelled a status gate for ${v.jurisdictionName}, so this finding answers ` +
+        `the durational and intent questions ONLY. It is not a finding that status does not matter ` +
+        `here: some states bar certain statuses outright, and a reading with no gate modelled would ` +
+        `not have detected such a bar.`,
+      how_to_resolve:
+        `Confirm with ${v.jurisdictionName}'s deciding office whether your immigration status ` +
+        `affects domicile before relying on this reading.`,
+    },
+  ];
+}
+
+/**
  * Run the supplied pack's domicile gate and, past it, the durational clock. Returns a Finding.
  * Order matters and mirrors the gate's own placement in the guidelines: alien status FIRST.
  *
@@ -436,7 +479,13 @@ export function runDomicileGate(run: DomicileRun): Finding {
       headline: `${v.jurisdictionName} sets no durational requirement PathWise can count`,
       reasoning_steps: [
         {
-          claim: `The gate does not close domicile for this student, and this jurisdiction's pack states no durational period — so there is no waiting clock to compute.`,
+          // "The gate does not close domicile for this student" is a true sentence only where a
+          // gate was actually consulted. On a pack that states none it asserts a check that never
+          // happened, which is the same silence this branch's `unknowns` exists to break.
+          claim:
+            v.gates.length > 0
+              ? `The gate does not close domicile for this student, and this jurisdiction's pack states no durational period — so there is no waiting clock to compute.`
+              : `${v.jurisdictionName}'s pack states no status gate PathWise has modelled and no durational period — so there is no waiting clock to compute.`,
           from_events: [],
           from_evidence: [],
         },
@@ -452,7 +501,7 @@ export function runDomicileGate(run: DomicileRun): Finding {
         source_url: v.sourceUrl,
         verified_on: v.verifiedOn,
       },
-      unknowns: [],
+      unknowns: unmodelledStatusGateUnknowns(v),
       deciding_office: v.office,
     };
   }
@@ -491,6 +540,7 @@ export function runDomicileGate(run: DomicileRun): Finding {
         verified_on: v.verifiedOn,
       },
       unknowns: [
+        ...unmodelledStatusGateUnknowns(v),
         {
           // The examples are the pack's own first three factors, not a list typed here. A pack
           // that weighs different things asks about the things it weighs.
@@ -514,6 +564,7 @@ export function runDomicileGate(run: DomicileRun): Finding {
 
   // Anything supplied and not counted is surfaced as an open question rather than dropped in
   // silence, so "I gave PathWise a date and nothing happened" is never a mystery.
+  // The status-gate gap leads, because it qualifies the whole finding rather than one supplied fact.
   const ignoredUnknowns: Finding['unknowns'] = ignoredFactors.map((f) => ({
     what: `"${f.id}" did not count toward ${v.jurisdictionName}'s durational clock.`,
     why_it_matters: `It was supplied with this record and was not counted — either ${v.jurisdictionName} does not weigh it, or the pack's own condition on that factor excludes this student, or its caveat is engaged. PathWise will not start a clock on a factor the jurisdiction's own rules do not credit.`,
@@ -545,7 +596,7 @@ export function runDomicileGate(run: DomicileRun): Finding {
       source_url: v.sourceUrl,
       verified_on: v.verifiedOn,
     },
-    unknowns: ignoredUnknowns,
+    unknowns: [...unmodelledStatusGateUnknowns(v), ...ignoredUnknowns],
     deciding_office: v.office,
   };
 }
