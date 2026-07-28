@@ -11,10 +11,17 @@ import {
 } from "@/lib/engines/jurisdiction";
 import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
 import type { StepStatus } from "@/lib/engines/next-steps";
-import { priyaStudent, priyaEvents, priyaOpt, priyaOptBudget, priyaAid } from "@/lib/fixtures/priya";
+import { applyLifeEvent } from "@/lib/engines/consequence-engine";
+import {
+  priyaStudent,
+  priyaEvents,
+  priyaOpt,
+  priyaOptBudget,
+  priyaAid,
+  priyaJobOffer,
+} from "@/lib/fixtures/priya";
 import { formatDecidingOffice, formatImmigrationStatus } from "@/lib/format";
 import { statusFromBand, type StatusKey } from "@/lib/tokens";
-import { STATE_COUNT } from "@/lib/coverage";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
@@ -23,7 +30,7 @@ import { OptBudget } from "@/components/OptBudget";
 import { DeadlineExport } from "@/components/DeadlineExport";
 import { StatusGlyph } from "@/components/StatusGlyph";
 import { Callout } from "@/components/Callout";
-import { Tabs } from "@/components/Tabs";
+import { ScenarioNote } from "@/components/ScenarioNote";
 
 // Visual scale for the immigration card's mini-track only — how much track to draw. The cliff
 // itself is the rulepack's, and the ledger reads it; nothing regulatory is set here.
@@ -76,16 +83,15 @@ export default function StudentPage() {
     asOf: priyaOpt.asOf,
   });
   const firstStep = steps[0];
+  const actionableSteps = steps.filter((s) => !s.informational).length;
+
+  // The life-event card below quotes these; both are counted, never typed.
+  const jobConsequences = applyLifeEvent(priyaStudent, priyaJobOffer, jx);
+  const jobOffices = new Set(jobConsequences.map((c) => c.domain)).size;
 
   return (
     <>
-      <Tabs
-        activeId="overview"
-        tabs={[
-          { id: "overview", label: "Overview", href: "/student" },
-          { id: "journey", label: "My journey", href: "/student/journey" },
-        ]}
-      />
+      <ScenarioNote asOf={priyaOpt.asOf} />
 
       <Callout title="How to read this" dismissible>
         Every card below is a live finding, not a summary — the status, the citation, and the
@@ -100,14 +106,19 @@ export default function StudentPage() {
         jurisdictionName={jx.name}
         residencyText={domicile.rule_citation.text}
         residencyCite={jx.display?.residencyCite ?? ""}
+        residencyOffice={formatDecidingOffice(domicile.deciding_office)}
         aidCite={jx.display?.aidCite ?? ""}
+        aidOffice={formatDecidingOffice(aid.deciding_office)}
       />
 
       {firstStep ? (
         <Link href="/student/next" className="nextcard surface">
           <div>
+            {/* The actionable count, not the raw step count — the plan itself now separates the
+                two, and a dashboard promising ten things next to a plan offering seven is the
+                dashboard being wrong. */}
             <div className="nc-k">
-              Your next steps · {steps.length} in order, first one first
+              Your next steps · {actionableSteps} to act on, in order, first one first
             </div>
             <div className="nc-v t-row-title">{firstStep.title}</div>
             <div className="nc-when">
@@ -206,19 +217,25 @@ export default function StudentPage() {
           through, residency runs the full determination — dependency, every intent factor and its
           weight, and the {jx.display?.durationDays}-day clock.
         </span>
-        <span className="ms-go">See Engine B do the work →</span>
+        <span className="ms-go">See the full determination →</span>
       </Link>
 
       {masters ? (
         <>
           <div className="section-head">The computation a chatbot can&apos;t do</div>
           <LedgerBar ledger={masters} />
-          <Link href="/student/changed" className="memorystrip surface">
-            <span>
-              <span className="ms-k">One missing document decides this count.</span> Watch the ledger
-              re-reason the moment it arrives.
-            </span>
-            <span className="ms-go">See what changes when you add evidence →</span>
+          {/* The loudest secondary action on this page, deliberately: it is the route to the one
+              screen where PathWise is seen refusing to guess, which is the thing worth remembering
+              about it. It was a quiet strip indistinguishable from three others. */}
+          <Link href="/student/changed" className="cta">
+            <div>
+              <div className="cta-k">One missing document decides this count</div>
+              <div className="cta-v">
+                Watch the same engine reach two answers over these same authorizations — on opposite
+                sides of the cliff — and refuse to pick one
+              </div>
+            </div>
+            <span className="cta-arrow">→</span>
           </Link>
         </>
       ) : null}
@@ -231,20 +248,18 @@ export default function StudentPage() {
       <div className="section-head">Immigration — the clock that runs while she waits</div>
       <UnemploymentClock input={priyaOpt} />
 
-      <Link href="/moment" className="cta">
-        <div>
-          <div className="cta-k">Now watch one event ripple across all three</div>
-          <div className="cta-v">Priya signs a job offer → four things change at once</div>
-        </div>
-        <span className="cta-arrow">→</span>
-      </Link>
-
-      <Link href="/coverage" className="memorystrip surface">
+      {/* Both numbers below are counted off the engine's own output. This card used to promise that
+          one event rippled "across all three" offices and that "four things change" — the second
+          was right by luck and the first was simply not true: signing an offer reaches immigration
+          and residency rules, and nothing in the map touches aid. A card that oversells the engine
+          is worse than one that undersells it, because the engine is the thing being judged. */}
+      <Link href="/moment" className="memorystrip surface">
         <span>
-          <span className="ms-k">Priya&apos;s residency rules are a file, not a special case.</span>{" "}
-          See how far the rule packs reach, and where they honestly don&apos;t yet.
+          <span className="ms-k">One event, re-read across the whole record.</span> Priya signs a job
+          offer → {jobConsequences.length} consequences in {jobOffices} of her three offices, one of
+          which is a reasoned &ldquo;this changes nothing&rdquo;.
         </span>
-        <span className="ms-go">Coverage: {STATE_COUNT} states + DC →</span>
+        <span className="ms-go">See the consequences →</span>
       </Link>
 
       <div className="foot">

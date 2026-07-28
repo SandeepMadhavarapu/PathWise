@@ -1,5 +1,5 @@
 import { aidDeadlineFor, aidFindingFor, jurisdictionFor } from "@/lib/engines/jurisdiction";
-import { priyaAid, priyaStudent } from "@/lib/fixtures/priya";
+import { priyaAid, priyaEvents, priyaStudent } from "@/lib/fixtures/priya";
 import { FindingDetail } from "@/components/FindingDetail";
 import { AidDeadline } from "@/components/AidDeadline";
 
@@ -17,7 +17,7 @@ export default function AidFindingPage() {
 
   return (
     <>
-      <FindingDetail finding={finding} />
+      <FindingDetail finding={finding} events={priyaEvents} />
 
       {deadline ? (
         <>

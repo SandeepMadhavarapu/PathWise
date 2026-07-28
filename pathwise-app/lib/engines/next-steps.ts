@@ -104,6 +104,19 @@ export interface NextStep {
   cite: string;
   /** Present on open questions: the concrete way to close them. */
   howToResolve?: string;
+  /**
+   * True when this step cannot change the finding it came from, because that finding is already
+   * determinate against the student.
+   *
+   * An `ineligible` finding still declares its `unknowns` — and it should: the questions really are
+   * open, and a different student, or the same student after a status change, reaches them. What was
+   * wrong was turning them into instructions. A status block on state aid is not reopened by
+   * producing a domicile document, so a plan that said "Get domicile established on record" as a
+   * route to that aid was telling the student to spend thirty days on a door the engine one screen
+   * away calls shut. Marked informational, the same fact reads correctly: worth having, not worth
+   * chasing for this.
+   */
+  informational?: boolean;
 }
 
 export interface NextStepsInput {
@@ -201,6 +214,8 @@ interface Draft {
   howToResolve?: string;
   /** Ordering fallback for a step with no date — an engine's own count of days left. */
   headroomDays?: number;
+  /** See NextStep.informational. */
+  informational?: boolean;
 }
 
 function make(d: Draft, asOf: ISODate): Omit<NextStep, 'order'> {
@@ -230,6 +245,7 @@ function make(d: Draft, asOf: ISODate): Omit<NextStep, 'order'> {
     consequenceOfMissing: d.consequenceOfMissing,
     cite: d.cite,
     howToResolve: d.howToResolve,
+    informational: d.informational,
   };
 }
 
@@ -460,31 +476,62 @@ function fromAidDeadline(deadline: AidDeadline, aid: Finding, asOf: ISODate): Dr
   ];
 }
 
-/** Every open question a finding declared, turned into the action that closes it. */
+/**
+ * Every open question a finding declared, turned into the action that closes it — unless the finding
+ * is already determinate against the student, in which case nothing closes it and the step says so.
+ *
+ * This is the distinction the plan was missing. `computeAidEligibility` reports its provision gaps
+ * whether or not a status block has already closed state aid, which is right: the gaps are real, and
+ * the checklist is what PathWise checked. But `fromUnknowns` read every gap as an instruction, so a
+ * student whose F-1 status closes Virginia state aid outright was handed three steps to go and
+ * obtain domicile proof and high-school records — as routes to that aid — while two screens away the
+ * same record said "Neither form opens Virginia state aid". One of those was wrong, and it was this
+ * one.
+ *
+ * An informational step keeps the question visible and drops the false promise: the evidence may
+ * still be worth having, and it is not the thing standing between the student and this door.
+ */
 function fromUnknowns(finding: Finding): Draft[] {
+  // A determinate refusal. No amount of evidence in this list reopens it, because what closed it was
+  // not an evidentiary gap.
+  const closed = finding.result === 'ineligible';
+  const subject = DOMAIN_SUBJECT[finding.domain];
+
   return finding.unknowns.map((u, i) => {
     const head = u.what.split('—')[0].replace(/[.?]\s*$/, '').trim();
     const office = OFFICE_PROSE[finding.deciding_office];
-    const title = u.what.trim().endsWith('?')
-      ? `Answer one open question: ${lowerFirst(head)}`
-      : /not on record/i.test(head)
-        ? `Confirm ${lowerFirst(head.replace(/\s*is not on record\s*/i, ''))} with ${office}`
-        : `Get ${lowerFirst(head)} on record`;
+    const item = lowerFirst(head.replace(/\s*is not on record\s*/i, ''));
+
+    const title = closed
+      ? `Keep ${item} — it will not reopen ${subject}`
+      : u.what.trim().endsWith('?')
+        ? `Answer one open question: ${lowerFirst(head)}`
+        : /not on record/i.test(head)
+          ? `Confirm ${item} with ${office}`
+          : `Get ${lowerFirst(head)} on record`;
 
     return {
       id: `${finding.rule_id}:unknown-${i}`,
       tier: 'unknown' as StepTier,
       title,
-      why: u.why_it_matters,
+      why: closed
+        ? `${finding.headline} — and that is a status fact, not a missing document, so producing this one does not change it. PathWise lists it because it is genuinely still open on the record, and because the same evidence can matter to a decision this finding does not govern.`
+        : u.why_it_matters,
       domain: finding.domain,
       office: finding.deciding_office,
       engineStatus: 'unknown' as StepStatus,
+      informational: closed || undefined,
       leadTimeDays: LEAD.documentRetrieval,
-      leadTimeReason:
-        'The document usually has to come from someone else — a school, a county, a former employer — and their timeline is not yours.',
-      consequenceOfMissing: `While this is missing it stays an open question in the ${DOMAIN_SUBJECT[finding.domain]} finding, and ${office} decides on the record as it stands — not on what is true but undocumented.`,
+      leadTimeReason: closed
+        ? 'Nothing here is on a clock, because nothing here is holding the decision up.'
+        : 'The document usually has to come from someone else — a school, a county, a former employer — and their timeline is not yours.',
+      consequenceOfMissing: closed
+        ? `Nothing, for ${subject} — it is already closed on status. The cost of treating this as the blocker is the application cycle spent on a door that does not open.`
+        : `While this is missing it stays an open question in the ${subject} finding, and ${office} decides on the record as it stands — not on what is true but undocumented.`,
       cite: finding.rule_citation.authority,
-      howToResolve: u.how_to_resolve,
+      howToResolve: closed
+        ? `Hold on to it. If the status this rests on ever changes, ${office} reads the record as it stands then — and this is one of the items it would need.`
+        : u.how_to_resolve,
     };
   });
 }

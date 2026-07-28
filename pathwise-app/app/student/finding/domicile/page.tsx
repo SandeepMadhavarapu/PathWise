@@ -22,10 +22,10 @@ export default function DomicileAnalysisPage() {
         <div className="jintro-eyebrow">
           Residency · past the gate <Capsule>Example student · Marcus</Capsule>
         </div>
-        <h1>
-          The same gate that refuses Priya lets Marcus through — and then Engine B has nine sections
-          of work to do.
-        </h1>
+        <h2>
+          The same gate that refuses Priya lets Marcus through — and then the residency engine has
+          nine sections of work to do.
+        </h2>
         <p>
           Marcus was on the same student visa Priya holds until he became a lawful permanent
           resident. PathWise reads the identical clause for both of them; for him it does not fire, so
@@ -56,7 +56,14 @@ export default function DomicileAnalysisPage() {
 
       <FindingDetail
         finding={analysis.finding}
-        analysis={<DomicileAnalysisDetail analysis={analysis} jurisdictionCode={jx.code} />}
+        events={marcusDomicile.events}
+        analysis={
+          <DomicileAnalysisDetail
+            analysis={analysis}
+            jurisdictionCode={jx.code}
+            events={marcusDomicile.events}
+          />
+        }
       />
 
       <Link href="/student/finding/residency" className="memorystrip">

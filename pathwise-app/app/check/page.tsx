@@ -21,7 +21,7 @@ import {
   jurisdictionFor,
   residencyFindingFor,
 } from "@/lib/engines/jurisdiction";
-import { JURISDICTIONS } from "@/lib/coverage";
+import { JURISDICTIONS, MODELLED_NAMES } from "@/lib/coverage";
 import { MODELLED_CODES } from "@/lib/rulepacks";
 
 // The statuses this flow offers (a curated subset of ImmigrationStatus).
@@ -167,6 +167,36 @@ export default function CheckPage() {
 
   return (
     <>
+      {/* This screen used to open on a bare form: two dropdowns, four date fields, no heading and no
+          statement of what came back. A visitor was being asked to type their immigration status
+          into something that had not yet said what it would do with it — which, for this population
+          in particular, is the point at which a tab gets closed. */}
+      <div className="jintro surface">
+        <div className="jintro-eyebrow">Check your status</div>
+        <h2>Run the same engines over your own facts.</h2>
+        <p>
+          Enter your status, your state and any CPT you have been authorized for. PathWise reads them
+          against the rules it has actually modelled and answers in the same form it answers for the
+          example student.
+        </p>
+        <ul className="check-expect">
+          <li>A finding for each of the three domains — immigration, residency and state aid</li>
+          <li>The rule behind each one, quoted, with the date PathWise last verified it</li>
+          <li>The office that decides it, which is never PathWise</li>
+          <li>
+            An explicit <strong>&ldquo;not modelled&rdquo;</strong> or{" "}
+            <strong>&ldquo;unable to verify&rdquo;</strong> wherever the rules or your record cannot
+            settle the question — {MODELLED_NAMES.length === 1 ? MODELLED_NAMES[0] : "some states"}{" "}
+            {MODELLED_NAMES.length === 1 ? "is" : "are"} fully modelled, and for the rest this will
+            say so plainly and link the office that does decide rather than guess
+          </li>
+        </ul>
+        <p className="check-privacy">
+          Nothing you type leaves your device. There is no account, no server and no request — the
+          reasoning runs in this tab.
+        </p>
+      </div>
+
       <form className="check-form surface" onSubmit={onSubmit}>
         <div className="field-row">
           <div className="field">
@@ -272,7 +302,9 @@ export default function CheckPage() {
               jurisdictionName={jx.name}
               residencyText={finding.rule_citation.text}
               residencyCite={jx.display?.residencyCite ?? ""}
+              residencyOffice={formatDecidingOffice(finding.deciding_office)}
               aidCite={jx.display?.aidCite ?? ""}
+              aidOffice={formatDecidingOffice(aidFinding.deciding_office)}
               voice="second"
             />
           ) : null}
@@ -360,7 +392,7 @@ export default function CheckPage() {
 
           <div className="section-head">The full reasoning</div>
           {showReasoning ? (
-            <FindingDetail finding={finding} />
+            <FindingDetail finding={finding} events={events} />
           ) : (
             <button
               type="button"

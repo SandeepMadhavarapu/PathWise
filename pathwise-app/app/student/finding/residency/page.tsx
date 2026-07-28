@@ -18,7 +18,7 @@ export default function ResidencyFindingPage() {
         ← Back to overview
       </Link>
 
-      <FindingDetail finding={domicile} />
+      <FindingDetail finding={domicile} events={priyaEvents} />
 
       {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the
           engine has. The sibling route runs the rest of Engine B on a student it lets through. */}

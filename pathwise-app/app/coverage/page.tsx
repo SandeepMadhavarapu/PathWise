@@ -240,12 +240,12 @@ export default function CoveragePage() {
     <>
       <div className="jintro surface">
         <div className="jintro-eyebrow">Coverage · {STATE_COUNT} states + DC</div>
-        <h1>
+        <h2>
           {IMPLEMENTED_COUNT === 1
             ? "One state is fully modelled."
             : `${IMPLEMENTED_COUNT} states are fully modelled.`}{" "}
           The other {UNMODELLED_COUNT} are the same shape of file.
-        </h1>
+        </h2>
         <p>
           Residency and state aid are decided state by state, so a system that only ever worked in
           Virginia would not be a system. PathWise keeps every rule in a versioned rule pack — the

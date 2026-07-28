@@ -1,4 +1,3 @@
-import type { DecidingOffice, Finding } from "@/lib/types";
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
 import { computeOptBudget } from "@/lib/engines/opt-budget";
@@ -9,7 +8,7 @@ import {
   residencyFindingFor,
 } from "@/lib/engines/jurisdiction";
 import { computeNextSteps, formatStepDate } from "@/lib/engines/next-steps";
-import type { NextStep, StepStatus, StepTier } from "@/lib/engines/next-steps";
+import type { NextStep, StepTier } from "@/lib/engines/next-steps";
 import {
   priyaStudent,
   priyaEvents,
@@ -18,120 +17,24 @@ import {
   priyaAid,
 } from "@/lib/fixtures/priya";
 import { DeadlineExport } from "@/components/DeadlineExport";
-import { StatusGlyph } from "@/components/StatusGlyph";
-import type { StatusKey } from "@/lib/tokens";
-
-// The app's one status vocabulary — glyph + word + colour, never colour alone. Same mapping the
-// dashboard uses, so a step cannot read one way here and another way there.
-const STATUS: Record<StepStatus, { glyph: StatusKey; word: string }> = {
-  verified: { glyph: "done", word: "On track" },
-  attention: { glyph: "warn", word: "Attention" },
-  blocked: { glyph: "blocked", word: "Blocked" },
-  unknown: { glyph: "idle", word: "Unable to verify" },
-};
-
-// Residency and aid are decided by a state; immigration is federal and is not. So the two state
-// domains take the resolved jurisdiction's name rather than a constant — this was a module-scope
-// record reading "Residency (Virginia)", which would have headed a Texas student's plan.
-function domainLabel(domain: Finding["domain"], jurisdictionName: string): string {
-  if (domain === "immigration") return "Immigration (F-1)";
-  return `${domain === "residency" ? "Residency" : "Financial aid"} (${jurisdictionName})`;
-}
-
-const OFFICE_LABEL: Record<DecidingOffice, string> = {
-  DSO: "your DSO",
-  registrar: "the registrar",
-  domicile_officer: "the domicile officer",
-  financial_aid: "the financial aid office",
-  USCIS: "USCIS",
-  SEVP: "SEVP",
-};
+import { NextStepCard } from "@/components/NextStepCard";
+import { ScenarioNote } from "@/components/ScenarioNote";
 
 // Why the plan is in this order. The headings are the ordering rule, said out loud.
+//
+// The `unknown` tier heading names both kinds of thing it now holds. The tier is "nobody can act
+// around this" — which covers a question waiting on a document AND a question no document closes,
+// because in both cases the answer is not available to be acted on. Saying only the first would
+// mislabel the informational steps sitting beside it.
 const TIERS: { key: StepTier; heading: string }[] = [
   { key: "cliff", heading: "First — the cliffs, because crossing one cannot be undone" },
   { key: "deadline", heading: "Then — real deadlines, ordered by the date you have to act" },
-  { key: "unknown", heading: "Then — the open questions nobody can act around" },
+  {
+    key: "unknown",
+    heading: "Then — the open questions: what a document would settle, and what one cannot",
+  },
   { key: "standing", heading: "Standing — settled findings that still shape your choices" },
 ];
-
-function StatusChip({ status }: { status: StepStatus }) {
-  const s = STATUS[status];
-  return (
-    <span className={`statuschip ${status}`}>
-      <StatusGlyph status={s.glyph} />
-      {s.word}
-    </span>
-  );
-}
-
-// Never a bare date: the margin rides along with it, and the consequence sits underneath.
-function marginPhrase(days: number): string {
-  if (days < 0) return `${Math.abs(days)} days past the point where the lead time still fits`;
-  if (days === 0) return "no margin left — this is the last day it fits";
-  return `${days} ${days === 1 ? "day" : "days"} of margin`;
-}
-
-function StepCard({ step, jurisdictionName }: { step: NextStep; jurisdictionName: string }) {
-  return (
-    <li className="nsitem">
-      <span className={`nsnum ${step.status}`} aria-hidden="true">
-        {step.order}
-      </span>
-      <article className="nscard surface">
-        <div className="nshead">
-          <span className="nsdomain">{domainLabel(step.domain, jurisdictionName)}</span>
-          <StatusChip status={step.status} />
-        </div>
-
-        <h2 className="nstitle">
-          <span className="sr-only">Step {step.order}: </span>
-          {step.title}
-        </h2>
-        <p className="nswhy">{step.why}</p>
-
-        {step.effectiveDeadline && step.deadline ? (
-          <div className={`nsdl ${step.status}`}>
-            <div className="nsdl-do">
-              Do this before {formatStepDate(step.effectiveDeadline)} —{" "}
-              {marginPhrase(step.daysOfMargin ?? 0)}
-            </div>
-            <div className="nsdl-hard">
-              The {step.deadlineLabel} is {formatStepDate(step.deadline)} · {step.leadTimeDays} days
-              of lead time: {step.leadTimeReason}
-            </div>
-            <div className="nsdl-miss">
-              <span className="nsdl-k">If it slips</span> {step.consequenceOfMissing}
-            </div>
-          </div>
-        ) : (
-          <div className={`nsdl ${step.status}`}>
-            <div className="nsdl-do">
-              No date is set by the office — allow about {step.leadTimeDays} days
-            </div>
-            <div className="nsdl-hard">{step.leadTimeReason}</div>
-            <div className="nsdl-miss">
-              <span className="nsdl-k">If it slips</span> {step.consequenceOfMissing}
-            </div>
-          </div>
-        )}
-
-        {step.howToResolve ? (
-          <div className="nsresolve">
-            <span className="nsdl-k">How to resolve</span> {step.howToResolve}
-          </div>
-        ) : null}
-
-        <div className="nsfoot">
-          {/* Data-driven: a step can carry a full SCHEV authority line, far past what a nowrap
-              chip can hold on a phone. `wrap` lets those break instead of widening the page. */}
-          <span className="cite wrap">{step.cite}</span> Decided by {OFFICE_LABEL[step.office]} — PathWise
-          advises, the office decides.
-        </div>
-      </article>
-    </li>
-  );
-}
 
 export default function NextStepsPage() {
   // ---- every number below comes from the same engines the rest of the app reads ----
@@ -166,30 +69,53 @@ export default function NextStepsPage() {
     (best, s) => (!best || (s.daysOfMargin ?? 0) < (best.daysOfMargin ?? 0) ? s : best),
     undefined,
   );
-  const openQuestions = steps.filter((s) => s.tier === "unknown").length;
+  // Counted separately, because they are counted differently: a step you can act on and a step that
+  // exists so the record stays complete are not the same kind of obligation, and a headline that
+  // added them together was the reason this page looked like ten equal tasks.
+  const actionable = steps.filter((s) => !s.informational);
+  const forTheRecord = steps.length - actionable.length;
+  const openQuestions = steps.filter((s) => s.tier === "unknown" && !s.informational).length;
 
   return (
     <>
+      <ScenarioNote asOf={asOf} what="Every deadline and margin below is counted from that day" />
+
       <div className="jintro surface">
         <div className="jintro-eyebrow">Next steps</div>
-        <h1>Priya has {steps.length} things to do. This is the order they matter in.</h1>
+        <h2>
+          {actionable.length} things Priya can act on, in the order they matter.
+        </h2>
         <p>
-          Every step below is read out of the same engines as the rest of the record — the CPT
-          ledger, the unemployment clock, the OPT budget, the domicile gate and the aid finding.
-          PathWise adds the two things a correct finding still leaves out: how long the action
-          actually takes to arrange, and therefore the date she has to work to rather than the one
-          the office prints.
+          {/* The plan is written TO the student — it is the thing she would print, mail herself or
+              load into a calendar, and the .ics and mailto exports below carry these exact
+              sentences. That is why the steps say "your DSO" on a page that talks about Priya in the
+              third person, and saying so once here is cheaper than translating the artifact into a
+              voice nobody would ever receive it in. */}
+          Below is Priya&apos;s plan as she would receive it, addressed to her. Every step is read out
+          of the same engines as the rest of the record — the CPT ledger, the unemployment clock, the
+          OPT budget, the domicile gate and the aid finding. PathWise adds the two things a correct
+          finding still leaves out: how long the action actually takes to arrange, and therefore the
+          date she has to work to rather than the one the office prints.
         </p>
         <div className="jstats">
           <span className="jstat">
-            <strong>{steps.length}</strong> steps
+            <strong>{actionable.length}</strong> to act on
           </span>
           <span className="jstat">
             <strong>{dated.length}</strong> with a real deadline
           </span>
-          <span className="jstat">
-            <strong>{openQuestions}</strong> open questions
-          </span>
+          {/* Only when there are any. A stat reading "0 open questions" beside a heading that says
+              "the open questions" is noise arguing with itself. */}
+          {openQuestions > 0 ? (
+            <span className="jstat">
+              <strong>{openQuestions}</strong> still open
+            </span>
+          ) : null}
+          {forTheRecord > 0 ? (
+            <span className="jstat">
+              <strong>{forTheRecord}</strong> for the record only — no document reopens them
+            </span>
+          ) : null}
           {soonest?.effectiveDeadline ? (
             <span className="jstat">
               <strong>{formatStepDate(soonest.effectiveDeadline)}</strong> is the first date that
@@ -207,7 +133,7 @@ export default function NextStepsPage() {
             <div className="section-head">{heading}</div>
             <ol className="nslist">
               {group.map((step) => (
-                <StepCard key={step.id} step={step} jurisdictionName={jx.name} />
+                <NextStepCard key={step.id} step={step} jurisdictionName={jx.name} />
               ))}
             </ol>
           </section>
