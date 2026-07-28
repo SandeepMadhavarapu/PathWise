@@ -240,13 +240,22 @@ export default function StudentPage() {
         </>
       ) : null}
 
-      <div className="section-head">
-        Immigration — the {OPT_BUDGET_RULES.budgetMonths} months she didn&apos;t know she was spending
+      {/* Two clocks, and they are the same KIND of object: a budget and a countdown, each measured
+          against a cap the student did not choose. On a wide screen they sit side by side so they
+          can be compared; below 1280 they stack, and each keeps its own heading either way. */}
+      <div className="section-head">Immigration — the two clocks already running</div>
+      <div className="gauge-pair">
+        <div>
+          <div className="gauge-pair-head">
+            The {OPT_BUDGET_RULES.budgetMonths} months she didn&apos;t know she was spending
+          </div>
+          <OptBudget input={priyaOptBudget} />
+        </div>
+        <div>
+          <div className="gauge-pair-head">The clock that runs while she waits</div>
+          <UnemploymentClock input={priyaOpt} />
+        </div>
       </div>
-      <OptBudget input={priyaOptBudget} />
-
-      <div className="section-head">Immigration — the clock that runs while she waits</div>
-      <UnemploymentClock input={priyaOpt} />
 
       {/* Both numbers below are counted off the engine's own output. This card used to promise that
           one event rippled "across all three" offices and that "four things change" — the second

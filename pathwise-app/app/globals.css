@@ -86,7 +86,12 @@
   --sidebar-width: 224px;
   --sidebar-width-collapsed: 64px;
   --topbar-height: 64px;
+  /* The two containers. They step up at 1024 / 1280 / 1600 rather than stretching — see the
+     scale-up block at the end of this file. Variables so the steps have one thing to move. */
   --content-max: 1200px;
+  --landing-max: 760px;
+  /* The page gutter, which grows with the container so a wider page does not mean a tighter edge. */
+  --gutter: var(--space-5);
 
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -343,7 +348,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: var(--space-5);
+  padding: var(--gutter);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -351,7 +356,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 /* Landing (no shell chrome) */
 .bare-page { min-height: 100vh; background: var(--canvas); display: flex; flex-direction: column; align-items: center; }
-.bare-page-inner { width: 100%; max-width: 760px; padding: var(--space-6) var(--space-5) 80px; }
+.bare-page-inner { width: 100%; max-width: var(--landing-max); padding: var(--space-6) var(--gutter) 80px; }
 
 /* =============================================================================
    Surfaces / cards
@@ -592,8 +597,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* =============================================================================
    DomainCard
    ============================================================================= */
-.domain-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
-@media (max-width: 900px) { .domain-cards { grid-template-columns: 1fr; } }
+.domain-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4); }
+/* Below 560px a 260px minimum would still try for two columns in a space that cannot hold them. */
+@media (max-width: 559px) { .domain-cards { grid-template-columns: 1fr; } }
 
 .domain-card { padding: var(--space-4); display: flex; flex-direction: column; }
 .domain-card-head { display: flex; align-items: flex-start; gap: var(--space-2); }
@@ -742,6 +748,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .btn:hover { background: color-mix(in srgb, var(--info) 85%, black); }
 
 /* The frozen-scenario label. Quiet by design — it is a caption on the record, not a status. */
+/* Each gauge keeps its own heading when the pair sits side by side, so neither one inherits the
+   other's label. Same size and colour as .section-head, one level down in the hierarchy. */
+.gauge-pair-head { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted); margin-bottom: var(--space-3); }
+.gauge-pair > div { display: flex; flex-direction: column; }
+.gauge-pair > div > .gauge-card { flex: 1; }
+/* Stacked below 1280 — the second heading needs air from the card above it. */
+.gauge-pair > div + div { margin-top: var(--space-5); }
+
 .scenario-note { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 .scenario-note strong { color: var(--text-secondary); font-weight: 600; }
 .scenario-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
@@ -1478,7 +1493,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
      rather than being dropped the way the search field it replaced was. */
   .topbar-privacy { margin-left: 0; font-size: 12px; }
-  .content { padding: var(--space-4); }
+  /* One lever. Setting --gutter here rather than .content's padding keeps the landing and the
+     shell on the same measurement at every width. */
+  :root { --gutter: var(--space-4); }
 }
 @media (max-width: 640px) {
   .t-page-title { font-size: 20px; }
@@ -1487,5 +1504,82 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .hero, .finding, .check-form, .rp-panel, .wc-panel, .nscard, .rem, .dl { padding: var(--space-4); }
   .finding-head { flex-direction: column; gap: var(--space-3); }
   .finding-headline { font-size: 19px; }
-  .bare-page-inner { padding: var(--space-5) var(--space-4) 64px; }
+  .bare-page-inner { padding: var(--space-5) var(--gutter) 64px; }
+}
+
+
+/* =============================================================================
+   Scale-up — everything above 900px.
+
+   There was not one `@media (min-width: …)` rule in this file. Every breakpoint
+   was a max-width override, which meant 1024, 1280, 1440 and 1920 all rendered
+   IDENTICALLY: the landing sat in a 760px column with 580px of dead margin on
+   either side at 1920, and the shell capped at 1200 whatever the screen.
+
+   The fix is not to stretch. A paragraph set 1600px wide is unreadable, and the
+   prose caps in `ch` throughout this file exist precisely to prevent that. So
+   the container steps up, and the space it gains is spent on COLUMNS and on
+   gutters — never on line length.
+
+     ≤ 899    single column, fluid, phone rail
+     900      shell sidebar returns; container 1200
+     1024     landing 900; gutters open up
+     1280     landing 1120; shell 1360; the three systems become three columns,
+              and the two gauges sit side by side
+     1600     landing 1200; shell 1520; gutters open again, measures unchanged
+   ============================================================================= */
+
+@media (min-width: 1024px) {
+  :root {
+    --landing-max: 900px;
+    --gutter: var(--space-6);
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --content-max: 1360px;
+    --landing-max: 1120px;
+  }
+
+  /* Three systems, read as three. The whole claim of the landing hero is that one fact is
+     evaluated INDEPENDENTLY by three bodies, and a vertical list reads as a sequence — one thing
+     after another — where columns read as parallel. This is the single place on the site where a
+     layout change does storytelling work, which is why it waits for the width to do it properly:
+     at 1024 the columns would be 264px and the citations would wrap to three lines each. */
+  .sh-rows {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+  .sh-row { flex-direction: column; gap: var(--space-2); }
+  .sh-row-top { gap: 6px var(--space-2); }
+  .sh-row-finding { flex: 1; }
+
+  /* The two clocks are the same KIND of object — a budget and a countdown, both measured against a
+     cap — so side by side they can be compared rather than scrolled past one after the other. */
+  .gauge-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); align-items: stretch; }
+  .gauge-pair > div + div { margin-top: 0; }
+
+  /* An ordered plan is a column: numbering across two columns reads wrong however it is arranged.
+     The card is capped instead, so a wide screen gives it breathing room rather than a 1300px line.
+     The measure inside is already capped in `ch`; this stops the CARD looking empty around it. */
+  .nslist, .rem, .wc-changes, .wc-why { max-width: 1080px; }
+
+  /* Finding pages are one argument read top to bottom. Capped for the same reason. */
+  .finding, .jintro, .dm { max-width: 1080px; }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --content-max: 1520px;
+    --landing-max: 1200px;
+    --gutter: var(--space-7);
+  }
+}
+
+/* Very wide screens: the container has stopped growing, so what is left is centring. Nothing here
+   changes a measure — a 2560px screen shows the same line lengths as a 1600px one, with more air. */
+@media (min-width: 1920px) {
+  :root { --gutter: 64px; }
 }
