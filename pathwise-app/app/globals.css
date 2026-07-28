@@ -840,8 +840,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sh-flow-line { flex: 1; height: 1px; background: var(--border-strong); }
 .sh-flow-line:first-child { transform-origin: right center; }
 .sh-flow-line:last-child { transform-origin: left center; }
-.sh-flow-note { flex: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
-  font-weight: 700; color: var(--text-muted); text-align: center; }
+/* `flex: 0 1 auto` + `min-width: 0`, and both halves matter. This used to be `flex: none`, which
+   sized the caption to its max-content width — 347px — and then forbade it to shrink. Above about
+   480px nobody could tell; at 375 and 390, the two commonest phone widths, 347px of unshrinkable
+   text in a ~328px content box pushed the LANDING PAGE into horizontal scroll. The first screen a
+   judge on a phone sees, scrolling sideways, because one flex keyword said "never wrap".
+   `min-width: 0` is the half that is easy to omit: a flex item's default `min-width: auto` floors it
+   at its content size, so `flex: 0 1 auto` alone would still refuse to shrink below 347px. */
+.sh-flow-note { flex: 0 1 auto; min-width: 0; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); text-align: center; }
 
 /* `perspective` on the parent is what makes the settle below a real depth move rather than a scale:
    the cards come forward along Z toward the reader, which is the difference between "three things
@@ -875,6 +882,17 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .lg-k { min-width: 0; }
   .sh { padding: var(--space-4); }
   .sh-flow-note { font-size: 10px; }
+}
+
+/* Wrapping alone stops the overflow, but it does it by letting the caption eat the whole row and
+   starving the two hairlines to nothing — the connector survives as text and disappears as a
+   drawing. Below 480px it stacks instead: rule, caption, rule. On a single-column layout that reads
+   the same way the page already flows, top to bottom, so the "one fact becomes three findings" beat
+   is still drawn rather than described. The lines keep their scale-out animation; they simply grow
+   along a row of their own. */
+@media (max-width: 480px) {
+  .sh-flow { flex-wrap: wrap; }
+  .sh-flow-note { flex-basis: 100%; }
 }
 
 .landing-brand { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: var(--space-2); }
