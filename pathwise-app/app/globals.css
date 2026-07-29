@@ -349,15 +349,25 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
+/* `min-height` and `flex-wrap`, not a fixed height and `nowrap`.
+   The bar carries three things — the page's name, the worked-example badge, and the privacy line —
+   and the badge grew when it started naming the example student. On the route with the longest
+   heading that tipped the total past the available width between roughly 1000px and 1085px, and a
+   nowrap row with a fixed height has nowhere to put the overflow: the privacy line ran off the
+   right edge and took the page into horizontal scroll. It now wraps, exactly as it already did
+   below 900px, so the same three items behave the same way at every width instead of having one
+   band where they silently do not fit. Truncating was the alternative and was rejected — the item
+   that would have been cut is the product's privacy promise. */
 .topbar {
-  height: var(--topbar-height);
+  min-height: var(--topbar-height);
   flex: none;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  padding: 0 var(--space-5);
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-5);
 }
 .topbar-title { flex: none; }
 
