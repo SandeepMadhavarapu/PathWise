@@ -21,13 +21,17 @@ export default function ResidencyFindingPage() {
 
       {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the
           engine has. The sibling route runs the rest of Engine B on a student it lets through. */}
+      {/* Names the student it leads to. This link crosses from Priya's record into Marcus's, and
+          said nothing about it — so a reader followed "see the full analysis" expecting more of
+          the finding they were reading and arrived at someone else's case. */}
       <Link href="/student/finding/domicile" className="memorystrip surface">
         <span>
           <span className="ms-k">This is where the analysis stops, not where the engine does.</span>{" "}
           Past the gate there are nine more sections of it — dependency, the intent factors and their
-          weights, the clock.
+          weights, the clock. They are shown on Marcus, a second example student the same gate lets
+          through.
         </span>
-        <span className="ms-go">See the full domicile analysis →</span>
+        <span className="ms-go">See Marcus&apos;s full analysis →</span>
       </Link>
     </>
   );

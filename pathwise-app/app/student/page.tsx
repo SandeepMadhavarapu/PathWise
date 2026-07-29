@@ -93,13 +93,11 @@ export default function StudentPage() {
     <>
       <ScenarioNote asOf={priyaOpt.asOf} />
 
-      <Callout title="How to read this" dismissible>
-        Every card below is a live finding, not a summary — the status, the citation, and the
-        micro-label under each row are computed from the same events shown in{" "}
-        <Link href="/student/journey">Priya&apos;s journey</Link>. Nothing here is asserted without
-        a regulation attached to it.
-      </Callout>
-
+      {/* The hero leads. "How to read this" used to sit here, between the scenario note and the
+          finding, pushing the one thing this page exists to say below itself on a laptop — and it
+          is an explanation of the CARDS, so it has moved down to sit immediately above them. Ten
+          seconds on this page should buy the thesis and the deadline, not the reading instructions
+          for a section still two screens away. */}
       <HeroFinding
         studentName="Priya"
         statusLabel={priyaStudent.immigration.status}
@@ -142,14 +140,12 @@ export default function StudentPage() {
 
       <DeadlineExport steps={steps} asOf={priyaOpt.asOf} variant="inline" />
 
-      <Link href="/student/journey" className="memorystrip surface">
-        <span>
-          <span className="ms-k">PathWise remembers the whole journey.</span>{" "}
-          {priyaStudent.institutions.length} institutions, {priyaEvents.length} events, nothing to
-          re-explain.
-        </span>
-        <span className="ms-go">View Priya&apos;s full journey →</span>
-      </Link>
+      <Callout title="How to read this" dismissible>
+        Every card below is a live finding, not a summary — the status, the citation, and the
+        micro-label under each row are computed from the same events shown in{" "}
+        <Link href="/student/journey">Priya&apos;s timeline</Link>. Nothing here is asserted without
+        a regulation attached to it.
+      </Callout>
 
       <div className="section-head">Her three offices, at a glance</div>
       <div className="domain-cards">
@@ -212,17 +208,6 @@ export default function StudentPage() {
         />
       </div>
 
-      {/* The residency card above is a refusal, and a refusal is only half of an engine. This is the
-          other half, on a student the same gate lets through. */}
-      <Link href="/student/finding/domicile" className="memorystrip surface">
-        <span>
-          <span className="ms-k">A refusal is not the whole engine.</span> On a student the gate lets
-          through, residency runs the full determination — dependency, every intent factor and its
-          weight, and the {jx.display?.durationDays}-day clock.
-        </span>
-        <span className="ms-go">See the full determination →</span>
-      </Link>
-
       {masters ? (
         <>
           <div className="section-head">The computation a chatbot can&apos;t do</div>
@@ -260,19 +245,60 @@ export default function StudentPage() {
         </div>
       </div>
 
-      {/* Both numbers below are counted off the engine's own output. This card used to promise that
-          one event rippled "across all three" offices and that "four things change" — the second
-          was right by luck and the first was simply not true: signing an offer reaches immigration
-          and residency rules, and nothing in the map touches aid. A card that oversells the engine
-          is worse than one that undersells it, because the engine is the thing being judged. */}
-      <Link href="/moment" className="memorystrip surface">
-        <span>
-          <span className="ms-k">One event, re-read across the whole record.</span> Priya signs a job
-          offer → {jobConsequences.length} consequences in {jobOffices} of her three offices, one of
-          which is a reasoned &ldquo;this changes nothing&rdquo;.
-        </span>
-        <span className="ms-go">See the consequences →</span>
-      </Link>
+      {/* Three routes onward, in one group, at one weight.
+          They used to be three full-width promotional strips scattered between the sections —
+          after the deadline export, after the domain cards, and after the gauges — each styled
+          like every other card on the page. With the next-step card and the evidence CTA that made
+          five things asking to be clicked, all shouting equally, so a reader arriving for ten
+          seconds had no way to tell which one mattered. The page now has ONE primary action (the
+          next-step card, straight after the finding) and ONE contextual action (the evidence CTA,
+          which earns its place by sitting under the count it is about). Everything else is here,
+          quieter, and labelled as what it is: more of this example, for a reader who wants it.
+
+          Every number below is still counted off the engines, not typed. */}
+      <div className="section-head">More of this example</div>
+      <div className="explore">
+        <Link href="/student/journey" className="explore-row">
+          <span className="explore-k">Her timeline</span>
+          <span className="explore-v">
+            {priyaStudent.institutions.length} institutions, {priyaEvents.length} events, nothing to
+            re-explain — every finding on every screen is read from them.
+          </span>
+          <span className="explore-go" aria-hidden="true">
+            →
+          </span>
+        </Link>
+
+        {/* The one row on this page that leads to a DIFFERENT student, so it says so before it is
+            clicked rather than after. "On a student the gate lets through" was true and told the
+            reader nothing about crossing from Priya's record into someone else's. */}
+        <Link href="/student/finding/domicile" className="explore-row">
+          <span className="explore-k">
+            The full determination
+            <span className="explore-who">a second example student</span>
+          </span>
+          <span className="explore-v">
+            A refusal is only half of an engine. Marcus is on the same visa Priya holds until he
+            becomes a permanent resident — the gate lets him through, and residency then runs all of
+            it: dependency, every intent factor and its weight, the {jx.display?.durationDays}-day
+            clock.
+          </span>
+          <span className="explore-go" aria-hidden="true">
+            →
+          </span>
+        </Link>
+
+        <Link href="/moment" className="explore-row">
+          <span className="explore-k">One event, many effects</span>
+          <span className="explore-v">
+            Priya signs a job offer → {jobConsequences.length} consequences in {jobOffices} of her
+            three offices, one of which is a reasoned &ldquo;this changes nothing&rdquo;.
+          </span>
+          <span className="explore-go" aria-hidden="true">
+            →
+          </span>
+        </Link>
+      </div>
 
       <div className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · PathWise reasons on

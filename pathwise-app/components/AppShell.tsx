@@ -123,16 +123,22 @@ const EXAMPLE_NAV = [
 const SECONDARY_NAV = [{ href: "/coverage", label: "State coverage", icon: MapIcon }];
 
 /**
- * The routes that show a FICTIONAL student's record — Priya on seven of them, Marcus on the
- * domicile analysis.
+ * The routes that show a FICTIONAL student's record — and WHICH ONE.
  *
  * Every one of these renders live findings, real citations, real countdowns and a real deciding
  * office, which is exactly what makes them convincing and exactly why they need saying. A reader
  * who arrives on /student/next sees "Report a qualifying job before your unemployment cap runs
  * out" with a date and ten days of margin; nothing in that sentence tells them it is not about
- * them. The rail now groups these under "Worked example", but a rail is not where a reader looks
- * when a countdown is telling them they have ten days — so the claim is repeated on the page, at
- * the top, on every one of them.
+ * them. The rail groups these under "Worked example", but a rail is not where anyone looks when a
+ * countdown is telling them they have ten days — so the claim is repeated on the page, at the top,
+ * on every one of them.
+ *
+ * The NAME is here because seven of these routes are Priya and one is not. /student/finding/domicile
+ * runs the residency engine on MARCUS, a second example student the status gate lets through — that
+ * is the whole point of the screen, since Priya's record stops at the gate and a refusal is only
+ * half of an engine. But a reader reaches it from a row on Priya's own dashboard, and a badge
+ * reading "Worked example" on both pages says nothing about having changed person mid-journey.
+ * With the name on it the switch is visible before the reader has read a word of the page.
  *
  * /check is deliberately absent: it is the reader's OWN facts, and the ABSENCE of this badge is
  * how that difference is felt. So is /coverage, which is reference material about rules rather
@@ -141,16 +147,16 @@ const SECONDARY_NAV = [{ href: "/coverage", label: "State coverage", icon: MapIc
  * Listed rather than inferred from the /student prefix, because /moment is an example route that
  * does not sit under it and /coverage is not one that would.
  */
-const EXAMPLE_ROUTES: ReadonlySet<string> = new Set([
-  "/student",
-  "/student/journey",
-  "/student/next",
-  "/student/changed",
-  "/moment",
-  "/student/finding/residency",
-  "/student/finding/aid",
-  "/student/finding/domicile",
-]);
+const EXAMPLE_STUDENT: Record<string, string> = {
+  "/student": "Priya",
+  "/student/journey": "Priya",
+  "/student/next": "Priya",
+  "/student/changed": "Priya",
+  "/moment": "Priya",
+  "/student/finding/residency": "Priya",
+  "/student/finding/aid": "Priya",
+  "/student/finding/domicile": "Marcus",
+};
 
 function formatVerifiedDate(iso: string): string {
   if (iso === "unknown") return iso;
@@ -197,7 +203,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const title = PAGE_TITLES[pathname] ?? "PathWise";
   const parent = PARENT[pathname];
-  const isExample = EXAMPLE_ROUTES.has(pathname);
+  const exampleStudent = EXAMPLE_STUDENT[pathname];
 
   return (
     <div className="app-shell">
@@ -263,10 +269,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               the steps are not the reader's. Not a status: it uses none of the four status
               colours, because "this is an example" is a fact about the RECORD, not a verdict on
               it, and borrowing amber here would make it argue with the findings below. */}
-          {isExample ? (
+          {exampleStudent ? (
             <span className="topbar-example">
               Worked example
-              <span className="sr-only"> — this page shows a fictional student, not your own record</span>
+              <span className="tx-sep" aria-hidden="true">
+                ·
+              </span>
+              <span className="tx-who">{exampleStudent}</span>
+              <span className="sr-only"> — a fictional student, not your own record</span>
             </span>
           ) : null}
           {/* This bar used to carry a search field that searched nothing and an avatar with an

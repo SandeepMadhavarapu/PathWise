@@ -482,6 +482,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   letter-spacing: 0.06em;
   white-space: nowrap;
 }
+/* The name carries the weight, because it is the half that changes: seven of the eight example
+   routes are one student and the eighth is another, and a reader crossing that boundary from a row
+   on the first one's dashboard has no other warning that the person changed. */
+.topbar-example .tx-sep { margin: 0 5px; opacity: 0.5; }
+.topbar-example .tx-who { color: var(--text); }
 
 /* The right of the bar. It held a search field and an account avatar, neither of which PathWise
    has; it now holds the promise the product is actually built around, on every screen. Deliberately
@@ -964,8 +969,23 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .landing { padding: var(--space-6) var(--space-4); }
   .landing-line { font-size: 26px; }
 }
-.landing-cta-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4) 22px; margin-top: var(--space-5); }
+.landing-cta-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
+/* Both CTAs are the same object at the same size — the difference between them is which one is the
+   default, not which one matters. `.btn` carries no border and `.btn.ghost` carries a 1px one,
+   which would otherwise leave the pair 2px apart in height and read as a mistake. */
+.landing-cta-row .btn { border: 1px solid transparent; }
+.landing-cta-row .btn.ghost { border-color: var(--info-border); }
 .landing-cta-alt { font-size: 14px; font-weight: 600; color: var(--info); }
+
+/* Says whose findings the hero below is showing. The shell badges every other screen that renders
+   the example student; this is the one page with no shell, and the first thing anyone reads. */
+.landing-proof-label { margin: 0 0 var(--space-3); font-size: 12px; color: var(--text-muted); }
+.lpl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
+.lpl-sep { margin: 0 6px; }
+
+/* The footer is two site-level statements rather than a run of sections, so it keeps the same
+   rhythm as the stack above it without introducing a new one. */
+.landing-footer { display: block; }
 
 .landing-refuse { padding: var(--space-7) 44px; margin-top: var(--space-4); }
 .landing-h2 { font-size: 24px; line-height: 1.25; margin: 0 0 var(--space-3); letter-spacing: -0.02em; font-weight: 600; color: var(--text); }
@@ -1219,6 +1239,51 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   padding: var(--space-3) var(--space-4); color: var(--text-secondary); font-size: 14px;
   transition: border-color var(--dur-fast) var(--ease); }
 .memorystrip:hover { text-decoration: none; border-color: var(--border-strong); }
+
+/* "More of this example" — three routes onward at ONE weight, below the substance.
+   These were three full-width promotional strips scattered between the sections, each carrying the
+   same surface, border and shadow as the findings themselves. A list that is visibly a list reads
+   as a list; three cards read as three more things competing with the cards above them. So: one
+   hairline-separated group, no card chrome, and the label on each row doing the work the bolded
+   sentence used to do. */
+.explore {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  overflow: hidden;
+}
+.explore-row {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: background var(--dur-fast) var(--ease);
+}
+.explore-row:first-child { border-top: none; }
+.explore-row:hover { text-decoration: none; background: var(--info-soft); }
+.explore-k { font-size: 14px; font-weight: 600; color: var(--text); }
+/* Sits under the row label on the one route that changes student. Quiet, because it is a caveat
+   on the destination rather than part of its name. */
+.explore-who {
+  display: block; margin-top: 2px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.explore-v { font-size: 13px; line-height: 1.5; }
+.explore-go { color: var(--info); font-weight: 600; }
+
+@media (max-width: 640px) {
+  /* Three columns of 13px text do not survive a phone; the label leads and the sentence follows. */
+  .explore-row { grid-template-columns: 1fr auto; gap: 4px var(--space-3); }
+  .explore-k { grid-column: 1; }
+  .explore-v { grid-column: 1 / -1; }
+  .explore-go { grid-row: 1; grid-column: 2; }
+}
 .memorystrip .ms-k { color: var(--text); font-weight: 600; }
 .memorystrip .ms-go { color: var(--info); font-weight: 600; font-size: 13px; white-space: nowrap; }
 
