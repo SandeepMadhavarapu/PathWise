@@ -21,9 +21,17 @@ export function statusFromBand(band: EngineBand): StatusKey {
 }
 
 // FindingResult -> status token, for domain cards and finding badges.
-// ineligible is a hard gate (blocked); no_issue needs no action (done); potential_risk
-// and unable_to_verify both mean "look at this" (warn); review_recommended is an open
-// task the office still has to act on (active).
+// ineligible is a hard gate (blocked); no_issue needs no action (done); potential_risk means
+// "look at this" (warn); review_recommended is an open task the office still has to act on
+// (active); unable_to_verify is not a verdict at all (idle).
+//
+// That last one was returning `warn` — the same amber as "you are approaching a limit" — which is a
+// claim PathWise has not made. Not knowing is not a warning: it says nothing about the student's
+// situation, only about what the record and the packs can settle. The product decided this once
+// already and applied it as a per-page override on /check (see DomainCard's `tone` prop), so the
+// SAME finding rendered grey on the dashboard card and amber in the reasoning panel below it. It is
+// fixed here instead, where every caller gets it, because the four-state vocabulary is only worth
+// anything if one state cannot mean two things on one screen.
 export type FindingResultLike =
   | "no_issue"
   | "review_recommended"
@@ -38,8 +46,9 @@ export function statusFromFindingResult(result: FindingResultLike): StatusKey {
     case "review_recommended":
       return "active";
     case "potential_risk":
-    case "unable_to_verify":
       return "warn";
+    case "unable_to_verify":
+      return "idle";
     case "no_issue":
       return "done";
   }

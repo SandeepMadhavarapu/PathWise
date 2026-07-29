@@ -57,6 +57,7 @@ export default function DomicileAnalysisPage() {
       <FindingDetail
         finding={analysis.finding}
         events={marcusDomicile.events}
+        packId={jx.packs?.domicile.pack_id}
         analysis={
           <DomicileAnalysisDetail
             analysis={analysis}

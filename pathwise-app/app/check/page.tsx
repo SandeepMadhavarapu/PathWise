@@ -619,6 +619,47 @@ export default function CheckPage() {
             </button>
           </div>
 
+          {/* HOW THIS WAS ROUTED — the one piece of PathWise's architecture that decides whether any
+              citation on this page is attributable, and it had no representation anywhere in the
+              product.
+              The resolver runs before a single rule is read: it takes the state off the student's
+              own record and either returns that jurisdiction's packs or returns nothing. A state
+              with no pack cannot reach an engine, which is what stops one state's arithmetic
+              printing under another state's heading. That guarantee was stated in code comments and
+              in the coverage map's prose; here it is stated where it actually applies — above the
+              answer it produced, naming the files that produced it.
+              Every value is read off the resolved context. Nothing is composed about anyone's law. */}
+          <div className="routing" aria-label="How this reading was routed">
+            <span className="routing-k">Routed</span>
+            <span className="routing-v">
+              <strong>{stateName}</strong>
+              {jx.packs ? (
+                <>
+                  {" — "}
+                  {jx.packs.aid ? "two rule packs" : "one rule pack"} loaded
+                  {": "}
+                  <span className="cite">{jx.packs.domicile.pack_id}</span>
+                  {jx.packs.aid ? (
+                    <>
+                      {" "}
+                      <span className="cite">{jx.packs.aid.pack_id}</span>
+                    </>
+                  ) : null}
+                  . Verified {jx.packs.domicile.verified_on}.
+                  {!jx.packs.aid
+                    ? ` No aid pack is registered for ${stateName}, so no state-aid rule was read.`
+                    : ""}
+                </>
+              ) : (
+                <>
+                  {" — no rule pack is registered, so PathWise ran no "}
+                  {stateName} engine and reached no {stateName} verdict.
+                  {unmodelled?.authority ? ` ${unmodelled.authority} decides this.` : ""}
+                </>
+              )}
+            </span>
+          </div>
+
           {bothDoorsClosed ? (
             <HeroFinding
               studentName="You"
@@ -756,14 +797,41 @@ export default function CheckPage() {
 
           <div className="section-head">The full reasoning</div>
           {showReasoning ? (
-            <FindingDetail finding={finding} events={events} agencies={jx.packs?.domicile.agencies} />
+            /* BOTH findings, not one.
+               This rendered the residency finding alone. The aid finding was computed on the very
+               same pass — its reasoning chain, its citation, its deciding office — and thrown away,
+               while its `unknowns` were correctly carried into the outlook below. So a reader who
+               asked to see the reasoning behind "the same status fact closes this door too" was
+               shown the reasoning for the OTHER door and no indication that anything was missing.
+               Each is labelled, because two findings under one heading with no divider is how the
+               residency rule and the aid rule get read as one argument. */
+            <div className="stack-gap">
+              <div>
+                <h3 className="reasoning-sub">In-state residency — {stateName}</h3>
+                <FindingDetail
+                  finding={finding}
+                  events={events}
+                  agencies={jx.packs?.domicile.agencies}
+                  packId={jx.packs?.domicile.pack_id}
+                />
+              </div>
+              <div>
+                <h3 className="reasoning-sub">State financial aid — {stateName}</h3>
+                <FindingDetail
+                  finding={aidFinding}
+                  events={events}
+                  agencies={jx.packs?.aid?.agencies}
+                  packId={jx.packs?.aid?.pack_id}
+                />
+              </div>
+            </div>
           ) : (
             <button
               type="button"
               className="domain-card-more btn-link"
               onClick={() => setShowReasoning(true)}
             >
-              See full reasoning →
+              See full reasoning for both →
             </button>
           )}
 

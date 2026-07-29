@@ -20,8 +20,11 @@ import { priyaStudent, priyaEvents, priyaAid } from "@/lib/fixtures/priya";
 import { formatDecidingOffice, formatImmigrationStatus } from "@/lib/format";
 import { statusFromBand, statusFromFindingResult, type StatusKey } from "@/lib/tokens";
 import type { Finding } from "@/lib/types";
+import Link from "next/link";
+import { cptLevelChangeReadings } from "@/lib/readings";
 import { StatusGlyph } from "./StatusGlyph";
 import { Capsule } from "./Capsule";
+import { UncertaintyBand } from "./UncertaintyBand";
 
 /** How a finding's verdict is worded on a one-line row. The full vocabulary lives in FindingDetail. */
 const VERDICT: Record<Finding["result"], string> = {
@@ -43,6 +46,8 @@ interface SystemRow {
 
 export function SystemsHero() {
   const jx = jurisdictionFor(priyaStudent);
+  // The refusal below is only rendered if the engines actually disagree — see lib/readings.ts.
+  const readings = cptLevelChangeReadings();
 
   const ledger = computeCptLedger(priyaEvents);
   const masters = ledger.forLevel("masters");
@@ -108,9 +113,7 @@ export function SystemsHero() {
             <div className="sh-row-body">
               <div className="sh-row-top">
                 <span className="sh-row-system">{row.system}</span>
-                <Capsule variant="tinted" status={row.status === "idle" ? undefined : row.status}>
-                  {row.verdict}
-                </Capsule>
+                <Capsule variant="tinted" status={row.status}>{row.verdict}</Capsule>
               </div>
               <p className="sh-row-finding">{row.finding}</p>
               <div className="sh-row-foot">
@@ -122,9 +125,44 @@ export function SystemsHero() {
         ))}
       </ul>
 
+      {/* THE FOURTH ROW, and the reason the landing page now shows what it previously only claimed.
+          The three rows above are findings PathWise reached. This is one it refused to reach — and
+          it is the differentiator, so leaving it two clicks away on /student/changed while section
+          two of this page ASSERTED it in prose was the single largest gap between what this product
+          does and what a visitor could see it doing.
+          Both ends are real ledger runs over the same authorizations (lib/readings.ts). Nothing here
+          is a mock-up of the screen it links to; it is the same computation, drawn smaller. */}
+      {readings.disagree ? (
+        <div className="sh-refusal">
+          <div className="sh-refusal-head">
+            <span className="sh-refusal-k">And one it would not make</span>
+            <Link href="/student/changed" className="sh-refusal-go">
+              Watch it change its mind →
+            </Link>
+          </div>
+          <UncertaintyBand
+            compact
+            lo={readings.settled.fullTimeDays}
+            hi={readings.pooled.fullTimeDays}
+            cliff={readings.cliff}
+            unit={`${readings.cliff}-day cliff`}
+            settled={false}
+            loLabel="if the level change holds"
+            hiLabel="if it can't be shown"
+            settledLabel="On track"
+          />
+          <p className="sh-refusal-why">
+            One missing document — the form recording her level change between two schools. The same
+            engine reads {readings.settled.fullTimeDays} days with it and{" "}
+            {readings.pooled.fullTimeDays} without, and the cliff sits between the two answers. So
+            PathWise says so, instead of picking one.
+          </p>
+        </div>
+      ) : null}
+
       <p className="sh-foot">
-        Not a summary — three findings, computed on this page by the same engines the app runs on.
-        PathWise advises; the office decides.
+        Not a summary — three findings and one refusal, computed on this page by the same engines the
+        app runs on. PathWise advises; the office decides.
       </p>
     </section>
   );

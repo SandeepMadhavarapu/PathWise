@@ -12,6 +12,10 @@ export interface ReasoningTreeNode {
   status: StatusKey;
   title: string;
   tags?: string[];
+  /** The first source, rendered on the row itself — see FindingDetail for why one and not all. */
+  lead?: string;
+  /** How many further sources are behind the disclosure, when there are any. */
+  leadMore?: number;
   micro?: (string | undefined | false | null)[];
   children?: ReasoningTreeNode[];
   defaultOpen?: boolean;
@@ -66,6 +70,20 @@ function Node({ node }: { node: ReasoningTreeNode }) {
             ) : null}
             <MicroLabel parts={node.micro ?? []} />
           </div>
+          {/* The derivation, on the row. Marked "from" so it reads as provenance rather than as a
+              second claim, and set as data. Silent when the step cites nothing. */}
+          {node.lead ? (
+            <p className="rtree-lead">
+              <span className="rtree-lead-k">from</span>
+              {node.lead}
+              {node.leadMore ? (
+                <span className="rtree-lead-more">
+                  {" "}
+                  +{node.leadMore} more
+                </span>
+              ) : null}
+            </p>
+          ) : null}
         </div>
       </div>
 

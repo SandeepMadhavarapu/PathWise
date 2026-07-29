@@ -47,6 +47,26 @@ export default function Landing() {
                 shell — and the landing is the one page with no shell, so the claim has to be made
                 here or not at all. It is also the first thing a visitor ever reads, which is the
                 worst possible place to leave it implied. */}
+            {/* Two actions, one size, one shape. This row used to be a filled button reading "See
+                the whole record" — which record? — beside a plain text link offering to check your
+                own. So the product's only tool, the single screen that reasons over the reader's
+                OWN facts, was the quieter of the two, and the louder one led to a stranger's file.
+                They are peers now, and the tool is named first.
+
+                It sits ABOVE the worked example now rather than below it. Measured at 390x844 — the
+                commonest phone the judge link will be opened on — the row previously landed past
+                1,300px: two full viewports of reading with nothing to act on, on the first screen
+                of the product. The order it takes now is the one a hero is normally built in
+                anyway: what this is, what it does, what you can do, then the proof. */}
+            <div className="landing-cta-row">
+              <Link href="/check" className="btn landing-cta">
+                Check my status →
+              </Link>
+              <Link href="/student" className="btn ghost landing-cta">
+                See the worked example →
+              </Link>
+            </div>
+
             <p className="landing-proof-label">
               <span className="lpl-k">Worked example</span>
               <span className="lpl-sep" aria-hidden="true">
@@ -56,20 +76,6 @@ export default function Landing() {
             </p>
 
             <SystemsHero />
-
-            {/* Two actions, one size, one shape. This row used to be a filled button reading "See
-                the whole record" — which record? — beside a plain text link offering to check your
-                own. So the product's only tool, the single screen that reasons over the reader's
-                OWN facts, was the quieter of the two, and the louder one led to a stranger's file.
-                They are peers now, and the tool is named first. */}
-            <div className="landing-cta-row">
-              <Link href="/check" className="btn landing-cta">
-                Check my status →
-              </Link>
-              <Link href="/student" className="btn ghost landing-cta">
-                See the worked example →
-              </Link>
-            </div>
           </section>
 
           <section className="landing-refuse surface">

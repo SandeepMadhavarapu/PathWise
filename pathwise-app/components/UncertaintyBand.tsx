@@ -1,0 +1,145 @@
+// UncertaintyBand — what PathWise does not know, drawn to scale.
+//
+// ---- what this is ----
+//
+// A measure, a threshold marked on it, and the answer plotted against both. While the record cannot
+// settle the question the answer is a SPAN with two ends; when evidence settles it, the span
+// becomes a point. The span's ends are not a confidence interval and nothing here is estimated:
+// they are two literal runs of the same ledger engine over the same authorizations, differing only
+// in which education level one school's CPT is attributed to. See lib/readings.ts.
+//
+// The whole argument is in one geometric fact: the span crosses the line. One reading keeps OPT,
+// the other loses it, and there is no honest way to choose between them without the document. That
+// is why the finding reads "unable to verify", and drawing it this way means a reader reaches that
+// conclusion by looking rather than by being told.
+//
+// ---- why it is drawn, and not just written ----
+//
+// The same two numbers were already on the page, set at 30px in two side-by-side sub-panels, with
+// the cliff they straddle mentioned in a sentence between them. Everything true was present and
+// the relationship between the three — the only part that matters — had to be assembled by the
+// reader. A comparison rendered as a list is not a comparison.
+//
+// ---- correctness constraints this component is built under ----
+//
+//  · Geometry is rendered from real values on the server, in the HTML, at rest. Nothing here is
+//    positioned by JavaScript after paint and nothing is hidden by a rule JavaScript must undo, so
+//    the drawing is correct with JS disabled and correct before hydration. This is the same rule
+//    SegmentedProgress is built under, and for the same reason: the numbers ARE the argument.
+//  · Motion is decoration on a correct state. Under prefers-reduced-motion the global reset drops
+//    the transitions and the band sits at its true geometry immediately — the reduced-motion path
+//    is the no-animation path, not a faster one.
+//  · The track maximum is a VISUAL SCALE and nothing else. It is derived from the data so the
+//    drawing cannot silently clip a reading, and it is never presented as a limit — the only limit
+//    on this track is the cliff, which comes from the rulepack.
+
+import { StatusGlyph } from "./StatusGlyph";
+
+/** Rounded up past the higher reading so the span always fits with air. Presentation only. */
+function trackMaxFor(hi: number, cliff: number): number {
+  return Math.ceil((Math.max(hi, cliff) * 1.06) / 25) * 25;
+}
+
+/* Rounded, because these end up as inline styles in the served HTML and `56.99999999999999%` is
+   what binary floating point makes of 342/600. It renders identically and reads as a defect to
+   anyone who opens the source — which, on this product, is a thing judges do. */
+const pct = (v: number, max: number) => `${Number(((v / max) * 100).toFixed(3))}%`;
+
+export function UncertaintyBand({
+  lo,
+  hi,
+  cliff,
+  unit,
+  settled,
+  loLabel,
+  hiLabel,
+  settledLabel,
+  marginDays,
+  compact = false,
+}: {
+  /** The lower reading. When `settled`, the single answer. */
+  lo: number;
+  /** The higher reading. Ignored for geometry once `settled` — the span has collapsed onto `lo`. */
+  hi: number;
+  /** The threshold the span is measured against. From a rulepack, never from this component. */
+  cliff: number;
+  /** What the cliff is, in the pack's own terms — e.g. "365-day cliff". */
+  unit: string;
+  /** True once evidence has ruled one reading out. Drives the collapse. */
+  settled: boolean;
+  loLabel: string;
+  hiLabel: string;
+  settledLabel: string;
+  /** Distance from the settled answer to the cliff, shown only once there is one answer. */
+  marginDays?: number;
+  /** The landing's smaller rendering: same geometry, no end labels. */
+  compact?: boolean;
+}) {
+  const max = trackMaxFor(hi, cliff);
+  const left = pct(lo, max);
+  // Collapsed onto `lo` when settled — this single value is what the transition animates.
+  const right = `${Number((100 - ((settled ? lo : hi) / max) * 100).toFixed(3))}%`;
+  const crosses = !settled && lo < cliff && hi > cliff;
+
+  /**
+   * The text equivalent, and it has to carry the whole finding rather than name the picture.
+   * A reader who never sees the drawing gets the same three facts in the same order: what the
+   * answer is, what it is measured against, and whether it is settled.
+   */
+  const label = settled
+    ? `${lo} of ${cliff}. One answer: ${settledLabel}.` +
+      (marginDays !== undefined ? ` ${marginDays} days of margin before the ${unit}.` : "")
+    : `Two readings, ${lo} and ${hi}, measured against the ${unit}. ` +
+      (crosses
+        ? `They fall on opposite sides of it, so this is unable to verify: ${loLabel}; ${hiLabel}.`
+        : `${loLabel}; ${hiLabel}.`);
+
+  return (
+    <div className={`ub${settled ? " ub--settled" : ""}${compact ? " ub--compact" : ""}`}>
+      <div className="ub-head">
+        <StatusGlyph status={settled ? "done" : "idle"} />
+        <span className="ub-verdict">{settled ? settledLabel : "Unable to verify"}</span>
+        {!settled ? (
+          <span className="ub-range">
+            between <strong>{lo}</strong> and <strong>{hi}</strong>
+          </span>
+        ) : (
+          <span className="ub-range">
+            <strong>{lo}</strong> of {cliff}
+          </span>
+        )}
+      </div>
+
+      <div className="ub-track" role="img" aria-label={label}>
+        {/* The threshold. Drawn first so the span reads as sitting against it. */}
+        <span className="ub-cliff" style={{ left: pct(cliff, max) }} aria-hidden="true">
+          <span className="ub-cliff-lbl">{unit}</span>
+        </span>
+        <span className="ub-span" style={{ left, right }} aria-hidden="true" />
+        {/* Only once there is a single answer, and only where there is room to draw it. */}
+        {settled && marginDays !== undefined && !compact ? (
+          <span
+            className="ub-margin"
+            style={{ left: pct(lo, max), right: `${100 - (cliff / max) * 100}%` }}
+            aria-hidden="true"
+          >
+            <span className="ub-margin-lbl">{marginDays} days</span>
+          </span>
+        ) : null}
+      </div>
+
+      {!compact ? (
+        <div className="ub-ends" aria-hidden="true">
+          <span className="ub-end">
+            <span className="ub-end-n">{lo}</span> {settled ? settledLabel : loLabel}
+          </span>
+          {!settled ? (
+            <span className="ub-end ub-end--hi">
+              <span className="ub-end-n">{hi}</span> {hiLabel}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}

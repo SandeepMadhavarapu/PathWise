@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import coverage from "@/lib/rulepacks/coverage.json";
 import { BackLink } from "./BackLink";
 import {
@@ -107,6 +107,30 @@ const PARENT: Record<string, { href: string; label: string }> = {
  */
 const CHECK_CTA = { href: "/check", label: "Check my status", icon: ClipboardIcon };
 
+/**
+ * The three finding routes, nested under the dashboard they belong to.
+ *
+ * These are the screens where PathWise shows its work — the reasoning chain, the regulation
+ * quoted, the deciding office, the open questions, and on the third one the nine sections of a full
+ * determination. They were reachable ONLY from in-page links: a row inside "More of this example",
+ * a strip at the foot of another finding, and two "See full reasoning →" links on cards. A judge
+ * who navigates by the rail — which is what a rail is for — never saw the explanation layer at all.
+ *
+ * Nested rather than promoted to peers, because they are not alternatives to the dashboard; they
+ * are the dashboard's cards opened up. Marcus is named on his row for the same reason the topbar
+ * badges him: that row crosses from one student's record into another's.
+ *
+ * Rendered only in the vertical rail. Below 900px the rail is a horizontally-scrolling strip that
+ * is already carrying more than it can show at 375px, and adding three more items would make a
+ * measured problem worse to solve a problem that does not exist there — on a phone these screens
+ * are reached by tapping the card that states the finding, which is directly above the fold.
+ */
+const FINDING_NAV = [
+  { href: "/student/finding/residency", label: "Why residency is blocked" },
+  { href: "/student/finding/aid", label: "Why state aid is blocked" },
+  { href: "/student/finding/domicile", label: "The full determination · Marcus" },
+];
+
 const EXAMPLE_NAV = [
   { href: "/student", label: "Priya's standing", icon: GridIcon },
   { href: "/student/journey", label: "Her timeline", icon: ClockIcon },
@@ -207,6 +231,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="app-shell">
+      {/* Seven links stand between the top of the document and the page's own content — eight on the
+          phone rail, where they are laid out horizontally and every one of them is a Tab stop. A
+          keyboard or screen-reader user had no way past them except through them, on every route.
+          First focusable element in the shell, and invisible until it is focused. */}
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
         <div className="sidebar-logo-row">
           {/* The wordmark is the way home now that "Home" is not a nav row. This is where readers
@@ -243,7 +274,29 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="sidebar-section-label">Worked example</div>
         <nav className="sidebar-nav" aria-label="Worked example">
           {EXAMPLE_NAV.map((item) => (
-            <NavLink key={item.href} item={item} pathname={pathname} />
+            <React.Fragment key={item.href}>
+              <NavLink item={item} pathname={pathname} />
+              {/* The findings hang off the dashboard, immediately under it, so the relationship is
+                  read rather than explained. A real nested list, so a screen reader hears three
+                  items inside the standing entry instead of eight flat siblings. */}
+              {item.href === "/student" ? (
+                <ul className="sidebar-subnav">
+                  {FINDING_NAV.map((sub) => (
+                    <li key={sub.href}>
+                      <Link
+                        href={sub.href}
+                        className={`sidebar-item sidebar-sub${
+                          pathname === sub.href ? " active" : ""
+                        }`}
+                        aria-label={sub.label}
+                      >
+                        <span className="sidebar-label">{sub.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </React.Fragment>
           ))}
         </nav>
 
@@ -290,7 +343,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* Above everything the page itself renders, and unconditional: a back affordance that
             appears only once some workflow has been completed is missing exactly when a lost
             reader needs it. */}
-        <main className="content">
+        <main className="content" id="main">
           {parent ? <BackLink href={parent.href} label={parent.label} /> : null}
           {children}
         </main>

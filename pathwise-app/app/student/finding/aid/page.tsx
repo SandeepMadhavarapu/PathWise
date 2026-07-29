@@ -17,7 +17,7 @@ export default function AidFindingPage() {
 
   return (
     <>
-      <FindingDetail finding={finding} events={priyaEvents} />
+      <FindingDetail finding={finding} events={priyaEvents} packId={jx.packs?.aid?.pack_id} />
 
       {deadline ? (
         <>

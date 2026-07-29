@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Event, Finding, FindingResult } from "@/lib/types";
 import { statusFromFindingResult, type StatusKey } from "@/lib/tokens";
@@ -39,6 +40,7 @@ export function FindingDetail({
   analysis,
   events = [],
   agencies,
+  packId,
 }: {
   finding: Finding;
   /**
@@ -60,22 +62,53 @@ export function FindingDetail({
    * "Domicile Officer" is never substituted. See formatDecidingBody.
    */
   agencies?: readonly Agency[];
+  /**
+   * The rule pack this finding was decided by, where the caller knows it.
+   *
+   * The citation block already quotes the regulation, names the authority and prints the date it
+   * was verified — and then stops, at exactly the point a sceptic wants to keep going. Meanwhile
+   * /coverage prints the actual file the engine read, in full, with its source URL and declared
+   * capabilities. The two have never been connected, so "here is the rule" and "here is the file
+   * that rule lives in" were two unrelated screens.
+   *
+   * Optional, and absent renders nothing: a jurisdiction with no registered pack has no file to
+   * point at, and inventing one would be the exact failure the resolver exists to prevent.
+   */
+  packId?: string;
 }) {
   const status: StatusKey = statusFromFindingResult(finding.result);
 
-  const reasoningNodes: ReasoningTreeNode[] = finding.reasoning_steps.map((step, i) => ({
-    id: `step-${i}`,
-    status: "done",
-    title: step.claim,
-    tags: [
+  const reasoningNodes: ReasoningTreeNode[] = finding.reasoning_steps.map((step, i) => {
+    const sources = [
       ...step.from_events.map((id) => describeEvent(id, events)),
       ...step.from_evidence.map((id) => describeEvidence(id)),
-    ],
-    // The sources sit behind a disclosure. They are the proof that a claim is derived rather than
-    // written, and they should stay one click away — but expanded by default they put a row of
-    // internal keys between the reader and the next sentence of the argument.
-    defaultOpen: false,
-  }));
+    ];
+    return {
+      id: `step-${i}`,
+      status: "done",
+      title: step.claim,
+      tags: sources,
+      /**
+       * The first source, shown ON the row rather than behind the disclosure.
+       *
+       * Measured against the real findings before this was written: of the two steps in the
+       * Virginia gate finding, zero cite anything — the gate fires on a Student field, not on an
+       * event — while Marcus's full determination cites events on three of its nine steps. So the
+       * useful distinction is not "how many sources", it is "is this step derived from the record
+       * at all", and with every source collapsed behind an identical chevron that distinction was
+       * invisible on both screens.
+       *
+       * One source inline answers it at a glance; the rest stay one click away, which is where a
+       * run of internal keys belongs. A step with no source shows nothing — the absence is the
+       * honest signal, and filling it would be inventing provenance.
+       */
+      lead: sources[0],
+      leadMore: sources.length > 1 ? sources.length - 1 : undefined,
+      // Expanded by default would put a row of internal keys between the reader and the next
+      // sentence of the argument.
+      defaultOpen: false,
+    };
+  });
 
   return (
     <article className="finding surface">
@@ -84,7 +117,10 @@ export function FindingDetail({
           <StatusGlyph status={status} />
           <h2 className="finding-headline">{finding.headline}</h2>
         </div>
-        <Capsule variant="tinted" status={status === "idle" ? undefined : status}>
+        {/* Passed straight through, including `idle`. This used to strip the idle case out, which
+            handed the capsule its `active` fallback and printed "Unable to verify" in the amber
+            reserved for a limit being approached — beside a glyph already drawing it as unknown. */}
+        <Capsule variant="tinted" status={status}>
           {RESULT_LABEL[finding.result]}
         </Capsule>
       </div>
@@ -112,6 +148,17 @@ export function FindingDetail({
             >
               Read the source →
             </a>
+          </div>
+        ) : null}
+        {/* Verdict → regulation → the file the engine actually read. A hash rather than a query
+            string on purpose: it needs no Next.js search-param API, so /coverage stays statically
+            prerendered, and the tab button already carries this exact id — so even with JavaScript
+            off the browser scrolls the reader to the right pack. */}
+        {packId ? (
+          <div className="citation-meta">
+            <Link className="citation-pack" href={`/coverage#rp-tab-${packId}`}>
+              Open the rule pack this came from — <code>{packId}.json</code> →
+            </Link>
           </div>
         ) : null}
       </section>

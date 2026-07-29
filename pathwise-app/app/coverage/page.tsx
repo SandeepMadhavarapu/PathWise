@@ -15,7 +15,7 @@
 // sourced only" is a real and common state, and a single badge per jurisdiction would flatten it
 // into something untrue in one direction or the other.
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   COVERAGE_LEGEND,
@@ -244,6 +244,60 @@ function RulePackViewer() {
   const packs = packEntries();
   const [active, setActive] = useState(0);
   const pack = packs[Math.min(active, packs.length - 1)];
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  /**
+   * Arriving from a finding's "open the rule pack this came from" link.
+   *
+   * The hash is read once, on mount, and only ever used to SELECT a tab that already exists — an
+   * unrecognised pack id selects nothing rather than erroring or defaulting to the first, because a
+   * link to a pack this build does not carry should fail visibly rather than quietly show the
+   * wrong file.
+   *
+   * A hash and not a query string: `useSearchParams` would opt this route out of static
+   * prerendering, and every route in this product ships as static HTML. The tab buttons already
+   * carry these ids, so with JavaScript disabled the browser still scrolls to the right pack — the
+   * selection is an enhancement on top of behaviour that works without it.
+   */
+  useEffect(() => {
+    const id = window.location.hash.replace(/^#rp-tab-/, "");
+    if (!id || id === window.location.hash) return;
+    const i = packs.findIndex((p) => p.tab === id);
+    if (i >= 0) setActive(i);
+    // `packs` is rebuilt each render from the registry but is stable in content; the registry is a
+    // module constant. Running this once on mount is the intent.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * The keyboard half of the tab pattern, which was missing.
+   *
+   * This strip already declared `role="tablist"` / `role="tab"` / `role="tabpanel"`, and declaring
+   * those roles is a promise about how the control behaves: a screen reader announces "tab, 1 of 6"
+   * and its user then reaches for the arrow keys. There were none. Every tab was an ordinary Tab
+   * stop instead, so the announced model and the real one disagreed — which is worse than shipping
+   * plain buttons, because plain buttons never claimed anything.
+   *
+   * Roving tabindex, per WAI-ARIA: exactly one tab is in the Tab sequence (the selected one), and
+   * Left/Right move selection between them, wrapping at both ends. Home and End jump to the first
+   * and last. Tab itself now leaves the strip entirely and lands in the panel, which is the point of
+   * the pattern — six packs should cost one Tab stop on the way to the content, not six.
+   */
+  function onTabKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, i: number) {
+    const last = packs.length - 1;
+    let next: number | null = null;
+    if (e.key === "ArrowRight") next = i === last ? 0 : i + 1;
+    else if (e.key === "ArrowLeft") next = i === 0 ? last : i - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = last;
+    if (next === null) return;
+    // Selection follows focus, which is the correct choice here: switching panel is instant, reads
+    // no network and loses no state, so making the user press Enter as well would be friction with
+    // nothing behind it.
+    e.preventDefault();
+    setActive(next);
+    tabRefs.current[next]?.focus();
+  }
   const meta = pack.data as PackMeta;
   const json = JSON.stringify(pack.data, null, 2);
   const lines = json.split("\n").length;
@@ -263,10 +317,15 @@ function RulePackViewer() {
             type="button"
             role="tab"
             id={`rp-tab-${p.tab}`}
+            ref={(el) => {
+              tabRefs.current[i] = el;
+            }}
             aria-selected={i === active}
             aria-controls="rp-panel"
+            tabIndex={i === active ? 0 : -1}
             className={`rp-tab ${i === active ? "active" : ""}`}
             onClick={() => setActive(i)}
+            onKeyDown={(e) => onTabKeyDown(e, i)}
           >
             {p.tab}
           </button>

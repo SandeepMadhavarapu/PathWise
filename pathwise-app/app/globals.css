@@ -38,6 +38,18 @@
      used; 45% takes it to ~5.2:1 there and ~5.6:1 on --surface. */
   --status-warn-text: color-mix(in srgb, var(--status-warn) 45%, var(--text));
 
+  /* Derived, for the same reason and by the same method: --status-done and --status-active are
+     legible as FILLS and fail as TEXT. Measured on --surface, #3ea76f lands near 3.0:1 and #e8833a
+     near 2.7:1 — both under WCAG AA for normal text, and both carry 11-13px labels ("On track", the
+     privacy line, the ledger's own subtitle, the coverage badge). This is the same failure the
+     --text-muted and --status-warn-text tokens above were introduced to fix; two of the five status
+     colours were simply left behind when it was.
+     Mixed with --text rather than darkened by hand, so a status can still only ever be RESTATED,
+     never redefined. Both land near 5.3-5.5:1 on --surface and stay above 4.5:1 on their own soft
+     fills, which is where each is most often used. The fills themselves are untouched. */
+  --status-done-text: color-mix(in srgb, var(--status-done) 62%, var(--text));
+  --status-active-text: color-mix(in srgb, var(--status-active) 60%, var(--text));
+
   /* Derived: the soft fill / hairline-border pair for each status and for --info. Every tinted
      panel in the app resolves to one of these rather than to a second hex, so a status can only
      ever be restated — never redefined — further down the file. */
@@ -138,6 +150,35 @@ a:hover { text-decoration: underline; }
   outline-color: var(--text-inverse);
   outline-offset: 1px;
 }
+
+/* =============================================================================
+   Skip link. Off-screen until focused, then a real, visible control.
+
+   Deliberately NOT `display: none` or `visibility: hidden` — both take it out of the tab order,
+   which is the one thing it exists to be in. It is moved off the top edge instead and slides back
+   under `:focus-visible`.
+   ============================================================================= */
+.skip-link {
+  /* `fixed`, not `absolute`. There is no positioned ancestor, so `absolute` would anchor it to the
+     document rather than the viewport — and a skip link that has scrolled off the top of the page
+     is one that can be focused and not seen. */
+  position: fixed;
+  top: 0;
+  left: var(--space-3);
+  z-index: 100;
+  transform: translateY(-120%);
+  background: var(--surface);
+  color: var(--info);
+  border: 1px solid var(--border-strong);
+  border-top: none;
+  border-radius: 0 0 var(--radius-input) var(--radius-input);
+  padding: 10px var(--space-4);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--shadow-hairline);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.skip-link:focus-visible { transform: translateY(0); text-decoration: none; }
 
 /* =============================================================================
    Typography scale — utility classes, not one-off styles.
@@ -337,6 +378,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sidebar-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .sidebar.collapsed .sidebar-label { display: none; }
 
+/* The findings, nested under the dashboard. Indented onto the same optical rail the parent's icon
+   sits on, one step quieter, and marked with a hairline so the group reads as belonging to the row
+   above it rather than as three more peers. */
+.sidebar-subnav { list-style: none; padding: 0; margin: 2px 0 2px var(--space-5); display: flex; flex-direction: column; gap: 2px; border-left: 1px solid var(--divider-inverse); }
+.sidebar-sub { padding: 8px var(--space-2); font-size: 13px; color: var(--text-inverse-muted); }
+.sidebar-sub:hover { color: var(--text-inverse); }
+.sidebar-sub.active { color: var(--text-inverse); }
+.sidebar.collapsed .sidebar-subnav { display: none; }
+
 .sidebar-divider { height: 1px; background: var(--divider-inverse); margin: var(--space-3) var(--space-2); flex: none; }
 .sidebar-secondary { display: flex; flex-direction: column; gap: 2px; }
 
@@ -462,9 +512,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .oq-arrow { flex: none; color: var(--status-warn-text); font-weight: 700; }
 .oq-why { margin-top: var(--space-2); }
+/* 12px text on a 12px line is a ~16px target. The vertical padding takes it past 24px without
+   changing where anything sits, because the block below it is spaced by the list's own gap. */
 .oq-why > summary {
   font-size: 12px; font-weight: 600; color: var(--info); cursor: pointer;
   list-style: none; display: inline-flex; align-items: center; gap: 4px;
+  padding: var(--space-1) 0;
 }
 .oq-why > summary::-webkit-details-marker { display: none; }
 .oq-why > summary::before { content: "›"; display: inline-block; transition: transform var(--dur-fast) var(--ease); }
@@ -594,8 +647,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   font-size: 11px;
   font-weight: 700;
 }
-.status-glyph.count.done { border-color: var(--status-done); color: var(--status-done); background: var(--surface); }
-.status-glyph.count.active { border-color: var(--status-active); color: var(--status-active); background: var(--surface); }
+/* The border keeps the pure status colour — it is a shape, not text. The numeral inside it is
+   11px/700 on white and takes the derived text token. */
+.status-glyph.count.done { border-color: var(--status-done); color: var(--status-done-text); background: var(--surface); }
+.status-glyph.count.active { border-color: var(--status-active); color: var(--status-active-text); background: var(--surface); }
 .status-glyph.count.warn { border-color: var(--status-warn); color: var(--status-warn); background: var(--surface); }
 
 /* =============================================================================
@@ -618,10 +673,21 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   background: var(--surface);
 }
 .capsule--tinted { border: 1px solid transparent; font-weight: 600; }
-.capsule--tinted.done { background: color-mix(in srgb, var(--status-done) 10%, transparent); color: var(--status-done); }
-.capsule--tinted.active { background: color-mix(in srgb, var(--status-active) 10%, transparent); color: var(--status-active); }
+.capsule--tinted.done { background: color-mix(in srgb, var(--status-done) 10%, transparent); color: var(--status-done-text); }
+.capsule--tinted.active { background: color-mix(in srgb, var(--status-active) 10%, transparent); color: var(--status-active-text); }
 .capsule--tinted.warn { background: color-mix(in srgb, var(--status-warn) 14%, transparent); color: var(--status-warn-text); }
 .capsule--tinted.blocked { background: color-mix(in srgb, var(--status-blocked) 10%, transparent); color: var(--status-blocked); }
+/* "Unable to verify" is not a fifth colour — it is the ABSENCE of a verdict, and it gets the shape
+   the rest of the app already uses for that: neutral fill, muted text, a dashed edge. Without this
+   rule the tinted capsule had no idle member at all, and the component quietly fell back to
+   `active` — so the one state that means "PathWise could not settle this" rendered ORANGE, in the
+   same chip that elsewhere means "in progress". See components/Capsule.tsx. */
+.capsule--tinted.idle {
+  background: var(--idle-soft);
+  color: var(--text-muted);
+  border-style: dashed;
+  border-color: var(--border-strong);
+}
 
 /* =============================================================================
    SegmentedProgress
@@ -737,9 +803,25 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-radius: var(--radius-input);
   transition: transform var(--dur-slow) var(--ease), background var(--dur-fast) var(--ease);
 }
+/* The drawn control is 20px because the row is dense and a bigger chevron would out-weigh the claim
+   beside it. The TARGET does not have to match the drawing: an inset pseudo-element lifts the hit
+   area to ~36px without moving a pixel of layout, which clears the 24px WCAG 2.5.8 minimum with
+   room to spare. Not 44px — the rows are ~38px apart, so a 44px target would overlap its
+   neighbours, and two overlapping disclosure buttons in a vertical list is a worse failure than a
+   slightly small one. */
+.rtree-toggle { position: relative; }
+.rtree-toggle::after { content: ""; position: absolute; inset: -8px; }
 .rtree-toggle:hover { background: var(--canvas); }
 .rtree-node.open > .rtree-row .rtree-toggle { transform: rotate(90deg); }
 .rtree-toggle-spacer { width: 20px; flex: none; }
+
+/* The derivation line under a claim. Deliberately set as data rather than prose — it is a pointer
+   into the record, not another sentence of the argument — and deliberately silent when the step
+   cites nothing, because an empty "from" would imply a source that does not exist. */
+.rtree-lead { margin: 3px 0 0; font-size: 12px; line-height: 1.45; color: var(--text-secondary); }
+.rtree-lead-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+  color: var(--text-muted); margin-right: 6px; }
+.rtree-lead-more { color: var(--text-muted); }
 
 .rtree-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .rtree-body-top { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; }
@@ -780,6 +862,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   justify-content: center;
   transition: background var(--dur-fast) var(--ease);
 }
+/* Same technique as .rtree-toggle: a 24px glyph with a ~40px target. Nothing sits within 8px of
+   this corner, so there is no neighbour to overlap. */
+.callout-close::after { content: ""; position: absolute; inset: -8px; }
 .callout-close:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
 
 /* The Overview / My journey tab strip lived here. It navigated the same two routes the sidebar
@@ -864,9 +949,18 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .hero-fact-v { font-size: 22px; }
   .hero-split-note { font-size: 10px; }
 }
-.door { border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-3); background: var(--canvas); }
-.door .k { font-size: 11px; color: var(--status-blocked); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-.door .v { font-size: 14px; color: var(--text); margin-top: 4px; line-height: 1.5; }
+/* A second `.door` declaration used to sit here, left over from the version of the hero that
+   rendered `.k` / `.v` rows. It was pure cascade damage and it was invisible in review because the
+   rule that lost was the one ABOVE it:
+     · `border: 1px solid var(--border)` is a shorthand, so it reset the 3px status stripe declared
+       200 lines up to 1px. `.door.blocked` still won on specificity for the COLOUR, which is why
+       the stripe stayed red and nobody noticed it had stopped being a stripe.
+     · `padding: var(--space-3)` undercut the card to 12px, against 16px on every comparable card.
+     · `background: var(--canvas)` repainted the surface the blocked tint sits on.
+   So the one component whose entire job is to say BLOCKED was drawing a 1px hairline where the
+   design system draws 3px — on the dashboard, on the /check result, and on the screen the whole
+   product's thesis rests on. The two `.k` / `.v` rules went with it: HeroFinding has not rendered
+   that markup since the doors learned to speak the app's status vocabulary. */
 
 /* =============================================================================
    CPT ledger / OPT budget / unemployment clock — shared "gauge card" anatomy
@@ -875,8 +969,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .gauge-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
 .gauge-head .gauge-title { font-size: 15px; font-weight: 600; color: var(--text); text-transform: capitalize; }
 .gauge-head .gauge-sub { font-size: 13px; font-weight: 600; }
-.gauge-head .gauge-sub.done { color: var(--status-done); }
-.gauge-head .gauge-sub.active { color: var(--status-active); }
+.gauge-head .gauge-sub.done { color: var(--status-done-text); }
+.gauge-head .gauge-sub.active { color: var(--status-active-text); }
 .gauge-head .gauge-sub.warn { color: var(--status-warn-text); }
 .gauge-head .gauge-sub.blocked { color: var(--status-blocked); }
 
@@ -903,9 +997,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border: 1px solid transparent;
 }
 .gauge-consequence.blocked { background: color-mix(in srgb, var(--status-blocked) 8%, var(--surface)); border-color: color-mix(in srgb, var(--status-blocked) 30%, transparent); color: var(--status-blocked); }
-.gauge-consequence.done { background: color-mix(in srgb, var(--status-done) 8%, var(--surface)); border-color: color-mix(in srgb, var(--status-done) 30%, transparent); color: var(--status-done); }
+.gauge-consequence.done { background: color-mix(in srgb, var(--status-done) 8%, var(--surface)); border-color: color-mix(in srgb, var(--status-done) 30%, transparent); color: var(--status-done-text); }
 .gauge-consequence.warn { background: color-mix(in srgb, var(--status-warn) 12%, var(--surface)); border-color: color-mix(in srgb, var(--status-warn) 40%, transparent); color: var(--status-warn-text); }
-.gauge-consequence.active { background: color-mix(in srgb, var(--status-active) 8%, var(--surface)); border-color: color-mix(in srgb, var(--status-active) 30%, transparent); color: var(--status-active); }
+.gauge-consequence.active { background: color-mix(in srgb, var(--status-active) 8%, var(--surface)); border-color: color-mix(in srgb, var(--status-active) 30%, transparent); color: var(--status-active-text); }
 .gauge-consequence .cite { margin-left: 4px; }
 
 /* Per-authorization usage lines (OPT budget) */
@@ -1078,6 +1172,18 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sh-row-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); margin-top: var(--space-2); }
 .sh-row-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
 
+/* The refusal, beneath the three findings. Separated by a rule rather than made into a fourth
+   card, because it is a different KIND of statement from the three above it — those are answers,
+   this is the absence of one — and giving it identical chrome would file it as a fourth answer. */
+.sh-refusal { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border-strong); }
+.sh-refusal-head { display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-3); }
+.sh-refusal-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+  color: var(--text-muted); }
+.sh-refusal-go { font-size: 13px; font-weight: 600; color: var(--info); white-space: nowrap; }
+.sh-refusal-why { margin: var(--space-3) 0 0; font-size: 12px; line-height: 1.55; color: var(--text-secondary); }
+@media (max-width: 480px) { .sh-refusal-go { white-space: normal; } }
+
 .sh-foot { margin: var(--space-4) 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
 @media (max-width: 640px) {
@@ -1107,7 +1213,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    Footer
    ============================================================================= */
 .foot { margin-top: var(--space-6); font-size: 12px; color: var(--text-muted); text-align: center; padding-bottom: var(--space-5); }
-.foot .privacy { color: var(--status-done); font-weight: 600; }
+.foot .privacy { color: var(--status-done-text); font-weight: 600; }
 
 /* =============================================================================
    Finding detail
@@ -1121,6 +1227,28 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .citation-block { background: var(--canvas); border: 1px solid var(--border); border-left: 3px solid var(--info); border-radius: var(--radius-input); padding: var(--space-4); }
 .citation-quote { margin: 0 0 var(--space-2); font-size: 14px; color: var(--text); font-style: italic; line-height: 1.55; }
 .citation-meta { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+/* The last step of the descent: verdict → regulation → the file the engine read. Given its own
+   spacing and a rule above it, because it is a different KIND of link from "read the source" —
+   that one leaves for the agency's website, this one stays inside the product and shows the data. */
+.citation-pack { display: inline-block; margin-top: var(--space-2); padding-top: var(--space-2);
+  border-top: 1px dashed var(--border); font-size: 13px; font-weight: 600; }
+.citation-pack code { font-family: var(--font-mono); font-size: 12px; }
+
+/* Names which finding is which when /check shows both. */
+.reasoning-sub { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted); margin: 0 0 var(--space-2); }
+
+/* How the reading was routed, above the answer it produced. A statement about PathWise's own
+   machinery rather than about the reader's situation, so it carries no status colour at all — it
+   sits on the canvas with a hairline, in the same register as a caption. */
+.routing { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3);
+  padding: var(--space-3) var(--space-4); background: var(--canvas);
+  border: 1px solid var(--border); border-radius: var(--radius-input); }
+.routing-k { flex: none; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+  font-weight: 700; color: var(--text-muted); }
+.routing-v { flex: 1 1 240px; min-width: 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+.routing-v strong { color: var(--text); font-weight: 600; }
+.routing-v .cite { margin-right: 4px; }
 
 .unknowns { list-style: none; padding: 0; margin: var(--space-2) 0 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .unknown-item { background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
@@ -1163,7 +1291,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .row-add:hover { background: color-mix(in srgb, var(--info) 14%, var(--surface)); }
 .form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-5);
   padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.check-privacy { font-size: 13px; color: var(--status-done); font-weight: 600; }
+.check-privacy { font-size: 13px; color: var(--status-done-text); font-weight: 600; }
 /* A note under a field row — explains what an optional input does before it is filled in. */
 .field-note { margin: var(--space-3) 0 0; font-size: 12px; color: var(--text-muted);
   line-height: 1.5; max-width: 74ch; }
@@ -1366,7 +1494,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .rem-v { font-size: 18px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-1) 0 0; max-width: 44ch; color: var(--text); }
 .rem-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-4); }
 /* Confirmation of a purely local action — done-green, because nothing left the device. */
-.rem-said:not(:empty) { font-size: 13px; color: var(--status-done); font-weight: 600; max-width: 40ch; }
+.rem-said:not(:empty) { font-size: 13px; color: var(--status-done-text); font-weight: 600; max-width: 40ch; }
 .rem-note { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
 .rem-note p { margin: 0 0 var(--space-2); font-size: 13px; color: var(--text-secondary); max-width: 72ch; line-height: 1.55; }
 .rem-note p:last-child { margin-bottom: 0; }
@@ -1419,7 +1547,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 /* The number carries the same four-state colour as the chip, and never carries it alone —
    the chip beside it always says the word. */
-.nsnum.done { background: var(--done-soft); color: var(--status-done); }
+.nsnum.done { background: var(--done-soft); color: var(--status-done-text); }
 .nsnum.warn { background: var(--warn-soft); color: var(--status-warn-text); }
 .nsnum.blocked { background: var(--blocked-soft); color: var(--status-blocked); }
 .nsnum.idle { background: var(--idle-soft); color: var(--text-muted); }
@@ -1527,6 +1655,107 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-why-v { font-size: 14px; color: var(--text); margin-top: var(--space-2); line-height: 1.55; }
 .wc-fade { display: flex; flex-direction: column; gap: var(--space-4); }
 
+/* =============================================================================
+   UncertaintyBand — the span that crosses the line.
+
+   The one drawing in this product that carries an argument on its own, so it is worth stating what
+   each part is FOR:
+
+     · the track is a measure, not a progress bar. Nothing is "filling up" toward anything, and it
+       deliberately has no fill: an empty rail with one marked threshold reads as a scale, where a
+       filled rail reads as an achievement.
+     · the cliff is the only hard line on it, and it comes from the rulepack.
+     · the span is the answer while there are two of them. Dashed, neutral, and untinted — the same
+       vocabulary the rest of the app uses for "not established". It is emphatically NOT amber:
+       amber here would say "you are approaching a limit", which is a claim about the student, and
+       the whole point is that PathWise cannot make one yet.
+     · once the record settles it, the span collapses to a point and only then takes a status
+       colour, because only then is there a verdict to colour.
+
+   ---- the collapse, and why it is ordered ----
+
+   Three beats, and the order is the logic:
+     1  the span closes    (360ms)            — the two readings become one
+     2  the status changes (180ms, at 240ms)  — and only now is there something to be verdict about
+     3  the margin appears (200ms, at 420ms)  — the consequence of the answer, last
+   Reversing 1 and 2 would say the colour decided the answer. Under prefers-reduced-motion the
+   global reset drops all three and the band renders settled, in place, immediately.
+   ============================================================================= */
+.ub {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-hairline);
+}
+.ub-head { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
+.ub-verdict {
+  font-size: 15px; font-weight: 650; letter-spacing: -0.01em; color: var(--text-muted);
+  transition: color var(--dur-slow) var(--ease) 240ms;
+}
+.ub--settled .ub-verdict { color: var(--status-done-text); }
+.ub-range { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.ub-range strong { color: var(--text); font-weight: 700; }
+
+/* 26px of headroom above the rail for the cliff label, and the same below for the margin label. */
+.ub-track { position: relative; height: 10px; margin: 30px 0 26px; background: var(--canvas);
+  border: 1px solid var(--border); border-radius: var(--radius-pill); }
+
+.ub-cliff { position: absolute; top: -9px; bottom: -9px; width: 1px; background: var(--status-blocked); }
+.ub-cliff-lbl {
+  position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--status-blocked); white-space: nowrap;
+}
+
+/* `left` and `right` rather than a width, so the two ends are independent — the collapse moves one
+   edge and leaves the other exactly where it was, which is what "one reading was ruled out" looks
+   like. Both are set inline, server-side, from real values. */
+.ub-span {
+  position: absolute; top: -3px; bottom: -3px;
+  background: var(--idle-soft);
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-pill);
+  transition: right var(--dur-slow) var(--ease), background var(--dur-slow) var(--ease) 240ms,
+    border-color var(--dur-slow) var(--ease) 240ms, border-style var(--dur-slow) step-end 240ms;
+}
+.ub--settled .ub-span {
+  background: var(--status-done);
+  border-style: solid;
+  border-color: var(--status-done);
+}
+
+/* The consequence of there being one answer: the distance left before the line. */
+.ub-margin { position: absolute; top: 50%; height: 1px; background: var(--border-strong);
+  animation: ubMarginIn 200ms var(--ease) 420ms backwards; }
+.ub-margin-lbl {
+  position: absolute; top: 6px; right: 0;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-muted); white-space: nowrap;
+}
+@keyframes ubMarginIn { from { opacity: 0; } }
+
+.ub-ends { display: flex; justify-content: space-between; gap: var(--space-4); }
+.ub-end { font-size: 12px; line-height: 1.45; color: var(--text-secondary); max-width: 30ch; }
+.ub-end--hi { text-align: right; }
+.ub-end-n { display: block; font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+  color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* The landing rendering: same geometry, no end labels, tighter. It is a fourth row in a stack of
+   three findings, not a section of its own. */
+.ub--compact { padding: var(--space-3) var(--space-4); }
+.ub--compact .ub-track { margin: 26px 0 6px; }
+.ub--compact .ub-verdict { font-size: 14px; }
+
+/* A phone can hold the track — it must, because a span that stacks stops being a measurement — but
+   not two end labels side by side. */
+@media (max-width: 480px) {
+  .ub { padding: var(--space-4); }
+  .ub-ends { flex-direction: column; gap: var(--space-2); }
+  .ub-end--hi { text-align: left; }
+  .ub-end { max-width: none; }
+}
+
 /* The evidence flow: a real file, read in this tab. Two steps, deliberately separate — the read is
    something PathWise did, the attestation is something the student did, and the surface says which
    is which rather than blending them into one confident-looking action. */
@@ -1567,7 +1796,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 @media (max-width: 760px) { .cov-legend { grid-template-columns: 1fr; } }
 .cov-legend li { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
 .cov-legend-k { display: flex; align-items: center; gap: var(--space-2); font-size: 13px; font-weight: 600; }
-.cov-legend-k.done { color: var(--status-done); }
+.cov-legend-k.done { color: var(--status-done-text); }
 .cov-legend-k.warn { color: var(--status-warn-text); }
 .cov-legend-k.idle { color: var(--text-muted); }
 .cov-legend-v { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1); }
@@ -1609,7 +1838,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cov-domain .status-glyph { flex: none; transform: scale(0.72); transform-origin: center; margin: -4px; }
 .cov-domain-k { color: var(--text-secondary); font-weight: 600; min-width: 62px; }
 .cov-domain-v { font-weight: 600; }
-.cov-domain.verified .cov-domain-v { color: var(--status-done); }
+.cov-domain.verified .cov-domain-v { color: var(--status-done-text); }
 .cov-domain.attention .cov-domain-v { color: var(--status-warn-text); }
 .cov-domain.unknown .cov-domain-v { color: var(--text-muted); }
 
@@ -1840,6 +2069,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
      example routes carry their own marker on the page (Step 8.3), which is what tells a phone
      reader whose record they are looking at. */
   .sidebar-section-label { display: none; }
+  /* The nested findings are a vertical-rail affordance and would be actively harmful here: this
+     strip already holds more than a 375px viewport can show, and three more items — text-only,
+     with no icon, and the longest labels in the product — would add roughly 450px to a scroller
+     whose visible window is measured in tens of pixels. On a phone these screens are reached by
+     tapping the card that states the finding, which sits above the fold on the dashboard. */
+  .sidebar-subnav { display: none; }
   .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); height: auto; min-height: var(--topbar-height); flex-wrap: wrap; }
   /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
      rather than being dropped the way the search field it replaced was. */

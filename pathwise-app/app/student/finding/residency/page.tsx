@@ -5,7 +5,8 @@ import { FindingDetail } from "@/components/FindingDetail";
 
 export default function ResidencyFindingPage() {
   // Same inputs as the /student dashboard — the finding shown here IS the finding shown there.
-  const domicile = residencyFindingFor(jurisdictionFor(priyaStudent), {
+  const jx = jurisdictionFor(priyaStudent);
+  const domicile = residencyFindingFor(jx, {
     student: priyaStudent,
     events: priyaEvents,
     intentFactors: [],
@@ -17,7 +18,11 @@ export default function ResidencyFindingPage() {
       {/* The "← Back to overview" link that used to sit here is now the shell's, from the PARENT
           map in AppShell. It said "overview" while /moment said "Priya's standing" for the very
           same destination; one destination now has one name. */}
-      <FindingDetail finding={domicile} events={priyaEvents} />
+      <FindingDetail
+        finding={domicile}
+        events={priyaEvents}
+        packId={jx.packs?.domicile.pack_id}
+      />
 
       {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the
           engine has. The sibling route runs the rest of Engine B on a student it lets through. */}

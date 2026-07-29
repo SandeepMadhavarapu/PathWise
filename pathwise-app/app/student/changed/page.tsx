@@ -26,13 +26,14 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import {
-  computeCptLedger,
   CLIFF_CITE,
   CLIFF_DAYS,
   SECTION_CITE,
   type LedgerBand,
 } from "@/lib/engines/cpt-ledger";
+import { cptLevelChangeReadings } from "@/lib/readings";
 import { priyaEvents } from "@/lib/fixtures/priya";
+import { UncertaintyBand } from "@/components/UncertaintyBand";
 import type { Event, Evidence, LocalFileRead } from "@/lib/types";
 import {
   LEVEL_CHANGE_DOC_TYPE,
@@ -84,15 +85,8 @@ const ATTESTATION =
 
 // ---- the two readings, both computed by the real engine ----
 
-// Reading B — nothing on file establishes that School X's program sat at a different education
-// level, so its authorizations can't be partitioned out of the level under review. Same events,
-// same engine, same authorized periods; only the level attribution differs.
-const pooledEvents: Event[] = priyaEvents.map((e) =>
-  e.type === "cpt_auth" ? { ...e, program_level: "masters" as const } : e,
-);
-
-// Reading A — the level change is established, so the record stands as written: School X's
-// authorizations are counted at the bachelor's level and kept out of the master's ledger.
+// The two readings, derived in lib/readings.ts so the landing hero and this screen cannot disagree
+// about the one finding PathWise refuses to make. Both call the same function; neither computes it.
 //
 // Worth being exact about what the evidence does here. The ledger reads `cpt_auth` events only, so
 // attaching the level-change event does not move a single day of arithmetic — reading A is the
@@ -100,14 +94,10 @@ const pooledEvents: Event[] = priyaEvents.map((e) =>
 // survive and the finding is honestly indeterminate; with it reading B is ruled out and one answer
 // is left. That is why the numbers below are identical before and after, and why the finding still
 // changes.
-const settledLedger = computeCptLedger(priyaEvents);
-const settled = settledLedger.forLevel("masters")!;
-const bachelors = settledLedger.forLevel("bachelors")!;
-const pooled = computeCptLedger(pooledEvents).forLevel("masters")!;
-
-// The readings disagree about the outcome that actually matters. THIS is why the before-state is
-// gray: the evidence on record cannot settle which answer is true.
-const readingsDisagree = settled.optEligible !== pooled.optEligible || settled.band !== pooled.band;
+//
+// `readingsDisagree` is why the before-state is gray: the evidence on record cannot settle which
+// answer is true. It is derived, not declared.
+const { settled, pooled, bachelors, disagree: readingsDisagree } = cptLevelChangeReadings();
 
 const beforeStatus: StatusKey = readingsDisagree ? "unknown" : BAND_STATUS[settled.band];
 const afterStatus: StatusKey = BAND_STATUS[settled.band];
@@ -418,6 +408,25 @@ export default function ChangedPage() {
           </div>
         ) : null}
       </div>
+
+      {/* THE FINDING, drawn to scale — and the element that actually moves when the document lands.
+          Above the before/after pair rather than inside it, because it is not a third panel: it is
+          the current state of the question the two panels describe. While the record cannot settle
+          it, the answer is a span with two ends and it crosses the cliff; once the attestation rules
+          one reading out, the span collapses to a point and takes a verdict colour for the first
+          time. The panels below keep the full before/after detail. */}
+      <div className="section-head">The finding, against the cliff it turns on</div>
+      <UncertaintyBand
+        lo={settled.fullTimeDays}
+        hi={pooled.fullTimeDays}
+        cliff={CLIFF_DAYS}
+        unit={`${CLIFF_DAYS}-day cliff`}
+        settled={added}
+        loLabel="if the level change holds — OPT at the master's level preserved"
+        hiLabel="if it can't be shown — OPT at this level would be gone"
+        settledLabel="On track"
+        marginDays={settled.daysToCliff}
+      />
 
       <div className="section-head">Before → after</div>
 
