@@ -378,6 +378,90 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .check-result-head:focus { outline: none; }
 .check-result-head:focus-visible { outline: 2px solid var(--info); outline-offset: 3px; }
 
+/* =============================================================================
+   Where this leaves you — the /check onward path
+   ============================================================================= */
+.outlook {
+  margin-top: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.outlook-head { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; color: var(--text); margin: 0; }
+.outlook-block { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* One row per domain: what is being decided, who decides it, under what, and where to read it.
+   A grid rather than a flex row so the three columns line up down the list; it collapses to a
+   stack below 640 where three columns of 13px text stop being readable. */
+.outlook-offices { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
+.oo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) auto;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border);
+}
+.oo:first-child { border-top: none; }
+.oo-domain { font-size: 14px; font-weight: 600; color: var(--text); }
+.oo-body { font-size: 13px; color: var(--text-secondary); }
+.oo .cite { justify-self: start; }
+.oo-src { grid-column: 1 / -1; font-size: 13px; font-weight: 500; }
+.outlook-foot { margin: var(--space-2) 0 0; font-size: 12px; color: var(--text-muted); }
+
+/* Open questions. The resolution is the load-bearing line, so it gets the weight and the arrow;
+   the reasoning behind it sits in a disclosure rather than competing with it. */
+.outlook-questions { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.oq {
+  background: var(--callout-bg);
+  border: 1px solid var(--callout-border);
+  border-radius: var(--radius-input);
+  padding: var(--space-3) var(--space-4);
+}
+.oq-what { margin: 0; font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; }
+.oq-do {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  display: flex;
+  gap: var(--space-2);
+}
+.oq-arrow { flex: none; color: var(--status-warn-text); font-weight: 700; }
+.oq-why { margin-top: var(--space-2); }
+.oq-why > summary {
+  font-size: 12px; font-weight: 600; color: var(--info); cursor: pointer;
+  list-style: none; display: inline-flex; align-items: center; gap: 4px;
+}
+.oq-why > summary::-webkit-details-marker { display: none; }
+.oq-why > summary::before { content: "›"; display: inline-block; transition: transform var(--dur-fast) var(--ease); }
+.oq-why[open] > summary::before { transform: rotate(90deg); }
+.oq-why > p { margin: var(--space-2) 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+
+/* Coverage gaps: what PathWise did not read. Neutral, because an unread rule is not a warning
+   about the reader's situation — it is a statement about this product's reach. */
+.outlook-gaps { margin: 0; padding-left: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+.outlook-gaps li { font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+
+/* The volatility note is written inline elsewhere, where it follows a short label on one line.
+   The notes are long enough that here it wrapped after the label and left the separator stranded
+   alone on the second line. Stacked instead, and the separator — which only ever existed to divide
+   two things sharing a line — is dropped rather than left floating between them. */
+.outlook .volatility { display: flex; flex-direction: column; gap: 4px; margin: 0; }
+.outlook .volatility-sep { display: none; }
+
+.outlook-more { font-size: 13px; font-weight: 500; align-self: flex-start; }
+
+@media (max-width: 640px) {
+  .outlook { padding: var(--space-4); gap: var(--space-4); }
+  .oo { grid-template-columns: 1fr; gap: 4px; }
+  .oo .cite { justify-self: start; }
+}
+
 /* "This is not your record", said next to the page's own name.
    Warm and bordered so it reads as a label on the page rather than another finding, and
    deliberately built from NO status colour — the four status tints mean something specific on the

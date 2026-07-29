@@ -14,6 +14,7 @@ import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { FindingDetail } from "@/components/FindingDetail";
+import { ResultOutlook } from "@/components/ResultOutlook";
 import { formatDecidingBody, formatDecidingOffice } from "@/lib/format";
 import {
   aidFindingFor,
@@ -63,6 +64,13 @@ const RESULT_CARD_BAND: Record<FindingResult, "green" | "amber" | "red"> = {
   no_issue: "green",
 };
 
+/** The pack's own volatility status, written for a reader. Matches FindingDetail's wording. */
+const VOLATILITY_LABEL: Record<NonNullable<Finding["volatility"]>["status"], string> = {
+  stable: "Stable",
+  under_litigation: "Under litigation",
+  recently_changed: "Recently changed",
+};
+
 /**
  * Each verdict in one or two words, for the spoken summary only.
  *
@@ -71,13 +79,6 @@ const RESULT_CARD_BAND: Record<FindingResult, "green" | "amber" | "red"> = {
  * its citation, its office and its open questions. A live region that recites all of that is one
  * a screen-reader user learns to dread.
  */
-/** The pack's own volatility status, written for a reader. Matches FindingDetail's wording. */
-const VOLATILITY_LABEL: Record<NonNullable<Finding["volatility"]>["status"], string> = {
-  stable: "Stable",
-  under_litigation: "Under litigation",
-  recently_changed: "Recently changed",
-};
-
 const RESULT_WORD: Record<FindingResult, string> = {
   ineligible: "blocked",
   potential_risk: "at risk",
@@ -285,6 +286,45 @@ export default function CheckPage() {
    */
   const statusGateUnmodelled = Boolean(jx.packs && jx.packs.domicile.gates.length === 0);
 
+
+  // The hero's whole claim is that ONE fact closed BOTH doors, so it renders when both findings
+  // actually say so — and `ineligible` is a determinate answer only a real pack can reach. That is
+  // the condition, rather than a check on which state was picked.
+  const isBlocked = finding.result === "ineligible";
+  const bothDoorsClosed = isBlocked && aidFinding.result === "ineligible";
+
+  // Immigration summary: the level closest to the 365-day cliff.
+  const closestLevel = ledger.byLevel.length
+    ? ledger.byLevel.reduce((a, b) => (b.daysToCliff < a.daysToCliff ? b : a))
+    : undefined;
+
+  // The resolver already spelled the jurisdiction's name; looking it up a second time from the
+  // dropdown list is a second source of truth for the same fact.
+  const stateName = jx.name;
+
+  /**
+   * What a screen reader is told when the answer arrives — and deliberately nothing more.
+   *
+   * Three verdicts and a pointer to where the detail is. It names no citation, no deciding office
+   * and none of the open questions, because all of those are on the screen in full and a live
+   * region that recites them turns every submission into a minute of unskippable speech. The job
+   * here is only: your submission was processed, and here is roughly how it came out.
+   *
+   * Built from the same findings the cards render, so the spoken summary cannot claim something
+   * the page does not show.
+   */
+  const resultSummary = submitted
+    ? `Result ready for ${stateName}. ` +
+      `Immigration: ${
+        closestLevel
+          ? `${closestLevel.daysToCliff} days from the CPT cliff`
+          : "no CPT authorization on record"
+      }. ` +
+      `Residency: ${RESULT_WORD[finding.result]}. ` +
+      `State financial aid: ${RESULT_WORD[aidFinding.result]}. ` +
+      `The full findings, their citations and the offices that decide them are below.`
+    : "";
+
   // ---- The onward path. Assembled here, rendered by <ResultOutlook>. ----
   //
   // Every value below is read off a finding or off a flag this page already computed. Nothing is
@@ -359,44 +399,6 @@ export default function CheckPage() {
       : "",
     !aidModelled ? `${stateName}'s state financial aid rules — PathWise has not read them.` : "",
   ].filter(Boolean);
-
-  // The hero's whole claim is that ONE fact closed BOTH doors, so it renders when both findings
-  // actually say so — and `ineligible` is a determinate answer only a real pack can reach. That is
-  // the condition, rather than a check on which state was picked.
-  const isBlocked = finding.result === "ineligible";
-  const bothDoorsClosed = isBlocked && aidFinding.result === "ineligible";
-
-  // Immigration summary: the level closest to the 365-day cliff.
-  const closestLevel = ledger.byLevel.length
-    ? ledger.byLevel.reduce((a, b) => (b.daysToCliff < a.daysToCliff ? b : a))
-    : undefined;
-
-  // The resolver already spelled the jurisdiction's name; looking it up a second time from the
-  // dropdown list is a second source of truth for the same fact.
-  const stateName = jx.name;
-
-  /**
-   * What a screen reader is told when the answer arrives — and deliberately nothing more.
-   *
-   * Three verdicts and a pointer to where the detail is. It names no citation, no deciding office
-   * and none of the open questions, because all of those are on the screen in full and a live
-   * region that recites them turns every submission into a minute of unskippable speech. The job
-   * here is only: your submission was processed, and here is roughly how it came out.
-   *
-   * Built from the same findings the cards render, so the spoken summary cannot claim something
-   * the page does not show.
-   */
-  const resultSummary = submitted
-    ? `Result ready for ${stateName}. ` +
-      `Immigration: ${
-        closestLevel
-          ? `${closestLevel.daysToCliff} days from the CPT cliff`
-          : "no CPT authorization on record"
-      }. ` +
-      `Residency: ${RESULT_WORD[finding.result]}. ` +
-      `State financial aid: ${RESULT_WORD[aidFinding.result]}. ` +
-      `The full findings, their citations and the offices that decide them are below.`
-    : "";
 
   return (
     <>
