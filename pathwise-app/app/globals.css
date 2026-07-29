@@ -1425,7 +1425,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 @media (max-width: 640px) {
   .jintro { padding: var(--space-4); }
   .jintro h2, .moment h2 { font-size: 19px; }
-  .jchev { display: none; }
+  /* The chevron stays. It was hidden here to save width, and what it actually saved was the only
+     visible sign that a timeline row opens — on the screen where opening a row is how a reader
+     reaches the evidence beneath an event. A phone reader got a list of dates that looked inert.
+     It is 20px in a wrapping flex row with `margin-left: auto`, so it costs a corner, not a line. */
+  .jchev { margin-top: 2px; }
 }
 
 .statuschip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
@@ -2079,28 +2083,57 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
        extends the backdrop across it. Same trick as the pinned action on the other edge. */
     box-shadow: -12px 0 0 0 var(--sidebar);
   }
+  /* ---- the tool leaves the rail and goes under the thumb ----
+
+     It used to be pinned to the right edge of this strip, and the arithmetic was the problem.
+     Measured at 375px: the pinned brand takes ~88px, the pinned action ~170px and its gradient
+     28px — about 286px of a ~351px rail — which left roughly SIXTY-FIVE PIXELS of visible scroll
+     window for the five worked-example destinations. Less than half of one item. The strip
+     scrolled correctly and had almost nothing to scroll in.
+
+     So the action moves to the bottom of the viewport, where a single primary action belongs on a
+     phone, and the five destinations get the whole rail back.
+
+     It is the SAME element, repositioned — not a second copy hidden at the other breakpoint. One
+     node means one accessible name, one tab stop, and no chance of the two drifting apart. This
+     works because `position: fixed` escapes the sticky rail: sticky does not create a containing
+     block for fixed descendants (only transform, filter and perspective do, and the rail has
+     none), so it anchors to the viewport as intended.
+
+     One action, not five. A five-tab bar would be a phone-app cliché; a single pinned control is
+     a tool, and this product has exactly one. */
   .sidebar-cta {
-    order: 99;
-    position: sticky;
-    right: 0;
-    z-index: 2;
-    /* Its own backdrop, so the scrolling items pass behind it instead of through it. */
-    box-shadow: -10px 0 0 0 var(--sidebar);
+    position: fixed;
+    left: var(--space-4);
+    right: var(--space-4);
+    /* Clear of the iOS home indicator, and of nothing on a device that has none. */
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    z-index: 40;
+    justify-content: center;
+    padding: 13px var(--space-4);
+    border-radius: var(--radius-card);
+    /* It floats over content now, so it needs to sit ON something rather than beside it. */
+    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.22);
   }
-  /* The scroll affordance, immediately before the pinned action. A flex item rather than a
-     decorative overlay so it participates in the same sticky context and cannot drift. */
+  /* The scroll affordance, now at the rail's own right edge. A flex item rather than a decorative
+     overlay so it participates in the same sticky context and cannot drift. */
   .sidebar::after {
     content: "";
-    order: 98;
+    order: 99;
     position: sticky;
     right: 0;
     z-index: 1;
     flex: none;
     width: 28px;
     align-self: stretch;
-    margin-right: calc(var(--space-2) * -1);
+    margin-right: calc(var(--space-3) * -1);
     background: linear-gradient(to right, transparent, var(--sidebar));
     pointer-events: none;
+  }
+  /* The floating action would otherwise sit on top of the last thing on every page — which is the
+     footer carrying the privacy promise. */
+  .content {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
 
   .sidebar-collapse-btn { display: none; }
@@ -2109,7 +2142,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .sidebar-spacer, .sidebar-footer { display: none; }
   /* 44px minimum target, and the label is what makes the target identifiable. */
   .sidebar-item { flex: none; padding: 10px var(--space-3); min-height: 44px; }
-  .sidebar-cta { flex: none; padding: 10px var(--space-3); min-height: 44px; }
+  .sidebar-cta { min-height: 48px; }
   .sidebar.collapsed .sidebar-label { display: block; }
   /* A group heading cannot do its job inside a horizontally-scrolling strip: it would sit beside
      the items it is meant to sit above, and add width to a rail that already overflows. The
