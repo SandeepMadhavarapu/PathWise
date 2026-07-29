@@ -23,7 +23,10 @@ export default function JourneyPage() {
   return (
     <>
       <div className="jintro surface">
-        <div className="jintro-eyebrow">My journey</div>
+        {/* Was "My journey", directly above "Priya never has to explain HER history again" — the
+            possessive and the sentence under it were describing different people, and the
+            possessive reached the reader first. */}
+        <div className="jintro-eyebrow">Her timeline</div>
         <h2>Priya never has to explain her history again.</h2>
         <p>
           Two institutions, two education levels, and every authorization in between — held as one

@@ -562,12 +562,17 @@ export default function ChangedPage() {
             </div>
           </div>
 
+          {/* This is the payoff of the flow, not a way out of the page — the way out is the
+              shell's back link, which is present from the moment the page loads rather than only
+              once a document has been attached. So it stops calling itself "Back to …" with an
+              arrow pointing the other way, and says what it actually offers: the dashboard as it
+              reads NOW, recomputed. The trailing arrow is correct for that. */}
           <Link href="/student" className="memorystrip" style={{ marginTop: 18 }}>
             <span>
               <span className="ms-k">Her dashboard now reads the settled count.</span> Same record,
               same engines, one fewer open question.
             </span>
-            <span className="ms-go">Back to Priya&apos;s standing →</span>
+            <span className="ms-go">See her standing now →</span>
           </Link>
         </div>
       ) : null}

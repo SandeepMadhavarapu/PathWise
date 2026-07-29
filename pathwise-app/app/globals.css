@@ -282,6 +282,34 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sidebar-collapse-icon { transform: rotate(180deg); }
 .sidebar.collapsed .sidebar-collapse-btn { transform: rotate(180deg); }
 
+/* The tool, styled as an action rather than a destination.
+   It borrows `.btn`'s fill and hover so the one control that acts on the reader's own facts reads
+   the same here as it does anywhere else in the product — and so it cannot be mistaken for the
+   five worked-example links beneath it, which is exactly what happened when it was the fourth of
+   eight identical rows. */
+.sidebar-cta {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: 10px var(--space-2); border-radius: 8px;
+  background: var(--info); color: var(--text-inverse);
+  font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden;
+  transition: background var(--dur-fast) var(--ease);
+}
+.sidebar-cta:hover { background: color-mix(in srgb, var(--info) 85%, black); color: var(--text-inverse); text-decoration: none; }
+/* Already filled, so "active" cannot be signalled by a fill. The underline matches how
+   `.sidebar-item.active` marks the current page, so both halves of the rail say it the same way. */
+.sidebar-cta.active .sidebar-label { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Names the group the five links below belong to. Without it "Priya's standing" is a stranger's
+   name in a navigation rail with nothing to explain why it is there. */
+.sidebar-section-label {
+  padding: var(--space-4) var(--space-2) var(--space-2);
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-inverse-faint); white-space: nowrap; overflow: hidden;
+}
+/* Collapsed to icons there is no room for a group heading, and a truncated one is worse than
+   none — the icons keep their accessible names either way. */
+.sidebar.collapsed .sidebar-section-label { display: none; }
+
 .sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
 .sidebar-item {
   display: flex;
@@ -332,6 +360,27 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   padding: 0 var(--space-5);
 }
 .topbar-title { flex: none; }
+
+/* "This is not your record", said next to the page's own name.
+   Warm and bordered so it reads as a label on the page rather than another finding, and
+   deliberately built from NO status colour — the four status tints mean something specific on the
+   cards below, and a badge that borrowed one would look like a verdict about the record instead of
+   a statement about whose record it is. */
+.topbar-example {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--callout-bg);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
 
 /* The right of the bar. It held a search field and an account avatar, neither of which PathWise
    has; it now holds the promise the product is actually built around, on every screen. Deliberately
@@ -628,6 +677,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .domain-card-findings .domain-card-finding-row:first-child { border-top: none; padding-top: var(--space-1); }
 .domain-card-more { display: inline-block; margin-top: var(--space-3); font-size: 13px; font-weight: 500; color: var(--info); }
 .back-link { display: inline-block; font-size: 13px; font-weight: 500; color: var(--info); }
+/* `.content` is a flex column, and a flex child is blockified and stretched — so the back link
+   would span the full content width and hand a 13px label a page-wide click target, which reads
+   as a broken row on hover and is a trap for anyone aiming at something below it. It takes the
+   width of its own text instead. The column's own `gap` supplies the space beneath. */
+.content > .back-link { align-self: flex-start; }
 .btn-link { background: none; border: none; padding: 0; cursor: pointer; font-family: var(--font-sans); }
 
 /* =============================================================================
@@ -1532,7 +1586,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .sidebar-spacer, .sidebar-footer { display: none; }
   /* 44px minimum target, and the label is what makes the target identifiable. */
   .sidebar-item { flex: none; padding: 10px var(--space-3); min-height: 44px; }
+  .sidebar-cta { flex: none; padding: 10px var(--space-3); min-height: 44px; }
   .sidebar.collapsed .sidebar-label { display: block; }
+  /* A group heading cannot do its job inside a horizontally-scrolling strip: it would sit beside
+     the items it is meant to sit above, and add width to a rail that already overflows. The
+     example routes carry their own marker on the page (Step 8.3), which is what tells a phone
+     reader whose record they are looking at. */
+  .sidebar-section-label { display: none; }
   .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); height: auto; min-height: var(--topbar-height); flex-wrap: wrap; }
   /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
      rather than being dropped the way the search field it replaced was. */

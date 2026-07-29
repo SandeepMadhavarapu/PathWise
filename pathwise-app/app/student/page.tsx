@@ -117,8 +117,11 @@ export default function StudentPage() {
             {/* The actionable count, not the raw step count — the plan itself now separates the
                 two, and a dashboard promising ten things next to a plan offering seven is the
                 dashboard being wrong. */}
+            {/* Third person, because this is Priya's plan. It read "Your next steps" while the
+                rail item pointing at the very same screen now reads "Her next steps" — and of the
+                two, the possessive was the one making a claim about whose record this is. */}
             <div className="nc-k">
-              Your next steps · {actionableSteps} to act on, in order, first one first
+              Her next steps · {actionableSteps} to act on, in order, first one first
             </div>
             <div className="nc-v t-row-title">{firstStep.title}</div>
             <div className="nc-when">
@@ -133,7 +136,7 @@ export default function StudentPage() {
               </span>
             </div>
           </div>
-          <span className="nc-go">Your next steps →</span>
+          <span className="nc-go">Her next steps →</span>
         </Link>
       ) : null}
 

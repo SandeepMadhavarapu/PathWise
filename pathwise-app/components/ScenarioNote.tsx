@@ -28,13 +28,17 @@ export function ScenarioNote({
   asOf: string;
   what?: string;
 }) {
+  // "Example student" used to lead this line. The shell now says that on every example route, in
+  // the topbar, beside the page's own name — so repeating it here left two labels making one
+  // claim while the fact this component actually exists for, the frozen date, came second. It
+  // leads now, and this component has exactly one job again.
   return (
     <p className="scenario-note">
-      <span className="scenario-k">Example student</span>
+      <span className="scenario-k">Scenario date</span>
       <span className="scenario-sep" aria-hidden="true">
         ·
       </span>
-      scenario as of <strong>{formatScenarioDate(asOf)}</strong>. {what}.
+      <strong>{formatScenarioDate(asOf)}</strong>. {what}.
     </p>
   );
 }

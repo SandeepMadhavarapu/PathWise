@@ -14,10 +14,9 @@ export default function ResidencyFindingPage() {
 
   return (
     <>
-      <Link href="/student" className="back-link">
-        ← Back to overview
-      </Link>
-
+      {/* The "← Back to overview" link that used to sit here is now the shell's, from the PARENT
+          map in AppShell. It said "overview" while /moment said "Priya's standing" for the very
+          same destination; one destination now has one name. */}
       <FindingDetail finding={domicile} events={priyaEvents} />
 
       {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the
