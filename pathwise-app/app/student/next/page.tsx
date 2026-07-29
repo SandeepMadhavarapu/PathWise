@@ -82,8 +82,17 @@ export default function NextStepsPage() {
 
       <div className="jintro surface">
         <div className="jintro-eyebrow">Next steps</div>
+        {/* Both halves, because the page numbers all of them.
+            This read "{actionable} things Priya can act on" — 7 — above a list numbered 1 to 10,
+            since three of the steps are settled findings no document reopens and the engine orders
+            the whole plan as one sequence. Nothing was wrong except the arithmetic a reader was
+            left to do: the heading promised seven and the page counted to ten. Saying both numbers
+            makes the list match its own headline, and the ordering is untouched — `order` is the
+            engine's, and the golden pins it. */}
         <h2>
-          {actionable.length} things Priya can act on, in the order they matter.
+          {actionable.length} things Priya can act on
+          {forTheRecord > 0 ? `, and ${forTheRecord} more worth knowing` : ""}, in the order they
+          matter.
         </h2>
         <p>
           {/* The plan is written TO the student — it is the thing she would print, mail herself or
@@ -133,7 +142,12 @@ export default function NextStepsPage() {
             <div className="section-head">{heading}</div>
             <ol className="nslist">
               {group.map((step) => (
-                <NextStepCard key={step.id} step={step} jurisdictionName={jx.name} />
+                <NextStepCard
+                  key={step.id}
+                  step={step}
+                  jurisdictionName={jx.name}
+                  totalSteps={steps.length}
+                />
               ))}
             </ol>
           </section>

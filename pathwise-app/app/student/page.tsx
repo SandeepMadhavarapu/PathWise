@@ -172,7 +172,7 @@ export default function StudentPage() {
           }
         />
         <DomainCard
-          domain={`Residency (${jx.name})`}
+          domain={`In-state residency (${jx.name})`}
           decidingOffice={formatDecidingOffice(domicile.deciding_office)}
           status={isBlocked ? "Blocked by status" : "Under review"}
           band={isBlocked ? "red" : "amber"}

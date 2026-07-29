@@ -259,8 +259,19 @@ export default function CheckPage() {
     const source = domain === "residency" ? packs.domicile : packs.aid;
     return source?.capabilities.find((c) => c.domain === domain)?.level;
   };
+  /**
+   * "partial READING", not "partial rules".
+   *
+   * The old wording was the one piece of terminology on this screen with a real risk in it. A
+   * capsule reading "partial rules" beside a jurisdiction's name says the JURISDICTION's rules are
+   * partial — that its law is half-written — when what is actually partial is PathWise's reading of
+   * it. That is a claim about a state's legal system, made by accident, in two words, on the card
+   * that names the state.
+   *
+   * The capability level it is derived from is unchanged; only the sentence a reader forms from it.
+   */
   const qualifierFor = (domain: "residency" | "aid"): string | undefined =>
-    levelFor(domain) === "partial" ? "partial rules" : undefined;
+    levelFor(domain) === "partial" ? "partial reading" : undefined;
 
   // Not knowing is not a warning. A finding PathWise could not settle is shown neutral rather than
   // amber, so the colour does not claim more than the finding does.
@@ -339,7 +350,7 @@ export default function CheckPage() {
       cite: SECTION_CITE,
     },
     {
-      domain: `Residency (${stateName})`,
+      domain: `In-state residency (${stateName})`,
       body: formatDecidingBody(finding.deciding_office, jx.packs?.domicile.agencies, "residency"),
       cite: jx.display?.residencyCite,
       sourceUrl: residencySource,
@@ -395,7 +406,7 @@ export default function CheckPage() {
       : "",
     unmodelled?.unverifiable ?? "",
     statusGateUnmodelled
-      ? `Whether immigration status affects domicile in ${stateName} — no status gate is modelled for this jurisdiction.`
+      ? `Whether immigration status affects domicile in ${stateName} — PathWise has not read a status rule for this jurisdiction.`
       : "",
     !aidModelled ? `${stateName}'s state financial aid rules — PathWise has not read them.` : "",
   ].filter(Boolean);
@@ -415,11 +426,20 @@ export default function CheckPage() {
           example student.
         </p>
         <ul className="check-expect">
-          <li>A finding for each of the three domains — immigration, residency and state aid</li>
+          {/* "Residency" is qualified here for a reason particular to this audience: to an
+              international student the word already means something else, and an unqualified
+              "residency" finding beside an immigration one invites exactly the wrong reading.
+              "Domicile" is glossed rather than replaced — it is the term the rules use and the
+              term the officer will use, so a reader who meets it here should recognise it there. */}
+          <li>
+            A finding for each of the three domains — immigration, in-state residency for tuition
+            (the rules call it <em>domicile</em>: which state counts as your legal home) and state
+            financial aid
+          </li>
           <li>The rule behind each one, quoted, with the date PathWise last verified it</li>
           <li>The office that decides it, which is never PathWise</li>
           <li>
-            An explicit <strong>&ldquo;not modelled&rdquo;</strong> or{" "}
+            An explicit <strong>&ldquo;not yet read&rdquo;</strong> or{" "}
             <strong>&ldquo;unable to verify&rdquo;</strong> wherever the rules or your record cannot
             settle the question — {MODELLED_NAMES.length === 1 ? MODELLED_NAMES[0] : "some states"}{" "}
             {MODELLED_NAMES.length === 1 ? "is" : "are"} fully modelled, and for the rest this will
@@ -602,10 +622,18 @@ export default function CheckPage() {
               cite={SECTION_CITE}
             />
             <DomainCard
-              domain={`Residency (${stateName})`}
+              domain={`In-state residency (${stateName})`}
               decidingOffice={formatDecidingBody(finding.deciding_office, jx.packs?.domicile.agencies, 'residency')}
               status={
-                unmodelled ? "Not modelled by PathWise" : isBlocked ? "Blocked by status" : finding.headline
+                // "Not modelled" is how the packs and the coverage map talk about themselves, and
+                // it is the right word there. On a card a student is reading about their own state
+                // it is developer vocabulary: "modelled" invites "modelled how?", where "read"
+                // says plainly what has and has not happened.
+                unmodelled
+                  ? "Not yet read by PathWise"
+                  : isBlocked
+                    ? "Blocked by status"
+                    : finding.headline
               }
               band={RESULT_CARD_BAND[finding.result]}
               tone={toneFor(finding)}

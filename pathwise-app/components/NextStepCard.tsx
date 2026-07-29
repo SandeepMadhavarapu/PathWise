@@ -64,9 +64,12 @@ function whenLine(step: NextStep): string {
 export function NextStepCard({
   step,
   jurisdictionName,
+  totalSteps,
 }: {
   step: NextStep;
   jurisdictionName: string;
+  /** How many steps the plan has in total, so a step can say which of them it is. */
+  totalSteps: number;
 }) {
   const [open, setOpen] = useState(false);
   const s = STATUS[step.status];
@@ -90,7 +93,13 @@ export function NextStepCard({
         </div>
 
         <h2 className="nstitle">
-          <span className="sr-only">Step {step.order}: </span>
+          {/* "of {totalSteps}" is the half that was missing. The visible number beside this card is
+              `aria-hidden`, so this is the only place a screen reader hears which step it is on —
+              and hearing "Step 8" after being told the plan has seven things to act on is a
+              contradiction with no way to resolve it by listening harder. The total closes it. */}
+          <span className="sr-only">
+            Step {step.order} of {totalSteps}:{" "}
+          </span>
           {step.title}
         </h2>
 
