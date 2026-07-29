@@ -300,11 +300,11 @@ export default function StudentPage() {
         </Link>
       </div>
 
-      <div className="foot">
+      <footer className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · PathWise reasons on
         your device. Every finding shows its regulation and the office that decides it. PathWise advises;
         the office decides.
-      </div>
+      </footer>
     </>
   );
 }

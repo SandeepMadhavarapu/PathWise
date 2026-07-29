@@ -157,11 +157,11 @@ export default function NextStepsPage() {
       <div className="section-head">Last — put the plan somewhere it will find you</div>
       <DeadlineExport steps={steps} asOf={asOf} />
 
-      <div className="foot">
+      <footer className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · The plan is
         recomputed from the record every time it is opened, so a new document or a signed offer
         reorders it on the spot. PathWise advises; the office decides.
-      </div>
+      </footer>
     </>
   );
 }

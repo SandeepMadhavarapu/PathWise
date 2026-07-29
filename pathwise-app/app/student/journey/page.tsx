@@ -53,11 +53,11 @@ export default function JourneyPage() {
 
       <JourneyTimeline student={priyaStudent} events={priyaEvents} ledger={ledger} />
 
-      <div className="foot">
+      <footer className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · The timeline is the
         product — every finding on every screen is read from these events. PathWise advises; the office
         decides.
-      </div>
+      </footer>
     </>
   );
 }

@@ -83,7 +83,11 @@
   /* Shell */
   /* 224 rather than 208 so the longest rail label ("Check your status", "When evidence lands")
      fits without the ellipsis that made two destinations read as the same truncated word. */
-  --sidebar-width: 224px;
+  /* 244, not 224. Two rail labels needed 182px and 173px in a 164px box and were being cut to
+     "When a document ar…" and "One event, many eff…" — their accessible names were complete, so
+     only sighted readers saw the ellipsis, which is the worst way for a label to be wrong. The
+     twenty pixels come out of a content column that is capped by --content-max anyway. */
+  --sidebar-width: 244px;
   --sidebar-width-collapsed: 64px;
   --topbar-height: 64px;
   /* The two containers. They step up at 1024 / 1280 / 1600 rather than stretching — see the
@@ -385,6 +389,21 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   margin: var(--space-2) 0 0;
   scroll-margin-top: var(--space-5);
 }
+/* The heading and its escape hatch share a line, so the way back to the form is found at the
+   moment a reader realises they want it — reading the answer — rather than by guessing that
+   scrolling up past a result is how you revise the question that produced it. */
+.check-result-head-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+.check-result-head-row .check-result-head { margin-top: 0; }
+.check-again { font-size: 13px; font-weight: 500; color: var(--info); flex: none; }
+.check-again:hover { text-decoration: underline; }
+
 .check-result-head:focus { outline: none; }
 .check-result-head:focus-visible { outline: 2px solid var(--info); outline-offset: 3px; }
 

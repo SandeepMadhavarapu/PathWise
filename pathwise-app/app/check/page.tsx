@@ -169,6 +169,17 @@ export default function CheckPage() {
     heading.scrollIntoView({ block: "start", behavior: "auto" });
   }, [submitCount]);
 
+  /** Back to the form, focus and all — the exact inverse of what submitting does. */
+  function backToForm() {
+    const first = document.getElementById("status");
+    if (!first) return;
+    first.focus({ preventScroll: true });
+    (document.querySelector(".check-form") ?? first).scrollIntoView({
+      block: "start",
+      behavior: "auto",
+    });
+  }
+
   // ---- Live client-side computation. Nothing here touches the network. ----
   const today = new Date().toISOString().slice(0, 10);
 
@@ -500,6 +511,16 @@ export default function CheckPage() {
         </p>
 
         <div className="section-head">Your CPT authorizations</div>
+        {/* Four blank date fields with no explanation is a question a reader cannot tell whether
+            they are required to answer. Most people arriving here have no CPT at all, and the
+            immigration finding is the one that suffers in silence for it: with nothing entered the
+            ledger has nothing to count, which is correct and looks identical to the form being
+            broken. Saying both things — optional, and what it buys — costs one line. */}
+        <p className="field-note">
+          Optional. CPT is work authorization tied to your programme; full-time CPT is what counts
+          against the 365-day cliff that ends OPT eligibility. Leave this blank if you have had
+          none — PathWise will say it has no CPT on record rather than assume you have none.
+        </p>
         {rows.map((row, i) => (
           <div className="cpt-row" key={i}>
             <div className="field">
@@ -583,9 +604,20 @@ export default function CheckPage() {
               status card and no heading at all, so there was nothing for a heading-navigation
               user to jump to and nothing for focus to land on. `tabIndex={-1}` lets it receive
               focus programmatically without becoming a Tab stop for everyone else. */}
-          <h2 className="check-result-head" tabIndex={-1} ref={resultHeadingRef}>
-            Your result — {stateName}
-          </h2>
+          {/* The way back to the form. Once a result rendered there was no route to revising it:
+              the form was still on the page, above a result that had just scrolled the reader past
+              it, and nothing said so. A reader who picked the wrong state had to work out for
+              themselves that scrolling up was the answer.
+              It focuses the first field rather than only scrolling, so the keyboard goes back to
+              the form too — the mirror of what submitting does. */}
+          <div className="check-result-head-row">
+            <h2 className="check-result-head" tabIndex={-1} ref={resultHeadingRef}>
+              Your result — {stateName}
+            </h2>
+            <button type="button" className="btn-link check-again" onClick={backToForm}>
+              Change my answers
+            </button>
+          </div>
 
           {bothDoorsClosed ? (
             <HeroFinding
@@ -747,11 +779,11 @@ export default function CheckPage() {
         </>
       ) : null}
 
-      <div className="foot">
+      <footer className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · PathWise reasons on
         your device. Every finding shows its regulation and the office that decides it. PathWise advises;
         the office decides.
-      </div>
+      </footer>
     </>
   );
 }

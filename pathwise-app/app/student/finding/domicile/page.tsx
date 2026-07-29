@@ -74,12 +74,12 @@ export default function DomicileAnalysisPage() {
         <span className="ms-go">See the finding that refuses →</span>
       </Link>
 
-      <div className="foot">
+      <footer className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · Every weight,
         threshold, exception and section reference on this page is read from{" "}
         <code>lib/rulepacks/{jx.packs?.domicile.pack_id ?? "—"}.json</code>. PathWise advises; the
         office decides.
-      </div>
+      </footer>
     </>
   );
 }

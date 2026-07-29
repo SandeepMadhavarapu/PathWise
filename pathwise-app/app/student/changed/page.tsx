@@ -580,11 +580,11 @@ export default function ChangedPage() {
         </div>
       ) : null}
 
-      <div className="foot">
+      <footer className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · The document is
         never uploaded anywhere — it is read in this tab and released, and the re-computation runs on
         this device. Every finding shows its regulation and the office that decides it.
-      </div>
+      </footer>
     </>
   );
 }

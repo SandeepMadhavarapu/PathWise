@@ -438,7 +438,7 @@ export default function CoveragePage() {
       <div className="section-head">The rules themselves</div>
       <RulePackViewer />
 
-      <div className="foot">
+      <footer className="foot">
         <span className="privacy">No account. Nothing stored on a server.</span> · A jurisdiction
         moves up this list when someone authors its rule pack against the primary source and dates
         it — and the list moves with it, because it is read from the packs. Until then PathWise says
@@ -449,7 +449,7 @@ export default function CoveragePage() {
             } a verified official source but no authored rules — PathWise can name who decides and link the rule, and will not go further than that. `
           : ""}
         PathWise advises; the office decides.
-      </div>
+      </footer>
     </>
   );
 }
