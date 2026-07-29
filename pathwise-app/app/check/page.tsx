@@ -71,6 +71,13 @@ const RESULT_CARD_BAND: Record<FindingResult, "green" | "amber" | "red"> = {
  * its citation, its office and its open questions. A live region that recites all of that is one
  * a screen-reader user learns to dread.
  */
+/** The pack's own volatility status, written for a reader. Matches FindingDetail's wording. */
+const VOLATILITY_LABEL: Record<NonNullable<Finding["volatility"]>["status"], string> = {
+  stable: "Stable",
+  under_litigation: "Under litigation",
+  recently_changed: "Recently changed",
+};
+
 const RESULT_WORD: Record<FindingResult, string> = {
   ineligible: "blocked",
   potential_risk: "at risk",
@@ -277,6 +284,81 @@ export default function CheckPage() {
    * sentence cannot silently switch this off. Empty for Virginia, which states a gate.
    */
   const statusGateUnmodelled = Boolean(jx.packs && jx.packs.domicile.gates.length === 0);
+
+  // ---- The onward path. Assembled here, rendered by <ResultOutlook>. ----
+  //
+  // Every value below is read off a finding or off a flag this page already computed. Nothing is
+  // composed about anyone's law: the two places a sentence is written rather than copied are the
+  // coverage gaps, which say only what PathWise has NOT read, and the office rows, which are
+  // labels this page already prints on the cards above.
+
+  const outlookOffices = [
+    {
+      domain: "Immigration (F-1)",
+      body: formatDecidingOffice("SEVP"),
+      cite: SECTION_CITE,
+    },
+    {
+      domain: `Residency (${stateName})`,
+      body: formatDecidingBody(finding.deciding_office, jx.packs?.domicile.agencies, "residency"),
+      cite: jx.display?.residencyCite,
+      sourceUrl: residencySource,
+      sourceLabel: residencySource ? `Official ${stateName} source` : undefined,
+    },
+    {
+      domain: `Financial aid (${stateName})`,
+      body: formatDecidingBody(aidFinding.deciding_office, jx.packs?.aid?.agencies, "aid"),
+      cite: jx.display?.aidCite,
+      sourceUrl: aidSource,
+      sourceLabel: aidSource ? `Official ${stateName} aid source` : undefined,
+    },
+  ];
+
+  /**
+   * BOTH findings, and that is the whole reason this exists rather than a residency-only list.
+   *
+   * A jurisdiction modelled in both domains reaches its residency answer at the status gate, which
+   * stops the analysis and returns NO unknowns — while its aid finding carries one per missing
+   * required item, each with a resolution the aid engine wrote. Wiring only the residency finding
+   * would leave the most complete jurisdiction in the product showing an empty section, which is
+   * the opposite of the truth about it.
+   *
+   * Residency first, then aid, matching the card order above so the eye tracks. Deduplicated on
+   * `what` in case the two ever raise the same question, first occurrence winning.
+   */
+  const outlookQuestions = (() => {
+    const seen = new Set<string>();
+    return [...finding.unknowns, ...aidFinding.unknowns].filter((u) => {
+      if (seen.has(u.what)) return false;
+      seen.add(u.what);
+      return true;
+    });
+  })();
+
+  // Only where a pack says the rule is moving. A `stable` note is not news, and printing it would
+  // train readers to skip the ones that are.
+  const outlookVolatility = [
+    { label: "Residency rule", v: finding.volatility },
+    { label: "State aid rule", v: aidFinding.volatility },
+  ]
+    .filter((x) => x.v && x.v.status !== "stable")
+    .map((x) => ({ label: `${x.label} — ${VOLATILITY_LABEL[x.v!.status]}`, note: x.v!.note }));
+
+  // What this reading did not reach. Every line is about PathWise's coverage, never about the
+  // jurisdiction's law — and each is derived from a flag, so a state cannot appear here because
+  // someone typed it.
+  const outlookNotChecked = [
+    unmodelled
+      ? `${stateName}'s residency rules — PathWise has not read them.${
+          unmodelled.authority ? ` ${unmodelled.authority} decides this.` : ""
+        }`
+      : "",
+    unmodelled?.unverifiable ?? "",
+    statusGateUnmodelled
+      ? `Whether immigration status affects domicile in ${stateName} — no status gate is modelled for this jurisdiction.`
+      : "",
+    !aidModelled ? `${stateName}'s state financial aid rules — PathWise has not read them.` : "",
+  ].filter(Boolean);
 
   // The hero's whole claim is that ONE fact closed BOTH doors, so it renders when both findings
   // actually say so — and `ineligible` is a determinate answer only a real pack can reach. That is
@@ -622,6 +704,16 @@ export default function CheckPage() {
               See full reasoning →
             </button>
           )}
+
+          {/* Last on the page, and deliberately not the focus target — focus goes to the result
+              heading above, and this is where a reader arrives after reading the answer. */}
+          <ResultOutlook
+            offices={outlookOffices}
+            openQuestions={outlookQuestions}
+            volatility={outlookVolatility}
+            notChecked={outlookNotChecked}
+            exampleHref="/student"
+          />
         </>
       ) : null}
 
