@@ -1755,7 +1755,59 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .sidebar::-webkit-scrollbar { height: 4px; }
   .sidebar::-webkit-scrollbar-thumb { background: var(--sidebar-active); border-radius: var(--radius-pill); }
   .sidebar.collapsed { width: 100%; }
-  .sidebar-logo-row { flex: none; padding: 0 var(--space-2) 0 var(--space-1); }
+
+  /* ---- the rail stops being eight equal things in a 1400px scroller ----
+     Measured before this: 1413px of content in a 375px viewport, with exactly ONE item fully
+     visible and everything else — including the way home and the state coverage map — behind a
+     drag gesture that nothing on screen advertised. It scrolled correctly; it just did not tell
+     anyone it could.
+     It now has three parts instead of one list. The brand is pinned to the left edge, so home is
+     always one tap. The tool is pinned to the right edge, so the reader's own facts are always one
+     tap. The worked-example routes scroll between them, which is the only group where scrolling is
+     acceptable — they are alternatives to each other, not to the two pinned controls. A gradient
+     sits in front of the pinned action so the scrolling middle visibly continues underneath it
+     rather than simply stopping.
+     `order` does the rearranging: no second markup, no duplicate links for a screen reader to read
+     twice, and nothing here depends on JavaScript. */
+  .sidebar { position: sticky; top: 0; z-index: 30; }
+
+  .sidebar-logo-row {
+    flex: none;
+    order: -1;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--sidebar);
+    padding: 0 var(--space-3) 0 var(--space-1);
+    /* `left: 0` pins to the scrollport, but the rail's own left padding sits outside the pinned
+       element — so a scrolled item's tail showed through that gap beside the brand. The shadow
+       extends the backdrop across it. Same trick as the pinned action on the other edge. */
+    box-shadow: -12px 0 0 0 var(--sidebar);
+  }
+  .sidebar-cta {
+    order: 99;
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    /* Its own backdrop, so the scrolling items pass behind it instead of through it. */
+    box-shadow: -10px 0 0 0 var(--sidebar);
+  }
+  /* The scroll affordance, immediately before the pinned action. A flex item rather than a
+     decorative overlay so it participates in the same sticky context and cannot drift. */
+  .sidebar::after {
+    content: "";
+    order: 98;
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    flex: none;
+    width: 28px;
+    align-self: stretch;
+    margin-right: calc(var(--space-2) * -1);
+    background: linear-gradient(to right, transparent, var(--sidebar));
+    pointer-events: none;
+  }
+
   .sidebar-collapse-btn { display: none; }
   .sidebar-nav, .sidebar-secondary { flex: none; flex-direction: row; flex-wrap: nowrap; gap: var(--space-1); }
   .sidebar-divider { flex: none; height: 20px; width: 1px; margin: 0 var(--space-1); }
