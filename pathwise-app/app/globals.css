@@ -361,6 +361,23 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .topbar-title { flex: none; }
 
+/* The top of the /check answer, and the element focus is moved to when a result arrives.
+   `scroll-margin-top` is the part that is easy to leave out: focusing an element scrolls it to the
+   very edge of the viewport, so without this the heading lands flush against the top with the
+   result appearing to start mid-sentence. The outline is suppressed because focus here is
+   programmatic — the reader did not Tab to it, and a focus ring on a heading nobody aimed at reads
+   as a rendering fault rather than as guidance. Keyboard users still get every real control's ring. */
+.check-result-head {
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: var(--space-2) 0 0;
+  scroll-margin-top: var(--space-5);
+}
+.check-result-head:focus { outline: none; }
+.check-result-head:focus-visible { outline: 2px solid var(--info); outline-offset: 3px; }
+
 /* "This is not your record", said next to the page's own name.
    Warm and bordered so it reads as a label on the page rather than another finding, and
    deliberately built from NO status colour — the four status tints mean something specific on the

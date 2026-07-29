@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import type {
   Event,
@@ -63,6 +63,22 @@ const RESULT_CARD_BAND: Record<FindingResult, "green" | "amber" | "red"> = {
   no_issue: "green",
 };
 
+/**
+ * Each verdict in one or two words, for the spoken summary only.
+ *
+ * Short on purpose. The announcement exists to tell a reader that their submission was processed
+ * and roughly how it came out — not to read them the finding, which is on the screen in full with
+ * its citation, its office and its open questions. A live region that recites all of that is one
+ * a screen-reader user learns to dread.
+ */
+const RESULT_WORD: Record<FindingResult, string> = {
+  ineligible: "blocked",
+  potential_risk: "at risk",
+  review_recommended: "needs review",
+  unable_to_verify: "unable to verify",
+  no_issue: "no issue found",
+};
+
 type CptRow = {
   start: string;
   end: string;
@@ -85,6 +101,17 @@ export default function CheckPage() {
   const [presenceSince, setPresenceSince] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
   const [showReasoning, setShowReasoning] = useState(false);
+  /**
+   * Counts submissions rather than recording that one happened.
+   *
+   * `submitted` latches true and stays there, so an effect keyed on it fires once and never again —
+   * and a reader who changes their state and presses the button a second time would get a silently
+   * rewritten page with no movement, no focus change and nothing announced, which is the exact
+   * failure this step exists to fix, surviving in the resubmit case. Keyed on a count, every
+   * submission moves the reader.
+   */
+  const [submitCount, setSubmitCount] = useState(0);
+  const resultHeadingRef = useRef<HTMLHeadingElement>(null);
 
   function updateRow(i: number, patch: Partial<CptRow>) {
     setRows((prev) => prev.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
@@ -100,7 +127,39 @@ export default function CheckPage() {
     e.preventDefault();
     setShowReasoning(false);
     setSubmitted(true);
+    setSubmitCount((n) => n + 1);
   }
+
+  /**
+   * Move the reader to the answer.
+   *
+   * Measured before this existed: pressing "Check my status" moved the viewport 0px, left focus on
+   * the button, grew the page by ~1,600px on a phone, and announced nothing — there were no live
+   * regions on the page at all. The result rendered below the fold and the app gave no sign it had
+   * done anything. For a screen-reader user there was no signal whatsoever.
+   *
+   * Focusing the result heading does three jobs at once and is why it is preferred over a bare
+   * `scrollIntoView`: it scrolls the heading into view, it moves the keyboard position into the
+   * result so the next Tab continues there rather than back at the top of the form, and it makes
+   * a screen reader read the heading. The heading carries `tabIndex={-1}` so it can receive focus
+   * programmatically without ever becoming a Tab stop.
+   */
+  useEffect(() => {
+    if (submitCount === 0) return;
+    const heading = resultHeadingRef.current;
+    if (!heading) return;
+
+    // Focus and scroll are separated on purpose. `focus()` scrolls only when the element is not
+    // already in the viewport, and "in the viewport" includes clinging to the bottom edge: measured
+    // at 1440x900, the heading landed at top=801px — visible by that definition, and useless by any
+    // other, because the answer began one line above the fold and the reader saw the form they had
+    // just submitted. So focus moves the keyboard and the screen reader, and the scroll is asked
+    // for explicitly and unconditionally.
+    heading.focus({ preventScroll: true });
+    // Instant, not smooth: a scroll animation is motion, and this must behave identically under
+    // prefers-reduced-motion rather than needing a second code path to switch it off.
+    heading.scrollIntoView({ block: "start", behavior: "auto" });
+  }, [submitCount]);
 
   // ---- Live client-side computation. Nothing here touches the network. ----
   const today = new Date().toISOString().slice(0, 10);
@@ -233,6 +292,29 @@ export default function CheckPage() {
   // The resolver already spelled the jurisdiction's name; looking it up a second time from the
   // dropdown list is a second source of truth for the same fact.
   const stateName = jx.name;
+
+  /**
+   * What a screen reader is told when the answer arrives — and deliberately nothing more.
+   *
+   * Three verdicts and a pointer to where the detail is. It names no citation, no deciding office
+   * and none of the open questions, because all of those are on the screen in full and a live
+   * region that recites them turns every submission into a minute of unskippable speech. The job
+   * here is only: your submission was processed, and here is roughly how it came out.
+   *
+   * Built from the same findings the cards render, so the spoken summary cannot claim something
+   * the page does not show.
+   */
+  const resultSummary = submitted
+    ? `Result ready for ${stateName}. ` +
+      `Immigration: ${
+        closestLevel
+          ? `${closestLevel.daysToCliff} days from the CPT cliff`
+          : "no CPT authorization on record"
+      }. ` +
+      `Residency: ${RESULT_WORD[finding.result]}. ` +
+      `State financial aid: ${RESULT_WORD[aidFinding.result]}. ` +
+      `The full findings, their citations and the offices that decide them are below.`
+    : "";
 
   return (
     <>
@@ -381,8 +463,26 @@ export default function CheckPage() {
         </div>
       </form>
 
+      {/* Rendered on every pass, empty until there is something to say.
+          A live region that is added to the page at the same moment its text appears is a region
+          assistive tech was not yet watching, and the announcement is missed. This one is always
+          present and only its contents change, which is the form that reliably speaks. It is
+          `sr-only` because the summary it carries is a spoken restatement of what is already on
+          screen; showing it too would be saying everything twice. */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {resultSummary}
+      </p>
+
       {submitted ? (
         <>
+          {/* The focus target, and the top of the answer. Before this the result began with a
+              status card and no heading at all, so there was nothing for a heading-navigation
+              user to jump to and nothing for focus to land on. `tabIndex={-1}` lets it receive
+              focus programmatically without becoming a Tab stop for everyone else. */}
+          <h2 className="check-result-head" tabIndex={-1} ref={resultHeadingRef}>
+            Your result — {stateName}
+          </h2>
+
           {bothDoorsClosed ? (
             <HeroFinding
               studentName="You"
