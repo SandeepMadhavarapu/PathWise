@@ -937,8 +937,16 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    cannot be mistaken for a status. */
 .hero-split { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; }
 .hero-split-line { flex: 1; height: 1px; background: var(--border-strong); }
-.hero-split-note { flex: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
-  font-weight: 700; color: var(--text-muted); text-align: center; }
+/* `flex: 0 1 auto` + `min-width: 0`, and both halves matter — the identical fix `.sh-flow-note`
+   already carries, applied to the twin that never got it.
+   This was `flex: none`, which sized the caption to its max-content width (287px measured) and then
+   forbade it to shrink. In a 256px box at 320px that pushed the DASHBOARD into horizontal scroll —
+   found in a real browser at 320x568, 16px of document overflow, on the screen carrying the
+   product's thesis. `min-width: 0` is the half that is easy to omit: a flex item's default
+   `min-width: auto` floors it at its content size, so `flex: 0 1 auto` alone would still refuse to
+   shrink below 287px. Two components drew the same connector and only one of them had been fixed. */
+.hero-split-note { flex: 0 1 auto; min-width: 0; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); text-align: center; }
 
 .hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
 
@@ -1501,6 +1509,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 /* Long authority lines wrap instead of pushing the page sideways on a phone. */
 .cite.wrap { white-space: normal; }
+
+/* The safety net for the whole class, rather than for the one instance a browser happened to catch.
+   `.cite` is nowrap by default so an authority does not break awkwardly mid-line, and every long one
+   is supposed to opt into `.wrap` — which is a rule enforced by remembering. Below 400px there is no
+   citation in this product short enough for nowrap to be the right answer, and the failure mode is
+   the whole page scrolling sideways, so the default inverts here. Above 400px nothing changes. */
+@media (max-width: 400px) {
+  .cite { white-space: normal; }
+}
 
 /* On a phone the strip cannot hold both halves — the nowrap link pushed the page
    sideways. Stack them and let the link wrap; the desktop row is untouched. */

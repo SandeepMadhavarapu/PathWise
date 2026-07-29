@@ -168,7 +168,10 @@ export function OptBudget({
             education level — it resets at the next degree, and never carries backward.
           </>
         )}{" "}
-        <span className="cite">{R.cite} · USCIS Policy Manual</span>
+        {/* `wrap`, because this one is a compound authority — a CFR section AND the policy manual —
+            and at 278px it is the longest citation the app renders. Nowrap pushed /student into
+            horizontal scroll at 320px. */}
+        <span className="cite wrap">{R.cite} · USCIS Policy Manual</span>
       </div>
     </div>
   );
