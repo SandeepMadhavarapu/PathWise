@@ -1047,7 +1047,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .moment { padding: var(--space-5); }
 .moment-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
 .moment-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
-.moment h2 { font-size: 20px; line-height: 1.3; margin: 0 0 var(--space-2); letter-spacing: -0.01em; font-weight: 600; }
+/* Matched to `.jintro h2`, which is the same thing: the heading of the panel that introduces a
+   screen. They were 22px and 20px at slightly different tracking, and the gap widened on a phone
+   because only one of them had a mobile step-down — so the two diverged exactly where the
+   difference is most visible. Six screens use one and this uses the other; a reader moving between
+   them was being told, quietly and wrongly, that these are different kinds of heading. */
+.moment h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-2); letter-spacing: -0.015em; font-weight: 600; }
 .moment-sub { margin: 0; color: var(--text-secondary); font-size: 14px; max-width: 46ch; }
 .btn {
   flex: none; background: var(--info); color: var(--text-inverse); border: none; border-radius: var(--radius-input);
@@ -1128,11 +1133,29 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .landing-refuse { padding: var(--space-7) 44px; margin-top: var(--space-4); }
 .landing-h2 { font-size: 24px; line-height: 1.25; margin: 0 0 var(--space-3); letter-spacing: -0.02em; font-weight: 600; color: var(--text); }
 .landing-guarantees { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: flex; flex-direction: column; }
-.landing-guarantees li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px var(--space-3);
+/* Three columns: the promise, what it means, and the thing itself. A grid rather than the flex row
+   this was, because the artifact in the third column has to line up down the list — five atoms in a
+   ragged right margin read as decoration, where a column of them reads as a specimen sheet.
+   Same shape as `.oo` on the /check outlook, deliberately: one pattern for "label, explanation,
+   evidence" rather than a second one invented here. */
+.landing-guarantees li { display: grid; grid-template-columns: 168px minmax(0, 1fr) auto;
+  align-items: baseline; gap: 4px var(--space-3);
   padding: var(--space-3) 0; border-top: 1px solid var(--border); }
 .landing-guarantees li:first-child { border-top: none; }
-.lg-k { flex: none; min-width: 168px; font-size: 13px; font-weight: 600; color: var(--text); }
-.lg-v { flex: 1 1 240px; font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.lg-k { font-size: 13px; font-weight: 600; color: var(--text); }
+.lg-v { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.lg-demo { justify-self: end; display: inline-flex; align-items: center; }
+/* The deciding office, in the same treatment it carries on a finding row. */
+.lg-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+  color: var(--text-muted); white-space: nowrap; }
+
+/* Below 760 the three columns stop fitting: the citation alone runs to 30 characters. The label
+   leads, the explanation follows, and the artifact sits under them left-aligned — still a column,
+   just a narrower one. */
+@media (max-width: 760px) {
+  .landing-guarantees li { grid-template-columns: 1fr; gap: 6px; }
+  .lg-demo { justify-self: start; }
+}
 
 /* =============================================================================
    SystemsHero — one fact, read by three systems. Every value in it is engine output;
@@ -1401,7 +1424,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 @media (max-width: 640px) {
   .jintro { padding: var(--space-4); }
-  .jintro h2 { font-size: 19px; }
+  .jintro h2, .moment h2 { font-size: 19px; }
   .jchev { display: none; }
 }
 
@@ -2267,6 +2290,76 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   from { opacity: 0; transform: translate3d(0, 8px, 0); }
 }
 .sh-refusal { animation: shRefusalIn 480ms var(--ease) 1200ms backwards; }
+
+/* =============================================================================
+   Print.
+
+   A finding is the one thing in this product with a life off the screen: it is what a student takes
+   to a DSO, a registrar or a domicile officer, and the whole argument for showing the regulation,
+   the date it was verified and the office that decides is that somebody may have to hand it over.
+   Printed as-is that came out as a dark navigation rail, a topbar, and a page of promotional rows.
+
+   Nothing here changes a screen pixel — a print block cannot — which is why it is worth having even
+   this late: it is the one addition in the product with no regression surface at all.
+   ============================================================================= */
+@media print {
+  @page { margin: 16mm; }
+
+  /* Chrome, navigation and anything that offers to take you elsewhere. On paper every one of these
+     is either a dead control or an advertisement. */
+  .sidebar, .topbar, .skip-link, .back-link, .explore, .memorystrip, .cta, .nextcard,
+  .landing-cta-row, .sh-refusal-go, .outlook-more, .domain-card-more, .rp-tabs,
+  .wc-ev-actions, .rem-actions, .callout-close, .btn, .row-add, .row-remove,
+  .check-again, .nsmore, .wc-undo, .sidebar-subnav {
+    display: none !important;
+  }
+
+  /* The shell was a flex row with a fixed 244px column beside the content. */
+  .app-shell { display: block; }
+  .shell-main { display: block; }
+  .content, .bare-page-inner {
+    max-width: none;
+    padding: 0;
+    display: block;
+  }
+
+  body { background: #fff; color: #000; font-size: 11pt; line-height: 1.45; }
+
+  /* Cards become ruled blocks. The hairline borders survive; the fills and shadows do not, because
+     a soft tint costs a third of a cartridge and carries no meaning a word is not already carrying. */
+  .surface, .finding, .nscard, .ub, .outlook, .citation-block, .unknown-item, .oq {
+    box-shadow: none !important;
+    background: #fff !important;
+    border: 1px solid #999 !important;
+  }
+
+  /* The status vocabulary is glyph + word + colour, and the word is what survives here — but the
+     glyph carries the shape that distinguishes "blocked" from "unable to verify", and the band's
+     geometry IS its finding, so those keep their ink deliberately. */
+  .status-glyph, .ub-span, .ub-cliff, .segprog-seg {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* A finding split across a page break is a finding whose citation ends up on a different sheet
+     from the claim it supports. */
+  .finding, .unknown-item, .oq, .citation-block, .ub, .nsitem, .domain-card, .sh-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, .section-head { break-after: avoid; page-break-after: avoid; }
+
+  /* The source is the point. On paper a link that cannot be clicked has to say where it goes —
+     scoped to citations and official sources so the page does not fill up with URLs. */
+  .citation-meta a::after, .oo-src::after, .cov-source a::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    word-break: break-all;
+  }
+
+  /* Motion is meaningless on paper, and `backwards` fill would print the FROM frame. */
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
 
 /* A stem draws downward, so it scales on Y — scaleX would collapse a 1px line sideways. */
 @keyframes shStemIn {

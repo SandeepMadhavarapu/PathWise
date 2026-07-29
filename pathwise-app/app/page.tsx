@@ -5,6 +5,12 @@ import { STATE_COUNT } from "@/lib/coverage";
 import { MODELLED_COUNT, MODELLED_NAMES, SOURCED_ONLY_COUNT } from "@/lib/jurisdiction-coverage";
 import { Callout } from "@/components/Callout";
 import { SystemsHero } from "@/components/SystemsHero";
+import { Capsule } from "@/components/Capsule";
+import { aidFindingFor, jurisdictionFor, residencyFindingFor } from "@/lib/engines/jurisdiction";
+import { priyaAid, priyaEvents, priyaStudent } from "@/lib/fixtures/priya";
+import { formatDecidingOffice } from "@/lib/format";
+import { statusFromFindingResult } from "@/lib/tokens";
+import type { Finding } from "@/lib/types";
 
 // What PathWise does with an answer, stated as the five things every finding on every screen
 // actually carries. This is the differentiator, and it is checkable: open any finding and all five
@@ -17,7 +23,48 @@ const GUARANTEES: { k: string; v: string }[] = [
   { k: "What is still unknown", v: "named as an open question instead of guessed at" },
 ];
 
+/** How a finding's verdict is worded — the same vocabulary SystemsHero uses on the rows above. */
+const VERDICT: Record<Finding["result"], string> = {
+  ineligible: "Blocked",
+  potential_risk: "At risk",
+  review_recommended: "Needs review",
+  unable_to_verify: "Unable to verify",
+  no_issue: "Clear",
+};
+
 export default function Landing() {
+  // The five guarantees are the strongest claim on this page and they were five sentences.
+  // Each one now carries the ACTUAL artifact it promises, taken off the real example student by the
+  // real engines at build time — so the section demonstrates its own claims in the same block that
+  // states them, and a reader can check every one of them by opening any finding.
+  const jx = jurisdictionFor(priyaStudent);
+  const residency = residencyFindingFor(jx, {
+    student: priyaStudent,
+    events: priyaEvents,
+    intentFactors: [],
+    allegedEntitlementDate: "2026-08-24",
+  });
+  // The aid finding, because it is the one carrying open questions: the residency answer is reached
+  // at the status gate, which stops the analysis and raises none. Using the residency finding for
+  // the fifth row would print "0 open questions" under a guarantee about naming them.
+  const aid = aidFindingFor(jx, priyaAid);
+
+  const demos: React.ReactNode[] = [
+    <Capsule key="verdict" variant="tinted" status={statusFromFindingResult(residency.result)}>
+      {VERDICT[residency.result]}
+    </Capsule>,
+    <Capsule key="steps">{residency.reasoning_steps.length} reasoning steps</Capsule>,
+    <span key="office" className="lg-office">
+      {formatDecidingOffice(residency.deciding_office)}
+    </span>,
+    <span key="cite" className="cite wrap">
+      {jx.display?.residencyCite}
+    </span>,
+    <Capsule key="unknowns" variant="tinted" status="idle">
+      {aid.unknowns.length} open questions
+    </Capsule>,
+  ];
+
   return (
     // header / main / footer, where there used to be one <main> wrapping everything. The landing
     // was the only screen in the product with no landmark structure at all — a screen-reader user
@@ -86,10 +133,14 @@ export default function Landing() {
               likelier answer. Every finding it does make arrives with all five of these attached:
             </p>
             <ul className="landing-guarantees">
-              {GUARANTEES.map((g) => (
+              {GUARANTEES.map((g, i) => (
                 <li key={g.k}>
                   <span className="lg-k">{g.k}</span>
                   <span className="lg-v">{g.v}</span>
+                  {/* The claim, and the thing itself, on the same line. Every value is engine
+                      output — none of these is a picture of a component, they are the components,
+                      rendered from Priya's real findings. */}
+                  <span className="lg-demo">{demos[i]}</span>
                 </li>
               ))}
             </ul>
