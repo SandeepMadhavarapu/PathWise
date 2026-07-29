@@ -258,7 +258,10 @@ export default function ChangedPage() {
   return (
     <>
       <div className="jintro surface">
-        <div className="jintro-eyebrow">When evidence lands</div>
+        {/* Matches the rail label and this page's own heading. It was left reading "When evidence
+            lands" when both of those were renamed — the same miss as the timeline page's eyebrow,
+            and the reason the terminology pass is swept for rather than trusted. */}
+        <div className="jintro-eyebrow">When a document arrives</div>
         <h2>One document arrives. Watch PathWise re-reason.</h2>
         <p>
           Priya&apos;s bachelor&apos;s CPT at School X only stays out of her master&apos;s count if the
