@@ -675,7 +675,11 @@ export default function CheckPage() {
           ) : null}
 
           <div className="section-head">Your three offices, at a glance</div>
-          <div className="domain-cards">
+          {/* `check-cards` scopes the arrival stagger to THIS screen. The dashboard renders the same
+              component and must not animate: there the cards are simply the state of a record the
+              reader navigated to, where here they are the output of a computation they just asked
+              for, and the stagger is what says so. */}
+          <div className="domain-cards check-cards">
             <DomainCard
               domain="Immigration (F-1)"
               decidingOffice={formatDecidingOffice("SEVP")}

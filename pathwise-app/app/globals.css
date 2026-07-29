@@ -879,6 +879,21 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* Below 560px a 260px minimum would still try for two columns in a space that cannot hold them. */
 @media (max-width: 559px) { .domain-cards { grid-template-columns: 1fr; } }
 
+/* The /check result only. Three findings arriving 90ms apart, on the same curve and the same
+   spacing as the landing hero's three system rows — deliberately, so the tool's output rhymes with
+   the argument the landing makes. One fact went in; three offices answered.
+   `backwards` for the same reason it is used in the hero: the cards are correct and present in the
+   DOM from the first frame, and the animation decorates a state that JavaScript never has to undo.
+   It plays on the first submission and not on a re-submission, because React reuses these nodes
+   rather than remounting them — which is the right trade: forcing a remount to replay a flourish
+   would disturb the focus management this screen is carefully built around. */
+@keyframes checkCardIn {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+}
+.check-cards > .domain-card { animation: checkCardIn 460ms var(--ease) backwards; }
+.check-cards > .domain-card:nth-child(2) { animation-delay: 90ms; }
+.check-cards > .domain-card:nth-child(3) { animation-delay: 180ms; }
+
 .domain-card { padding: var(--space-4); display: flex; flex-direction: column; }
 .domain-card-head { display: flex; align-items: flex-start; gap: var(--space-2); }
 .domain-card-head-text { min-width: 0; }
@@ -1771,6 +1786,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-ev-sample { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
 .wc-ev-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-2) var(--space-4); margin: 0; }
 .wc-ev-facts > div { min-width: 0; }
+/* Measurements returning, one after another — not prose appearing. Each of these is a fact PathWise
+   established by passing over the file's bytes, and 60ms between them is enough to read as a
+   sequence of readings being taken rather than a block of text being shown. Short, because there is
+   nothing to wait for: the read has already happened by the time this renders. */
+@keyframes evFactIn { from { opacity: 0; transform: translate3d(0, 4px, 0); } }
+.wc-ev-facts > div { animation: evFactIn 320ms var(--ease) backwards; }
+.wc-ev-facts > div:nth-child(2) { animation-delay: 60ms; }
+.wc-ev-facts > div:nth-child(3) { animation-delay: 120ms; }
+.wc-ev-facts > div:nth-child(4) { animation-delay: 180ms; }
 .wc-ev-facts dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
 .wc-ev-facts dd { margin: 2px 0 0; font-size: 13px; color: var(--text); }
 .wc-ev-hash { grid-column: 1 / -1; }
@@ -2230,6 +2254,19 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sh-row:nth-child(3) { --row-delay: 180ms; }
 /* The citation lands after its own card has settled — 320ms later, not on a shared clock. */
 .sh-row .cite { animation: shCiteIn 380ms var(--ease) calc(740ms + var(--row-delay)) backwards; }
+
+/* The fifth beat: the refusal.
+   The three findings finish arriving when the last citation settles — row 3 starts at 920ms and
+   runs 380ms, so ~1300ms. This waits until then and deliberately leaves a gap rather than
+   overlapping: the first four beats are one continuous statement ("one fact, read three ways"),
+   and this is a different KIND of statement, so a beat of silence in front of it is doing the same
+   work the dashed rule above it does. It arrives as one block — the band inside it is not
+   separately choreographed, because a span drawing itself open would read as the finding becoming
+   LESS certain, which is the opposite of the direction this product ever moves. */
+@keyframes shRefusalIn {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+}
+.sh-refusal { animation: shRefusalIn 480ms var(--ease) 1200ms backwards; }
 
 /* A stem draws downward, so it scales on Y — scaleX would collapse a 1px line sideways. */
 @keyframes shStemIn {
