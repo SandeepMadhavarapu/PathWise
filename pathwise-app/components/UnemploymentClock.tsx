@@ -5,6 +5,7 @@ import {
   TERMINATION_CITE,
   type UnemploymentClockInput,
 } from "@/lib/engines/unemployment-clock";
+import { formatCapRemaining } from "@/lib/format";
 import { statusFromBand } from "@/lib/tokens";
 import { SegmentedProgress } from "./SegmentedProgress";
 
@@ -47,7 +48,7 @@ export function UnemploymentClock({
         <span className={`gauge-sub ${status}`}>
           {clock.isPaused
             ? "clock paused — qualifying job active"
-            : `${clock.daysRemaining} days remaining`}
+            : formatCapRemaining(clock.daysRemaining)}
         </span>
       </div>
 

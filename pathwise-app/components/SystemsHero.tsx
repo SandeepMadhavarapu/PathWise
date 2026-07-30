@@ -17,7 +17,7 @@
 import { computeCptLedger, CLIFF_DAYS, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import { aidFindingFor, jurisdictionFor, residencyFindingFor } from "@/lib/engines/jurisdiction";
 import { priyaStudent, priyaEvents, priyaAid } from "@/lib/fixtures/priya";
-import { formatDecidingOffice, formatImmigrationStatus } from "@/lib/format";
+import { formatDecidingOffice, formatImmigrationStatus, formatMargin } from "@/lib/format";
 import { statusFromBand, statusFromFindingResult, type StatusKey } from "@/lib/tokens";
 import type { Finding } from "@/lib/types";
 import Link from "next/link";
@@ -74,7 +74,7 @@ export function SystemsHero() {
       system: `Immigration (${statusDisplay})`,
       office: formatDecidingOffice("SEVP"),
       status: masters ? statusFromBand(masters.band) : "idle",
-      verdict: masters ? `${masters.daysToCliff} days of margin` : "No CPT on record",
+      verdict: masters ? formatMargin(masters.daysToCliff) : "No CPT on record",
       finding: masters
         ? `${masters.fullTimeDays} full-time CPT days counted at the master's level, against the ${CLIFF_DAYS}-day cliff that ends OPT eligibility.`
         : "",

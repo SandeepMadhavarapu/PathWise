@@ -20,7 +20,7 @@ import {
   priyaAid,
   priyaJobOffer,
 } from "@/lib/fixtures/priya";
-import { formatDecidingOffice, formatImmigrationStatus } from "@/lib/format";
+import { formatCliffDistance, formatDecidingOffice, formatImmigrationStatus } from "@/lib/format";
 import { statusFromBand, type StatusKey } from "@/lib/tokens";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
@@ -127,7 +127,7 @@ export default function StudentPage() {
         <DomainCard
           domain="Immigration (F-1)"
           decidingOffice={formatDecidingOffice("SEVP")}
-          status={masters ? `${masters.daysToCliff} days from the CPT cliff` : "No CPT on record"}
+          status={masters ? formatCliffDistance(masters.daysToCliff) : "No CPT on record"}
           band={masters ? masters.band : "green"}
           detail={
             masters

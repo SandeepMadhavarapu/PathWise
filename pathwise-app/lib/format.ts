@@ -7,6 +7,72 @@ export function formatImmigrationStatus(statusLabel: string): string {
   return map[statusLabel] ?? statusLabel;
 }
 
+/* =============================================================================
+   Countdowns against a regulatory limit.
+
+   The engines report headroom as a SIGNED number — `daysToCliff` is `365 - fullTimeDays`, and it
+   goes negative the moment the cliff is crossed. That is correct arithmetic and it is not changed
+   here. What was wrong is that six display sites formatted it verbatim, so a student with two
+   ordinary full-time CPT years read:
+
+       "-366 days from the CPT cliff"
+       "at 731 days you are -366 days from 365 — cross it and you lose OPT eligibility"
+
+   The first is not English. The second is worse: it is the future tense, promising a consequence
+   to someone for whom it has already happened, on the one question — OPT eligibility — that
+   decides whether an F-1 student can stay. And the same card's detail line already said
+   "OPT eligibility lost for this level", so one card stated both.
+
+   It survived because every fixture, test and screenshot sits INSIDE the cap: Priya is at 342 of
+   365 and day 70 of 90, so the negative branch had never once rendered.
+
+   The sign is therefore read in exactly one place. Callers get a magnitude and a direction and
+   cannot format a negative by accident; a seventh surface added later inherits the fix by using
+   these rather than by remembering to.
+
+   Presentation only. No engine, no pack, no arithmetic, no band, no outcome — and for any
+   non-negative input every string below is byte-identical to what it replaced, which is why the
+   342-day path and the golden fixture do not move.
+   ============================================================================= */
+
+/** A countdown reduced to how far, and which side of the line. */
+export interface LimitDistance {
+  /** Always positive: the distance itself, never a signed remainder. */
+  days: number;
+  /** True once the limit has been passed. */
+  crossed: boolean;
+}
+
+export function limitDistance(remaining: number): LimitDistance {
+  return { days: Math.abs(remaining), crossed: remaining < 0 };
+}
+
+/** "23 days from the CPT cliff" · "366 days past the CPT cliff" */
+export function formatCliffDistance(remaining: number): string {
+  const { days, crossed } = limitDistance(remaining);
+  return `${days} ${days === 1 ? "day" : "days"} ${crossed ? "past" : "from"} the CPT cliff`;
+}
+
+/** The short ledger form: "23 to the cliff" · "366 past the cliff" */
+export function formatToCliff(remaining: number): string {
+  const { days, crossed } = limitDistance(remaining);
+  return crossed ? `${days} past the cliff` : `${days} to the cliff`;
+}
+
+/** The landing's one-line verdict: "23 days of margin" · "366 days past the cliff" */
+export function formatMargin(remaining: number): string {
+  const { days, crossed } = limitDistance(remaining);
+  return crossed
+    ? `${days} ${days === 1 ? "day" : "days"} past the cliff`
+    : `${days} ${days === 1 ? "day" : "days"} of margin`;
+}
+
+/** A capped clock: "20 days remaining" · "12 days over the cap" */
+export function formatCapRemaining(remaining: number): string {
+  const { days, crossed } = limitDistance(remaining);
+  return `${days} ${days === 1 ? "day" : "days"} ${crossed ? "over the cap" : "remaining"}`;
+}
+
 /**
  * How an office is NAMED — standalone, Title Case, no leading article.
  *

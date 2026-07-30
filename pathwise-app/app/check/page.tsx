@@ -15,7 +15,7 @@ import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { FindingDetail } from "@/components/FindingDetail";
 import { ResultOutlook } from "@/components/ResultOutlook";
-import { formatDecidingBody, formatDecidingOffice } from "@/lib/format";
+import { formatCliffDistance, formatDecidingBody, formatDecidingOffice } from "@/lib/format";
 import {
   aidFindingFor,
   aidFormFor,
@@ -390,7 +390,7 @@ export default function CheckPage() {
     ? `Result ready for ${stateName}. ` +
       `Immigration: ${
         closestLevel
-          ? `${closestLevel.daysToCliff} days from the CPT cliff`
+          ? formatCliffDistance(closestLevel.daysToCliff)
           : "no CPT authorization on record"
       }. ` +
       `Residency: ${RESULT_WORD[finding.result]}. ` +
@@ -774,7 +774,7 @@ export default function CheckPage() {
               decidingOffice={formatDecidingOffice("SEVP")}
               status={
                 closestLevel
-                  ? `${closestLevel.daysToCliff} days from the CPT cliff`
+                  ? formatCliffDistance(closestLevel.daysToCliff)
                   : "No CPT on record"
               }
               band={closestLevel ? closestLevel.band : "green"}

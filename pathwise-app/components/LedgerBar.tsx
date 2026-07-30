@@ -5,6 +5,7 @@ import {
   levelLabel,
   type LevelLedger,
 } from "@/lib/engines/cpt-ledger";
+import { formatToCliff, limitDistance } from "@/lib/format";
 import { SegmentedProgress, type ProgressLegendItem } from "./SegmentedProgress";
 
 // Purely a visual scale (how much track to draw), not a regulatory number — safe to hardcode.
@@ -19,6 +20,7 @@ export function LedgerBar({
   voice?: "second" | "third";
 }) {
   const second = voice === "second";
+  const cliff = limitDistance(ledger.daysToCliff);
   const solidFull = ledger.fullTimeDays - ledger.overlapDays; // single-authorization full-time days
   // Which other level's days the partition is keeping out, in the record's own terms — empty string
   // when this record has no other level, so the sentence below never invents one.
@@ -48,7 +50,7 @@ export function LedgerBar({
       <div className="gauge-head">
         <span className="gauge-title t-card-title">CPT ledger — {levelLabel(ledger.level)}</span>
         <span className="t-meta">
-          {ledger.fullTimeDays} full-time days · {ledger.daysToCliff} to the cliff
+          {ledger.fullTimeDays} full-time days · {formatToCliff(ledger.daysToCliff)}
         </span>
       </div>
 
@@ -69,9 +71,23 @@ export function LedgerBar({
       </div>
 
       <div className="gauge-note">
+        {/* The tense follows the record. This sentence was unconditionally future — "cross it and
+            you lose OPT eligibility" — which is the right thing to say to someone approaching the
+            cliff and exactly the wrong thing to say to someone a year past it, on the question that
+            decides whether they can stay. The same card's detail already read "OPT eligibility lost
+            for this level", so the two halves disagreed. Only the crossed branch is new. */}
         <strong>Why this matters:</strong> at {ledger.fullTimeDays} days {second ? "you are" : "she is"}{" "}
-        <strong>{ledger.daysToCliff} days</strong> from {CLIFF_DAYS} — cross it and{" "}
-        {second ? "you lose" : "she loses"} OPT eligibility for this level entirely.{" "}
+        {cliff.crossed ? (
+          <>
+            <strong>{cliff.days} days</strong> past {CLIFF_DAYS} — {second ? "you have" : "she has"}{" "}
+            already lost OPT eligibility for this level entirely.{" "}
+          </>
+        ) : (
+          <>
+            <strong>{cliff.days} days</strong> from {CLIFF_DAYS} — cross it and{" "}
+            {second ? "you lose" : "she loses"} OPT eligibility for this level entirely.{" "}
+          </>
+        )}
         {ledger.overlapDays > 0 ? (
           <>
             The {ledger.overlapDays} overlap days are ones{" "}
