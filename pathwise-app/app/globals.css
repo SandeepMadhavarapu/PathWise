@@ -249,6 +249,16 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .section-head:first-child { margin-top: 0; }
 
+/* A subtitle under a section head, for a claim that belongs WITH the block rather than in a panel
+   in front of it. Pulled up tight against its heading so the two read as one unit. */
+.section-note {
+  margin: calc(var(--space-3) * -1) 0 var(--space-4);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 78ch;
+}
+
 .icon-14 { width: 14px; height: 14px; }
 .icon-16 { width: 16px; height: 16px; }
 .icon-18 { width: 18px; height: 18px; }
@@ -1786,16 +1796,25 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    Reversing 1 and 2 would say the colour decided the answer. Under prefers-reduced-motion the
    global reset drops all three and the band renders settled, in place, immediately.
    ============================================================================= */
+/* ---- scale ----
+   The full rendering is the product's central idea and was drawn at the weight of a progress
+   widget: a 12px rail with 15px numerals inside a 16px-padded card. It is an information graphic,
+   not a dashboard component, and it is the one drawing on which the whole argument rests — so it
+   gets the room to say "there is a measurable boundary here" before a word is read.
+   Everything below is size, weight and space. No colour, no gradient, no motion, and not one
+   value in the drawing changed: the geometry is still the same two engine runs against the same
+   pack cliff. The landing's `--compact` rendering is pinned to its previous dimensions further
+   down, so this scaling reaches this screen and nothing else. */
 .ub {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-6);
   box-shadow: var(--shadow-hairline);
 }
-.ub-head { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
+.ub-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
 .ub-verdict {
-  font-size: 15px; font-weight: 650; letter-spacing: -0.01em; color: var(--text-muted);
+  font-size: 20px; font-weight: 650; letter-spacing: -0.015em; color: var(--text-muted);
   transition: color var(--dur-slow) var(--ease) 240ms;
 }
 /* The settled verdict takes the colour the ENGINE reached, not the colour "settled" suggests.
@@ -1807,7 +1826,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .ub--settled.ub--active .ub-verdict { color: var(--status-active-text); }
 .ub--settled.ub--blocked .ub-verdict { color: var(--status-blocked); }
 .ub--settled.ub--idle .ub-verdict { color: var(--text-muted); }
-.ub-range { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.ub-range { font-size: 15px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .ub-range strong { color: var(--text); font-weight: 700; }
 
 /* The track is EMPTY space, and has to look it. It was painted --canvas, which is the same value the
@@ -1819,13 +1838,17 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* The bottom margin holds two stacked rows below the rail: the endpoint ticks, and — once settled —
    the margin label under them. Reserved at the same height in BOTH states on purpose, so the
    collapse does not shift the layout underneath it while the reader is watching the bar. */
-.ub-track { position: relative; height: 12px; margin: 32px 0 58px; background: var(--surface);
+.ub-track { position: relative; height: 26px; margin: 44px 0 68px; background: var(--surface);
   border: 1px solid var(--border-strong); border-radius: var(--radius-pill); }
 
-.ub-cliff { position: absolute; top: -11px; bottom: -11px; width: 2px; background: var(--status-blocked); border-radius: 1px; }
+/* The threshold, and the reason the drawing exists. It was a 2px tick standing 11px proud of a
+   12px rail — the least visible mark in a picture whose entire claim is that a span CROSSES it.
+   It now runs the full height of the plot and past it on both sides, so the crossing is the first
+   relationship the eye resolves. */
+.ub-cliff { position: absolute; top: -18px; bottom: -18px; width: 3px; background: var(--status-blocked); border-radius: 2px; }
 .ub-cliff-lbl {
-  position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--status-blocked); white-space: nowrap;
 }
 
@@ -1855,10 +1878,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    without borrowing amber, which would say "you are approaching a limit", a claim PathWise has not
    made. It also survives being printed and being colourblind, because the signal is texture. */
 .ub-span {
-  position: absolute; top: -3px; bottom: -3px;
+  position: absolute; top: -4px; bottom: -4px;
   background-color: var(--surface);
+  /* Hatch pitch scales with the rail — at 3px on a 26px band the texture reads as noise. */
   background-image: repeating-linear-gradient(
-    45deg, transparent 0 3px, var(--border-strong) 3px 6px
+    45deg, transparent 0 4px, var(--border-strong) 4px 8px
   );
   border: 1.5px dashed var(--text-muted);
   border-radius: var(--radius-pill);
@@ -1877,12 +1901,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    They were in a `space-between` row at the CONTAINER's extremes while the span ran 57% to 92% — so
    "342" was captioned nearly 750px to the left of the end it labelled, and a reader mapped it to the
    wrong point on the scale. A label on a plot belongs at its datum. */
-.ub-tick { position: absolute; top: calc(100% + 7px); font-variant-numeric: tabular-nums; }
+.ub-tick { position: absolute; top: calc(100% + 12px); font-variant-numeric: tabular-nums; }
 .ub-tick::before {
-  content: ""; position: absolute; top: -7px; height: 7px; width: 1px;
+  content: ""; position: absolute; top: -12px; height: 12px; width: 1px;
   background: var(--text-muted);
 }
-.ub-tick-n { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+/* The two readings are the finding. At 15px they were smaller than the body text explaining them. */
+.ub-tick-n { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
 .ub-tick--lo { transform: translateX(-1px); }
 .ub-tick--lo::before { left: 0; }
 .ub-tick--hi { text-align: right; transform: translateX(1px); }
@@ -1895,8 +1920,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    the same 80px of space and struck through each other — visible only in a screenshot, which is
    where it was found. */
 .ub-margin-lbl {
-  position: absolute; top: 34px; right: 0;
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  /* Clears the taller endpoint numerals below the rail. */
+  position: absolute; top: 50px; right: 0;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--text-muted); white-space: nowrap;
 }
 @keyframes ubMarginIn { from { opacity: 0; } }
@@ -1906,18 +1932,41 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    of this component's header once settled. */
 
 /* The landing rendering: same geometry, no end labels, tighter. It is a fourth row in a stack of
-   three findings, not a section of its own. */
+   three findings, not a section of its own.
+
+   Every value here is PINNED to what it measured before the full band was scaled up. The scaling
+   above is for the screen where the band is the subject; on the landing it is one row among four
+   and must not out-shout the three findings above it. Without these the landing hero would have
+   been redesigned as a side effect of a change to another page — which is exactly the kind of
+   accidental blast radius this pass was told not to have. */
 .ub--compact { padding: var(--space-3) var(--space-4) var(--space-4); }
 /* The bottom margin has to clear the endpoint ticks, which did not exist when this was 6px — the
    numbers were being drawn hard against the card's bottom border. */
-.ub--compact .ub-track { margin: 26px 0 30px; }
+.ub--compact .ub-track { height: 12px; margin: 26px 0 30px; }
+.ub--compact .ub-head { align-items: center; }
 .ub--compact .ub-verdict { font-size: 14px; }
+.ub--compact .ub-range { font-size: 13px; }
+.ub--compact .ub-cliff { top: -11px; bottom: -11px; width: 2px; }
+.ub--compact .ub-cliff-lbl { bottom: calc(100% + 4px); font-size: 10px; letter-spacing: 0.05em; }
+.ub--compact .ub-span {
+  top: -3px; bottom: -3px;
+  background-image: repeating-linear-gradient(45deg, transparent 0 3px, var(--border-strong) 3px 6px);
+}
+.ub--compact .ub-tick { top: calc(100% + 7px); }
+.ub--compact .ub-tick::before { top: -7px; height: 7px; }
+.ub--compact .ub-tick-n { font-size: 15px; letter-spacing: -0.01em; }
 
-/* A phone can hold the track — it must, because a span that stacks stops being a measurement. */
+/* A phone can hold the track — it must, because a span that stacks stops being a measurement. What
+   a phone cannot hold is the scaled-up numerals: the span runs from 57% to 92% of the rail, so the
+   two readings share roughly a third of its width. Measured at 320px, 26px figures collided by 8px
+   — the page did not overflow, they simply overlapped each other. The plot keeps its proportions
+   and the type steps down. */
 @media (max-width: 480px) {
   .ub { padding: var(--space-4); }
-  .ub-end--hi { text-align: left; }
-  .ub-end { max-width: none; }
+  .ub-track { height: 22px; margin: 38px 0 58px; }
+  .ub-tick-n { font-size: 20px; }
+  .ub-verdict { font-size: 17px; }
+  .ub-cliff { top: -15px; bottom: -15px; }
 }
 
 /* The evidence flow: a real file, read in this tab. Two steps, deliberately separate — the read is

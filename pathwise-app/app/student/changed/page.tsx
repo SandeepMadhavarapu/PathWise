@@ -274,6 +274,29 @@ export default function ChangedPage() {
         </div>
       </div>
 
+      {/* THE FINDING, FIRST.
+          This sat below the block that explains it — so the page described a refusal, at length,
+          before the reader had seen the thing being refused. The band IS the climax of this screen
+          and of the product: two readings of one record, drawn to scale, straddling the line that
+          decides the outcome. Showing it before explaining it is the whole point; a reader now
+          reaches the conclusion by looking, and everything beneath is the account of why.
+          Nothing about the band's inputs, logic or wording changed — only where it sits. */}
+      <div className="section-head">The finding, against the cliff it turns on</div>
+      {/* The settled verdict is read off the ledger's own band, exactly as the After panel below
+          does — `afterStatus` is `BAND_STATUS[settled.band]`. */}
+      <UncertaintyBand
+        lo={settled.fullTimeDays}
+        hi={pooled.fullTimeDays}
+        cliff={CLIFF_DAYS}
+        unit={`${CLIFF_DAYS}-day cliff`}
+        settled={added}
+        loLabel="if the level change holds — OPT at the master's level preserved"
+        hiLabel="if it can't be shown — OPT at this level would be gone"
+        settledLabel={STATUS[afterStatus].word}
+        settledStatus={STATUS[afterStatus].glyph}
+        marginDays={settled.daysToCliff}
+      />
+
       <div className={`wc-gap surface${added ? " done" : ""}`}>
         <div className="wc-gap-head">
           <div>
@@ -410,30 +433,6 @@ export default function ChangedPage() {
           </div>
         ) : null}
       </div>
-
-      {/* THE FINDING, drawn to scale — and the element that actually moves when the document lands.
-          Above the before/after pair rather than inside it, because it is not a third panel: it is
-          the current state of the question the two panels describe. While the record cannot settle
-          it, the answer is a span with two ends and it crosses the cliff; once the attestation rules
-          one reading out, the span collapses to a point and takes a verdict colour for the first
-          time. The panels below keep the full before/after detail. */}
-      <div className="section-head">The finding, against the cliff it turns on</div>
-      {/* The settled verdict is read off the ledger's own band, exactly as the After panel below
-          does — `afterStatus` is `BAND_STATUS[settled.band]`. It said "On track" as a literal,
-          which is the one thing this product never does: 342 of 365 with 23 days left is amber,
-          and the band was printing a green tick beside a panel printing "Attention". */}
-      <UncertaintyBand
-        lo={settled.fullTimeDays}
-        hi={pooled.fullTimeDays}
-        cliff={CLIFF_DAYS}
-        unit={`${CLIFF_DAYS}-day cliff`}
-        settled={added}
-        loLabel="if the level change holds — OPT at the master's level preserved"
-        hiLabel="if it can't be shown — OPT at this level would be gone"
-        settledLabel={STATUS[afterStatus].word}
-        settledStatus={STATUS[afterStatus].glyph}
-        marginDays={settled.daysToCliff}
-      />
 
       <div className="section-head">Before → after</div>
 

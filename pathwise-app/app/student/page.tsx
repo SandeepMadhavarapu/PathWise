@@ -109,6 +109,78 @@ export default function StudentPage() {
         aidOffice={formatDecidingOffice(aid.deciding_office)}
       />
 
+      {/* The trust claim that used to sit in a dismissible "How to read this" panel above these
+          cards. The panel is gone; the sentence is not. It said the one thing worth saying here —
+          that these are computed findings rather than a summary — and it said it in an instruction
+          box that a reader had to get past before reaching the thing being explained.
+          As a subtitle it is read WITH the cards instead of in front of them, and it cannot be
+          dismissed, so the claim is now made to every reader rather than to the ones who leave
+          callouts open. Wording preserved apart from the join. */}
+      <div className="section-head">Her three offices, at a glance</div>
+      <p className="section-note">
+        Every card is a live finding, not a summary — the status, the citation and the micro-label
+        under each row are computed from the same events shown in{" "}
+        <Link href="/student/journey">Priya&apos;s timeline</Link>. Nothing here is asserted without
+        a regulation attached to it.
+      </p>
+      <div className="domain-cards">
+        <DomainCard
+          domain="Immigration (F-1)"
+          decidingOffice={formatDecidingOffice("SEVP")}
+          status={masters ? `${masters.daysToCliff} days from the CPT cliff` : "No CPT on record"}
+          band={masters ? masters.band : "green"}
+          detail={
+            masters
+              ? `${masters.fullTimeDays} full-time CPT days at the master's level; OPT still available.`
+              : ""
+          }
+          cite={SECTION_CITE}
+          progress={
+            masters
+              ? {
+                  segments: [
+                    { key: "used", status: statusFromBand(masters.band), value: masters.fullTimeDays },
+                    { key: "remaining", status: "idle", value: CLIFF_TRACK_DAYS - masters.fullTimeDays },
+                  ],
+                }
+              : undefined
+          }
+        />
+        <DomainCard
+          domain={`In-state residency (${jx.name})`}
+          decidingOffice={formatDecidingOffice(domicile.deciding_office)}
+          status={isBlocked ? "Blocked by status" : "Under review"}
+          band={isBlocked ? "red" : "amber"}
+          detail={`Not an error — a reasoned finding. ${domicile.rule_citation.text}`}
+          cite={jx.display?.residencyCite}
+          detailHref="/student/finding/residency"
+          detailLabel="See full reasoning →"
+        />
+        <DomainCard
+          domain={`Financial aid (${jx.name})`}
+          decidingOffice={formatDecidingOffice(aid.deciding_office)}
+          status={aidBlocked ? "Blocked by status" : "Under review"}
+          band={aidBlocked ? "red" : "amber"}
+          detail={[
+            aidBlocked
+              ? `The same ${formatImmigrationStatus(
+                  priyaStudent.immigration.status,
+                )} fact closes this door too.`
+              : aid.headline + ".",
+            aidForm ? `${aidForm.label}.` : "",
+            aidForm?.remains ?? "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          cite={jx.display?.aidCite}
+          detailHref="/student/finding/aid"
+          detailLabel="See full reasoning →"
+        />
+      </div>
+
+      {/* The plan follows the findings it is derived from. It used to sit between the hero and the
+          cards, so the dashboard offered an action before it had shown the situation the action
+          answers to. */}
       {firstStep ? (
         <Link href="/student/next" className="nextcard surface">
           <div>
@@ -139,74 +211,6 @@ export default function StudentPage() {
       ) : null}
 
       <DeadlineExport steps={steps} asOf={priyaOpt.asOf} variant="inline" />
-
-      <Callout title="How to read this" dismissible>
-        Every card below is a live finding, not a summary — the status, the citation, and the
-        micro-label under each row are computed from the same events shown in{" "}
-        <Link href="/student/journey">Priya&apos;s timeline</Link>. Nothing here is asserted without
-        a regulation attached to it.
-      </Callout>
-
-      <div className="section-head">Her three offices, at a glance</div>
-      <div className="domain-cards">
-        <DomainCard
-          domain="Immigration (F-1)"
-          decidingOffice={formatDecidingOffice("SEVP")}
-          status={masters ? `${masters.daysToCliff} days from the CPT cliff` : "No CPT on record"}
-          band={masters ? masters.band : "green"}
-          detail={
-            masters
-              ? `${masters.fullTimeDays} full-time CPT days at the master's level; OPT still available.`
-              : ""
-          }
-          cite={SECTION_CITE}
-          progress={
-            masters
-              ? {
-                  segments: [
-                    { key: "used", status: statusFromBand(masters.band), value: masters.fullTimeDays },
-                    { key: "remaining", status: "idle", value: CLIFF_TRACK_DAYS - masters.fullTimeDays },
-                  ],
-                }
-              : undefined
-          }
-        />
-        <DomainCard
-          domain={`In-state residency (${jx.name})`}
-          decidingOffice={formatDecidingOffice(domicile.deciding_office)}
-          status={isBlocked ? "Blocked by status" : "Under review"}
-          band={isBlocked ? "red" : "amber"}
-          // The reason is the pack's, carried on the finding. This card used to assert the rule
-          // itself, which made it true only for as long as Virginia was the only pack.
-          detail={`Not an error — a reasoned finding. ${domicile.rule_citation.text}`}
-          cite={jx.display?.residencyCite}
-          detailHref="/student/finding/residency"
-          detailLabel="See full reasoning →"
-        />
-        <DomainCard
-          domain={`Financial aid (${jx.name})`}
-          decidingOffice={formatDecidingOffice(aid.deciding_office)}
-          status={aidBlocked ? "Blocked by status" : "Under review"}
-          band={aidBlocked ? "red" : "amber"}
-          // "The same fact" is the hero's cross-domain framing and belongs to the screen. What
-          // follows it does not: the form verdict and the route it leaves open are the engine's
-          // words, so the card and the full reasoning can no longer say opposite things.
-          detail={[
-            aidBlocked
-              ? `The same ${formatImmigrationStatus(
-                  priyaStudent.immigration.status,
-                )} fact closes this door too.`
-              : aid.headline + ".",
-            aidForm ? `${aidForm.label}.` : "",
-            aidForm?.remains ?? "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-          cite={jx.display?.aidCite}
-          detailHref="/student/finding/aid"
-          detailLabel="See full reasoning →"
-        />
-      </div>
 
       {masters ? (
         <>
