@@ -1126,11 +1126,21 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    which would otherwise leave the pair 2px apart in height and read as a mistake. */
 .landing-cta-row .btn { border: 1px solid transparent; }
 .landing-cta-row .btn.ghost { border-color: var(--info-border); }
+
+/* Once the row wraps, the two stop being side-by-side peers and become a stack — and a stack of two
+   buttons at 336px and 443px, sized to their own labels, reads as a mistake rather than as a choice.
+   Full width apiece below 520px, so they align and the pair still says "these are equals". */
+@media (max-width: 519px) {
+  .landing-cta-row .btn { flex: 1 1 100%; text-align: center; }
+}
 .landing-cta-alt { font-size: 14px; font-weight: 600; color: var(--info); }
 
 /* Says whose findings the hero below is showing. The shell badges every other screen that renders
    the example student; this is the one page with no shell, and the first thing anyone reads. */
-.landing-proof-label { margin: 0 0 var(--space-3); font-size: 12px; color: var(--text-muted); }
+/* Needs air above it. With no top margin it sat flush against the bottom edge of the button row —
+   touching it, at every width — which read as a rendering fault rather than as a caption on the
+   panel below. It captions the instrument, so it belongs nearer to the instrument than to the CTAs. */
+.landing-proof-label { margin: var(--space-5) 0 var(--space-3); font-size: 12px; color: var(--text-muted); }
 .lpl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
 .lpl-sep { margin: 0 6px; }
 
@@ -2269,6 +2279,14 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
     --landing-max: 900px;
     --gutter: var(--space-6);
   }
+
+  /* The headline was capped at 20ch and never grew, so on a 1120px container it set to about 570px
+     and broke into FOUR short lines with "does." orphaned on the last one — leaving roughly 460px of
+     empty page beside the product's opening statement. A hero headline that occupies half its own
+     width reads as unfinished. The cap rises with the container and the size rises with it, so the
+     sentence sets in three lines and fills the measure it is given. Still capped in `ch`, so the
+     line length stays readable rather than stretching. */
+  .landing-line { font-size: 38px; max-width: 26ch; }
 }
 
 @media (min-width: 1280px) {
