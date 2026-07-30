@@ -1156,8 +1156,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    ragged right margin read as decoration, where a column of them reads as a specimen sheet.
    Same shape as `.oo` on the /check outlook, deliberately: one pattern for "label, explanation,
    evidence" rather than a second one invented here. */
+/* Capped, so the artifact sits beside the claim it proves rather than at the far edge of the page.
+   Ungoverned, this row spread across the full container and pushed each artifact roughly 600px from
+   the sentence it belongs to — "a verdict, in one line, in plain words" ending near x=860 with
+   `Blocked` stranded at x=1400. The whole idea of this section is that the claim and the evidence
+   for it occupy one line; a 600px gap is the eye being asked to do work the layout should do. */
 .landing-guarantees li { display: grid; grid-template-columns: 168px minmax(0, 1fr) auto;
-  align-items: baseline; gap: 4px var(--space-3);
+  align-items: baseline; gap: 4px var(--space-3); max-width: 840px;
   padding: var(--space-3) 0; border-top: 1px solid var(--border); }
 .landing-guarantees li:first-child { border-top: none; }
 .lg-k { font-size: 13px; font-weight: 600; color: var(--text); }
@@ -1536,6 +1541,18 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .memorystrip .ms-go { white-space: normal; }
 }
 .landing-strip { margin-top: var(--space-4); }
+
+/* The privacy promise: quiet, unboxed, and deliberately NOT in the callout surface. Amber in this
+   product means "there is a question here"; using it for the one guarantee the whole architecture
+   is built to keep made the promise argue with itself. */
+.landing-privacy {
+  margin: var(--space-5) 0 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  max-width: 78ch;
+}
+.landing-privacy strong { color: var(--text); font-weight: 650; }
 
 /* ---- Dashboard → next steps ---- */
 .nextcard {

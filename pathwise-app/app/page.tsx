@@ -8,7 +8,6 @@ import {
   PARTIALLY_MODELLED_COUNT,
   SOURCED_ONLY_COUNT,
 } from "@/lib/jurisdiction-coverage";
-import { Callout } from "@/components/Callout";
 import { SystemsHero } from "@/components/SystemsHero";
 import { Capsule } from "@/components/Capsule";
 import { aidFindingFor, jurisdictionFor, residencyFindingFor } from "@/lib/engines/jurisdiction";
@@ -159,16 +158,13 @@ export default function Landing() {
             actually reach. Both are claims about the product rather than steps in the pitch, which
             is what a contentinfo landmark is for. */}
         <footer className="landing-footer">
-          <Callout title="Nothing leaves this device">
-            No account. Nothing stored on a server. PathWise reasons on your device — the app makes
-            no network requests once it has loaded, and a document you pick is read in the tab and
-            never uploaded.
-          </Callout>
-
+          {/* The scale answer comes FIRST, above the housekeeping. "Does this generalise?" is the
+              question a reader asks silently after seeing one student's findings, and it was the
+              last element on the page, below a privacy notice. */}
           {/* The claim this strip is allowed to make is the ARCHITECTURE, not the coverage. It used
               to read "the other 50 the same shape of file", which implied fifty authored rule packs;
-              there are four files, one modelled jurisdiction, and a map that says so. The honest
-              version is stronger anyway, because /coverage can substantiate every word of it. */}
+              there are four files, one fully modelled jurisdiction, and a map that says so. The
+              honest version is stronger anyway, because /coverage substantiates every word of it. */}
           <Link href="/coverage" className="memorystrip surface landing-strip">
             <span>
               <span className="ms-k">The rules are data, not code.</span> Every rule is a cited, dated
@@ -190,6 +186,16 @@ export default function Landing() {
             </span>
             <span className="ms-go">See the coverage map →</span>
           </Link>
+
+          {/* The privacy promise, and it is a PROMISE. It was rendered in the warm amber callout —
+              the same surface this product uses for open questions and volatility warnings — so the
+              strongest guarantee on the page was dressed as a caveat about it. Ink on paper now,
+              matching the line the topbar carries on every other screen. */}
+          <p className="landing-privacy">
+            <strong>Nothing leaves this device.</strong> No account. Nothing stored on a server.
+            PathWise reasons on your device — the app makes no network requests once it has loaded,
+            and a document you pick is read in the tab and never uploaded.
+          </p>
         </footer>
       </div>
     </div>
