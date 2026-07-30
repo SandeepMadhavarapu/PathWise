@@ -1798,7 +1798,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   font-size: 15px; font-weight: 650; letter-spacing: -0.01em; color: var(--text-muted);
   transition: color var(--dur-slow) var(--ease) 240ms;
 }
-.ub--settled .ub-verdict { color: var(--status-done-text); }
+/* The settled verdict takes the colour the ENGINE reached, not the colour "settled" suggests.
+   This was `--status-done-text` unconditionally, which printed a green "On track" for a record the
+   ledger bands amber — 342 of 365 days used, 23 to spare — while the panel beside it said
+   "Attention". A finding can settle into any of these; the component no longer picks. */
+.ub--settled.ub--done .ub-verdict { color: var(--status-done-text); }
+.ub--settled.ub--warn .ub-verdict { color: var(--status-warn-text); }
+.ub--settled.ub--active .ub-verdict { color: var(--status-active-text); }
+.ub--settled.ub--blocked .ub-verdict { color: var(--status-blocked); }
+.ub--settled.ub--idle .ub-verdict { color: var(--text-muted); }
 .ub-range { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .ub-range strong { color: var(--text); font-weight: 700; }
 
@@ -1834,7 +1842,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-radius: var(--radius-pill);
   transition: background var(--dur-slow) var(--ease) 240ms;
 }
-.ub--settled .ub-floor { background: var(--status-done); }
+/* Same rule for the fill. A green rail under a count that has used 342 of its 365 days reads as
+   "you are fine"; the ledger's own bar draws those identical days in amber. */
+.ub--settled.ub--done .ub-floor { background: var(--status-done); }
+.ub--settled.ub--warn .ub-floor { background: var(--status-warn); }
+.ub--settled.ub--active .ub-floor { background: var(--status-active); }
+.ub--settled.ub--blocked .ub-floor { background: var(--status-blocked); }
+.ub--settled.ub--idle .ub-floor { background: var(--status-idle); }
 
 /* HATCHED, not tinted. Hatching is the conventional way to draw a region a measurement could be
    anywhere inside, and — decisively for this product — it is achromatic: it says "indeterminate"
@@ -1887,14 +1901,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 @keyframes ubMarginIn { from { opacity: 0; } }
 
-.ub-ends { display: flex; justify-content: space-between; gap: var(--space-4);
-  padding-top: var(--space-3); border-top: 1px dashed var(--border); }
-.ub-end { font-size: 12px; line-height: 1.45; color: var(--text-secondary); max-width: 34ch; }
-.ub-end--hi { text-align: right; }
-/* Keys the annotation to its datum on the plot above. Mono, because it is a reference to a value
-   rather than the value itself. */
-.ub-end-k { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text);
-  font-variant-numeric: tabular-nums; }
+/* `.ub-ends` and its parts were removed with the legend they styled — see UncertaintyBand.tsx. It
+   repeated the reading cards' own captions verbatim one screen apart, and collapsed to a restatement
+   of this component's header once settled. */
 
 /* The landing rendering: same geometry, no end labels, tighter. It is a fourth row in a stack of
    three findings, not a section of its own. */
@@ -1904,11 +1913,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .ub--compact .ub-track { margin: 26px 0 30px; }
 .ub--compact .ub-verdict { font-size: 14px; }
 
-/* A phone can hold the track — it must, because a span that stacks stops being a measurement — but
-   not two end labels side by side. */
+/* A phone can hold the track — it must, because a span that stacks stops being a measurement. */
 @media (max-width: 480px) {
   .ub { padding: var(--space-4); }
-  .ub-ends { flex-direction: column; gap: var(--space-2); }
   .ub-end--hi { text-align: left; }
   .ub-end { max-width: none; }
 }

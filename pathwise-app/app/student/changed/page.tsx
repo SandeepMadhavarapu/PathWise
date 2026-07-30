@@ -418,6 +418,10 @@ export default function ChangedPage() {
           one reading out, the span collapses to a point and takes a verdict colour for the first
           time. The panels below keep the full before/after detail. */}
       <div className="section-head">The finding, against the cliff it turns on</div>
+      {/* The settled verdict is read off the ledger's own band, exactly as the After panel below
+          does — `afterStatus` is `BAND_STATUS[settled.band]`. It said "On track" as a literal,
+          which is the one thing this product never does: 342 of 365 with 23 days left is amber,
+          and the band was printing a green tick beside a panel printing "Attention". */}
       <UncertaintyBand
         lo={settled.fullTimeDays}
         hi={pooled.fullTimeDays}
@@ -426,7 +430,8 @@ export default function ChangedPage() {
         settled={added}
         loLabel="if the level change holds — OPT at the master's level preserved"
         hiLabel="if it can't be shown — OPT at this level would be gone"
-        settledLabel="On track"
+        settledLabel={STATUS[afterStatus].word}
+        settledStatus={STATUS[afterStatus].glyph}
         marginDays={settled.daysToCliff}
       />
 

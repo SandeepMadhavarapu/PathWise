@@ -33,6 +33,7 @@
 //    drawing cannot silently clip a reading, and it is never presented as a limit — the only limit
 //    on this track is the cliff, which comes from the rulepack.
 
+import type { StatusKey } from "@/lib/tokens";
 import { StatusGlyph } from "./StatusGlyph";
 
 /** Rounded up past the higher reading so the span always fits with air. Presentation only. */
@@ -54,6 +55,7 @@ export function UncertaintyBand({
   loLabel,
   hiLabel,
   settledLabel,
+  settledStatus,
   marginDays,
   compact = false,
 }: {
@@ -69,7 +71,23 @@ export function UncertaintyBand({
   settled: boolean;
   loLabel: string;
   hiLabel: string;
+  /** The settled verdict IN WORDS — the caller reads it off the engine, never a literal. */
   settledLabel: string;
+  /**
+   * The settled verdict's STATUS, and the reason this prop exists.
+   *
+   * This component used to assume that settling a question settles it WELL: it drew the done glyph,
+   * the done text colour and a green fill whenever `settled` was true. On the demo record that was
+   * flatly wrong. Resolving the level change leaves 342 of 365 days used with 23 to spare, and the
+   * ledger's own verdict for that is `amber` — approaching a limit. So the band displayed a green
+   * tick and "On track" directly above a panel that correctly read "Attention", and the two
+   * disagreed on screen about the same number.
+   *
+   * A finding can settle into any status. Deriving it here is the difference between showing what
+   * the engine concluded and showing what the component hoped it concluded — and this product has
+   * exactly one rule it cannot break: the surface never claims more than the arithmetic.
+   */
+  settledStatus: StatusKey;
   /** Distance from the settled answer to the cliff, shown only once there is one answer. */
   marginDays?: number;
   /** The landing's smaller rendering: same geometry, no end labels. */
@@ -98,9 +116,13 @@ export function UncertaintyBand({
         : `${loLabel}; ${hiLabel}.`);
 
   return (
-    <div className={`ub${settled ? " ub--settled" : ""}${compact ? " ub--compact" : ""}`}>
+    <div
+      className={`ub${settled ? ` ub--settled ub--${settledStatus}` : ""}${
+        compact ? " ub--compact" : ""
+      }`}
+    >
       <div className="ub-head">
-        <StatusGlyph status={settled ? "done" : "idle"} />
+        <StatusGlyph status={settled ? settledStatus : "idle"} />
         <span className="ub-verdict">{settled ? settledLabel : "Unable to verify"}</span>
         {!settled ? (
           <span className="ub-range">
@@ -146,20 +168,17 @@ export function UncertaintyBand({
         ) : null}
       </div>
 
-      {/* The legend. The numbers moved onto the plot, so these are the annotations only — each keyed
-          by its own value so the mapping survives even where the text sits at a container edge. */}
-      {!compact ? (
-        <div className="ub-ends" aria-hidden="true">
-          <span className="ub-end">
-            <span className="ub-end-k">{lo}</span> {settled ? settledLabel : loLabel}
-          </span>
-          {!settled ? (
-            <span className="ub-end ub-end--hi">
-              <span className="ub-end-k">{hi}</span> {hiLabel}
-            </span>
-          ) : null}
-        </div>
-      ) : null}
+      {/* A legend used to sit here, repeating `loLabel` and `hiLabel` beneath the plot. It was
+          removed rather than restyled, because it was saying things the screen already says:
+
+            · unsettled — "342 if the level change holds — OPT at the master's level preserved" is
+              verbatim the caption on the reading card 200px below it, so one screen carried the
+              same sentence twice;
+            · settled — it collapsed to "342 On track", which is the header of this very component.
+
+          It was `aria-hidden`, so it was decoration by its own admission, and the two numbers it
+          keyed are already pinned to the span's ends as ticks. `loLabel` and `hiLabel` are still
+          load-bearing: they carry the meaning into the accessible description above. */}
     </div>
   );
 }

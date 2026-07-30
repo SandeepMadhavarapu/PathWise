@@ -26,6 +26,13 @@ import { StatusGlyph } from "./StatusGlyph";
 import { Capsule } from "./Capsule";
 import { UncertaintyBand } from "./UncertaintyBand";
 
+/** A ledger band in the app's own status words — the same three the dashboard and the plan use. */
+const BAND_WORD: Record<"green" | "amber" | "red", string> = {
+  green: "On track",
+  amber: "Attention",
+  red: "Blocked",
+};
+
 /** How a finding's verdict is worded on a one-line row. The full vocabulary lives in FindingDetail. */
 const VERDICT: Record<Finding["result"], string> = {
   ineligible: "Blocked",
@@ -140,6 +147,10 @@ export function SystemsHero() {
               Watch it change its mind →
             </Link>
           </div>
+          {/* The settled props are unreachable here — this band is never settled on the landing —
+              but they are derived rather than typed all the same, so they cannot become a stale
+              literal if that ever changes. "On track" was wrong on the record it describes: the
+              ledger bands 342 days amber. */}
           <UncertaintyBand
             compact
             lo={readings.settled.fullTimeDays}
@@ -149,7 +160,8 @@ export function SystemsHero() {
             settled={false}
             loLabel="if the level change holds"
             hiLabel="if it can't be shown"
-            settledLabel="On track"
+            settledStatus={statusFromBand(readings.settled.band)}
+            settledLabel={BAND_WORD[readings.settled.band]}
           />
           <p className="sh-refusal-why">
             One missing document — the form recording her level change between two schools. The same
