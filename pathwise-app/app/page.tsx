@@ -2,7 +2,12 @@ import Link from "next/link";
 // The coverage claim in the strip below is a count out of rulepacks/coverage.json, not a boast typed
 // into a link label — the same file the /coverage map is drawn from.
 import { STATE_COUNT } from "@/lib/coverage";
-import { MODELLED_COUNT, MODELLED_NAMES, SOURCED_ONLY_COUNT } from "@/lib/jurisdiction-coverage";
+import {
+  FULLY_MODELLED_COUNT,
+  FULLY_MODELLED_NAMES,
+  PARTIALLY_MODELLED_COUNT,
+  SOURCED_ONLY_COUNT,
+} from "@/lib/jurisdiction-coverage";
 import { Callout } from "@/components/Callout";
 import { SystemsHero } from "@/components/SystemsHero";
 import { Capsule } from "@/components/Capsule";
@@ -168,10 +173,18 @@ export default function Landing() {
             <span>
               <span className="ms-k">The rules are data, not code.</span> Every rule is a cited, dated
               JSON file the engines read —{" "}
-              {MODELLED_COUNT === 1
-                ? `${MODELLED_NAMES[0]} is fully modelled`
-                : `${MODELLED_COUNT} states are fully modelled`}
-              , {SOURCED_ONLY_COUNT} more have their deciding agency and published rule on record and
+              {/* Four honest tiers, each counted from what the packs declare. This said "3 states
+                  are fully modelled" — the count of jurisdictions that can answer ANYTHING, printed
+                  under the word "fully". Only Virginia has every domain modelled; Tennessee and
+                  Texas are partial residency with no aid pack at all, which is exactly what the
+                  coverage map one click away says about them. */}
+              {FULLY_MODELLED_COUNT === 1
+                ? `${FULLY_MODELLED_NAMES[0]} is modelled in full`
+                : `${FULLY_MODELLED_COUNT} states are modelled in full`}
+              {PARTIALLY_MODELLED_COUNT > 0
+                ? `, ${PARTIALLY_MODELLED_COUNT} more are partially modelled and say which part`
+                : ""}
+              , {SOURCED_ONLY_COUNT} have their deciding agency and published rule on record and
               linked, and all {STATE_COUNT} states and DC carry a status derived from the packs
               themselves — including the ones PathWise could not verify at all.
             </span>

@@ -27,8 +27,9 @@ import {
 import {
   COVERAGE,
   LEVEL_COUNTS,
-  MODELLED_COUNT,
-  MODELLED_NAMES,
+  FULLY_MODELLED_COUNT,
+  FULLY_MODELLED_NAMES,
+  PARTIALLY_MODELLED_COUNT,
   SOURCED_ONLY_COUNT,
   type DomainCoverage,
   type JurisdictionCoverage,
@@ -417,7 +418,11 @@ function RulePackViewer() {
 }
 
 export default function CoveragePage() {
-  const modelled = MODELLED_NAMES.length === 1 ? MODELLED_NAMES[0] : `${MODELLED_COUNT} states`;
+  // The heading of the page whose whole job is honest coverage claimed "3 states are fully
+  // modelled" while its own tiles, one scroll below, badged two of those three "partial" and
+  // "source captured". Same constant, same bug as the landing.
+  const modelled =
+    FULLY_MODELLED_NAMES.length === 1 ? FULLY_MODELLED_NAMES[0] : `${FULLY_MODELLED_COUNT} states`;
   const notModelled = LEVEL_COUNTS.not_modelled;
 
   return (
@@ -425,9 +430,14 @@ export default function CoveragePage() {
       <div className="jintro surface">
         <div className="jintro-eyebrow">Coverage · {STATE_COUNT} states + DC</div>
         <h2>
-          {MODELLED_COUNT === 1
-            ? `${modelled} is fully modelled.`
-            : `${modelled} are fully modelled.`}{" "}
+          {FULLY_MODELLED_COUNT === 1
+            ? `${modelled} is modelled in full.`
+            : `${modelled} are modelled in full.`}{" "}
+          {PARTIALLY_MODELLED_COUNT > 0
+            ? `${PARTIALLY_MODELLED_COUNT} more ${
+                PARTIALLY_MODELLED_COUNT === 1 ? "is" : "are"
+              } partially modelled. `
+            : ""}
           Every other jurisdiction says exactly how far PathWise has got.
         </h2>
         <p>

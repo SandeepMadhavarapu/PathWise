@@ -186,13 +186,45 @@ export const LEVEL_COUNTS: Record<CapabilityLevel, number> = COVERAGE.reduce(
   { modelled: 0, partial: 0, sourced_only: 0, not_modelled: 0, unable_to_verify: 0 },
 );
 
-/** The jurisdictions whose engines can return a determinate answer in at least one domain. */
-export const MODELLED = COVERAGE.filter((c) => c.decidesAnything);
-export const MODELLED_NAMES = MODELLED.map((c) => c.name);
-export const MODELLED_COUNT = MODELLED.length;
+/**
+ * Jurisdictions whose engines can return a determinate answer in AT LEAST ONE domain.
+ *
+ * Renamed from `MODELLED_COUNT`, because that name is what caused the bug this comment exists to
+ * prevent recurring. Three screens read it and rendered it as "N states are fully modelled" — a
+ * strictly stronger claim than this filter makes. It was true while Virginia was the only
+ * registered jurisdiction; registering Tennessee and Texas, which declare `partial` residency and
+ * ship no aid pack at all, silently turned a correct sentence into a false one on the landing page,
+ * on /check, and in the /coverage heading — directly above tiles badging those two states
+ * "partial" and "source captured". The page contradicted itself one scroll apart.
+ *
+ * If you want the sentence "fully modelled", you want FULLY_MODELLED below. This one answers a
+ * narrower question: can the engines say anything determinate here at all?
+ */
+export const DECIDES_ANYTHING = COVERAGE.filter((c) => c.decidesAnything);
+export const DECIDES_ANYTHING_COUNT = DECIDES_ANYTHING.length;
 
-/** Everything short of that — the honest remainder, in the product's own words. */
-export const UNMODELLED_COUNT = COVERAGE.length - MODELLED_COUNT;
+/**
+ * FULLY modelled: every domain PathWise models is at `modelled` for this jurisdiction.
+ *
+ * Tested with `every`, not by reading `furthest`. `furthest` is the BEST level across domains, so a
+ * jurisdiction with residency modelled and aid unread would satisfy it — which is the same class of
+ * overclaim, one step subtler. The only jurisdiction that can be described as fully modelled is one
+ * with nothing left partial or unread.
+ */
+export const FULLY_MODELLED = COVERAGE.filter((c) =>
+  c.domains.every((d) => d.level === 'modelled'),
+);
+export const FULLY_MODELLED_NAMES = FULLY_MODELLED.map((c) => c.name);
+export const FULLY_MODELLED_COUNT = FULLY_MODELLED.length;
+
+/** Authored, but not all the way — declared `partial` in at least one domain, and nothing unread. */
+export const PARTIALLY_MODELLED = COVERAGE.filter(
+  (c) => !c.domains.every((d) => d.level === 'modelled') && c.domains.some((d) => d.level === 'partial'),
+);
+export const PARTIALLY_MODELLED_COUNT = PARTIALLY_MODELLED.length;
+
+/** Everything short of a determinate answer anywhere — the honest remainder. */
+export const UNMODELLED_COUNT = COVERAGE.length - DECIDES_ANYTHING_COUNT;
 
 /** Jurisdictions with a verified official source but no authored rules. */
 export const SOURCED_ONLY_COUNT = COVERAGE.filter((c) => c.furthest === 'sourced_only').length;

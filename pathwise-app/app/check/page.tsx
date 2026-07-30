@@ -25,7 +25,7 @@ import {
 import type { StatusKey } from "@/lib/tokens";
 import type { CapabilityLevel } from "@/lib/rulepacks/schema";
 import { JURISDICTIONS } from "@/lib/coverage";
-import { MODELLED_NAMES } from "@/lib/jurisdiction-coverage";
+import { FULLY_MODELLED_NAMES, PARTIALLY_MODELLED_COUNT } from "@/lib/jurisdiction-coverage";
 import { assertDefaultIsRegistered, DEFAULT_CHECK_JURISDICTION } from "@/lib/rulepacks";
 
 // The statuses this flow offers (a curated subset of ImmigrationStatus).
@@ -452,9 +452,14 @@ export default function CheckPage() {
           <li>
             An explicit <strong>&ldquo;not yet read&rdquo;</strong> or{" "}
             <strong>&ldquo;unable to verify&rdquo;</strong> wherever the rules or your record cannot
-            settle the question — {MODELLED_NAMES.length === 1 ? MODELLED_NAMES[0] : "some states"}{" "}
-            {MODELLED_NAMES.length === 1 ? "is" : "are"} fully modelled, and for the rest this will
-            say so plainly and link the office that does decide rather than guess
+            settle the question —{" "}
+            {FULLY_MODELLED_NAMES.length === 1 ? FULLY_MODELLED_NAMES[0] : "some states"}{" "}
+            {FULLY_MODELLED_NAMES.length === 1 ? "is" : "are"} modelled in full
+            {PARTIALLY_MODELLED_COUNT > 0
+              ? `, ${PARTIALLY_MODELLED_COUNT} more partially`
+              : ""}
+            , and for the rest this will say so plainly and link the office that does decide rather
+            than guess
           </li>
         </ul>
         <p className="check-privacy">
