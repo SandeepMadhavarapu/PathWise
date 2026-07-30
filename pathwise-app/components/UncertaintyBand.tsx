@@ -79,6 +79,8 @@ export function UncertaintyBand({
   const left = pct(lo, max);
   // Collapsed onto `lo` when settled — this single value is what the transition animates.
   const right = `${Number((100 - ((settled ? lo : hi) / max) * 100).toFixed(3))}%`;
+  // The floor ends where the dispute begins, so it shares an edge with the span's left.
+  const floorRight = `${Number((100 - (lo / max) * 100).toFixed(3))}%`;
   const crosses = !settled && lo < cliff && hi > cliff;
 
   /**
@@ -89,9 +91,10 @@ export function UncertaintyBand({
   const label = settled
     ? `${lo} of ${cliff}. One answer: ${settledLabel}.` +
       (marginDays !== undefined ? ` ${marginDays} days of margin before the ${unit}.` : "")
-    : `Two readings, ${lo} and ${hi}, measured against the ${unit}. ` +
+    : `${lo} is established under both readings. The ${hi - lo} between ${lo} and ${hi} are in ` +
+      `dispute, measured against the ${unit}. ` +
       (crosses
-        ? `They fall on opposite sides of it, so this is unable to verify: ${loLabel}; ${hiLabel}.`
+        ? `The two readings fall on opposite sides of it, so this is unable to verify: ${loLabel}; ${hiLabel}.`
         : `${loLabel}; ${hiLabel}.`);
 
   return (
@@ -115,7 +118,22 @@ export function UncertaintyBand({
         <span className="ub-cliff" style={{ left: pct(cliff, max) }} aria-hidden="true">
           <span className="ub-cliff-lbl">{unit}</span>
         </span>
+        {/* The ESTABLISHED floor: 0 to `lo` is counted under BOTH readings, so it is not in dispute
+            at all. Drawing it as empty rail — which is what this did at first — implied nothing was
+            known below 342, when 342 days are certain and only the 210 above them are contested.
+            The disputed region is the hatch; this is the part that is simply true. */}
+        <span className="ub-floor" style={{ right: floorRight }} aria-hidden="true" />
         <span className="ub-span" style={{ left, right }} aria-hidden="true" />
+
+        {/* The two numbers, pinned to the ends of the span rather than to the ends of the box. */}
+        <span className="ub-tick ub-tick--lo" style={{ left }} aria-hidden="true">
+          <span className="ub-tick-n">{lo}</span>
+        </span>
+        {!settled ? (
+          <span className="ub-tick ub-tick--hi" style={{ right }} aria-hidden="true">
+            <span className="ub-tick-n">{hi}</span>
+          </span>
+        ) : null}
         {/* Only once there is a single answer, and only where there is room to draw it. */}
         {settled && marginDays !== undefined && !compact ? (
           <span
@@ -128,14 +146,16 @@ export function UncertaintyBand({
         ) : null}
       </div>
 
+      {/* The legend. The numbers moved onto the plot, so these are the annotations only — each keyed
+          by its own value so the mapping survives even where the text sits at a container edge. */}
       {!compact ? (
         <div className="ub-ends" aria-hidden="true">
           <span className="ub-end">
-            <span className="ub-end-n">{lo}</span> {settled ? settledLabel : loLabel}
+            <span className="ub-end-k">{lo}</span> {settled ? settledLabel : loLabel}
           </span>
           {!settled ? (
             <span className="ub-end ub-end--hi">
-              <span className="ub-end-n">{hi}</span> {hiLabel}
+              <span className="ub-end-k">{hi}</span> {hiLabel}
             </span>
           ) : null}
         </div>

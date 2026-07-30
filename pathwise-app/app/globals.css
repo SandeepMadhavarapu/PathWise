@@ -1756,11 +1756,19 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .ub-range { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .ub-range strong { color: var(--text); font-weight: 700; }
 
-/* 26px of headroom above the rail for the cliff label, and the same below for the margin label. */
-.ub-track { position: relative; height: 10px; margin: 30px 0 26px; background: var(--canvas);
-  border: 1px solid var(--border); border-radius: var(--radius-pill); }
+/* The track is EMPTY space, and has to look it. It was painted --canvas, which is the same value the
+   page behind it uses — and the span sat on it in --idle-soft, which computes to #f3f4f5 against the
+   track's #f6f7f8. Three parts in 255, a contrast ratio of about 1.02:1: the signature drawing in
+   this product was invisible, and every automated check passed because geometry, border-style and
+   the crossing were all correct. A real browser and a human eye caught it.
+   White track, hatched span. */
+/* The bottom margin holds two stacked rows below the rail: the endpoint ticks, and — once settled —
+   the margin label under them. Reserved at the same height in BOTH states on purpose, so the
+   collapse does not shift the layout underneath it while the reader is watching the bar. */
+.ub-track { position: relative; height: 12px; margin: 32px 0 58px; background: var(--surface);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-pill); }
 
-.ub-cliff { position: absolute; top: -9px; bottom: -9px; width: 1px; background: var(--status-blocked); }
+.ub-cliff { position: absolute; top: -11px; bottom: -11px; width: 2px; background: var(--status-blocked); border-radius: 1px; }
 .ub-cliff-lbl {
   position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%);
   font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
@@ -1770,40 +1778,84 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* `left` and `right` rather than a width, so the two ends are independent — the collapse moves one
    edge and leaves the other exactly where it was, which is what "one reading was ruled out" looks
    like. Both are set inline, server-side, from real values. */
+/* The established floor. Solid, because it is not in dispute — and neutral until the record settles
+   the rest, because a green bar under an unresolved finding would read as a verdict. It turns green
+   in the same beat the verdict does, which is the point: nothing here is coloured before there is
+   something to be coloured about. */
+.ub-floor {
+  position: absolute; top: -1px; bottom: -1px; left: 0;
+  background: var(--status-idle);
+  border-radius: var(--radius-pill);
+  transition: background var(--dur-slow) var(--ease) 240ms;
+}
+.ub--settled .ub-floor { background: var(--status-done); }
+
+/* HATCHED, not tinted. Hatching is the conventional way to draw a region a measurement could be
+   anywhere inside, and — decisively for this product — it is achromatic: it says "indeterminate"
+   without borrowing amber, which would say "you are approaching a limit", a claim PathWise has not
+   made. It also survives being printed and being colourblind, because the signal is texture. */
 .ub-span {
   position: absolute; top: -3px; bottom: -3px;
-  background: var(--idle-soft);
-  border: 1.5px dashed var(--border-strong);
+  background-color: var(--surface);
+  background-image: repeating-linear-gradient(
+    45deg, transparent 0 3px, var(--border-strong) 3px 6px
+  );
+  border: 1.5px dashed var(--text-muted);
   border-radius: var(--radius-pill);
-  transition: right var(--dur-slow) var(--ease), background var(--dur-slow) var(--ease) 240ms,
+  transition: right var(--dur-slow) var(--ease), background-color var(--dur-slow) var(--ease) 240ms,
     border-color var(--dur-slow) var(--ease) 240ms, border-style var(--dur-slow) step-end 240ms;
 }
+/* One answer: the disputed region has closed to nothing, so it is faded out rather than left as a
+   3px sliver of border at the point it collapsed onto. The solid floor beneath is what remains, and
+   it is the answer. Opacity waits for the collapse to finish — 360ms — so the shrink is seen. */
 .ub--settled .ub-span {
-  background: var(--status-done);
-  border-style: solid;
-  border-color: var(--status-done);
+  opacity: 0;
+  transition: right var(--dur-slow) var(--ease), opacity 160ms var(--ease) 360ms;
 }
+
+/* The numbers, under the ends they actually describe.
+   They were in a `space-between` row at the CONTAINER's extremes while the span ran 57% to 92% — so
+   "342" was captioned nearly 750px to the left of the end it labelled, and a reader mapped it to the
+   wrong point on the scale. A label on a plot belongs at its datum. */
+.ub-tick { position: absolute; top: calc(100% + 7px); font-variant-numeric: tabular-nums; }
+.ub-tick::before {
+  content: ""; position: absolute; top: -7px; height: 7px; width: 1px;
+  background: var(--text-muted);
+}
+.ub-tick-n { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+.ub-tick--lo { transform: translateX(-1px); }
+.ub-tick--lo::before { left: 0; }
+.ub-tick--hi { text-align: right; transform: translateX(1px); }
+.ub-tick--hi::before { right: 0; }
 
 /* The consequence of there being one answer: the distance left before the line. */
 .ub-margin { position: absolute; top: 50%; height: 1px; background: var(--border-strong);
   animation: ubMarginIn 200ms var(--ease) 420ms backwards; }
+/* Below the endpoint tick, not on top of it. At 6px this label and the "342" tick were drawn into
+   the same 80px of space and struck through each other — visible only in a screenshot, which is
+   where it was found. */
 .ub-margin-lbl {
-  position: absolute; top: 6px; right: 0;
+  position: absolute; top: 34px; right: 0;
   font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--text-muted); white-space: nowrap;
 }
 @keyframes ubMarginIn { from { opacity: 0; } }
 
-.ub-ends { display: flex; justify-content: space-between; gap: var(--space-4); }
-.ub-end { font-size: 12px; line-height: 1.45; color: var(--text-secondary); max-width: 30ch; }
+.ub-ends { display: flex; justify-content: space-between; gap: var(--space-4);
+  padding-top: var(--space-3); border-top: 1px dashed var(--border); }
+.ub-end { font-size: 12px; line-height: 1.45; color: var(--text-secondary); max-width: 34ch; }
 .ub-end--hi { text-align: right; }
-.ub-end-n { display: block; font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
-  color: var(--text); font-variant-numeric: tabular-nums; }
+/* Keys the annotation to its datum on the plot above. Mono, because it is a reference to a value
+   rather than the value itself. */
+.ub-end-k { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--text);
+  font-variant-numeric: tabular-nums; }
 
 /* The landing rendering: same geometry, no end labels, tighter. It is a fourth row in a stack of
    three findings, not a section of its own. */
-.ub--compact { padding: var(--space-3) var(--space-4); }
-.ub--compact .ub-track { margin: 26px 0 6px; }
+.ub--compact { padding: var(--space-3) var(--space-4) var(--space-4); }
+/* The bottom margin has to clear the endpoint ticks, which did not exist when this was 6px — the
+   numbers were being drawn hard against the card's bottom border. */
+.ub--compact .ub-track { margin: 26px 0 30px; }
 .ub--compact .ub-verdict { font-size: 14px; }
 
 /* A phone can hold the track — it must, because a span that stacks stops being a measurement — but
