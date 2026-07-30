@@ -131,11 +131,13 @@ function buildChanges(
     },
     {
       k: "Evidence linked",
+      // The file is described by what it IS — type, name, size, fingerprint — not by the internal
+      // id it was filed under, which told a reader nothing they could use.
       v: read
         ? `${evidence.doc_type} · ${evidence.file_ref} (${formatBytes(read.sizeBytes)}${
             shortHash(read) ? `, SHA-256 ${shortHash(read)}…` : ""
-          }) is on record as ${evidence.id}, and sits under the level change — and through it, under all ${cptCount} CPT authorizations whose level it settles.`
-        : `${evidence.id} sits under the level change, and through it under all ${cptCount} CPT authorizations whose level it settles.`,
+          }) is on record, and sits under the level change — and through it, under all ${cptCount} CPT authorizations whose level it settles.`
+        : `The document sits under the level change, and through it under all ${cptCount} CPT authorizations whose level it settles.`,
     },
     {
       k: "Analysis recalculated",
@@ -507,11 +509,11 @@ export default function ChangedPage() {
                 <span>OPT at the master&apos;s level</span>
                 <strong>{settled.optEligible ? "Still available" : "Gone"}</strong>
               </li>
+              {/* Named, not keyed. This printed the internal record id and the raw confidence rung
+                  — "ev-f7aff64da265 · asserted" — as the answer to "what is this resting on?". */}
               <li className="wc-fact">
                 <span>Resting on</span>
-                <strong>
-                  {evidence.id} · {levelChange?.confidence}
-                </strong>
+                <strong>The document you attested, at your word</strong>
               </li>
             </ul>
 

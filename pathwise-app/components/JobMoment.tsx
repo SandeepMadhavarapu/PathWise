@@ -24,6 +24,23 @@ const DOMAINS: { key: Domain; office: string }[] = [
   { key: "aid", office: "financial aid" },
 ];
 
+/**
+ * The derivation, made readable — WITHOUT touching the string itself.
+ *
+ * `consequence-map.json` carries derivations like `employment_start_date + 10 days`, and that text
+ * is not prose: `resolveDeadline` in the consequence engine matches `+ N days` against it and tests
+ * it for `employment_start_date` / `program_completion_date` to pick the anchor. It is machine
+ * input, so rewriting it in the pack would change deterministic behaviour and is out of the
+ * question. What was wrong is only that the raw identifier reached the screen.
+ *
+ * So the transformation happens here, at the render edge: the underscored anchor becomes words and
+ * the arithmetic is left exactly as authored. Nothing upstream is altered, and an anchor this does
+ * not recognise still renders — just spaced — rather than disappearing.
+ */
+function readableDerivation(derivation: string): string {
+  return derivation.replace(/\b[a-z]+(?:_[a-z]+)+\b/g, (token) => token.replace(/_/g, " "));
+}
+
 /** ["a", "b", "c"] → "a, b and c". */
 function listPhrase(items: string[]): string {
   if (items.length <= 1) return items.join("");
@@ -114,12 +131,19 @@ export function JobMoment() {
                     {c.newDeadline && (
                       <div className="ci-deadline">
                         <strong>Deadline{c.newDeadline.date ? ` ${c.newDeadline.date}` : ""}</strong>
-                        <span className="ci-derivation"> — {c.newDeadline.derivation}</span>
+                        <span className="ci-derivation"> — {readableDerivation(c.newDeadline.derivation)}</span>
                         <div className="ci-miss">If missed: {c.newDeadline.consequenceOfMissing}</div>
                       </div>
                     )}
                     {c.supersedes && (
-                      <div className="ci-stale">Re-run needed · supersedes: {c.supersedes.join(", ")}</div>
+                      <div className="ci-stale">
+                        {/* The count, not the keys. This printed the internal finding ids —
+                            "supersedes: opt_risk_finding, unemployment_finding" — and the effect
+                            sentence directly above it already says the finding must be recomputed,
+                            so the ids were the only thing the line added. */}
+                        Supersedes {c.supersedes.length} earlier{" "}
+                        {c.supersedes.length === 1 ? "finding" : "findings"}
+                      </div>
                     )}
                     <div className="ci-cite">
                       <span className="cite">{c.cite.authority}</span>

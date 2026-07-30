@@ -89,7 +89,7 @@ function differences(a: unknown, b: unknown, path: string, out: Difference[]): v
  *
  * Note what is NOT in here: not one number. The demo's arithmetic — 342, 552, 210, 288, 54, 23, the
  * 365-day cliff, the 12-month budget, the 90/150 unemployment caps, the aid deadline set, the step
- * ORDER and the step COUNT — is untouched by every change below. All thirty-seven are prose,
+ * ORDER and the step COUNT — is untouched by every change below. All thirty-eight are prose,
  * citation scoping, or two added fields.
  */
 const INTENDED_CHANGES: Difference[] = [
@@ -342,6 +342,34 @@ const INTENDED_CHANGES: Difference[] = [
     path: "marcus:domicile-analysis.construction[2].kind",
     before: undefined,
     after: "parental_status_alone_insufficient",
+  },
+
+  // ---- 8. One provision sentence stops printing an internal file id, and reads as English. ------
+  //
+  // The domicile provision's note in va-aid.json ended "(see va-domicile pack)" — a pointer to
+  // another rule pack BY ITS FILENAME, printed inside a legal finding a student reads. The
+  // cross-reference is worth keeping; naming a file in the repository to make it is not. It now
+  // says the same thing about the same rules: the Virginia domicile determination, made under
+  // Virginia's residency rules.
+  //
+  // The second half of the same sentence was ungrammatical and lower-cased mid-paragraph. The
+  // tally opens a sentence — the note before it ends with a full stop — and read "…pack). none of
+  // its one required item on record yet". aid-eligibility.ts now renders the 0-of-1 case as a
+  // sentence.
+  //
+  // Presentation only, and provably so: `note` is carried to the claim and rendered (nothing in
+  // lib/ branches on its contents), and the tally is a display string composed from counts that did
+  // not move. Everything the finding turns on is identical either side of this change — result
+  // `ineligible`, the SCHEV VASA citation and authority, deciding office `financial_aid`, 3
+  // unknowns, 7 reasoning steps, and the untouched "; still missing: Domicile established." clause
+  // carried through verbatim. This is the only entry in this file that touches an aid claim, and it
+  // is the only difference the diff reports for `priya:aid-eligibility`.
+  {
+    path: "priya:aid-eligibility.reasoning_steps[3].claim",
+    before:
+      "Domicile provision — Qualifies via VA domicile (see va-domicile pack). none of its one required item on record yet; still missing: Domicile established.",
+    after:
+      "Domicile provision — Qualifies through Virginia domicile, as determined under Virginia's residency rules. Its one required item is not yet on record; still missing: Domicile established.",
   },
 ];
 

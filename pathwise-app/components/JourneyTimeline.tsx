@@ -5,7 +5,7 @@
 // real CPT ledger, so the timeline and the dashboard can never disagree.
 
 import { useState } from "react";
-import type { Event, Institution, ProgramLevel, Student } from "@/lib/types";
+import type { Confidence, Event, Institution, ProgramLevel, Student } from "@/lib/types";
 import {
   CLIFF_DAYS,
   FULL_TIME_HOURS_THRESHOLD,
@@ -86,6 +86,26 @@ function levelLabel(level?: ProgramLevel): string {
 
 const statusLabel = formatImmigrationStatus;
 
+/**
+ * The confidence ladder, said in words instead of printed as its key.
+ *
+ * This rendered `Confidence: extracted.` — the raw enum, on the screen a reader opens to see what a
+ * finding rests on. Each rung means something specific about HOW a fact reached the record, and the
+ * distinction is the point of having the ladder at all, so it is worth a sentence each.
+ */
+function confidenceNote(confidence: Confidence): string {
+  switch (confidence) {
+    case "confirmed":
+      return "Confirmed against the issuing record.";
+    case "extracted":
+      return "Taken from the document itself.";
+    case "asserted":
+      return "Stated by the student, with a document attached.";
+    case "inferred":
+      return "Inferred from the surrounding record, not from a document.";
+  }
+}
+
 // Both label helpers moved to lib/labels.ts when the finding screens needed them too — the timeline
 // and the reasoning chain must not be able to call the same event two different things.
 const titleFor = eventTypeLabel;
@@ -162,14 +182,17 @@ function rowForEvent(ev: Event, inst: Institution | undefined, ledger: LedgerRes
     meta,
     dateLabel,
     periodLabel,
-    typeLabel: ev.type,
+    // Empty: the row's own title already names the kind of event in English, and this slot used to
+    // repeat it as the internal key beside it ("CPT authorization  cpt_auth"). Only a genuine
+    // qualifier earns the chip now — see the derived rows below.
+    typeLabel: "",
     status,
     statusLine,
     evidence: ev.evidence_ids,
     evidenceNote:
       ev.evidence_ids.length === 0
         ? "No document linked — this rests on the student record alone."
-        : `Confidence: ${ev.confidence}.`,
+        : confidenceNote(ev.confidence),
     why,
     cite,
   };
@@ -201,7 +224,7 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
       meta: `Held continuously since ${fmtDate(since)}`,
       dateLabel: fmtDate(since),
       periodLabel: `${fmtDate(since)} → present`,
-      typeLabel: "status_change",
+      typeLabel: "",
       status: "verified",
       statusLine: "On the student record and unchanged since — no prior status on file.",
       evidence: [],
@@ -258,7 +281,7 @@ export function buildJourney(student: Student, events: Event[], ledger: LedgerRe
       meta: `${prev.heading} (${levelLabel(prev.level).toLowerCase()}) → ${cur.heading} (${levelLabel(cur.level).toLowerCase()})`,
       dateLabel: `between ${lastPrev.dateLabel.split(" → ").pop()} and ${firstCur.dateLabel.split(" → ")[0]}`,
       periodLabel: `Somewhere between ${lastPrev.dateLabel.split(" → ").pop()} and ${firstCur.dateLabel.split(" → ")[0]} — the exact date is not on record.`,
-      typeLabel: "level_change (derived)",
+      typeLabel: "Derived",
       status: "unknown",
       statusLine: "Inferred from the order of her records, not from a document.",
       evidence: [],
@@ -331,7 +354,10 @@ function JourneyRow({
               <div className="jfact">
                 <div className="k">Type</div>
                 <div className="v">
-                  {row.title} <Capsule>{row.typeLabel}</Capsule>
+                  {/* The chip is rendered only when it has something to add. It used to carry the
+                      event's internal key beside the English title — "Level change to master's"
+                      followed by "level_change (derived)". */}
+                  {row.title} {row.typeLabel ? <Capsule>{row.typeLabel}</Capsule> : null}
                 </div>
               </div>
               <div className="jfact">
@@ -345,12 +371,13 @@ function JourneyRow({
             {row.evidence.length > 0 || row.evidenceNote ? (
               <div className="jfact jev-block">
                 <div className="k">Evidence this rests on</div>
+                {/* The document, named. The internal filing id used to sit beside it
+                    ("Form I-20  i20-mast-1"); a reader gains nothing from the key, and three
+                    separate I-20s reading "Form I-20" three times is simply the truth. */}
                 {row.evidence.length > 0 ? (
                   <ul className="jev">
                     {row.evidence.map((id) => (
-                      <li key={id}>
-                        {evidenceLabel(id)} <span className="jev-id">{id}</span>
-                      </li>
+                      <li key={id}>{evidenceLabel(id)}</li>
                     ))}
                   </ul>
                 ) : null}

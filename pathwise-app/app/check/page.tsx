@@ -668,16 +668,14 @@ export default function CheckPage() {
               {jx.packs ? (
                 <>
                   {" — "}
-                  {jx.packs.aid ? "two rule packs" : "one rule pack"} loaded
-                  {": "}
-                  <span className="cite">{jx.packs.domicile.pack_id}</span>
-                  {jx.packs.aid ? (
-                    <>
-                      {" "}
-                      <span className="cite">{jx.packs.aid.pack_id}</span>
-                    </>
-                  ) : null}
-                  {/* No leading space: JSX would otherwise render "va-aid . Verified". */}
+                  {/* Named, not keyed. These were the pack file ids — `va-domicile`, `va-aid` — set
+                      as citation chips, which put developer shorthand directly above the reader's
+                      own verdict. The routing claim is just as strong said in English. */}
+                  {/* The state is already named in bold immediately before this, so repeating it
+                      here read "Virginia — Virginia's residency rules…". */}
+                  {jx.packs.aid
+                    ? "residency rules and state aid rules were loaded"
+                    : "residency rules were loaded"}
                   {". "}
                   Verified {jx.packs.domicile.verified_on}.
                   {!jx.packs.aid

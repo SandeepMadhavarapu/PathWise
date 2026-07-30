@@ -58,6 +58,7 @@ export default function DomicileAnalysisPage() {
         finding={analysis.finding}
         events={marcusDomicile.events}
         packId={jx.packs?.domicile.pack_id}
+        packLabel={`${jx.name} residency rules`}
         analysis={
           <DomicileAnalysisDetail
             analysis={analysis}
@@ -76,10 +77,13 @@ export default function DomicileAnalysisPage() {
       </Link>
 
       <footer className="foot">
+        {/* This printed the repository path to the file — `lib/rulepacks/va-domicile.json` — which
+            is a fact about where the source tree keeps things, not about where the rules come from.
+            The claim worth making is the second one, and it is checkable on the coverage page. */}
         <span className="privacy">No account. Nothing stored on a server.</span> · Every weight,
-        threshold, exception and section reference on this page is read from{" "}
-        <code>lib/rulepacks/{jx.packs?.domicile.pack_id ?? "—"}.json</code>. PathWise advises; the
-        office decides.
+        threshold, exception and section reference on this page is read from the {jx.name} residency
+        rules, printed in full on the <Link href="/coverage">coverage page</Link>. PathWise advises;
+        the office decides.
       </footer>
     </>
   );

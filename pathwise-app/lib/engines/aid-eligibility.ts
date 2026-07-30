@@ -371,9 +371,15 @@ export function computeAidEligibility(input: AidEligibilityRun): Finding {
   for (const c of checklists) {
     const total = c.present.length + c.missing.length;
     const items = total === 1 ? 'required item' : `of ${total} required items`;
+    // The tally opens a sentence — `note` ends with a full stop — so it has to read like one.
+    // This produced "…provision. none of its one required item on record yet", which is both
+    // lower-cased mid-paragraph and ungrammatical. Presentation only: the counts, the item names
+    // and the branch conditions are untouched.
     const tally = c.present.length
       ? `${c.present.length} ${items} on record: ${c.present.map(label).join(', ')}`
-      : `none ${total === 1 ? 'of its one required item' : items} on record yet`;
+      : total === 1
+        ? 'Its one required item is not yet on record'
+        : `None of its ${total} required items are on record yet`;
     const missingText = c.missing.length ? `; still missing: ${c.missing.map(label).join(', ')}` : '';
     steps.push({
       claim: `${label(c.id)} provision — ${c.note} ${tally}${missingText}.`,

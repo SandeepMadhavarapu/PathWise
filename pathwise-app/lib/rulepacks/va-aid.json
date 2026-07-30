@@ -46,7 +46,7 @@
     ]
   },
   "state_provisions": [
-    { "id": "domicile", "note": "Qualifies via VA domicile (see va-domicile pack).", "requires": ["domicile_established"] },
+    { "id": "domicile", "note": "Qualifies through Virginia domicile, as determined under Virginia's residency rules.", "requires": ["domicile_established"] },
     { "id": "military_dependent", "note": "Qualifies as a dependent of military personnel stationed in VA.", "requires": ["military_orders", "dependent_proof"] },
     { "id": "tuition_equity", "note": "Qualifies under tuition-equity provision.", "requires": ["va_high_school_attendance", "va_high_school_graduation", "tax_filing_evidence"], "volatility": "under_litigation" }
   ],

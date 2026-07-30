@@ -22,6 +22,7 @@ export default function ResidencyFindingPage() {
         finding={domicile}
         events={priyaEvents}
         packId={jx.packs?.domicile.pack_id}
+        packLabel={`${jx.name} residency rules`}
       />
 
       {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the

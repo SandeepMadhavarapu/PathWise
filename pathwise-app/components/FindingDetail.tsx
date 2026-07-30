@@ -41,6 +41,7 @@ export function FindingDetail({
   events = [],
   agencies,
   packId,
+  packLabel,
 }: {
   finding: Finding;
   /**
@@ -75,6 +76,8 @@ export function FindingDetail({
    * point at, and inventing one would be the exact failure the resolver exists to prevent.
    */
   packId?: string;
+  /** How to NAME that pack to a reader — e.g. "Virginia residency rules". Never its file id. */
+  packLabel?: string;
 }) {
   const status: StatusKey = statusFromFindingResult(finding.result);
 
@@ -156,8 +159,11 @@ export function FindingDetail({
             off the browser scrolls the reader to the right pack. */}
         {packId ? (
           <div className="citation-meta">
+            {/* Named for the reader, keyed for the link. The label used to print the file id
+                (`va-aid.json`) in the sentence itself; the id now lives only in the href, where it
+                belongs, and the visible text says which rules are being opened. */}
             <Link className="citation-pack" href={`/coverage#rp-tab-${packId}`}>
-              Open the rule pack this came from — <code>{packId}.json</code> →
+              Open the {packLabel ?? "rule pack"} this finding was decided by →
             </Link>
           </div>
         ) : null}
