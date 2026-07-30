@@ -46,7 +46,7 @@ export function LedgerBar({
   return (
     <div className="ledger gauge-card surface">
       <div className="gauge-head">
-        <span className="gauge-title t-card-title">CPT ledger — {ledger.level}</span>
+        <span className="gauge-title t-card-title">CPT ledger — {levelLabel(ledger.level)}</span>
         <span className="t-meta">
           {ledger.fullTimeDays} full-time days · {ledger.daysToCliff} to the cliff
         </span>

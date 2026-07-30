@@ -6,6 +6,7 @@ import {
   type OptBudgetInput,
   type OptUsageLine,
 } from "@/lib/engines/opt-budget";
+import { levelLabel } from "@/lib/engines/cpt-ledger";
 import { statusFromBand } from "@/lib/tokens";
 import { SegmentedProgress, type ProgressLegendItem } from "./SegmentedProgress";
 
@@ -83,7 +84,8 @@ export function OptBudget({
     <div className="optbudget gauge-card surface">
       <div className="gauge-head">
         <span className="gauge-title t-card-title">
-          OPT budget — {level.level} · {fmtMonths(level.monthsUsed)} of {level.budgetMonths} months used
+          OPT budget — {levelLabel(level.level)} · {fmtMonths(level.monthsUsed)} of{" "}
+          {level.budgetMonths} months used
         </span>
         <span className={`gauge-sub ${status}`}>
           {level.overByMonths > 0
@@ -168,10 +170,13 @@ export function OptBudget({
             education level — it resets at the next degree, and never carries backward.
           </>
         )}{" "}
-        {/* `wrap`, because this one is a compound authority — a CFR section AND the policy manual —
-            and at 278px it is the longest citation the app renders. Nowrap pushed /student into
-            horizontal scroll at 320px. */}
-        <span className="cite wrap">{R.cite} · USCIS Policy Manual</span>
+        {/* Plain `.cite`, deliberately. This is the longest citation the app renders (278px), and it
+            was given `wrap` to stop it pushing /student sideways at 320px — but `wrap` applies at
+            EVERY width, so on a desktop it broke the reference after "8", leaving "CFR 214.2(f)(11)"
+            on the next line. A citation split across lines mid-reference is worse than a long one.
+            The narrow case is handled where it belongs instead: `.cite` wraps below 400px globally,
+            which is the only place nowrap is the wrong answer. */}
+        <span className="cite">{R.cite} · USCIS Policy Manual</span>
       </div>
     </div>
   );

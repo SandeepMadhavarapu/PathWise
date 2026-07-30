@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
+import { computeCptLedger, levelLabel, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import type {
   Event,
   Finding,
@@ -195,6 +195,22 @@ export default function CheckPage() {
       evidence_ids: [],
       confidence: "asserted",
     }));
+
+  /**
+   * Rows that are filled in but cannot be counted, named rather than dropped.
+   *
+   * The ledger is correctly defensive: a reversed range or an implausible year yields zero days,
+   * no crash and no negative. But the SCREEN then reported "0 full-time CPT days" beside a green
+   * tick and "OPT still available" — a confident finding computed from input it had silently
+   * discarded. On a product whose entire posture is saying what it could not use, quietly ignoring
+   * a row the reader filled in is the one thing it must not do.
+   *
+   * Only rows the reader actually completed are checked, so an untouched row says nothing.
+   */
+  const unusableRows = rows
+    .map((r, i) => ({ r, i }))
+    .filter(({ r }) => r.start && r.end && r.end < r.start)
+    .map(({ i }) => i + 1);
 
   const student: Student = {
     id: "self",
@@ -585,6 +601,17 @@ export default function CheckPage() {
           + Add another CPT row
         </button>
 
+        {/* Says what will NOT be counted, before the reader presses the button — not after, and not
+            never. `role="status"` rather than `alert`: it is a note about the input, not a failure. */}
+        {unusableRows.length > 0 ? (
+          <p className="row-unusable" role="status">
+            {unusableRows.length === 1
+              ? `CPT row ${unusableRows[0]} ends before it starts, so it is not counted below.`
+              : `CPT rows ${unusableRows.join(" and ")} end before they start, so they are not counted below.`}{" "}
+            PathWise will not guess which date you meant.
+          </p>
+        ) : null}
+
         <div className="form-actions">
           <button type="submit" className="btn">
             Check my status →
@@ -650,7 +677,9 @@ export default function CheckPage() {
                       <span className="cite">{jx.packs.aid.pack_id}</span>
                     </>
                   ) : null}
-                  . Verified {jx.packs.domicile.verified_on}.
+                  {/* No leading space: JSX would otherwise render "va-aid . Verified". */}
+                  {". "}
+                  Verified {jx.packs.domicile.verified_on}.
                   {!jx.packs.aid
                     ? ` No aid pack is registered for ${stateName}, so no state-aid rule was read.`
                     : ""}
@@ -696,7 +725,13 @@ export default function CheckPage() {
               band={closestLevel ? closestLevel.band : "green"}
               detail={
                 closestLevel
-                  ? `${closestLevel.fullTimeDays} full-time CPT days at the ${closestLevel.level} level${
+                  ? // `levelLabel`, not the raw enum. This printed "at the masters level" — the
+                    // internal key — while /student, computing the same sentence from the same
+                    // ledger, printed "at the master's level".
+                    // Lowercased because it sits mid-sentence; the gauge titles use the label as-is.
+                    `${closestLevel.fullTimeDays} full-time CPT days at the ${levelLabel(
+                      closestLevel.level,
+                    ).toLowerCase()} level${
                       closestLevel.optEligible ? "; OPT still available." : "; OPT eligibility lost for this level."
                     }`
                   : "Add a CPT authorization above to see your ledger."

@@ -990,7 +990,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    ============================================================================= */
 .gauge-card { padding: var(--space-4) var(--space-5); }
 .gauge-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-3); flex-wrap: wrap; }
-.gauge-head .gauge-title { font-size: 15px; font-weight: 600; color: var(--text); text-transform: capitalize; }
+/* `text-transform: capitalize` was here to turn the raw program level ("masters") into a capital
+   in the title. It capitalises EVERY word, so it also produced "12 Of 12 Months Used" and
+   "Day 70 Of 90" — a capital O on a preposition, on the two gauges carrying the most consequential
+   numbers in the product. The level is labelled properly at source now (levelLabel), so the whole
+   title can just be written the way it should read. */
+.gauge-head .gauge-title { font-size: 15px; font-weight: 600; color: var(--text); }
 .gauge-head .gauge-sub { font-size: 13px; font-weight: 600; }
 .gauge-head .gauge-sub.done { color: var(--status-done-text); }
 .gauge-head .gauge-sub.active { color: var(--status-active-text); }
@@ -1350,6 +1355,20 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   color: var(--info); background: color-mix(in srgb, var(--info) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--info) 30%, transparent);
   border-radius: var(--radius-input); padding: 9px 14px; cursor: pointer; transition: background var(--dur-fast) var(--ease); }
 .row-add:hover { background: color-mix(in srgb, var(--info) 14%, var(--surface)); }
+/* A note about the input, not a verdict about the reader — so it takes the warm callout surface
+   the product uses for open questions, and none of the four status colours. */
+.row-unusable {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--callout-bg);
+  border: 1px solid var(--callout-border);
+  border-radius: var(--radius-input);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text);
+  max-width: 74ch;
+}
+
 .form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-5);
   padding-top: var(--space-4); border-top: 1px dashed var(--border); }
 .check-privacy { font-size: 13px; color: var(--status-done-text); font-weight: 600; }
