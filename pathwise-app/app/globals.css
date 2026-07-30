@@ -1382,6 +1382,39 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-5);
   padding-top: var(--space-4); border-top: 1px dashed var(--border); }
 .check-privacy { font-size: 13px; color: var(--status-done-text); font-weight: 600; }
+
+/* The lifetime promise, beside the network one. Deliberately NOT given a status colour: "nothing is
+   kept" is a statement about how this product is built, not a verdict on the reader's situation,
+   and chroma in this app means status. It sits on the neutral canvas with a hairline instead. */
+.check-lifetime {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--canvas);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 78ch;
+}
+.check-lifetime-k { color: var(--text); font-weight: 650; }
+
+/* A reset, not a destruction and not a navigation — so neither the red of `.row-remove` nor the
+   blue of a link. Neutral, bordered, and quieter than the submit it sits beside. */
+.check-clear {
+  flex: none;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-input);
+  padding: 10px var(--space-4);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.check-clear:hover { background: var(--canvas); color: var(--text); }
 /* A note under a field row — explains what an optional input does before it is filled in. */
 .field-note { margin: var(--space-3) 0 0; font-size: 12px; color: var(--text-muted);
   line-height: 1.5; max-width: 74ch; }

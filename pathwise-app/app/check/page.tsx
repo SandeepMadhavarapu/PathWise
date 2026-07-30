@@ -169,6 +169,41 @@ export default function CheckPage() {
     heading.scrollIntoView({ block: "start", behavior: "auto" });
   }, [submitCount]);
 
+  /**
+   * Clear the workspace — the explicit version of what leaving the page already does.
+   *
+   * PathWise keeps nothing: no storage of any kind is used anywhere in this product, so navigating
+   * away, going back, refreshing or closing the tab already discards everything below. This control
+   * exists because "it will be gone when you leave" is not the same as "it is gone NOW", and on a
+   * shared or public computer the difference is the whole point — a student handing the machine
+   * back should not have to close the tab and hope.
+   *
+   * It introduces no persistence and no new state. Every line resets a value the form already
+   * holds, back to the same initial value a first visit starts from.
+   *
+   * Focus then moves to the first field, exactly as `backToForm` does. That is the announcement: a
+   * screen reader reads "Immigration status, combo box, F-1 (student)", which says both that the
+   * form is back at the top and that it is back at its defaults — without a live region that would
+   * have to be introduced, and kept in step, purely to narrate a reset.
+   */
+  function clearWorkspace() {
+    setStatus("F1");
+    setState(DEFAULT_STATE);
+    setRows([blankRow()]);
+    setPresenceSince("");
+    setSubmitted(false);
+    setShowReasoning(false);
+    setSubmitCount(0);
+
+    const first = document.getElementById("status");
+    if (!first) return;
+    first.focus({ preventScroll: true });
+    (document.querySelector(".check-form") ?? first).scrollIntoView({
+      block: "start",
+      behavior: "auto",
+    });
+  }
+
   /** Back to the form, focus and all — the exact inverse of what submitting does. */
   function backToForm() {
     const first = document.getElementById("status");
@@ -482,6 +517,23 @@ export default function CheckPage() {
           Nothing you type leaves your device. There is no account, no server and no request — the
           reasoning runs in this tab.
         </p>
+        {/* The second half of the same promise, and the half that was never stated.
+            The line above is about the NETWORK: nothing is sent. This one is about LIFETIME:
+            nothing is kept. They are different claims and a reader cannot infer the second from
+            the first — "no server" is entirely compatible with a browser quietly writing an
+            immigration status to disk, which is what most products in this position do.
+            PathWise stores nothing at all, anywhere, by any mechanism. That has always been true;
+            it had simply never been said, so a reader had no way to know it was a decision rather
+            than an omission. It matters most to the person least likely to ask: someone using a
+            library or a shared family computer, for whom a durable record of their visa status is
+            the actual risk — not the network. */}
+        <p className="check-lifetime">
+          <span className="check-lifetime-k">Nothing is saved, either.</span> This workspace lives
+          in this tab alone. Leaving the page, going back, refreshing or closing the tab clears
+          everything you have entered — there is no history to come back to, on this device or any
+          other. That is deliberate: on a shared or public computer, nothing of yours is left
+          behind.
+        </p>
       </div>
 
       <form className="check-form surface" onSubmit={onSubmit}>
@@ -615,6 +667,11 @@ export default function CheckPage() {
         <div className="form-actions">
           <button type="submit" className="btn">
             Check my status →
+          </button>
+          {/* `type="button"` is load-bearing: the default inside a form is submit, so without it
+              this control would compute a finding instead of clearing one. */}
+          <button type="button" className="check-clear" onClick={clearWorkspace}>
+            Clear workspace
           </button>
           <span className="check-privacy">Nothing you type leaves your device.</span>
         </div>
