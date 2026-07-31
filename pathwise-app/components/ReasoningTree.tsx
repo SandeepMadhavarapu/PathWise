@@ -107,7 +107,19 @@ function Node({ node }: { node: ReasoningTreeNode }) {
       </div>
 
       {hasDetail ? (
-        <div className="rtree-children">
+        // `aria-hidden` follows the disclosure, because the CSS alone does not remove this from the
+        // accessibility tree. Collapsed, this wrapper computes to `height: 0` with the inner block
+        // at `opacity: 0` — invisible, but Chrome's accessibility tree still contained every source
+        // string inside it ("Physical move · 1 Aug 2024", "Lease signed · 18 Jul 2024", …). So the
+        // button announced "Show the 4 sources this step rests on, collapsed" and a screen-reader
+        // user then heard the four sources anyway: the state the control reported was false, and
+        // the control appeared to do nothing. WCAG 4.1.2.
+        //
+        // `aria-hidden` and not `hidden` or `display: none`, because those would take the block out
+        // of flow and kill the open/close transition this element exists to animate. Safe to apply
+        // here: the collapsed region carries no focusable descendants — measured 0 across all three
+        // finding routes — so nothing is being hidden from AT while remaining in the tab order.
+        <div className="rtree-children" aria-hidden={!open}>
           <div className="rtree-children-inner">
             {node.tags && node.tags.length > 0 ? (
               <div className="rtree-tags">
