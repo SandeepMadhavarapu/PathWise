@@ -7,3 +7,4 @@ Thumbs.db
 
 # Local editor / agent settings (machine-specific, not shared)
 .claude/
+visual-audit/
