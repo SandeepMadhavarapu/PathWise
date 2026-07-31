@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 
 import { domicileAnalysisFor, jurisdictionFor } from "@/lib/engines/jurisdiction";
@@ -6,6 +8,10 @@ import { formatImmigrationStatus } from "@/lib/format";
 import { FindingDetail } from "@/components/FindingDetail";
 import { DomicileAnalysisDetail } from "@/components/DomicileAnalysis";
 import { Capsule } from "@/components/Capsule";
+
+// Tab title only. The string is the one this route's topbar already renders, so the
+// browser tab and the page heading cannot disagree. Nothing visible changes.
+export const metadata: Metadata = { title: "The domicile analysis in full" };
 
 // The other branch of Engine B. Priya's record ends at the gate; Marcus's passes it, and everything
 // past the gate — dependency, the intent factors and their weights, the durational clock, the rules

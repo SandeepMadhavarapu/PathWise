@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { computeCptLedger } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
 import { computeOptBudget } from "@/lib/engines/opt-budget";
@@ -19,6 +21,10 @@ import {
 import { DeadlineExport } from "@/components/DeadlineExport";
 import { NextStepCard } from "@/components/NextStepCard";
 import { ScenarioNote } from "@/components/ScenarioNote";
+
+// Tab title only. The string is the one this route's topbar already renders, so the
+// browser tab and the page heading cannot disagree. Nothing visible changes.
+export const metadata: Metadata = { title: "Her next steps" };
 
 // Why the plan is in this order. The headings are the ordering rule, said out loud.
 //

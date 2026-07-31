@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 import { computeCptLedger, SECTION_CITE } from "@/lib/engines/cpt-ledger";
 import { computeUnemploymentClock } from "@/lib/engines/unemployment-clock";
@@ -31,6 +33,10 @@ import { DeadlineExport } from "@/components/DeadlineExport";
 import { StatusGlyph } from "@/components/StatusGlyph";
 import { Callout } from "@/components/Callout";
 import { ScenarioNote } from "@/components/ScenarioNote";
+
+// Tab title only. The string is the one this route's topbar already renders, so the
+// browser tab and the page heading cannot disagree. Nothing visible changes.
+export const metadata: Metadata = { title: "Priya's standing" };
 
 // Visual scale for the immigration card's mini-track only — how much track to draw. The cliff
 // itself is the rulepack's, and the ledger reads it; nothing regulatory is set here.

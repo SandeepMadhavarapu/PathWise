@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 import { JobMoment } from "@/components/JobMoment";
+
+// Tab title only. The string is the one this route's topbar already renders, so the
+// browser tab and the page heading cannot disagree. Nothing visible changes.
+export const metadata: Metadata = { title: "One event, many effects" };
 
 // The back link that used to sit here is now rendered by the shell from the PARENT map in
 // AppShell, so this route's way out cannot say something different from every other route's.

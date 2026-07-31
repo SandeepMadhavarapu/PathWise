@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 import { jurisdictionFor, residencyFindingFor } from "@/lib/engines/jurisdiction";
 import { priyaStudent, priyaEvents } from "@/lib/fixtures/priya";
 import { FindingDetail } from "@/components/FindingDetail";
+
+// Tab title only. The string is the one this route's topbar already renders, so the
+// browser tab and the page heading cannot disagree. Nothing visible changes.
+export const metadata: Metadata = { title: "Why residency is blocked" };
 
 export default function ResidencyFindingPage() {
   // Same inputs as the /student dashboard — the finding shown here IS the finding shown there.

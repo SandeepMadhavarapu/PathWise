@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
+
 import { aidDeadlineFor, aidFindingFor, jurisdictionFor } from "@/lib/engines/jurisdiction";
 import { priyaAid, priyaEvents, priyaStudent } from "@/lib/fixtures/priya";
 import { FindingDetail } from "@/components/FindingDetail";
 import { AidDeadline } from "@/components/AidDeadline";
+
+// Tab title only. The string is the one this route's topbar already renders, so the
+// browser tab and the page heading cannot disagree. Nothing visible changes.
+export const metadata: Metadata = { title: "Why state aid is blocked" };
 
 export default function AidFindingPage() {
   // Resolved from the student's own record, so this screen answers under the rules of the state she
