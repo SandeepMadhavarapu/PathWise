@@ -487,10 +487,13 @@ export default function CheckPage() {
           against the rules it has actually modelled and answers in the same form it answers for the
           example student.
         </p>
-        <p className="check-privacy">
-          Nothing you type leaves your device. There is no account, no server and no request — the
-          reasoning runs in this tab.
-        </p>
+        {/* The two halves of one promise, in one object. They were a bold green sentence floating
+            on the panel and a bordered box beneath it — two different treatments for two claims
+            that are the same promise, stacked, costing ~40px and reading as a statement followed
+            by an afterthought. Merged they are one bordered block a reader takes in as a unit, and
+            the form above the fold moves up by that much. Neither sentence is changed; the network
+            claim and the lifetime claim are still made separately, because one cannot be inferred
+            from the other. */}
         {/* The second half of the same promise, and the half that was never stated.
             The line above is about the NETWORK: nothing is sent. This one is about LIFETIME:
             nothing is kept. They are different claims and a reader cannot infer the second from
@@ -502,6 +505,8 @@ export default function CheckPage() {
             library or a shared family computer, for whom a durable record of their visa status is
             the actual risk — not the network. */}
         <p className="check-lifetime">
+          <span className="check-lifetime-k">Nothing you type leaves your device.</span> There is no
+          account, no server and no request — the reasoning runs in this tab.{" "}
           <span className="check-lifetime-k">Nothing is saved, either.</span> This workspace lives
           in this tab alone. Leaving the page, going back, refreshing or closing the tab clears
           everything you have entered — there is no history to come back to, on this device or any

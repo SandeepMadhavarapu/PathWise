@@ -11,6 +11,7 @@ import {
 } from "@/lib/jurisdiction-coverage";
 import { SystemsHero } from "@/components/SystemsHero";
 import { Capsule } from "@/components/Capsule";
+import { computeCptLedger, levelLabel } from "@/lib/engines/cpt-ledger";
 import { aidFindingFor, jurisdictionFor, residencyFindingFor } from "@/lib/engines/jurisdiction";
 import { priyaAid, priyaEvents, priyaStudent } from "@/lib/fixtures/priya";
 import { formatDecidingOffice } from "@/lib/format";
@@ -53,6 +54,14 @@ export default function Landing() {
   // at the status gate, which stops the analysis and raises none. Using the residency finding for
   // the fifth row would print "0 open questions" under a guarantee about naming them.
   const aid = aidFindingFor(jx, priyaAid);
+
+  // Who Priya actually IS. The three findings below are hers, and until now this page introduced
+  // them with a label — "Worked example" — and no person. A reader met a fact ("Priya's F-1
+  // status") and never a student with something to lose, on the one screen most visitors will
+  // never scroll past. The margin is read off the same ledger /student draws, so the number here
+  // cannot drift from the number there; the institution count is her own record's length. Nothing
+  // in the sentence is asserted that the engines have not computed.
+  const masters = computeCptLedger(priyaEvents).forLevel("masters");
 
   const demos: React.ReactNode[] = [
     <Capsule key="verdict" variant="tinted" status={statusFromFindingResult(residency.result)}>
@@ -155,7 +164,19 @@ export default function Landing() {
               <span className="lpl-sep" aria-hidden="true">
                 ·
               </span>
-              computed live, by the same engines the app runs on
+              <span className="lpl-who">Priya</span>
+            </p>
+            <p className="landing-proof-who">
+              A {levelLabel("masters")} student at {priyaStudent.institutions.length} institutions
+              {masters ? (
+                <>
+                  , <strong>{masters.daysToCliff} days</strong> from a limit that would end her OPT
+                  eligibility at that level
+                </>
+              ) : null}
+              . No single office is in a position to tell her: each of the three below decides one
+              of these answers and none of them sees the other two. Every one was computed live, on
+              this page, by the same engines the app runs on.
             </p>
 
             <SystemsHero />

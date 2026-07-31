@@ -480,7 +480,25 @@ export default function CoveragePage() {
         </p>
       </div>
 
-      <div className="section-head">What each level means</div>
+      {/* The distinction this page exists to make, raised out of the fourth legend row.
+          "Unable to verify" and "not modelled" are separate levels in the pack, separately
+          counted in the four numbers above, and a reader who does not know why will read the
+          five as a rounding error rather than as the most careful thing on the screen. The
+          legend below still carries the pack's own words for each level, unchanged — this only
+          states, in PathWise's voice, why two of them are kept apart. */}
+      <div className="section-head">
+        What each level means — and why &ldquo;unable to verify&rdquo; is not &ldquo;not
+        modelled&rdquo;
+      </div>
+      {/* Deliberately the one phrase the legend card below also carries, and nothing else it
+          carries: the card is the glossary definition, this is the reason the distinction exists.
+          An earlier draft of this note restated the card's other sentence too, which read as an
+          editing mistake rather than as emphasis. */}
+      <p className="section-note">
+        One is work not done. The other is work done that failed. A single &ldquo;unsupported&rdquo;
+        badge would hide which of the two you were looking at, so PathWise keeps them as separate
+        levels and counts them separately above.
+      </p>
       <ul className="cov-legend">
         {LEVEL_ORDER.map((level) => {
           const s = LEVEL[level];

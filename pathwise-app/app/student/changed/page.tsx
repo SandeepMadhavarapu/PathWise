@@ -255,6 +255,19 @@ export default function ChangedPage() {
             and the reason the terminology pass is swept for rather than trusted. */}
         <div className="jintro-eyebrow">When a document arrives</div>
         <h2>One document arrives. Watch PathWise re-reason.</h2>
+        {/* The stakes, on the page that is the climax of the product and stated them nowhere.
+            The heading describes the MECHANISM — an engine re-running — and the two band labels
+            below carry the consequence, but only once a reader has understood what the drawing
+            is. This is the sentence that makes the drawing worth reading before it is read, and
+            every quantity in it is derived: the gap is the difference between the two engine
+            runs, the cliff is the rulepack's. Nothing here claims an outcome; it names what the
+            two readings are on opposite sides of. */}
+        <p className="jintro-stakes">
+          One document is missing from Priya&apos;s file. Without it the same engine reads her own
+          CPT record two honest ways, {pooled.fullTimeDays - settled.fullTimeDays} days apart, on
+          either side of the line that decides whether she has any work authorization left at this
+          level after she graduates. So PathWise will not pick one.
+        </p>
         <div className="jstats">
           <span className="jstat">
             <strong>1</strong> finding affected
