@@ -255,12 +255,6 @@ export default function ChangedPage() {
             and the reason the terminology pass is swept for rather than trusted. */}
         <div className="jintro-eyebrow">When a document arrives</div>
         <h2>One document arrives. Watch PathWise re-reason.</h2>
-        <p>
-          Priya&apos;s bachelor&apos;s CPT at School X only stays out of her master&apos;s count if the
-          level change between the two schools is established. The document that records it is
-          missing — so PathWise runs the count both ways, finds that the two answers fall on opposite
-          sides of the {CLIFF_DAYS}-day cliff, and says so rather than guessing.
-        </p>
         <div className="jstats">
           <span className="jstat">
             <strong>1</strong> finding affected
@@ -296,6 +290,15 @@ export default function ChangedPage() {
         settledStatus={STATUS[afterStatus].glyph}
         marginDays={settled.daysToCliff}
       />
+      {/* The paragraph that used to sit in the intro panel, describing this drawing in prose
+          immediately above the drawing itself. It is the caption now, not the preamble: the reader
+          sees the span cross the line, and then reads why. Wording unchanged. */}
+      <p className="section-note section-note--after">
+        Priya&apos;s bachelor&apos;s CPT at School X only stays out of her master&apos;s count if the
+        level change between the two schools is established. The document that records it is
+        missing — so PathWise runs the count both ways, finds that the two answers fall on opposite
+        sides of the {CLIFF_DAYS}-day cliff, and says so rather than guessing.
+      </p>
 
       <div className={`wc-gap surface${added ? " done" : ""}`}>
         <div className="wc-gap-head">

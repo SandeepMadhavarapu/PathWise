@@ -251,6 +251,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 /* A subtitle under a section head, for a claim that belongs WITH the block rather than in a panel
    in front of it. Pulled up tight against its heading so the two read as one unit. */
+/* The same caption, sitting AFTER the thing it describes rather than before it. */
+.section-note--after { margin: var(--space-3) 0 0; }
+
 .section-note {
   margin: calc(var(--space-3) * -1) 0 var(--space-4);
   font-size: 13px;
@@ -833,6 +836,16 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   color: var(--text-muted); margin-right: 6px; }
 .rtree-lead-more { color: var(--text-muted); }
 
+/* The step's place in the argument. Deliberately achromatic: a reasoning step carries no verdict,
+   and the status glyph it replaced was lending it one. */
+.rtree-ord {
+  flex: none; width: 22px; height: 22px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--canvas); border: 1px solid var(--border-strong);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--text-secondary); font-variant-numeric: tabular-nums;
+}
+
 .rtree-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .rtree-body-top { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; }
 .rtree-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: var(--space-1) 0 var(--space-1) 34px; }
@@ -1112,6 +1125,16 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 @keyframes conseqIn { to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .conseq-item { opacity: 1; transform: none; } }
 
+/* The surprise, given the weight its content already carries. No new colour: the accent rule and
+   the raised surface are the same devices the hero and the finding pages use for "this is the one
+   that matters". */
+.conseq-item--key {
+  border-left: 3px solid var(--status-warn);
+  background: var(--warn-soft);
+  border-color: var(--warn-border);
+}
+.conseq-item--key .ci-effect { font-size: 15px; font-weight: 600; }
+
 .ci-body { flex: 1; min-width: 0; }
 .ci-top { display: flex; align-items: center; gap: var(--space-2); margin-bottom: 4px; flex-wrap: wrap; }
 .ci-effect { font-size: 14px; color: var(--text); }
@@ -1135,6 +1158,25 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .landing { padding: var(--space-6) var(--space-4); }
   .landing-line { font-size: 26px; }
 }
+/* The scale block. Single column by default — it simply follows the copy on a phone, which is the
+   correct reading order. It only becomes a second column where there is genuinely a column's worth
+   of empty space to fill. */
+.landing-scale {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  background: var(--canvas);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.ls-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 700; color: var(--text-muted); margin-bottom: var(--space-3); }
+.ls-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.ls-list li { display: flex; align-items: baseline; gap: var(--space-3); font-size: 13px; color: var(--text-secondary); }
+.ls-list strong { min-width: 2.2ch; font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--text); font-variant-numeric: tabular-nums; }
+.ls-foot { margin: var(--space-3) 0 0; padding-top: var(--space-3); border-top: 1px dashed var(--border);
+  font-size: 11px; line-height: 1.5; color: var(--text-muted); }
+
 .landing-cta-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
 /* Both CTAs are the same object at the same size — the difference between them is which one is the
    default, not which one matters. `.btn` carries no border and `.btn.ghost` carries a 1px one,
@@ -1419,7 +1461,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .field-note { margin: var(--space-3) 0 0; font-size: 12px; color: var(--text-muted);
   line-height: 1.5; max-width: 74ch; }
 
-/* What the visitor gets back, stated before they are asked to type anything. */
+/* Now stated AFTER the form rather than in front of it — a caption on the answer, not a
+   prerequisite for asking the question. */
+.check-expect-after { padding: var(--space-4) var(--space-5); }
+.check-expect-after .check-expect { margin: 0; }
+.check-expect-after .section-head { margin-top: 0; }
+
+/* What the visitor gets back. */
 .check-expect { list-style: none; padding: 0; margin: var(--space-4) 0 var(--space-4);
   display: flex; flex-direction: column; gap: var(--space-2); }
 .check-expect li { position: relative; padding-left: var(--space-5); font-size: 13px;
@@ -1587,6 +1635,17 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* Long authority lines wrap instead of pushing the page sideways on a phone. */
 .cite.wrap { white-space: normal; }
 
+/* PathWise's own reasoning, marked as NOT a citation. No mono, no chip, no border box — the three
+   things that say "external authority" in this product. Dashed underline instead, which is the
+   vocabulary already used for "not established". */
+.cite-self {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-muted);
+  border-bottom: 1px dashed var(--border-strong);
+  padding-bottom: 1px;
+}
+
 /* The safety net for the whole class, rather than for the one instance a browser happened to catch.
    `.cite` is nowrap by default so an authority does not break awkwardly mid-line, and every long one
    is supposed to opt into `.wrap` — which is a rule enforced by remembering. Below 400px there is no
@@ -1700,7 +1759,16 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .nsnum.blocked { background: var(--blocked-soft); color: var(--status-blocked); }
 .nsnum.idle { background: var(--idle-soft); color: var(--text-muted); }
 
-.nscard { padding: var(--space-4) var(--space-5); }
+/* Ten steps at 180px each made a 3,400px page, and a prioritised plan whose tenth item takes as
+   much room as its first is not prioritised in a way a reader can use. Density is the fix, not
+   fewer steps: nothing is removed, the same four facts show, they simply stop being spaced like a
+   landing page. */
+.nscard { padding: var(--space-3) var(--space-4); }
+.nscard .nstitle { margin-top: var(--space-1); }
+.nscard .nswhen { margin-top: var(--space-1); }
+.nscard .nsmore { margin-top: var(--space-2); }
+.nslist { gap: var(--space-2); }
+.nsnum { top: var(--space-3); }
 .nshead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
 .nsdomain { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
 .nstitle { font-size: 17px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 44ch; color: var(--text); }
@@ -2043,6 +2111,17 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 /* ---- Coverage map + rule-pack viewer ---- */
 .cov-counts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px dashed var(--border); }
+/* Leading the page rather than closing it: the rule above becomes a rule below, and the numbers
+   get the size that four counts summarising an entire coverage policy deserve. */
+.cov-counts--lead {
+  margin: var(--space-3) 0 var(--space-4);
+  padding: 0 0 var(--space-4);
+  border-top: none;
+  border-bottom: 1px dashed var(--border);
+  gap: var(--space-3) var(--space-5);
+}
+.cov-counts--lead .cov-count { font-size: 15px; }
+.cov-counts--lead .cov-count strong { font-size: 22px; }
 .cov-count { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; color: var(--text-secondary); }
 .cov-count strong { font-size: 16px; font-weight: 700; color: var(--text); }
 .cov-sep { color: var(--border-strong); }
@@ -2404,6 +2483,22 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
     --landing-max: 900px;
     --gutter: var(--space-6);
   }
+
+  /* The hero's copy becomes a column and the scale block takes the space beside it. Below this
+     width everything stays stacked in source order, so the reading order never changes — only
+     whether the right-hand void is doing any work. The instrument below spans full width,
+     untouched. */
+  .landing-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 250px;
+    column-gap: var(--space-7);
+    align-items: start;
+  }
+  .landing-top > .landing-eyebrow,
+  .landing-top > .landing-line,
+  .landing-top > .landing-lede,
+  .landing-top > .landing-cta-row { grid-column: 1; }
+  .landing-top > .landing-scale { grid-column: 2; grid-row: 1 / span 4; margin-top: 0; }
 
   /* The headline was capped at 20ch and never grew, so on a 1120px container it set to about 570px
      and broke into FOUR short lines with "does." orphaned on the last one — leaving roughly 460px of

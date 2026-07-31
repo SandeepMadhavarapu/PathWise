@@ -88,7 +88,9 @@ export function FindingDetail({
     ];
     return {
       id: `step-${i}`,
+      // Kept for the type; the ordinal below is what renders. See ReasoningTree.
       status: "done",
+      ordinal: i + 1,
       title: step.claim,
       tags: sources,
       /**

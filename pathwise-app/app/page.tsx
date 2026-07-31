@@ -5,6 +5,7 @@ import { STATE_COUNT } from "@/lib/coverage";
 import {
   FULLY_MODELLED_COUNT,
   FULLY_MODELLED_NAMES,
+  LEVEL_COUNTS,
   PARTIALLY_MODELLED_COUNT,
   SOURCED_ONLY_COUNT,
 } from "@/lib/jurisdiction-coverage";
@@ -83,40 +84,71 @@ export default function Landing() {
 
         <main>
           <section className="landing surface">
-            <div className="landing-eyebrow">One student · three systems</div>
-            <h1 className="landing-line">
-              Three offices decide your fate. None of them can see the whole you. PathWise does.
-            </h1>
-            <p className="landing-lede">
-              An international student&apos;s immigration status, tuition residency and financial aid
-              are decided by three offices that never talk to each other. PathWise is one reasoning
-              engine over one record, so it catches what falls between them.
-            </p>
-
-            {/* The landing shows Priya's real findings and, until now, said nothing about whose they
-                were. Every other screen that renders her carries a "Worked example" badge from the
-                shell — and the landing is the one page with no shell, so the claim has to be made
-                here or not at all. It is also the first thing a visitor ever reads, which is the
-                worst possible place to leave it implied. */}
-            {/* Two actions, one size, one shape. This row used to be a filled button reading "See
-                the whole record" — which record? — beside a plain text link offering to check your
-                own. So the product's only tool, the single screen that reasons over the reader's
-                OWN facts, was the quieter of the two, and the louder one led to a stranger's file.
-                They are peers now, and the tool is named first.
-
-                It sits ABOVE the worked example now rather than below it. Measured at 390x844 — the
-                commonest phone the judge link will be opened on — the row previously landed past
-                1,300px: two full viewports of reading with nothing to act on, on the first screen
-                of the product. The order it takes now is the one a hero is normally built in
-                anyway: what this is, what it does, what you can do, then the proof. */}
-            <div className="landing-cta-row">
-              <Link href="/check" className="btn landing-cta">
-                Check my status →
-              </Link>
-              <Link href="/student" className="btn ghost landing-cta">
-                See the worked example →
-              </Link>
-            </div>
+            <div className="landing-top">
+              <div className="landing-eyebrow">One student · three systems</div>
+              <h1 className="landing-line">
+                Three offices decide your fate. None of them can see the whole you. PathWise does.
+              </h1>
+              <p className="landing-lede">
+                An international student&apos;s immigration status, tuition residency and financial aid
+                are decided by three offices that never talk to each other. PathWise is one reasoning
+                engine over one record, so it catches what falls between them.
+              </p>
+  
+              {/* The landing shows Priya's real findings and, until now, said nothing about whose they
+                  were. Every other screen that renders her carries a "Worked example" badge from the
+                  shell — and the landing is the one page with no shell, so the claim has to be made
+                  here or not at all. It is also the first thing a visitor ever reads, which is the
+                  worst possible place to leave it implied. */}
+              {/* Two actions, one size, one shape. This row used to be a filled button reading "See
+                  the whole record" — which record? — beside a plain text link offering to check your
+                  own. So the product's only tool, the single screen that reasons over the reader's
+                  OWN facts, was the quieter of the two, and the louder one led to a stranger's file.
+                  They are peers now, and the tool is named first.
+  
+                  It sits ABOVE the worked example now rather than below it. Measured at 390x844 — the
+                  commonest phone the judge link will be opened on — the row previously landed past
+                  1,300px: two full viewports of reading with nothing to act on, on the first screen
+                  of the product. The order it takes now is the one a hero is normally built in
+                  anyway: what this is, what it does, what you can do, then the proof. */}
+              {/* The coverage answer, moved into the space the hero was leaving empty.
+                  At 1440 the headline wrapped at ~55% and the lede at ~40%, so roughly 40% of the
+                  first screen was blank while the panel below ran full width — the page read as two
+                  different layouts stacked. These four counts are the answer to the question every
+                  judge asks silently ("does this generalise?"), and they were at the very bottom of
+                  the page in a footer strip. Every number is derived from the packs; none is typed.
+                  Below 1024 this returns to a single column and the block simply follows the copy. */}
+              <div className="landing-scale" aria-label="How far the rules reach">
+                <span className="ls-k">The rules are data</span>
+                <ul className="ls-list">
+                  <li>
+                    <strong>{FULLY_MODELLED_COUNT}</strong> modelled in full
+                  </li>
+                  <li>
+                    <strong>{PARTIALLY_MODELLED_COUNT}</strong> partially modelled
+                  </li>
+                  <li>
+                    <strong>{SOURCED_ONLY_COUNT}</strong> source captured
+                  </li>
+                  <li>
+                    <strong>{LEVEL_COUNTS.unable_to_verify}</strong> unable to verify
+                  </li>
+                </ul>
+                <p className="ls-foot">
+                  Every status derived from the rule packs themselves — including the ones PathWise
+                  could not verify at all.
+                </p>
+              </div>
+  
+              <div className="landing-cta-row">
+                <Link href="/check" className="btn landing-cta">
+                  Check my status →
+                </Link>
+                <Link href="/student" className="btn ghost landing-cta">
+                  See the worked example →
+                </Link>
+              </div>
+              </div>
 
             <p className="landing-proof-label">
               <span className="lpl-k">Worked example</span>

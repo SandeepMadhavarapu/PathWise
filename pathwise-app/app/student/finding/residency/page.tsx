@@ -18,18 +18,12 @@ export default function ResidencyFindingPage() {
       {/* The "← Back to overview" link that used to sit here is now the shell's, from the PARENT
           map in AppShell. It said "overview" while /moment said "Priya's standing" for the very
           same destination; one destination now has one name. */}
-      <FindingDetail
-        finding={domicile}
-        events={priyaEvents}
-        packId={jx.packs?.domicile.pack_id}
-        packLabel={`${jx.name} residency rules`}
-      />
-
-      {/* The gate stops this analysis, which is the honest answer — and it is not the only answer the
-          engine has. The sibling route runs the rest of Engine B on a student it lets through. */}
-      {/* Names the student it leads to. This link crosses from Priya's record into Marcus's, and
-          said nothing about it — so a reader followed "see the full analysis" expecting more of
-          the finding they were reading and arrived at someone else's case. */}
+      {/* Moved ABOVE the finding. This sat at the foot of the page, and the page is the shortest in
+          the product — two reasoning steps and it is over, because the status gate stops the
+          analysis before the other nine sections run. A reader met the two steps, concluded "that
+          is all it does", and only then reached the sentence explaining that the brevity is the
+          finding. Said first, the two steps read as a gate doing its job rather than as a thin
+          answer. Nothing about the finding, its wording or its links changed. */}
       <Link href="/student/finding/domicile" className="memorystrip surface">
         <span>
           <span className="ms-k">This is where the analysis stops, not where the engine does.</span>{" "}
@@ -39,6 +33,14 @@ export default function ResidencyFindingPage() {
         </span>
         <span className="ms-go">See Marcus&apos;s full analysis →</span>
       </Link>
+
+      <FindingDetail
+        finding={domicile}
+        events={priyaEvents}
+        packId={jx.packs?.domicile.pack_id}
+        packLabel={`${jx.name} residency rules`}
+      />
+
     </>
   );
 }

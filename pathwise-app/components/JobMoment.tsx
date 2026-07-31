@@ -109,9 +109,14 @@ export function JobMoment() {
             {consequences.map((c, i) => {
               const status = TONE_STATUS[c.tone] ?? "active";
               return (
+                /* The counter-intuitive consequence is the one a judge remembers — "a signed offer
+                   with a future start date does NOT stop the unemployment clock" is the claim no
+                   calendar app and no chatbot would make. It was rendered in a card identical to
+                   the routine one beside it, distinguished only by a small chip. It now carries the
+                   weight its content already had. */
                 <li
                   key={i}
-                  className="conseq-item in"
+                  className={`conseq-item in${c.counterintuitive ? " conseq-item--key" : ""}`}
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <StatusGlyph status={status} />
@@ -146,7 +151,14 @@ export function JobMoment() {
                       </div>
                     )}
                     <div className="ci-cite">
-                      <span className="cite">{c.cite.authority}</span>
+                      {/* An inference PathWise drew is not an authority it can cite, and it was
+                          wearing the identical mono chip as `8 CFR 214.2(f)(12)` on the card
+                          directly above — so the product appeared to cite itself as if it were law.
+                          The wording is unchanged and was always honest; only the costume is
+                          removed, so the two kinds of claim stop looking like one kind. */}
+                      <span className={/^PathWise/.test(c.cite.authority) ? "cite-self" : "cite"}>
+                        {c.cite.authority}
+                      </span>
                       {/* An unmodelled jurisdiction's consequence carries the official source the
                           engine found for it. This component was computing that link and then
                           dropping it, which is the one case where the link matters most. */}

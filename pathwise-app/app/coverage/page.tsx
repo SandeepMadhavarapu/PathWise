@@ -440,19 +440,11 @@ export default function CoveragePage() {
             : ""}
           Every other jurisdiction says exactly how far PathWise has got.
         </h2>
-        <p>
-          Residency and state aid are decided state by state, so a system that only ever worked in
-          one of them would not be a system. PathWise keeps every rule in a versioned rule pack — the
-          authority, the source URL, the date it was verified, and the conditions themselves — and
-          the engines read those files.{" "}
-          <strong>
-            Nothing below is typed into this page: each status is derived from what that
-            jurisdiction&apos;s registered pack declares it can answer.
-          </strong>{" "}
-          A state cannot be shown as modelled by editing the map — only by authoring a pack that says
-          so and passing the tests that check the claim.
-        </p>
-        <div className="cov-counts">
+        {/* The counts lead. They were below a four-line paragraph, at 13px — the most scannable and
+            most load-bearing object on the page, arriving fourth. Four numbers ARE the coverage
+            policy: one modelled, two partial, forty-three sourced, five honestly blank. The prose
+            explains them and now follows them. */}
+        <div className="cov-counts cov-counts--lead">
           {LEVEL_ORDER.filter((l) => LEVEL_COUNTS[l] > 0).map((level, i) => {
             const s = LEVEL[level];
             return (
@@ -474,6 +466,18 @@ export default function CoveragePage() {
             {JURISDICTION_COUNT} jurisdictions · every source link checked {SOURCES_CHECKED_ON}
           </span>
         </div>
+        <p>
+          Residency and state aid are decided state by state, so a system that only ever worked in
+          one of them would not be a system. PathWise keeps every rule in a versioned rule pack — the
+          authority, the source URL, the date it was verified, and the conditions themselves — and
+          the engines read those files.{" "}
+          <strong>
+            Nothing below is typed into this page: each status is derived from what that
+            jurisdiction&apos;s registered pack declares it can answer.
+          </strong>{" "}
+          A state cannot be shown as modelled by editing the map — only by authoring a pack that says
+          so and passing the tests that check the claim.
+        </p>
       </div>
 
       <div className="section-head">What each level means</div>

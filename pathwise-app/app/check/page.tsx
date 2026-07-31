@@ -487,32 +487,6 @@ export default function CheckPage() {
           against the rules it has actually modelled and answers in the same form it answers for the
           example student.
         </p>
-        <ul className="check-expect">
-          {/* "Residency" is qualified here for a reason particular to this audience: to an
-              international student the word already means something else, and an unqualified
-              "residency" finding beside an immigration one invites exactly the wrong reading.
-              "Domicile" is glossed rather than replaced — it is the term the rules use and the
-              term the officer will use, so a reader who meets it here should recognise it there. */}
-          <li>
-            A finding for each of the three domains — immigration, in-state residency for tuition
-            (the rules call it <em>domicile</em>: which state counts as your legal home) and state
-            financial aid
-          </li>
-          <li>The rule behind each one, quoted, with the date PathWise last verified it</li>
-          <li>The office that decides it, which is never PathWise</li>
-          <li>
-            An explicit <strong>&ldquo;not yet read&rdquo;</strong> or{" "}
-            <strong>&ldquo;unable to verify&rdquo;</strong> wherever the rules or your record cannot
-            settle the question —{" "}
-            {FULLY_MODELLED_NAMES.length === 1 ? FULLY_MODELLED_NAMES[0] : "some states"}{" "}
-            {FULLY_MODELLED_NAMES.length === 1 ? "is" : "are"} modelled in full
-            {PARTIALLY_MODELLED_COUNT > 0
-              ? `, ${PARTIALLY_MODELLED_COUNT} more partially`
-              : ""}
-            , and for the rest this will say so plainly and link the office that does decide rather
-            than guess
-          </li>
-        </ul>
         <p className="check-privacy">
           Nothing you type leaves your device. There is no account, no server and no request — the
           reasoning runs in this tab.
@@ -676,6 +650,42 @@ export default function CheckPage() {
           <span className="check-privacy">Nothing you type leaves your device.</span>
         </div>
       </form>
+
+      {/* The expectations list, moved BELOW the form.
+          It sat above it: four bullets and two paragraphs, about 380px of reading, before a
+          visitor could touch a single control. A tool that explains itself at length before it
+          will do anything reads as a brochure for a tool. The form is the point, so the form
+          leads; this is what the answer will contain, which is a caption on a result, not a
+          prerequisite for asking. Wording unchanged. */}
+      <div className="check-expect-after surface">
+        <div className="section-head">What comes back</div>
+        <ul className="check-expect">
+          {/* "Residency" is qualified here for a reason particular to this audience: to an
+              international student the word already means something else, and an unqualified
+              "residency" finding beside an immigration one invites exactly the wrong reading.
+              "Domicile" is glossed rather than replaced — it is the term the rules use and the
+              term the officer will use, so a reader who meets it here should recognise it there. */}
+          <li>
+            A finding for each of the three domains — immigration, in-state residency for tuition
+            (the rules call it <em>domicile</em>: which state counts as your legal home) and state
+            financial aid
+          </li>
+          <li>The rule behind each one, quoted, with the date PathWise last verified it</li>
+          <li>The office that decides it, which is never PathWise</li>
+          <li>
+            An explicit <strong>&ldquo;not yet read&rdquo;</strong> or{" "}
+            <strong>&ldquo;unable to verify&rdquo;</strong> wherever the rules or your record cannot
+            settle the question —{" "}
+            {FULLY_MODELLED_NAMES.length === 1 ? FULLY_MODELLED_NAMES[0] : "some states"}{" "}
+            {FULLY_MODELLED_NAMES.length === 1 ? "is" : "are"} modelled in full
+            {PARTIALLY_MODELLED_COUNT > 0
+              ? `, ${PARTIALLY_MODELLED_COUNT} more partially`
+              : ""}
+            , and for the rest this will say so plainly and link the office that does decide rather
+            than guess
+          </li>
+        </ul>
+      </div>
 
       {/* Rendered on every pass, empty until there is something to say.
           A live region that is added to the page at the same moment its text appears is a region

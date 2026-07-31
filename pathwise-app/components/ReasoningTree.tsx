@@ -16,6 +16,19 @@ export interface ReasoningTreeNode {
   lead?: string;
   /** How many further sources are behind the disclosure, when there are any. */
   leadMore?: number;
+  /**
+   * The step's position in the argument, shown INSTEAD of a status glyph.
+   *
+   * A reasoning step is not a verdict. Every step used to render the `done` tick — green, the
+   * colour this product spends eleven screens teaching means "on track" — so on "Why residency is
+   * blocked" a green check sat beside "Holders of student or temporary visas do not have the
+   * capacity to establish domicile in Virginia". The glyph meant "this step is established" and the
+   * reader had been taught it means "this is fine", on the one page where it is not.
+   *
+   * An ordinal cannot be misread as a verdict, and it adds the thing a status never carried: the
+   * chain is a sequence, and its order is the argument.
+   */
+  ordinal?: number;
   micro?: (string | undefined | false | null)[];
   children?: ReasoningTreeNode[];
   defaultOpen?: boolean;
@@ -53,7 +66,13 @@ function Node({ node }: { node: ReasoningTreeNode }) {
         ) : (
           <span className="rtree-toggle-spacer" aria-hidden="true" />
         )}
-        <StatusGlyph status={node.status} />
+        {node.ordinal !== undefined ? (
+          <span className="rtree-ord" aria-hidden="true">
+            {node.ordinal}
+          </span>
+        ) : (
+          <StatusGlyph status={node.status} />
+        )}
         <div className="rtree-body">
           <div className="rtree-body-top">
             <span className="t-row-title">{node.title}</span>
