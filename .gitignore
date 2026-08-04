@@ -7,4 +7,7 @@ Thumbs.db
 
 # Local editor / agent settings (machine-specific, not shared)
 .claude/
-visual-audit/
+# Audit evidence: reports and contact sheets are committed; the 51MB of raw
+# per-state PNGs are not (the contact sheets contain them).
+visual-audit/screenshots/
+visual-audit/node_modules/

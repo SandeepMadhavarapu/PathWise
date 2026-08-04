@@ -1,0 +1,6522 @@
+{
+ "origin": "local",
+ "base": "http://localhost:3210",
+ "browser": "Chrome/150.0.7871.188",
+ "captured": "2026-07-31T10:39:54.664Z",
+ "rows": [
+  {
+   "origin": "local",
+   "route": "/",
+   "url": "http://localhost:3210/",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "landing-1440x900-initial.png",
+   "fullPage": "landing-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:35:46.395Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2194,
+   "fixed": [],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [],
+   "wideEls": [],
+   "title": "PathWise — your standing across every system"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-1440x900-initial.png",
+   "fullPage": "student-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:35:49.565Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2490,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-changed-1440x900-initial.png",
+   "fullPage": "student-changed-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:35:52.392Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1792,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/journey",
+   "url": "http://localhost:3210/student/journey",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-journey-1440x900-initial.png",
+   "fullPage": "student-journey-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:35:55.161Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1327,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Her timeline · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/next",
+   "url": "http://localhost:3210/student/next",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-next-1440x900-initial.png",
+   "fullPage": "student-next-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:35:58.172Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2946,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 95,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 98,
+     "oy": 22,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Her next steps · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/residency",
+   "url": "http://localhost:3210/student/finding/residency",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-residency-1440x900-initial.png",
+   "fullPage": "finding-residency-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:36:00.917Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 900,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Why residency is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/aid",
+   "url": "http://localhost:3210/student/finding/aid",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-aid-1440x900-initial.png",
+   "fullPage": "finding-aid-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:36:03.847Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2246,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Why state aid is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/domicile",
+   "url": "http://localhost:3210/student/finding/domicile",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-domicile-1440x900-initial.png",
+   "fullPage": "finding-domicile-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:36:07.033Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 4107,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "The domicile analysis in full · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "moment-1440x900-initial.png",
+   "fullPage": "moment-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:36:09.755Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 900,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "coverage-1440x900-initial.png",
+   "fullPage": "coverage-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:36:12.802Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 3520,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "check-1440x900-initial.png",
+   "fullPage": "check-1440x900-initial-full.png",
+   "ts": "2026-07-31T10:36:15.601Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1355,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/",
+   "url": "http://localhost:3210/",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "landing-1280x720-initial.png",
+   "fullPage": "landing-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:18.322Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 2194,
+   "fixed": [],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [],
+   "wideEls": [],
+   "title": "PathWise — your standing across every system"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-1280x720-initial.png",
+   "fullPage": "student-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:21.294Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 2663,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-changed-1280x720-initial.png",
+   "fullPage": "student-changed-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:24.117Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 1925,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/journey",
+   "url": "http://localhost:3210/student/journey",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-journey-1280x720-initial.png",
+   "fullPage": "student-journey-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:26.877Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 1327,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Her timeline · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/next",
+   "url": "http://localhost:3210/student/next",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-next-1280x720-initial.png",
+   "fullPage": "student-next-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:29.763Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 2946,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 95,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 98,
+     "oy": 22,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Her next steps · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/residency",
+   "url": "http://localhost:3210/student/finding/residency",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-residency-1280x720-initial.png",
+   "fullPage": "finding-residency-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:32.511Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 814,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Why residency is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/aid",
+   "url": "http://localhost:3210/student/finding/aid",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-aid-1280x720-initial.png",
+   "fullPage": "finding-aid-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:35.379Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 2288,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Why state aid is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/domicile",
+   "url": "http://localhost:3210/student/finding/domicile",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-domicile-1280x720-initial.png",
+   "fullPage": "finding-domicile-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:38.529Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 4215,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "The domicile analysis in full · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "moment-1280x720-initial.png",
+   "fullPage": "moment-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:41.232Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 720,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "coverage-1280x720-initial.png",
+   "fullPage": "coverage-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:44.283Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 3801,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1280x720",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "check-1280x720-initial.png",
+   "fullPage": "check-1280x720-initial-full.png",
+   "ts": "2026-07-31T10:36:47.100Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1280,
+   "clientWidth": 1280,
+   "overflow": 0,
+   "pageHeight": 1374,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/",
+   "url": "http://localhost:3210/",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "landing-1512x764-initial.png",
+   "fullPage": "landing-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:36:49.897Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 2194,
+   "fixed": [],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [],
+   "wideEls": [],
+   "title": "PathWise — your standing across every system"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-1512x764-initial.png",
+   "fullPage": "student-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:36:52.773Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 2490,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-changed-1512x764-initial.png",
+   "fullPage": "student-changed-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:36:55.584Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 1792,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/journey",
+   "url": "http://localhost:3210/student/journey",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-journey-1512x764-initial.png",
+   "fullPage": "student-journey-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:36:58.357Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 1327,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Her timeline · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/next",
+   "url": "http://localhost:3210/student/next",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "student-next-1512x764-initial.png",
+   "fullPage": "student-next-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:37:01.259Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 2927,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 95,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 98,
+     "oy": 22,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Her next steps · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/residency",
+   "url": "http://localhost:3210/student/finding/residency",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-residency-1512x764-initial.png",
+   "fullPage": "finding-residency-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:37:04.009Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 793,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Why residency is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/aid",
+   "url": "http://localhost:3210/student/finding/aid",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-aid-1512x764-initial.png",
+   "fullPage": "finding-aid-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:37:06.918Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 2246,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Why state aid is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/domicile",
+   "url": "http://localhost:3210/student/finding/domicile",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "finding-domicile-1512x764-initial.png",
+   "fullPage": "finding-domicile-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:37:10.086Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 4107,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "The domicile analysis in full · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "moment-1512x764-initial.png",
+   "fullPage": "moment-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:37:12.797Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 764,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "coverage-1512x764-initial.png",
+   "fullPage": "coverage-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:37:15.943Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 3520,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1512x764",
+   "vpClass": "desktop",
+   "state": "initial",
+   "screenshot": "check-1512x764-initial.png",
+   "fullPage": "check-1512x764-initial-full.png",
+   "ts": "2026-07-31T10:37:18.780Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1512,
+   "clientWidth": 1512,
+   "overflow": 0,
+   "pageHeight": 1355,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/",
+   "url": "http://localhost:3210/",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "landing-834x1112-initial.png",
+   "fullPage": "landing-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:21.433Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 2776,
+   "fixed": [],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [],
+   "wideEls": [],
+   "title": "PathWise — your standing across every system"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "student-834x1112-initial.png",
+   "fullPage": "student-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:24.283Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 3201,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "student-changed-834x1112-initial.png",
+   "fullPage": "student-changed-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:27.067Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 2063,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/journey",
+   "url": "http://localhost:3210/student/journey",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "student-journey-834x1112-initial.png",
+   "fullPage": "student-journey-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:29.808Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 1460,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Her timeline · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/next",
+   "url": "http://localhost:3210/student/next",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "student-next-834x1112-initial.png",
+   "fullPage": "student-next-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:32.659Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 3088,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 95,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 98,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 98,
+     "oy": 22,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Her next steps · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/residency",
+   "url": "http://localhost:3210/student/finding/residency",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "finding-residency-834x1112-initial.png",
+   "fullPage": "finding-residency-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:35.375Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 1112,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Why residency is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/aid",
+   "url": "http://localhost:3210/student/finding/aid",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "finding-aid-834x1112-initial.png",
+   "fullPage": "finding-aid-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:38.222Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 2496,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Why state aid is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/domicile",
+   "url": "http://localhost:3210/student/finding/domicile",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "finding-domicile-834x1112-initial.png",
+   "fullPage": "finding-domicile-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:41.244Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 4672,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 71,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "The domicile analysis in full · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "moment-834x1112-initial.png",
+   "fullPage": "moment-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:43.957Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 1112,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "coverage-834x1112-initial.png",
+   "fullPage": "coverage-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:46.935Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 4370,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "834x1112",
+   "vpClass": "tablet",
+   "state": "initial",
+   "screenshot": "check-834x1112-initial.png",
+   "fullPage": "check-834x1112-initial-full.png",
+   "ts": "2026-07-31T10:37:49.681Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 834,
+   "clientWidth": 834,
+   "overflow": 0,
+   "pageHeight": 1553,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 834,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta active",
+     "x": 16,
+     "y": 1047,
+     "w": 802,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/",
+   "url": "http://localhost:3210/",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "landing-390x844-initial.png",
+   "fullPage": "landing-390x844-initial-full.png",
+   "ts": "2026-07-31T10:37:52.304Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 3766,
+   "fixed": [],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [],
+   "wideEls": [],
+   "title": "PathWise — your standing across every system"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "student-390x844-initial.png",
+   "fullPage": "student-390x844-initial-full.png",
+   "ts": "2026-07-31T10:37:55.097Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4843,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "student-changed-390x844-initial.png",
+   "fullPage": "student-changed-390x844-initial-full.png",
+   "ts": "2026-07-31T10:37:57.850Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 2756,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/journey",
+   "url": "http://localhost:3210/student/journey",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "student-journey-390x844-initial.png",
+   "fullPage": "student-journey-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:00.553Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 1895,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Her timeline · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/next",
+   "url": "http://localhost:3210/student/next",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "student-next-390x844-initial.png",
+   "fullPage": "student-next-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:03.372Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4251,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 95,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 99,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 98,
+     "oy": 22,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 98,
+     "oy": 22,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Her next steps · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/residency",
+   "url": "http://localhost:3210/student/finding/residency",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "finding-residency-390x844-initial.png",
+   "fullPage": "finding-residency-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:06.057Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 1303,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Why residency is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/aid",
+   "url": "http://localhost:3210/student/finding/aid",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "finding-aid-390x844-initial.png",
+   "fullPage": "finding-aid-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:08.863Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4030,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Why state aid is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/domicile",
+   "url": "http://localhost:3210/student/finding/domicile",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "finding-domicile-390x844-initial.png",
+   "fullPage": "finding-domicile-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:11.799Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 7759,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 140,
+     "scrollable": false
+    },
+    {
+     "cls": "rtree-children-inner",
+     "ox": 0,
+     "oy": 36,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "The domicile analysis in full · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "moment-390x844-initial.png",
+   "fullPage": "moment-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:14.460Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 848,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "coverage-390x844-initial.png",
+   "fullPage": "coverage-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:17.415Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 9317,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "initial",
+   "screenshot": "check-390x844-initial.png",
+   "fullPage": "check-390x844-initial-full.png",
+   "ts": "2026-07-31T10:38:20.134Z",
+   "http": 200,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 2241,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta active",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "uncertain-preDocument",
+   "screenshot": "student-changed-1440x900-uncertain-preDocument.png",
+   "fullPage": "student-changed-1440x900-uncertain-preDocument-full.png",
+   "ts": "2026-07-31T10:38:23.057Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1792,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "band-closeup",
+   "screenshot": "student-changed-1440x900-band-closeup.png",
+   "fullPage": "student-changed-1440x900-band-closeup-full.png",
+   "ts": "2026-07-31T10:38:24.044Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1792,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "sample-document-read",
+   "screenshot": "student-changed-1440x900-sample-document-read.png",
+   "fullPage": "student-changed-1440x900-sample-document-read-full.png",
+   "ts": "2026-07-31T10:38:26.174Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2011,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "attested-commit-enabled",
+   "screenshot": "student-changed-1440x900-attested-commit-enabled.png",
+   "fullPage": "student-changed-1440x900-attested-commit-enabled-full.png",
+   "ts": "2026-07-31T10:38:26.973Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2011,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "determinate-settled",
+   "screenshot": "student-changed-1440x900-determinate-settled.png",
+   "fullPage": "student-changed-1440x900-determinate-settled-full.png",
+   "ts": "2026-07-31T10:38:29.951Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2710,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "band-collapsed",
+   "screenshot": "student-changed-1440x900-band-collapsed.png",
+   "fullPage": "student-changed-1440x900-band-collapsed-full.png",
+   "ts": "2026-07-31T10:38:30.982Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2710,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "pre-reveal",
+   "screenshot": "moment-1440x900-pre-reveal.png",
+   "fullPage": "moment-1440x900-pre-reveal-full.png",
+   "ts": "2026-07-31T10:38:33.593Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 900,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "revealed",
+   "screenshot": "moment-1440x900-revealed.png",
+   "fullPage": "moment-1440x900-revealed-full.png",
+   "ts": "2026-07-31T10:38:36.439Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1210,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "empty-form",
+   "screenshot": "check-1440x900-empty-form.png",
+   "fullPage": "check-1440x900-empty-form-full.png",
+   "ts": "2026-07-31T10:38:39.043Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1355,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "input-focused",
+   "screenshot": "check-1440x900-input-focused.png",
+   "fullPage": "check-1440x900-input-focused-full.png",
+   "ts": "2026-07-31T10:38:39.697Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1355,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "result-virginia-nodata",
+   "screenshot": "check-1440x900-result-virginia-nodata.png",
+   "fullPage": "check-1440x900-result-virginia-nodata-full.png",
+   "ts": "2026-07-31T10:38:41.893Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 3088,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 1466,
+     "oy": 24,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "result-virginia-finding",
+   "screenshot": "check-1440x900-result-virginia-finding.png",
+   "fullPage": "check-1440x900-result-virginia-finding-full.png",
+   "ts": "2026-07-31T10:38:42.930Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 3088,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 1466,
+     "oy": 24,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "result-ohio-unmodelled",
+   "screenshot": "check-1440x900-result-ohio-unmodelled.png",
+   "fullPage": "check-1440x900-result-ohio-unmodelled-full.png",
+   "ts": "2026-07-31T10:38:46.205Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2856,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 1558,
+     "oy": 24,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "legend",
+   "screenshot": "coverage-1440x900-legend.png",
+   "fullPage": "coverage-1440x900-legend-full.png",
+   "ts": "2026-07-31T10:38:49.187Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 3520,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "grid-collapsed",
+   "screenshot": "coverage-1440x900-grid-collapsed.png",
+   "fullPage": "coverage-1440x900-grid-collapsed-full.png",
+   "ts": "2026-07-31T10:38:50.214Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 3520,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "tile-expanded",
+   "screenshot": "coverage-1440x900-tile-expanded.png",
+   "fullPage": "coverage-1440x900-tile-expanded-full.png",
+   "ts": "2026-07-31T10:38:51.629Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 3959,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "rulepack-viewer",
+   "screenshot": "coverage-1440x900-rulepack-viewer.png",
+   "fullPage": "coverage-1440x900-rulepack-viewer-full.png",
+   "ts": "2026-07-31T10:38:52.821Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 3959,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "ledger",
+   "screenshot": "student-1440x900-ledger.png",
+   "fullPage": "student-1440x900-ledger-full.png",
+   "ts": "2026-07-31T10:38:56.338Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2490,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "evidence-cta",
+   "screenshot": "student-1440x900-evidence-cta.png",
+   "fullPage": "student-1440x900-evidence-cta-full.png",
+   "ts": "2026-07-31T10:38:57.384Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2490,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "gauges",
+   "screenshot": "student-1440x900-gauges.png",
+   "fullPage": "student-1440x900-gauges-full.png",
+   "ts": "2026-07-31T10:38:58.472Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2490,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/residency",
+   "url": "http://localhost:3210/student/finding/residency",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "citation-and-source",
+   "screenshot": "finding-residency-1440x900-citation-and-source.png",
+   "fullPage": "finding-residency-1440x900-citation-and-source-full.png",
+   "ts": "2026-07-31T10:39:01.827Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 900,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Why residency is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "keyboard-focus-skiplink",
+   "screenshot": "student-1440x900-keyboard-focus-skiplink.png",
+   "fullPage": "student-1440x900-keyboard-focus-skiplink-full.png",
+   "ts": "2026-07-31T10:39:04.758Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2490,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": 0,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "keyboard-focus-rail",
+   "screenshot": "student-1440x900-keyboard-focus-rail.png",
+   "fullPage": "student-1440x900-keyboard-focus-rail-full.png",
+   "ts": "2026-07-31T10:39:05.515Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2490,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "uncertain-preDocument",
+   "screenshot": "student-changed-390x844-uncertain-preDocument.png",
+   "fullPage": "student-changed-390x844-uncertain-preDocument-full.png",
+   "ts": "2026-07-31T10:39:08.356Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 2756,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "band-closeup",
+   "screenshot": "student-changed-390x844-band-closeup.png",
+   "fullPage": "student-changed-390x844-band-closeup-full.png",
+   "ts": "2026-07-31T10:39:09.242Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 2756,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "sample-document-read",
+   "screenshot": "student-changed-390x844-sample-document-read.png",
+   "fullPage": "student-changed-390x844-sample-document-read-full.png",
+   "ts": "2026-07-31T10:39:11.252Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 3010,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "attested-commit-enabled",
+   "screenshot": "student-changed-390x844-attested-commit-enabled.png",
+   "fullPage": "student-changed-390x844-attested-commit-enabled-full.png",
+   "ts": "2026-07-31T10:39:11.952Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 3010,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "determinate-settled",
+   "screenshot": "student-changed-390x844-determinate-settled.png",
+   "fullPage": "student-changed-390x844-determinate-settled-full.png",
+   "ts": "2026-07-31T10:39:14.837Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4594,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "band-collapsed",
+   "screenshot": "student-changed-390x844-band-collapsed.png",
+   "fullPage": "student-changed-390x844-band-collapsed-full.png",
+   "ts": "2026-07-31T10:39:15.801Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4594,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "When a document arrives · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "pre-reveal",
+   "screenshot": "moment-390x844-pre-reveal.png",
+   "fullPage": "moment-390x844-pre-reveal-full.png",
+   "ts": "2026-07-31T10:39:18.360Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 848,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/moment",
+   "url": "http://localhost:3210/moment",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "revealed",
+   "screenshot": "moment-390x844-revealed.png",
+   "fullPage": "moment-390x844-revealed-full.png",
+   "ts": "2026-07-31T10:39:21.125Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 2026,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "One event, many effects · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "empty-form",
+   "screenshot": "check-390x844-empty-form.png",
+   "fullPage": "check-390x844-empty-form-full.png",
+   "ts": "2026-07-31T10:39:23.640Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 2241,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta active",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "input-focused",
+   "screenshot": "check-390x844-input-focused.png",
+   "fullPage": "check-390x844-input-focused-full.png",
+   "ts": "2026-07-31T10:39:24.222Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 2241,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta active",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "result-virginia-nodata",
+   "screenshot": "check-390x844-result-virginia-nodata.png",
+   "fullPage": "check-390x844-result-virginia-nodata-full.png",
+   "ts": "2026-07-31T10:39:26.342Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4986,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta active",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 1466,
+     "oy": 24,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "result-virginia-finding",
+   "screenshot": "check-390x844-result-virginia-finding.png",
+   "fullPage": "check-390x844-result-virginia-finding-full.png",
+   "ts": "2026-07-31T10:39:27.307Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4986,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta active",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 1466,
+     "oy": 24,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/check",
+   "url": "http://localhost:3210/check",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "result-ohio-unmodelled",
+   "screenshot": "check-390x844-result-ohio-unmodelled.png",
+   "fullPage": "check-390x844-result-ohio-unmodelled-full.png",
+   "ts": "2026-07-31T10:39:30.465Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4504,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta active",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 1558,
+     "oy": 24,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Check your status · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "legend",
+   "screenshot": "coverage-390x844-legend.png",
+   "fullPage": "coverage-390x844-legend-full.png",
+   "ts": "2026-07-31T10:39:33.294Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 9317,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "grid-collapsed",
+   "screenshot": "coverage-390x844-grid-collapsed.png",
+   "fullPage": "coverage-390x844-grid-collapsed-full.png",
+   "ts": "2026-07-31T10:39:34.274Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 9317,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "tile-expanded",
+   "screenshot": "coverage-390x844-tile-expanded.png",
+   "fullPage": "coverage-390x844-tile-expanded-full.png",
+   "ts": "2026-07-31T10:39:35.563Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 9648,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/coverage",
+   "url": "http://localhost:3210/coverage",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "rulepack-viewer",
+   "screenshot": "coverage-390x844-rulepack-viewer.png",
+   "fullPage": "coverage-390x844-rulepack-viewer-full.png",
+   "ts": "2026-07-31T10:39:36.651Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 9648,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "State coverage & rule packs · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "ledger",
+   "screenshot": "student-390x844-ledger.png",
+   "fullPage": "student-390x844-ledger-full.png",
+   "ts": "2026-07-31T10:39:40.054Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4843,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "evidence-cta",
+   "screenshot": "student-390x844-evidence-cta.png",
+   "fullPage": "student-390x844-evidence-cta-full.png",
+   "ts": "2026-07-31T10:39:41.065Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4843,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "gauges",
+   "screenshot": "student-390x844-gauges.png",
+   "fullPage": "student-390x844-gauges-full.png",
+   "ts": "2026-07-31T10:39:42.032Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4843,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student/finding/residency",
+   "url": "http://localhost:3210/student/finding/residency",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "citation-and-source",
+   "screenshot": "finding-residency-390x844-citation-and-source.png",
+   "fullPage": "finding-residency-390x844-citation-and-source-full.png",
+   "ts": "2026-07-31T10:39:45.329Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 1303,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Why residency is blocked · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "keyboard-focus-skiplink",
+   "screenshot": "student-390x844-keyboard-focus-skiplink.png",
+   "fullPage": "student-390x844-keyboard-focus-skiplink-full.png",
+   "ts": "2026-07-31T10:39:48.132Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4843,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": 0,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/student",
+   "url": "http://localhost:3210/student",
+   "viewport": "390x844",
+   "vpClass": "phone",
+   "state": "keyboard-focus-rail",
+   "screenshot": "student-390x844-keyboard-focus-rail.png",
+   "fullPage": "student-390x844-keyboard-focus-rail-full.png",
+   "ts": "2026-07-31T10:39:48.799Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 390,
+   "clientWidth": 390,
+   "overflow": 0,
+   "pageHeight": 4843,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    },
+    {
+     "cls": "sidebar",
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 60,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-logo-row",
+     "x": 12,
+     "y": 18,
+     "w": 87,
+     "h": 25,
+     "pos": "sticky"
+    },
+    {
+     "cls": "sidebar-cta",
+     "x": 16,
+     "y": 779,
+     "w": 358,
+     "h": 49,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [
+    {
+     "cls": "sidebar-nav",
+     "w": 932
+    }
+   ],
+   "title": "Priya's standing · PathWise"
+  },
+  {
+   "origin": "local",
+   "route": "/",
+   "url": "http://localhost:3210/",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "reduced-motion",
+   "screenshot": "landing-1440x900-reduced-motion.png",
+   "fullPage": "landing-1440x900-reduced-motion-full.png",
+   "ts": "2026-07-31T10:39:51.740Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 2194,
+   "fixed": [],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [],
+   "wideEls": [],
+   "title": "PathWise — your standing across every system"
+  },
+  {
+   "origin": "local",
+   "route": "/student/changed",
+   "url": "http://localhost:3210/student/changed",
+   "viewport": "1440x900",
+   "vpClass": "desktop",
+   "state": "reduced-motion",
+   "screenshot": "student-changed-1440x900-reduced-motion.png",
+   "fullPage": "student-changed-1440x900-reduced-motion-full.png",
+   "ts": "2026-07-31T10:39:54.652Z",
+   "http": 304,
+   "consoleErrors": [],
+   "consoleWarnings": [],
+   "netFailures": [],
+   "scrollWidth": 1440,
+   "clientWidth": 1440,
+   "overflow": 0,
+   "pageHeight": 1792,
+   "fixed": [
+    {
+     "cls": "skip-link",
+     "x": 12,
+     "y": -51,
+     "w": 136,
+     "h": 43,
+     "pos": "fixed"
+    }
+   ],
+   "imgs": [],
+   "brokenImgs": 0,
+   "clipped": [
+    {
+     "cls": "sidebar-label",
+     "ox": 4,
+     "oy": 0,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 308,
+     "oy": 16,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 45,
+     "oy": 19,
+     "scrollable": false
+    },
+    {
+     "cls": "sr-only",
+     "ox": 181,
+     "oy": 20,
+     "scrollable": false
+    }
+   ],
+   "wideEls": [],
+   "title": "When a document arrives · PathWise"
+  }
+ ]
+}
