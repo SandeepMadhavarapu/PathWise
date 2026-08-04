@@ -504,14 +504,27 @@ export default function CheckPage() {
             than an omission. It matters most to the person least likely to ask: someone using a
             library or a shared family computer, for whom a durable record of their visa status is
             the actual risk — not the network. */}
+        {/* The back-button clause was false and had to go.
+            This paragraph used to promise that "leaving the page, going back, refreshing or
+            closing the tab clears everything you have entered — there is no history to come back
+            to". Measured against production: refresh, a new tab and a reopened tab all reset
+            everything, but Chrome's back/forward cache restores EVERY field — status, state,
+            residence date, CPT start, hours — and the restored data sat in the same viewport as
+            the sentence denying it. Nothing was persisted (localStorage, sessionStorage and
+            cookies measured 0 throughout); the bfcache copy is the browser's own and dies with
+            the tab. But a product whose whole claim is that everything on screen is checkable
+            cannot carry a claim that is checkable and wrong.
+            So the promise now says only what is true, and names the exception itself rather than
+            waiting to be caught by it — which is the same move the coverage counts make. */}
         <p className="check-lifetime">
           <span className="check-lifetime-k">Nothing you type leaves your device.</span> There is no
           account, no server and no request — the reasoning runs in this tab.{" "}
           <span className="check-lifetime-k">Nothing is saved, either.</span> This workspace lives
-          in this tab alone. Leaving the page, going back, refreshing or closing the tab clears
-          everything you have entered — there is no history to come back to, on this device or any
-          other. That is deliberate: on a shared or public computer, nothing of yours is left
-          behind.
+          in this tab alone: nothing is written to disk — no cookie, no stored session, nothing this
+          browser still has tomorrow. Refreshing or closing the tab clears everything you have
+          entered. Your browser may re-fill the form if you press Back; that copy belongs to the
+          browser, not to PathWise, and it goes when the tab does. That is deliberate: once the tab
+          is closed, on a shared or public computer, nothing of yours is left behind.
         </p>
       </div>
 
