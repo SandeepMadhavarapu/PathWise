@@ -115,21 +115,48 @@ One new route. A date slider from the scenario date to +12 months. As it moves, 
 ### Why it is qualitatively different from every other candidate
 Every other idea adds *more of what PathWise already shows*. This adds **the axis PathWise was built for and has never displayed.** `asOf` is already plumbed through `unemployment-clock`, `next-steps`, `aid-eligibility` and `jurisdictionFor`. The capability exists; only the control is missing.
 
-### What actually moves — verified against the real fixture
-`priyaOpt`: `optStartDate 2026-05-16`, `cap 90` (STEM +60 locked until a job is reported), `asOf 2026-07-24` → **69 used, 21 remaining, amber**.
+### ⛔ CORRECTION — this section was wrong, and the feature was rejected because of it
 
-| Drag to | Days used | Remaining | Band |
-|---|---:|---:|---|
-| 24 Jul 2026 (today) | 69 | 21 | amber |
-| **30 Jul 2026** | 75 | 15 | **red** |
-| **14 Aug 2026** | 90 | 0 | **at cap** |
-| **15 Aug 2026** | 91 | −1 | **over cap — OPT lost** |
+**The table below was written from hand arithmetic and was never run. When the real engines were
+executed, every number was wrong and the central claim collapsed.** See
+`TEMPORAL-SCRUBBER-VERDICT.md` for the full investigation. Retained here rather than deleted,
+because a recommendation built on unverified numbers is the thing this repository's whole thesis
+is against.
 
-**Three band flips inside three weeks.** Meanwhile `computeCptLedger` and `computeOptBudget` take no `asOf` and **do not move at all** — 342 of 365 stays fixed.
+| Date | **Claimed here (wrong)** | **Real engine output** |
+|---|---|---|
+| 24 Jul 2026 | 69 used, 21 left, amber | **70 used, 20 left, amber** |
+| 30 Jul 2026 | 75 used, 15 left, red | **76 used, 14 left, red** |
+| 14 Aug 2026 | 90 used, 0 left, "at cap" | **91 used, −1 left, red** |
+| 15 Aug 2026 | 91 used, −1 left, "over cap" | **92 used, −2 left, red** |
 
-That contrast *is* the insight, and it is the sentence no competitor can say:
+Off by one throughout — the engine counts days **inclusively** (`asOfOrd - startOrd + 1`).
+There is no "at cap / 0 remaining" state at all: `bandFor` emits only `green | amber | red`,
+and returns `red` for both `daysRemaining <= 15` and `overCap`.
 
-> **"Two of her clocks are already decided. One is still running. They do not fail on the same day — and no single office is watching all three."**
+**"Three band flips inside three weeks" is false.** A 420-day sweep of the real engine finds
+**exactly one** flip:
+
+```
+BAND FLIP on 2026-07-29: amber -> red (used 75, left 15)
+(no further flips in the following 420 days)
+```
+
+**And the cross-domain claim is false.** Residency and aid return `ineligible` at *every* date
+tested, a year out — they are blocked by the F-1 status gate, which is time-invariant by design:
+
+```
+date         residency    aid
+2026-07-24   ineligible   ineligible
+2026-08-15   ineligible   ineligible
+2027-07-01   ineligible   ineligible
+```
+
+So the sentence below — the entire reason to build this — cannot be said. **Two of the three
+offices never move with time at all.**
+
+> ~~"Two of her clocks are already decided. One is still running. They do not fail on the same day —
+> and no single office is watching all three."~~
 
 ### Why an LLM wrapper cannot fake it
 Faking it means producing coherent, mutually consistent outputs from five engines at 365 distinct dates, where two engines are correctly *insensitive* to the input. A language model asked to "show what changes over time" will drift every number. Dragging backwards and landing on the identical previous value is a **live determinism proof** — the answer to the #1 judge attack, demonstrated rather than asserted.
