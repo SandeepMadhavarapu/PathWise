@@ -1,0 +1,388 @@
+{
+  "target": "https://path-wise-amber.vercel.app",
+  "at": "2026-08-04T18:11:17.492Z",
+  "log": [
+    {
+      "name": "01-landing-initial",
+      "route": "/",
+      "viewport": "1440x900",
+      "file": "01-landing-initial-1440x900.png",
+      "firstLines": [
+        "PathWise",
+        "ONE STUDENT · THREE SYSTEMS",
+        "Three offices decide your fate. None of them can see the whole you. PathWise does.",
+        "An international student's immigration status, tuition residency and financial aid are decided by three offices that never talk to each other. PathWise is one reasoning engine over one record, so it catches what falls between them.",
+        "THE RULES ARE DATA",
+        "1"
+      ],
+      "headingsAboveFold": [
+        "Three offices decide your fate. None of them can see the whole you. PathWise does.",
+        "An international student's immigration status, tuition residency and financial aid are dec"
+      ]
+    },
+    {
+      "name": "02-landing-refusal",
+      "route": "/",
+      "viewport": "1440x900",
+      "file": "02-landing-refusal-1440x900.png",
+      "firstLines": [
+        "PathWise",
+        "ONE STUDENT · THREE SYSTEMS",
+        "Three offices decide your fate. None of them can see the whole you. PathWise does.",
+        "An international student's immigration status, tuition residency and financial aid are decided by three offices that never talk to each other. PathWise is one reasoning engine over one record, so it catches what falls between them.",
+        "THE RULES ARE DATA",
+        "1"
+      ],
+      "headingsAboveFold": [
+        "PathWise does not guess — and shows you why.",
+        "When the record cannot settle a question, PathWise says so rather than picking the likelie"
+      ]
+    },
+    {
+      "name": "03-student-situation",
+      "route": "/student",
+      "viewport": "1440x900",
+      "file": "03-student-situation-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "Priya's standing",
+        "THE CROSS-DOMAIN FINDING",
+        "Priya's F-1 status.",
+        "HER THREE OFFICES, AT A GLANCE"
+      ]
+    },
+    {
+      "name": "04-student-ledger",
+      "route": "/student",
+      "viewport": "1440x900",
+      "file": "04-student-ledger-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "ONE MISSING DOCUMENT DECIDES THIS COUNT",
+        "IMMIGRATION — THE TWO CLOCKS ALREADY RUNNING",
+        "MORE OF THIS EXAMPLE"
+      ]
+    },
+    {
+      "name": "05-finding-residency",
+      "route": "/student/finding/residency",
+      "viewport": "1440x900",
+      "file": "05-finding-residency-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "Why residency is blocked",
+        "F-1 status blocks domicile in Virginia",
+        "HOW PATHWISE REASONED",
+        "THE REGULATION ITSELF"
+      ]
+    },
+    {
+      "name": "06-finding-reasoning-expanded",
+      "route": "/student/finding/residency",
+      "viewport": "1440x900",
+      "file": "06-finding-reasoning-expanded-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "Why residency is blocked",
+        "F-1 status blocks domicile in Virginia",
+        "HOW PATHWISE REASONED",
+        "THE REGULATION ITSELF"
+      ]
+    },
+    {
+      "name": "07-finding-aid-unknowns",
+      "route": "/student/finding/aid",
+      "viewport": "1440x900",
+      "file": "07-finding-aid-unknowns-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "THREE DATES, ONE THAT COUNTS"
+      ]
+    },
+    {
+      "name": "08-changed-refusal",
+      "route": "/student/changed",
+      "viewport": "1440x900",
+      "file": "08-changed-refusal-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "When a document arrives",
+        "One document arrives. Watch PathWise re-reason.",
+        "THE FINDING, AGAINST THE CLIFF IT TURNS ON",
+        "We couldn't verify this yet — and we won't guess."
+      ]
+    },
+    {
+      "name": "09-changed-collapsed",
+      "route": "/student/changed",
+      "viewport": "1440x900",
+      "file": "09-changed-collapsed-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "The level change is on the record.",
+        "BEFORE → AFTER"
+      ]
+    },
+    {
+      "name": "10-crossengine-moment",
+      "route": "/moment",
+      "viewport": "1440x900",
+      "file": "10-crossengine-moment-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "One event, many effects",
+        "Priya does something good — she signs a job offer."
+      ]
+    },
+    {
+      "name": "11-check-result",
+      "route": "/check",
+      "viewport": "1440x900",
+      "file": "11-check-result-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "THE CROSS-DOMAIN FINDING",
+        "Your F-1 status.",
+        "YOUR THREE OFFICES, AT A GLANCE",
+        "THE FULL REASONING"
+      ]
+    },
+    {
+      "name": "12-coverage",
+      "route": "/coverage",
+      "viewport": "1440x900",
+      "file": "12-coverage-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "State coverage & rule packs",
+        "Virginia is modelled in full. 2 more are partially modelled. Every other jurisdiction says",
+        "WHAT EACH LEVEL MEANS — AND WHY “UNABLE TO VERIFY” IS NOT “NOT MODELLED”"
+      ]
+    },
+    {
+      "name": "13-student-next",
+      "route": "/student/next",
+      "viewport": "1440x900",
+      "file": "13-student-next-1440x900.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "Her next steps",
+        "7 things Priya can act on, and 3 more worth knowing, in the order they matter.",
+        "FIRST — THE CLIFFS, BECAUSE CROSSING ONE CANNOT BE UNDONE",
+        "Step 1 of 10: Report a qualifying job before your unemployment cap runs out",
+        "Step 2 of 10: Confirm your CPT total with your DSO",
+        "THEN — REAL DEADLINES, ORDERED BY THE DATE YOU HAVE TO ACT",
+        "Step 3 of 10: Decide what follows your OPT before the authorization ends"
+      ]
+    },
+    {
+      "name": "01-landing-initial",
+      "route": "/",
+      "viewport": "1280x720",
+      "file": "01-landing-initial-1280x720.png",
+      "firstLines": [
+        "PathWise",
+        "ONE STUDENT · THREE SYSTEMS",
+        "Three offices decide your fate. None of them can see the whole you. PathWise does.",
+        "An international student's immigration status, tuition residency and financial aid are decided by three offices that never talk to each other. PathWise is one reasoning engine over one record, so it catches what falls between them.",
+        "THE RULES ARE DATA",
+        "1"
+      ],
+      "headingsAboveFold": [
+        "Three offices decide your fate. None of them can see the whole you. PathWise does.",
+        "An international student's immigration status, tuition residency and financial aid are dec"
+      ]
+    },
+    {
+      "name": "03-student-situation",
+      "route": "/student",
+      "viewport": "1280x720",
+      "file": "03-student-situation-1280x720.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "WORKED EXAMPLE",
+        "Priya's standing",
+        "Why residency is blocked"
+      ],
+      "headingsAboveFold": [
+        "Priya's standing",
+        "THE CROSS-DOMAIN FINDING",
+        "Priya's F-1 status.",
+        "HER THREE OFFICES, AT A GLANCE"
+      ]
+    },
+    {
+      "name": "01-landing-initial",
+      "route": "/",
+      "viewport": "390x844",
+      "file": "01-landing-initial-390x844.png",
+      "firstLines": [
+        "PathWise",
+        "ONE STUDENT · THREE SYSTEMS",
+        "Three offices decide your fate. None of them can see the whole you. PathWise does.",
+        "An international student's immigration status, tuition residency and financial aid are decided by three offices that never talk to each other. PathWise is one reasoning engine over one record, so it catches what falls between them.",
+        "THE RULES ARE DATA",
+        "1"
+      ],
+      "headingsAboveFold": [
+        "Three offices decide your fate. None of them can see the whole you. PathWise does.",
+        "An international student's immigration status, tuition residency and financial aid are dec"
+      ]
+    },
+    {
+      "name": "03-student-situation",
+      "route": "/student",
+      "viewport": "390x844",
+      "file": "03-student-situation-390x844.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "Priya's standing",
+        "Her timeline",
+        "Her next steps"
+      ],
+      "headingsAboveFold": [
+        "Priya's standing",
+        "THE CROSS-DOMAIN FINDING",
+        "Priya's F-1 status."
+      ]
+    },
+    {
+      "name": "05-finding-residency",
+      "route": "/student/finding/residency",
+      "viewport": "390x844",
+      "file": "05-finding-residency-390x844.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "Priya's standing",
+        "Her timeline",
+        "Her next steps"
+      ],
+      "headingsAboveFold": [
+        "Why residency is blocked",
+        "F-1 status blocks domicile in Virginia",
+        "HOW PATHWISE REASONED",
+        "THE REGULATION ITSELF"
+      ]
+    },
+    {
+      "name": "08-changed-refusal",
+      "route": "/student/changed",
+      "viewport": "390x844",
+      "file": "08-changed-refusal-390x844.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "Priya's standing",
+        "Her timeline",
+        "Her next steps"
+      ],
+      "headingsAboveFold": [
+        "When a document arrives",
+        "One document arrives. Watch PathWise re-reason.",
+        "THE FINDING, AGAINST THE CLIFF IT TURNS ON"
+      ]
+    },
+    {
+      "name": "10-crossengine-moment",
+      "route": "/moment",
+      "viewport": "390x844",
+      "file": "10-crossengine-moment-390x844.png",
+      "firstLines": [
+        "Skip to content",
+        "PathWise",
+        "Check my status",
+        "Priya's standing",
+        "Her timeline",
+        "Her next steps"
+      ],
+      "headingsAboveFold": [
+        "One event, many effects",
+        "Priya does something good — she signs a job offer."
+      ]
+    }
+  ]
+}
