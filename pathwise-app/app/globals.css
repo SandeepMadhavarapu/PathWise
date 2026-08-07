@@ -4,33 +4,49 @@
    properties (see lib/tokens.ts for the JS-side mirror of the spacing/motion
    constants).
    ============================================================================= */
+/* ---------------------------------------------------------------------------------------------
+   ORIGINAL PATHWISE VISUAL LANGUAGE (restored from 8ac1c3f).
+   ---------------------------------------------------------------------------------------------
+   The token NAMES below are the ones ~2,700 lines of component CSS already reference; only their
+   VALUES return to the original palette. That is deliberate and is the whole reason this change is
+   safe: every card, gauge, chip and callout in the product re-reads its colour, radius and shadow
+   from here, so the look moves and not one component's markup or behaviour has to.
+
+   The original palette, verbatim from 8ac1c3f:
+     --ink #12203a  --ink-soft #3d4a63  --muted #6b7789  --line #e4e7ee
+     --bg  #f7f8fb  --surface #ffffff   --accent #2f5fe0 --accent-soft #eaf0ff
+     --green #1f8a5b  --amber #b7791f   --red #c0392b    (+ soft variants)
+     --radius 14px    --radius-sm 9px
+   The old names are re-exported as aliases at the end of this block so shell rules written in the
+   original vocabulary read the way they did then.
+   --------------------------------------------------------------------------------------------- */
 :root {
   /* Surfaces */
-  --canvas: #f6f7f8;
+  --canvas: #f7f8fb;
   --surface: #ffffff;
-  --sidebar: #1b1b1d;
-  --sidebar-active: #3f4044;
-  --border: #e4e6e9;
-  --border-strong: #d2d6db;
+  --sidebar: #12203a;
+  --sidebar-active: #24365a;
+  --border: #e4e7ee;
+  --border-strong: #cfd5e0;
 
   /* Text */
-  --text: #1f2328;
-  --text-secondary: #5b6470;
+  --text: #12203a;
+  --text-secondary: #3d4a63;
   /* 4.75:1 on --surface. The previous #8a929c was 3.15:1 — under WCAG AA for normal text, and this
      token carries every section heading, micro-label, citation date and footer in the product, so
      the failure was the app's most widespread one rather than an edge case. */
-  --text-muted: #6b7480;
+  --text-muted: #6b7789;
   --text-inverse: #ffffff;
 
-  /* Status — the only chroma in the product */
-  --status-done: #3ea76f;
-  --status-active: #e8833a;
-  --status-warn: #f0b429;
-  --status-blocked: #d64545;
-  --status-idle: #d8dbdf;
-  --info: #2f80ed;
-  --callout-bg: #fef6e4;
-  --callout-border: #f2d69b;
+  /* Status — the original restrained band language: green / amber / red, and nothing else. */
+  --status-done: #1f8a5b;
+  --status-active: #b7791f;
+  --status-warn: #b7791f;
+  --status-blocked: #c0392b;
+  --status-idle: #dfe3ea;
+  --info: #2f5fe0;
+  --callout-bg: #fdf3e0;
+  --callout-border: #ecd9ae;
 
   /* Derived: --status-warn on its own fails text contrast on white, so warn-as-text
      (not warn-as-fill) uses this darker mix of the same token instead of a second hex.
@@ -79,13 +95,14 @@
   --space-6: 32px;
   --space-7: 48px;
 
-  /* Radii */
-  --radius-input: 6px;
-  --radius-card: 10px;
+  /* Radii — the original 14px card / 9px inner pair. */
+  --radius-input: 9px;
+  --radius-card: 14px;
   --radius-pill: 999px;
 
-  /* The one shadow token — cards otherwise rely on the 1px border */
-  --shadow-hairline: 0 1px 2px rgba(16, 24, 40, 0.04);
+  /* The original two-layer shadow. Cards had lift in the old design; the hairline-only treatment
+     was part of the redesign, so this token carries the original value under its current name. */
+  --shadow-hairline: 0 1px 2px rgba(18, 32, 58, 0.04), 0 8px 28px rgba(18, 32, 58, 0.06);
 
   /* Motion */
   --ease: cubic-bezier(0.2, 0, 0, 1);
@@ -99,18 +116,45 @@
      "When a document ar…" and "One event, many eff…" — their accessible names were complete, so
      only sighted readers saw the ellipsis, which is the worst way for a label to be wrong. The
      twenty pixels come out of a content column that is capped by --content-max anyway. */
-  --sidebar-width: 244px;
-  --sidebar-width-collapsed: 64px;
-  --topbar-height: 64px;
+  /* Retained so the (now unrendered) rail rules stay valid CSS; the shell is a topbar again. */
+  --sidebar-width: 0px;
+  --sidebar-width-collapsed: 0px;
+  --topbar-height: auto;
   /* The two containers. They step up at 1024 / 1280 / 1600 rather than stretching — see the
      scale-up block at the end of this file. Variables so the steps have one thing to move. */
-  --content-max: 1200px;
+  /* 940px — the original centred measure. The redesign's 1200px two-column geometry is what made
+     the product feel like an application shell rather than a document, and it is the single
+     largest contributor to the difference. */
+  --content-max: 940px;
   --landing-max: 760px;
   /* The page gutter, which grows with the container so a wider page does not mean a tighter edge. */
   --gutter: var(--space-5);
 
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* The original stack: system UI, no webfont. Inter is part of the redesign's voice. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- the original names, re-exported ----
+     So shell rules below can be written in the vocabulary the 8ac1c3f stylesheet used, without a
+     second set of hex values that could drift from the ones above. */
+  --ink: var(--text);
+  --ink-soft: var(--text-secondary);
+  --muted: var(--text-muted);
+  --line: var(--border);
+  --bg: var(--canvas);
+  --accent: var(--info);
+  --accent-soft: #eaf0ff;
+  --green: var(--status-done);
+  --green-soft: #e6f5ee;
+  --amber: var(--status-warn);
+  --amber-soft: #fdf3e0;
+  --red: var(--status-blocked);
+  --red-soft: #fdecea;
+  --radius: var(--radius-card);
+  --radius-sm: var(--radius-input);
+  --shadow: var(--shadow-hairline);
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
 }
 
 /* =============================================================================
@@ -146,10 +190,6 @@ a:hover { text-decoration: underline; }
   border-radius: var(--radius-input);
 }
 /* On the dark rail the accent blue is not the high-contrast choice against near-black; white is. */
-.sidebar :where(a, button):focus-visible {
-  outline-color: var(--text-inverse);
-  outline-offset: 1px;
-}
 
 /* =============================================================================
    Skip link. Off-screen until focused, then a real, visible control.
@@ -294,125 +334,6 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    App shell
    ============================================================================= */
 .app-shell { display: flex; min-height: 100vh; background: var(--canvas); }
-
-.sidebar {
-  flex: none;
-  width: var(--sidebar-width);
-  background: var(--sidebar);
-  color: var(--text-inverse);
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-3) var(--space-2);
-  transition: width var(--dur-slow) var(--ease);
-}
-.sidebar.collapsed { width: var(--sidebar-width-collapsed); }
-
-.sidebar-logo-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-2) var(--space-2) var(--space-4);
-}
-.sidebar-logo {
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: -0.02em;
-  color: var(--text-inverse);
-  white-space: nowrap;
-  overflow: hidden;
-}
-.sidebar-logo .dot { color: var(--info); }
-.sidebar-collapse-btn {
-  flex: none;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  border-radius: var(--radius-input);
-  color: var(--text-inverse-muted);
-  cursor: pointer;
-  transition: background var(--dur-fast) var(--ease), transform var(--dur-slow) var(--ease);
-}
-.sidebar-collapse-btn:hover { background: var(--sidebar-active); color: var(--text-inverse); }
-.sidebar-collapse-icon { transform: rotate(180deg); }
-.sidebar.collapsed .sidebar-collapse-btn { transform: rotate(180deg); }
-
-/* The tool, styled as an action rather than a destination.
-   It borrows `.btn`'s fill and hover so the one control that acts on the reader's own facts reads
-   the same here as it does anywhere else in the product — and so it cannot be mistaken for the
-   five worked-example links beneath it, which is exactly what happened when it was the fourth of
-   eight identical rows. */
-.sidebar-cta {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: 10px var(--space-2); border-radius: 8px;
-  background: var(--info); color: var(--text-inverse);
-  font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden;
-  transition: background var(--dur-fast) var(--ease);
-}
-.sidebar-cta:hover { background: color-mix(in srgb, var(--info) 85%, black); color: var(--text-inverse); text-decoration: none; }
-/* Already filled, so "active" cannot be signalled by a fill. The underline matches how
-   `.sidebar-item.active` marks the current page, so both halves of the rail say it the same way. */
-.sidebar-cta.active .sidebar-label { text-decoration: underline; text-underline-offset: 3px; }
-
-/* Names the group the five links below belong to. Without it "Priya's standing" is a stranger's
-   name in a navigation rail with nothing to explain why it is there. */
-.sidebar-section-label {
-  padding: var(--space-4) var(--space-2) var(--space-2);
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--text-inverse-faint); white-space: nowrap; overflow: hidden;
-}
-/* Collapsed to icons there is no room for a group heading, and a truncated one is worse than
-   none — the icons keep their accessible names either way. */
-.sidebar.collapsed .sidebar-section-label { display: none; }
-
-.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 10px var(--space-2);
-  border-radius: 8px;
-  color: var(--text-inverse-secondary);
-  font-size: 15px;
-  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
-  overflow: hidden;
-  white-space: nowrap;
-}
-.sidebar-item:hover { background: var(--sidebar-active); color: var(--text-inverse); text-decoration: none; }
-.sidebar-item.active {
-  background: var(--sidebar-active);
-  color: var(--text-inverse);
-}
-.sidebar-item.active .sidebar-label { text-decoration: underline; text-underline-offset: 3px; }
-.sidebar-item-icon { flex: none; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
-.sidebar-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.sidebar.collapsed .sidebar-label { display: none; }
-
-/* The findings, nested under the dashboard. Indented onto the same optical rail the parent's icon
-   sits on, one step quieter, and marked with a hairline so the group reads as belonging to the row
-   above it rather than as three more peers. */
-.sidebar-subnav { list-style: none; padding: 0; margin: 2px 0 2px var(--space-5); display: flex; flex-direction: column; gap: 2px; border-left: 1px solid var(--divider-inverse); }
-.sidebar-sub { padding: 8px var(--space-2); font-size: 13px; color: var(--text-inverse-muted); }
-.sidebar-sub:hover { color: var(--text-inverse); }
-.sidebar-sub.active { color: var(--text-inverse); }
-.sidebar.collapsed .sidebar-subnav { display: none; }
-
-.sidebar-divider { height: 1px; background: var(--divider-inverse); margin: var(--space-3) var(--space-2); flex: none; }
-.sidebar-secondary { display: flex; flex-direction: column; gap: 2px; }
-
-.sidebar-spacer { flex: 1; }
-.sidebar-footer {
-  padding: var(--space-3) var(--space-2) var(--space-2);
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--text-inverse-faint);
-  white-space: nowrap;
-  overflow: hidden;
-}
-.sidebar.collapsed .sidebar-footer { opacity: 0; }
 
 .shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
@@ -2351,116 +2272,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    ============================================================================= */
 @media (max-width: 900px) {
   .app-shell { flex-direction: column; }
-  .sidebar {
-    width: 100%; flex-direction: row; align-items: center; flex-wrap: nowrap;
-    gap: var(--space-2); padding: var(--space-2) var(--space-3); height: auto;
-    overflow-x: auto; overscroll-behavior-x: contain;
-    scrollbar-width: thin; scrollbar-color: var(--sidebar-active) transparent;
-  }
-  .sidebar::-webkit-scrollbar { height: 4px; }
-  .sidebar::-webkit-scrollbar-thumb { background: var(--sidebar-active); border-radius: var(--radius-pill); }
-  .sidebar.collapsed { width: 100%; }
-
-  /* ---- the rail stops being eight equal things in a 1400px scroller ----
-     Measured before this: 1413px of content in a 375px viewport, with exactly ONE item fully
-     visible and everything else — including the way home and the state coverage map — behind a
-     drag gesture that nothing on screen advertised. It scrolled correctly; it just did not tell
-     anyone it could.
-     It now has three parts instead of one list. The brand is pinned to the left edge, so home is
-     always one tap. The tool is pinned to the right edge, so the reader's own facts are always one
-     tap. The worked-example routes scroll between them, which is the only group where scrolling is
-     acceptable — they are alternatives to each other, not to the two pinned controls. A gradient
-     sits in front of the pinned action so the scrolling middle visibly continues underneath it
-     rather than simply stopping.
-     `order` does the rearranging: no second markup, no duplicate links for a screen reader to read
-     twice, and nothing here depends on JavaScript. */
-  .sidebar { position: sticky; top: 0; z-index: 30; }
-
-  .sidebar-logo-row {
-    flex: none;
-    order: -1;
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background: var(--sidebar);
-    padding: 0 var(--space-3) 0 var(--space-1);
-    /* `left: 0` pins to the scrollport, but the rail's own left padding sits outside the pinned
-       element — so a scrolled item's tail showed through that gap beside the brand. The shadow
-       extends the backdrop across it. Same trick as the pinned action on the other edge. */
-    box-shadow: -12px 0 0 0 var(--sidebar);
-  }
-  /* ---- the tool leaves the rail and goes under the thumb ----
-
-     It used to be pinned to the right edge of this strip, and the arithmetic was the problem.
-     Measured at 375px: the pinned brand takes ~88px, the pinned action ~170px and its gradient
-     28px — about 286px of a ~351px rail — which left roughly SIXTY-FIVE PIXELS of visible scroll
-     window for the five worked-example destinations. Less than half of one item. The strip
-     scrolled correctly and had almost nothing to scroll in.
-
-     So the action moves to the bottom of the viewport, where a single primary action belongs on a
-     phone, and the five destinations get the whole rail back.
-
-     It is the SAME element, repositioned — not a second copy hidden at the other breakpoint. One
-     node means one accessible name, one tab stop, and no chance of the two drifting apart. This
-     works because `position: fixed` escapes the sticky rail: sticky does not create a containing
-     block for fixed descendants (only transform, filter and perspective do, and the rail has
-     none), so it anchors to the viewport as intended.
-
-     One action, not five. A five-tab bar would be a phone-app cliché; a single pinned control is
-     a tool, and this product has exactly one. */
-  .sidebar-cta {
-    position: fixed;
-    left: var(--space-4);
-    right: var(--space-4);
-    /* Clear of the iOS home indicator, and of nothing on a device that has none. */
-    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
-    z-index: 40;
-    justify-content: center;
-    padding: 13px var(--space-4);
-    border-radius: var(--radius-card);
-    /* It floats over content now, so it needs to sit ON something rather than beside it. */
-    box-shadow: 0 6px 20px rgba(16, 24, 40, 0.22);
-  }
-  /* The scroll affordance, now at the rail's own right edge. A flex item rather than a decorative
-     overlay so it participates in the same sticky context and cannot drift. */
-  .sidebar::after {
-    content: "";
-    order: 99;
-    position: sticky;
-    right: 0;
-    z-index: 1;
-    flex: none;
-    width: 28px;
-    align-self: stretch;
-    margin-right: calc(var(--space-3) * -1);
-    background: linear-gradient(to right, transparent, var(--sidebar));
-    pointer-events: none;
-  }
   /* The floating action would otherwise sit on top of the last thing on every page — which is the
      footer carrying the privacy promise. */
   .content {
     padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
-
-  .sidebar-collapse-btn { display: none; }
-  .sidebar-nav, .sidebar-secondary { flex: none; flex-direction: row; flex-wrap: nowrap; gap: var(--space-1); }
-  .sidebar-divider { flex: none; height: 20px; width: 1px; margin: 0 var(--space-1); }
-  .sidebar-spacer, .sidebar-footer { display: none; }
-  /* 44px minimum target, and the label is what makes the target identifiable. */
-  .sidebar-item { flex: none; padding: 10px var(--space-3); min-height: 44px; }
-  .sidebar-cta { min-height: 48px; }
-  .sidebar.collapsed .sidebar-label { display: block; }
-  /* A group heading cannot do its job inside a horizontally-scrolling strip: it would sit beside
-     the items it is meant to sit above, and add width to a rail that already overflows. The
-     example routes carry their own marker on the page (Step 8.3), which is what tells a phone
-     reader whose record they are looking at. */
-  .sidebar-section-label { display: none; }
-  /* The nested findings are a vertical-rail affordance and would be actively harmful here: this
-     strip already holds more than a 375px viewport can show, and three more items — text-only,
-     with no icon, and the longest labels in the product — would add roughly 450px to a scroller
-     whose visible window is measured in tens of pixels. On a phone these screens are reached by
-     tapping the card that states the finding, which sits above the fold on the dashboard. */
-  .sidebar-subnav { display: none; }
   .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); height: auto; min-height: var(--topbar-height); flex-wrap: wrap; }
   /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
      rather than being dropped the way the search field it replaced was. */
@@ -2670,10 +2486,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
   /* Chrome, navigation and anything that offers to take you elsewhere. On paper every one of these
      is either a dead control or an advertisement. */
-  .sidebar, .topbar, .skip-link, .back-link, .explore, .memorystrip, .cta, .nextcard,
+  .topbar, .skip-link, .back-link, .explore, .memorystrip, .cta, .nextcard,
   .landing-cta-row, .sh-refusal-go, .outlook-more, .domain-card-more, .rp-tabs,
   .wc-ev-actions, .rem-actions, .callout-close, .btn, .row-add, .row-remove,
-  .check-again, .nsmore, .wc-undo, .sidebar-subnav {
+  .check-again, .nsmore, .wc-undo {
     display: none !important;
   }
 
@@ -2749,4 +2565,203 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   }
   /* The stem belongs to the card, so it lifts with it. */
   .sh-row:hover::before { background: var(--border-strong); }
+}
+
+/* =================================================================================================
+   PHASE 1 — THE ORIGINAL PATHWISE SHELL, RESTORED (reference: 8ac1c3f).
+
+   The redesign's geometry was a dark 244px rail beside a 1200px content column. The original was a
+   centred 940px document under a slim topbar. This block restores the second and neutralises the
+   first. It sits last in the file on purpose: everything above is component CSS that now reads the
+   original palette from :root, and only the SHELL needed replacing rather than retuning.
+
+   The `.sidebar*` rules were removed in Phase 3 once it was verified that no component emits that
+   markup any more — dead CSS, provably unreferenced, not merely unused-looking.
+   ================================================================================================= */
+
+/* The rail is gone; the shell is a plain block, and the centred `.wrap` inside it does the work. */
+.app-shell,
+.shell-main { display: block; width: 100%; min-height: 0; background: transparent; }
+
+.shell-wrap { max-width: var(--content-max); margin: 0 auto; padding: 32px 24px 80px; }
+
+/* ---- topbar: brand left, pills right ---- */
+.shell-wrap > .topbar {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; margin-bottom: 22px; padding: 0; border: 0; background: transparent;
+  position: static; height: auto; min-height: 0; box-shadow: none;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.brand .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.02em; color: var(--ink); }
+.brand .logo:hover { text-decoration: none; }
+.brand .dot { color: var(--accent); }
+.brand .tag { font-size: 13px; color: var(--muted); }
+.topnav { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* ---- the original pill ---- */
+.pill {
+  font-size: 12px; color: var(--muted); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px;
+  white-space: nowrap;
+}
+.pill-privacy { color: var(--green); border-color: color-mix(in srgb, var(--green) 26%, var(--line)); }
+
+/* ---- section navigation, as pills ---- */
+.sitenav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 22px; }
+.sitenav-sep { width: 1px; height: 16px; background: var(--line); margin: 0 2px; }
+a.navpill { color: var(--ink-soft); transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+a.navpill:hover { text-decoration: none; border-color: var(--accent); color: var(--accent); }
+a.navpill.active { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); color: var(--accent); font-weight: 600; }
+a.navpill-cta { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 650; }
+a.navpill-cta:hover { background: color-mix(in srgb, var(--accent) 88%, black); border-color: transparent; color: #fff; }
+a.navpill-cta.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sitenav-sub { margin-top: -12px; margin-bottom: 22px; }
+.sitenav-sub .navpill { font-size: 11.5px; }
+
+/* ---- the page's own name, at the original scale ---- */
+.page-title {
+  font-size: 25px; line-height: 1.3; letter-spacing: -0.01em; font-weight: 700;
+  color: var(--ink); margin: 0 0 18px;
+}
+
+.shell-meta { margin-top: 28px; font-size: 12px; color: var(--muted); text-align: center; }
+
+/* The old shell had no inner scroll container; content flows in the page. */
+.shell-wrap > main { display: block; padding: 0; max-width: none; }
+
+@media (max-width: 640px) {
+  .shell-wrap { padding: 20px 16px 56px; }
+  .shell-wrap > .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .topnav { justify-content: flex-start; }
+  .brand .tag { display: none; }
+  .page-title { font-size: 21px; }
+}
+
+/* -------------------------------------------------------------------------------------------------
+   PHASE 1 — the three pieces of Stellic chrome that carried the redesign's voice, returned to the
+   original language. CSS only: no component's markup, props or behaviour is touched, so every
+   status, band and citation still comes from the same engine output it did before.
+   ------------------------------------------------------------------------------------------------- */
+
+/* STATUS GLYPH → the original coloured dot.
+   The redesign made this a 22px filled rounded square with a white icon inside it, which is the
+   single most recognisable mark of that design. The original said the same thing with a 7px dot
+   inside a pill (`.badge::before`). The icon is hidden rather than removed — StatusGlyph still
+   renders it, and the `count` variant, which carries a NUMBER rather than a state, is untouched. */
+.status-glyph:not(.count) {
+  width: 9px; height: 9px; border-radius: 50%;
+  align-self: center; box-shadow: none;
+}
+.status-glyph:not(.count) > svg,
+.status-glyph:not(.count) > * { display: none; }
+.status-glyph.idle:not(.count) { border: 1px solid var(--border-strong); background: var(--surface); }
+
+/* CAPSULE → the original `.pill`. */
+.capsule {
+  font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line); color: var(--muted);
+}
+.capsule--tinted.done { background: var(--green-soft); color: var(--green); border-color: transparent; }
+.capsule--tinted.active,
+.capsule--tinted.warn { background: var(--amber-soft); color: var(--amber); border-color: transparent; }
+.capsule--tinted.blocked { background: var(--red-soft); color: var(--red); border-color: transparent; }
+
+/* SEGMENTED PROGRESS → the original track: taller, cooler, 8px corners.
+   The redesign's thin multi-segment rail was the dominant visual rhythm of the product; the
+   original was a single substantial bar the eye reads as a measure. Segment COLOURS are left to the
+   status tokens, which now carry the original green/amber/red. */
+.segprog-track {
+  height: 28px; background: #eef1f6; border-radius: 8px; overflow: hidden; gap: 0;
+}
+.segprog-seg { border-radius: 0; }
+.segprog-seg.done { background: linear-gradient(180deg, #3a6ae4, #2f5fe0); }
+.segprog-legend { margin-top: 12px; font-size: 12.5px; color: var(--ink-soft); }
+.segprog-dot { border-radius: 3px; }
+
+/* =================================================================================================
+   PHASE 2 — the components, in the original visual language.
+   Styling only. Every value, status, citation and office on these cards is the same engine output
+   it was before; what changed is the hierarchy they are drawn in.
+   ================================================================================================= */
+
+/* ---- HERO: one sentence, then two doors ---- */
+.hero {
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 26px 28px;
+  box-shadow: var(--shadow);
+  margin-bottom: 22px;
+}
+.hero .eyebrow {
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); font-weight: 600; margin-bottom: 10px;
+}
+.hero-h {
+  font-size: 25px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em;
+  font-weight: 700; color: var(--ink);
+}
+.hero-h strong { font-weight: 700; }
+.hero-lede { margin: 0 0 16px; color: var(--ink-soft); font-size: 15.5px; }
+.hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
+@media (max-width: 640px) { .hero .doors { grid-template-columns: 1fr; } }
+.door {
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 13px 15px; background: var(--red-soft);
+}
+.door .k {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 12px; color: var(--red); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.door .v { font-size: 14px; color: var(--ink); margin-top: 5px; }
+.door-office {
+  margin-top: 8px; font-size: 11.5px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.hero-foot { margin: 16px 0 0; color: var(--ink-soft); font-size: 14px; }
+
+/* ---- the original band pill, with its dot ---- */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+}
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.badge.green, .badge.done { background: var(--green-soft); color: var(--green); }
+.badge.amber, .badge.warn, .badge.active { background: var(--amber-soft); color: var(--amber); }
+.badge.red, .badge.blocked { background: var(--red-soft); color: var(--red); }
+/* Not knowing is not a warning — the neutral band keeps its own quiet treatment. */
+.badge.idle { background: var(--canvas); color: var(--muted); border: 1px solid var(--line); }
+.door .k .badge { text-transform: none; letter-spacing: 0; }
+
+/* ---- DOMAIN CARD: domain label, status, pill, detail ---- */
+.domain-card { padding: 18px; border-radius: var(--radius); box-shadow: var(--shadow); }
+.domain-card .domain-card-head { display: block; margin: 0; padding: 0; border: 0; }
+.domain-card .domain {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); font-weight: 600;
+}
+.domain-office { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.domain-status { font-size: 16px; font-weight: 650; margin: 8px 0 6px; color: var(--ink); line-height: 1.35; }
+.domain-detail { font-size: 13.5px; color: var(--ink-soft); margin-top: 8px; }
+.domain-card .domain-card-progress { margin: 12px 0 0; }
+.domain-card-more { display: inline-block; margin-top: 10px; font-size: 13.5px; align-self: flex-start; }
+/* The card is a flex column, so an inline-flex pill would otherwise stretch to the full card
+   width and stop reading as a pill. */
+.domain-card .badge { align-self: flex-start; }
+
+/* ---- the two gauges stack, as they did originally ---- */
+.gauge-pair { display: block; }
+.gauge-pair > div + div { margin-top: 22px; }
+
+/* The redesign widened the measure at 1280 and 1600 (1360px / 1520px) because a two-column shell
+   has room to fill. The original was a fixed centred 940px document at every width, and the
+   step-ups are what made the restored shell still read wide on a laptop. Held at 940 here rather
+   than edited above, so the breakpoint blocks stay intact and legible. */
+@media (min-width: 1280px) {
+  :root { --content-max: 940px; }
+  .finding, .jintro, .dm { max-width: none; }
+}
+@media (min-width: 1600px) {
+  :root { --content-max: 940px; --gutter: var(--space-5); }
 }

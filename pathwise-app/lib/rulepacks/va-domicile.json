@@ -48,6 +48,11 @@
       "stops_analysis": true
     }
   ],
+  "status_classification": {
+    "cite": "Part II, Section 03(A) & Section 02(4)",
+    "note": "Part II Section 03(A) directs the institution to determine first whether the student is a national or an alien, and holders of student or temporary visas cannot establish domicile — the rule this pack's gate encodes. The list below is an IMPLEMENTATION BOUNDARY, not a legal category: it names the immigration statuses PathWise has actually read this source against — the three the gate names, plus citizen and lawful permanent resident, for which PathWise returns the durational analysis. PathWise does not claim the source enumerates these five, and this list must not be read as the set of statuses Virginia permits. A status outside it has not been read against the source, so PathWise answers for it neither way: not barred, not permitted.",
+    "classified": ["citizen", "LPR", "F1", "J1", "M1"]
+  },
   "clock": {
     "duration_days": 365,
     "anchor": "date_of_alleged_entitlement",

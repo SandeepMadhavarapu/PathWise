@@ -339,6 +339,56 @@ rejects(
 
 // ---------------------------------------------------------------------------------------------
 console.log('');
+console.log('A pack that states a status rule has to say how far it was read');
+// ---------------------------------------------------------------------------------------------
+
+// The Claim #2 defect, as an authoring rule. A gate is a blacklist, so a `modelled` pack that states
+// one without a `status_classification` leaves every status the gate does not name being read as
+// considered-and-permitted — which is how Virginia came to answer a student whose status it cannot
+// name exactly as it answers a U.S. citizen. This makes that shape a build-visible error rather than
+// something only a probe would find.
+{
+  const stripped = JSON.parse(JSON.stringify(vaDomicileRaw)) as Record<string, unknown>;
+  delete stripped.status_classification;
+  const problems = validateDomicilePack(parseDomicilePack(stripped), TODAY);
+  assert(
+    'a modelled domicile pack with a gate and no status_classification is an error',
+    problems.some((p) => p.severity === 'error' && p.message.includes('status_classification')),
+    problems.map((p) => p.message),
+  );
+
+  const strippedAid = JSON.parse(JSON.stringify(vaAidRaw)) as Record<string, unknown>;
+  delete strippedAid.status_classification;
+  const aidProblems = validateAidPack(parseAidPack(strippedAid), TODAY);
+  assert(
+    'a modelled aid pack with a block and no status_classification is an error',
+    aidProblems.some((p) => p.severity === 'error' && p.message.includes('status_classification')),
+    aidProblems.map((p) => p.message),
+  );
+
+  // An empty list is worse than an absent one: it looks like a reading somebody made, and every
+  // status would fail closed against a rule nobody wrote.
+  rejects(
+    'a status_classification with an empty classified list is rejected',
+    brokenDomicile((p) => {
+      (p.status_classification as Record<string, unknown>).classified = [];
+    }),
+    PackSchemaError,
+  );
+
+  // TX and TN state no status rule at all, so the requirement must not reach them — the absence is
+  // a fact about those jurisdictions, and their gap is already carried as an open question.
+  for (const { code, packs } of REGISTERED_PACKS) {
+    if (packs.domicile.gates.length > 0) continue;
+    const gapless = validateDomicilePack(packs.domicile, TODAY).filter(
+      (p) => p.severity === 'error' && p.message.includes('status_classification'),
+    );
+    assert(`${code} is not required to classify statuses — it states no status rule`, gapless.length === 0);
+  }
+}
+
+// ---------------------------------------------------------------------------------------------
+console.log('');
 console.log('The parser reports everything wrong at once, not just the first thing');
 // ---------------------------------------------------------------------------------------------
 

@@ -161,6 +161,23 @@ function checkDomicileCapabilities(pack: DomicilePack, out: ValidationProblem[])
       message: 'carries a clock block but does not list "durational_clock" among what it answers',
     });
   }
+
+  // A gate is a blacklist, so a pack that states one has to say how far it was read.
+  //
+  // Without this, "modelled" plus a three-status gate means the engines treat every other status in
+  // the schema as considered-and-permitted — which is how Virginia came to answer a student whose
+  // status it cannot name exactly as it answers a U.S. citizen. The check binds only a pack that
+  // both declares `modelled` AND states a gate: a pack with no status rule (Texas, Tennessee) makes
+  // no claim to have read one and already carries that gap as an open question.
+  if (pack.gates.length > 0 && !pack.status_classification) {
+    out.push({
+      packId: pack.pack_id,
+      severity: 'error',
+      message:
+        'declares residency "modelled" and states a status gate, but no status_classification — a gate ' +
+        'is a blacklist, so without it every status the gate does not name would be read as permitted',
+    });
+  }
 }
 
 function checkAidCapabilities(pack: AidPack, out: ValidationProblem[]): void {
@@ -175,6 +192,19 @@ function checkAidCapabilities(pack: AidPack, out: ValidationProblem[]): void {
       packId: pack.pack_id,
       severity: 'error',
       message: 'declares aid "modelled" but states no form-selection blocks',
+    });
+  }
+  // The same requirement as the domicile side, for the same reason: `fafsa_blocks` is a blacklist,
+  // and the form-selection rule it sits inside is a positive predicate about FAFSA eligibility. A
+  // pack that does not say which statuses it read that predicate for would have "no block matched"
+  // standing in for "eligible to file", which they are not.
+  if (pack.form_selection.fafsa_blocks.length > 0 && !pack.status_classification) {
+    out.push({
+      packId: pack.pack_id,
+      severity: 'error',
+      message:
+        'declares aid "modelled" and states form-selection blocks, but no status_classification — a ' +
+        'block is a blacklist, so without it every status it does not name would be read as a FAFSA filer',
     });
   }
 }

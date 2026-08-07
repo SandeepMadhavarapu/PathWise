@@ -179,6 +179,43 @@ export interface Gate {
   agency_id?: string;
 }
 
+/**
+ * Which immigration statuses this pack's status rule has ACTUALLY been authored against.
+ *
+ * A pack states its status rule as conditions — a domicile `gate`, an aid `fafsa_block` — and every
+ * one of those conditions is a BLACKLIST: it names the statuses that close a door. Reading a
+ * non-match as "this status is not barred" is only sound for a status somebody actually considered.
+ * `other` is not a status at all; it is the absence of one, and no condition can have been written
+ * about it.
+ *
+ * That gap is how Virginia came to return "Domicile duration of 365 days appears satisfied" and
+ * "File the FAFSA — Virginia state aid is not blocked by status" for a student whose status PathWise
+ * cannot name — output byte-identical to what it returns for a U.S. citizen. Every sentence in it
+ * was true of the pack. None of it was true of the student.
+ *
+ * So a pack that means to answer status questions says which statuses it has read the source for.
+ * A status outside `classified` is not thereby INELIGIBLE — the engines return `unable_to_verify`
+ * and say what they could not establish. UNCLASSIFIED IS NOT A BAR, and nothing in this codebase may
+ * turn it into one.
+ *
+ * Optional, and the absence is meaningful rather than lazy: a pack that states no status rule at all
+ * (Texas and Tennessee both do) declares no classification, and the engines leave its behaviour
+ * exactly as it was — those packs already carry the gap as an open question via
+ * `unmodelledStatusGateUnknowns`. This field is for a pack that DOES state a status rule and must
+ * therefore say how far that rule was read.
+ */
+export interface StatusClassification {
+  /** The section of the source the classification was read from. */
+  cite: string;
+  /** Why this list is the list, in the author's own words. Rendered verbatim; never composed. */
+  note: string;
+  /**
+   * Status codes from `ImmigrationStatus` that this pack has been authored against — BOTH the ones
+   * its conditions close a door on and the ones the source establishes are not closed by it.
+   */
+  classified: string[];
+}
+
 export interface Clock {
   duration_days: number;
   anchor: ClockAnchor;
@@ -261,6 +298,11 @@ export interface DomicilePack extends PackHeader {
   display_cite?: string;
   gates: Gate[];
   /**
+   * How far this pack's status rule was read. Absent on a pack that states no status rule, which is
+   * why it is optional — see StatusClassification.
+   */
+  status_classification?: StatusClassification;
+  /**
    * Optional, and that is the whole point of it being optional: not every state has a durational
    * requirement. Tennessee has none. A pack without a clock is not an incomplete pack, and the
    * engine must not treat a missing clock as a clock of zero days.
@@ -290,6 +332,15 @@ export interface AidPack extends PackHeader {
   domain: 'aid';
   display_cite: string;
   form_selection: { rule: string; fafsa_blocks: AidBlock[] };
+  /**
+   * How far this pack's status rule was read — the same field, the same meaning, on the aid side.
+   *
+   * It matters here for a reason particular to aid: `form_selection.rule` is a POSITIVE predicate
+   * ("students eligible for FAFSA should file FAFSA"), and the engine had been substituting
+   * "no fafsa_block matched" for it. Those are different questions, and for a status the pack never
+   * classified only the second one has an answer.
+   */
+  status_classification?: StatusClassification;
   state_provisions: AidProvision[];
   deadlines: { priority_date: string; rule: string; cite: string };
   confidentiality: { note: string; product_consequence: string };
@@ -451,6 +502,24 @@ function parseCapabilities(c: Check, raw: Obj): Capability[] {
   return caps;
 }
 
+/**
+ * Parse the status classification, or return undefined where the pack states none.
+ *
+ * `classified` must be non-empty when the block is present: an empty list would classify nothing
+ * while looking like a claim to have classified something, and every status would fail closed
+ * against a rule the author never actually wrote.
+ */
+function parseStatusClassification(c: Check, raw: Obj): StatusClassification | undefined {
+  if (raw.status_classification === undefined) return undefined;
+  const sc = c.obj(raw, 'status_classification');
+  const scc = c.at('status_classification');
+  const classified = scc.strArr(sc, 'classified');
+  if (classified.length === 0) {
+    scc.fail('classified must name at least one status — an empty list claims a reading nobody made');
+  }
+  return { cite: scc.str(sc, 'cite'), note: scc.str(sc, 'note'), classified };
+}
+
 function parseHeader(c: Check, raw: Obj, domain: PackDomain): PackHeader {
   const agencies = parseAgencies(c, raw);
   const capabilities = parseCapabilities(c, raw);
@@ -531,6 +600,8 @@ export function parseDomicilePack(raw: unknown): DomicilePack {
   // has none, and "none" renders as no chip rather than as an empty one.
   const packDisplayCite =
     typeof raw.display_cite === 'string' ? c.str(raw, 'display_cite') : undefined;
+
+  const statusClassification = parseStatusClassification(c, raw);
 
   // Who decides. A gated pack carries it per gate; a gateless one must state it at the top, or no
   // finding it produces could name an office at all.
@@ -619,6 +690,7 @@ export function parseDomicilePack(raw: unknown): DomicilePack {
     deciding_office: decidingOffice,
     display_cite: packDisplayCite,
     gates,
+    status_classification: statusClassification,
     clock,
     dependency,
     intent_factors: intentFactors,
@@ -665,6 +737,8 @@ export function parseAidPack(raw: unknown): AidPack {
     };
   });
 
+  const statusClassification = parseStatusClassification(c, raw);
+
   const dl = c.obj(raw, 'deadlines');
   const dlc = c.at('deadlines');
   const conf = c.obj(raw, 'confidentiality');
@@ -677,6 +751,7 @@ export function parseAidPack(raw: unknown): AidPack {
     domain: 'aid',
     display_cite: c.str(raw, 'display_cite'),
     form_selection: { rule: fsc.str(fs, 'rule'), fafsa_blocks: blocks },
+    status_classification: statusClassification,
     state_provisions: provisions,
     deadlines: {
       priority_date: dlc.str(dl, 'priority_date'),

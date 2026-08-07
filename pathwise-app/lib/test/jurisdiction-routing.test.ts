@@ -307,6 +307,82 @@ assert(
   lprResidency.map((c) => c.cite.source_url),
 );
 
+// Claim #2c — the consequence engine obeys the same classification boundary as the two engines
+// that read the same record. `gateStatuses` is a blacklist, so "not gated" was being read here as
+// "the residency door is open", and this engine asserted that the one-year clock would start today
+// for a status domicile and aid both answer `unable_to_verify` for.
+//
+// The direction is the whole point: unclassified is NOT barred. It must not borrow the gate's
+// "blocks domicile entirely" sentence, and it must not assert the positive consequence either.
+{
+  const vaUnclassified: Student = {
+    ...f1Student('VA'),
+    immigration: { status: 'other', prior_statuses: [] },
+  };
+  const unclassified = applyLifeEvent(vaUnclassified, priyaJobOffer, jurisdictionFor(vaUnclassified))
+    .filter((c) => c.domain === 'residency');
+
+  assert(
+    'an unclassified status still gets a residency consequence — silence would be its own bug',
+    unclassified.length > 0,
+  );
+  assert(
+    'but it never asserts one: applies is false for every residency consequence',
+    unclassified.every((c) => !c.applies),
+    unclassified.map((c) => c.applies),
+  );
+  assert(
+    'and the determinate clock sentence is gone',
+    !/clock would start|clock_started/.test(JSON.stringify(unclassified)),
+    unclassified.map((c) => c.effect),
+  );
+  assert(
+    'and it does NOT borrow the gate’s bar — unclassified is unread, not barred',
+    // Says what it HAS not done, and says outright that this is not a bar. The gate's own
+    // "blocks … domicile entirely" sentence must not appear on a status nobody ruled on.
+    !/blocks .* domicile entirely/.test(unclassified.map((c) => c.effect).join(' ')) &&
+      unclassified.every(
+        (c) => /has not read/.test(c.effect) && /not a finding that the status is barred/.test(c.effect),
+      ),
+    unclassified.map((c) => c.effect),
+  );
+  assert(
+    'and it cites the pack’s own classification section, not a sentence composed here',
+    unclassified.every((c) => c.cite.authority.includes(resolveJurisdiction('VA')!.domicile.authority)),
+    unclassified.map((c) => c.cite.authority),
+  );
+
+  // The two halves that must NOT move.
+  const f1Res = applyLifeEvent(f1Student('VA'), priyaJobOffer, jurisdictionFor(f1Student('VA')))
+    .filter((c) => c.domain === 'residency');
+  assert(
+    'F-1 keeps the gate’s own reasoned negative, unchanged',
+    f1Res.length > 0 && f1Res.every((c) => !c.applies) &&
+      f1Res.some((c) => /blocks .* domicile entirely/.test(c.effect)),
+    f1Res.map((c) => c.effect),
+  );
+  assert(
+    'a positively classified status (LPR) keeps its affirmative consequence',
+    lprResidency.length > 0 && lprResidency.every((c) => c.applies),
+    lprResidency.map((c) => c.applies),
+  );
+
+  // A pack that states no classification claims nothing about its reach, so it must be untouched.
+  if (isModelled('TX')) {
+    const txUnclassified: Student = {
+      ...f1Student('TX'),
+      immigration: { status: 'other', prior_statuses: [] },
+    };
+    const tx = applyLifeEvent(txUnclassified, priyaJobOffer, jurisdictionForCode('TX'))
+      .filter((c) => c.domain === 'residency');
+    assert(
+      'Texas states no classification, so its consequences are unchanged',
+      tx.length > 0 && tx.every((c) => c.applies),
+      tx.map((c) => c.applies),
+    );
+  }
+}
+
 console.log('');
 console.log('A pack’s schema is not one jurisdiction’s vocabulary');
 
@@ -1080,6 +1156,219 @@ for (const { code, packs } of REGISTERED_PACKS) {
     });
     assert('Texas still accepts continuous_residence and runs its clock', tx.clock?.clockStart === '2024-01-01', tx.clock?.clockStart);
   }
+}
+
+console.log('');
+console.log('An unclassified status fails CLOSED — and closed means "cannot verify", not "barred"');
+
+// The defect: a gate is a BLACKLIST. Virginia's names F-1, J-1 and M-1, and "no gate matched" was
+// being rendered as a durational answer — so a student who picked "Other" got "Domicile duration of
+// 365 days appears satisfied" and "File the FAFSA — Virginia state aid is not blocked by status",
+// byte-identical to a U.S. citizen's result, with zero open questions on the page. "Other" is not a
+// status; it is the absence of one, and no clause in either pack can have been written about it.
+//
+// The guardrail these assertions exist to hold is the DIRECTION of the fix. Unclassified must reach
+// `unable_to_verify` and never `ineligible`: inventing a bar with no source is the same error
+// pointed the other way, and on the aid side it would deny a pathway Virginia actually keeps open.
+{
+  const ENT = '2026-08-05';
+  const SINCE = '2023-01-01'; // comfortably past the 365-day clock
+  const person = (status: string, state = 'VA'): Student => ({
+    id: `t-${status}`,
+    immigration: { status: status as Student['immigration']['status'], prior_statuses: [] },
+    dob: '2000-01-01',
+    institutions: [],
+    jurisdiction_history: [{ state, from: '2020-01-01' }],
+  });
+  const residency = (status: string, state = 'VA'): Finding =>
+    residencyFindingFor(jurisdictionForCode(state), {
+      student: person(status, state),
+      events: [],
+      intentFactors: [{ id: 'continuous_residence', date: SINCE }],
+      allegedEntitlementDate: ENT,
+    });
+  const aid = (status: string, state = 'VA'): Finding =>
+    aidFindingFor(jurisdictionForCode(state), {
+      student: person(status, state),
+      deadlines: { asOf: ENT },
+    });
+
+  // Every member of the ImmigrationStatus union. Kept as a literal, then checked against the type,
+  // so a status added to types.ts without being considered here is a COMPILE error rather than a
+  // silently untested one.
+  const ALL_STATUSES = [
+    'citizen', 'LPR', 'LPR_applicant',
+    'F1', 'J1', 'M1',
+    'H4', 'DACA', 'TPS', 'undocumented', 'other',
+  ] as const;
+  const _exhaustive: Student['immigration']['status'][] = [...ALL_STATUSES];
+  void _exhaustive;
+
+  // The statuses the two Virginia packs declare they were authored against.
+  const CLASSIFIED = ['citizen', 'LPR', 'F1', 'J1', 'M1'];
+  const UNCLASSIFIED = ALL_STATUSES.filter((s) => !CLASSIFIED.includes(s));
+
+  // ---- residency: the reachable case, in full ----
+  const other = residency('other');
+  assert('VA + Other residency is unable_to_verify', other.result === 'unable_to_verify', other.result);
+  assert('VA + Other residency raises a non-empty unknown', other.unknowns.length > 0, other.unknowns.length);
+  assert(
+    'VA + Other residency no longer claims the duration is satisfied',
+    !/appears satisfied|days of domicile appear/i.test(JSON.stringify(other)),
+    other.headline,
+  );
+  assert(
+    'VA + Other residency never says ineligible or blocked — unclassified is not a bar',
+    other.result !== 'ineligible' && !/\bblock(s|ed)?\b|\bbarred\b|\bineligible\b/i.test(other.headline),
+    other.headline,
+  );
+  assert(
+    'VA + Other residency says in words that it is not a finding of a bar',
+    /not a finding that the status is barred/i.test(JSON.stringify(other.reasoning_steps)),
+  );
+  assert(
+    'VA + Other residency still names the deciding office',
+    other.deciding_office === 'domicile_officer',
+    other.deciding_office,
+  );
+  assert(
+    'VA + Other residency cites the section the classification was read from',
+    other.rule_citation.authority.includes('Section 02(4)'),
+    other.rule_citation.authority,
+  );
+  assert(
+    'VA + Other residency tells the reader what would resolve it',
+    other.unknowns.every((u) => u.how_to_resolve.length > 0 && u.why_it_matters.length > 0),
+  );
+
+  // ---- aid: the reachable case, in full ----
+  const otherAid = aid('other');
+  const otherForm = aidFormFor(jurisdictionForCode('VA'), person('other'));
+  assert('VA + Other aid is unable_to_verify', otherAid.result === 'unable_to_verify', otherAid.result);
+  assert('VA + Other aid raises a non-empty unknown', otherAid.unknowns.length > 0, otherAid.unknowns.length);
+  assert(
+    'VA + Other aid no longer says state aid is not blocked by status',
+    !/not blocked by status/i.test(JSON.stringify(otherAid)),
+    otherAid.headline,
+  );
+  assert(
+    'VA + Other aid never reaches ineligible — declining is not denying',
+    otherAid.result !== 'ineligible',
+    otherAid.result,
+  );
+  assert(
+    'VA + Other aid form selection is undetermined, not "none"',
+    otherForm?.form === 'undetermined',
+    otherForm?.form,
+  );
+  assert(
+    'VA + Other aid says the pathways stay open rather than closing them',
+    !!otherForm?.remains && /still open/i.test(otherForm.remains),
+    otherForm?.remains,
+  );
+  assert(
+    'and the long reason ends with that same string, so the two cannot drift',
+    !!otherForm?.remains && otherForm.reason.endsWith(otherForm.remains),
+  );
+  assert('VA + Other aid still names the deciding office', otherAid.deciding_office === 'financial_aid');
+
+  // THE GUARDRAIL, stated as its own test. The forbidden fix is a citizen/LPR whitelist that denies
+  // everyone else; the required one declines to answer for them. A non-citizen, non-LPR status must
+  // never come back ineligible on either side.
+  for (const status of UNCLASSIFIED) {
+    const r = residency(status);
+    const a = aid(status);
+    assert(
+      `${status}: unclassified reaches unable_to_verify on BOTH sides, never ineligible`,
+      r.result === 'unable_to_verify' &&
+        a.result === 'unable_to_verify' &&
+        r.unknowns.length > 0 &&
+        a.unknowns.length > 0,
+      { residency: r.result, aid: a.result },
+    );
+  }
+
+  // ---- the supported statuses are untouched. This is the half a fail-closed change breaks. ----
+  for (const status of ['F1', 'J1', 'M1']) {
+    const r = residency(status);
+    const a = aid(status);
+    assert(
+      `${status}: still gated ineligible on residency, and still blocked on aid`,
+      r.result === 'ineligible' && a.result === 'ineligible',
+      { residency: r.result, aid: a.result },
+    );
+    assert(
+      `${status}: still cites the gate, not the classification`,
+      r.rule_id === 'va-domicile:eligible_alien_gate',
+      r.rule_id,
+    );
+  }
+  for (const status of ['citizen', 'LPR']) {
+    const r = residency(status);
+    const a = aid(status);
+    assert(
+      `${status}: still reaches the durational finding and the affirmative aid answer`,
+      r.rule_id === 'va-domicile:clock' &&
+        /appears satisfied/.test(r.headline) &&
+        a.result === 'review_recommended' &&
+        /not blocked by status/.test(a.headline),
+      { residency: r.headline, aid: a.headline },
+    );
+  }
+
+  // A status that is BOTH classified and gated must get the gate's determinate answer, not the
+  // classification's "cannot verify" — the order of the two checks is load-bearing.
+  assert(
+    'the gate wins over the classification for a status that is in both',
+    residency('F1').result === 'ineligible',
+  );
+
+  // ---- the two entry points must not disagree, which is why the check lives in the shared gate ----
+  for (const status of ALL_STATUSES) {
+    const gate = residency(status);
+    const full = domicileAnalysisFor(jurisdictionForCode('VA'), {
+      student: person(status),
+      events: [],
+      intentFactors: [{ id: 'continuous_residence', date: SINCE }],
+      allegedEntitlementDate: ENT,
+    });
+    const bothUnverifiable =
+      gate.rule_id === 'va-domicile:status-not-classified' &&
+      full.finding.rule_id === 'va-domicile:status-not-classified';
+    const neither =
+      gate.rule_id !== 'va-domicile:status-not-classified' &&
+      full.finding.rule_id !== 'va-domicile:status-not-classified';
+    assert(
+      `${status}: the gate path and the full analysis agree on whether the status was classified`,
+      bothUnverifiable || neither,
+      { gate: gate.rule_id, full: full.finding.rule_id },
+    );
+  }
+
+  // ---- cross-jurisdiction: no Virginia assumption may leak. TX and TN declare no classification. ----
+  for (const code of ['TX', 'TN']) {
+    if (!isModelled(code)) continue;
+    for (const status of ALL_STATUSES) {
+      const r = residency(status, code);
+      assert(
+        `${code} + ${status}: unchanged — a pack that states no classification is not fail-closed by it`,
+        r.rule_id !== `${code.toLowerCase()}-domicile:status-not-classified` &&
+          !/has not read .* domicile rules for this immigration status/.test(r.headline),
+        r.headline,
+      );
+    }
+    // And every status still gets the SAME answer there, which is what "no status rule" means.
+    const headlines = new Set(ALL_STATUSES.map((s) => residency(s, code).headline));
+    assert(
+      `${code} answers every status identically — it states no status rule and now still states none`,
+      headlines.size === 1,
+      [...headlines],
+    );
+  }
+
+  // ---- determinism ----
+  const runs = Array.from({ length: 5 }, () => JSON.stringify([residency('other'), aid('other')]));
+  assert('the same unclassified input yields byte-identical output every time', new Set(runs).size === 1);
 }
 
 console.log('');

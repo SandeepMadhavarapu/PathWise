@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { statusFromBand, type EngineBand, type StatusKey } from "@/lib/tokens";
-import { StatusGlyph } from "./StatusGlyph";
-import { Capsule } from "./Capsule";
 import { SegmentedProgress, type ProgressSegment, type ProgressLegendItem } from "./SegmentedProgress";
 
 export function DomainCard({
@@ -47,17 +45,29 @@ export function DomainCard({
   detailLabel?: string;
 }) {
   const statusKey = tone ?? statusFromBand(band);
+  // The original card's own word for the band, restored. It reads the SAME `band`/`tone` the glyph
+  // did, so a card cannot say one thing in its pill and another in its colour.
+  const bandLabel =
+    statusKey === "idle"
+      ? "Unable to verify"
+      : band === "green"
+        ? "On track"
+        : band === "amber"
+          ? "Attention"
+          : "Blocked";
 
   return (
     <div className="surface domain-card">
+      {/* The original structure: a small-caps domain label, the status line, the band pill, then
+          the detail with its citation. The redesign led with a filled glyph square beside a card
+          title; the original led with the domain name and said the state in a dotted pill. */}
       <div className="domain-card-head">
-        <StatusGlyph status={statusKey} />
         <div className="domain-card-head-text">
-          <div className="t-card-title">
+          <div className="domain">
             {domain}
-            {qualifier ? <Capsule>{qualifier}</Capsule> : null}
+            {qualifier ? <span className="capsule capsule--neutral">{qualifier}</span> : null}
           </div>
-          {decidingOffice ? <div className="t-meta">{decidingOffice}</div> : null}
+          {decidingOffice ? <div className="domain-office">{decidingOffice}</div> : null}
         </div>
       </div>
 
@@ -67,16 +77,11 @@ export function DomainCard({
         </div>
       ) : null}
 
-      <ul className="domain-card-findings">
-        <li className="domain-card-finding-row">
-          <span className="t-row-title">{status}</span>
-        </li>
-        <li className="domain-card-finding-row">
-          <span className="t-meta">
-            {detail} {cite ? <span className="cite wrap">{cite}</span> : null}
-          </span>
-        </li>
-      </ul>
+      <div className="domain-status">{status}</div>
+      <span className={`badge ${statusKey}`}>{bandLabel}</span>
+      <div className="domain-detail">
+        {detail} {cite ? <span className="cite wrap">{cite}</span> : null}
+      </div>
 
       {detailHref ? (
         <Link href={detailHref} className="domain-card-more">

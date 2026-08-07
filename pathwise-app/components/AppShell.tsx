@@ -2,19 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import coverage from "@/lib/rulepacks/coverage.json";
 import { BackLink } from "./BackLink";
-import {
-  GridIcon,
-  ClockIcon,
-  ClipboardIcon,
-  BoltIcon,
-  ChevronIcon,
-  MapIcon,
-  CompareIcon,
-  CalendarIcon,
-} from "./icons";
 
 const RULES_VERIFIED_ON: string = (coverage as { verified_on?: string }).verified_on ?? "unknown";
 // Resolved at build time from the commit actually being built — see next.config.mjs. Not typed by
@@ -105,7 +95,7 @@ const PARENT: Record<string, { href: string; label: string }> = {
  * "the start", and neither name told a first-time reader which was which. The wordmark links to /,
  * which is where every reader already looks for it.
  */
-const CHECK_CTA = { href: "/check", label: "Check my status", icon: ClipboardIcon };
+const CHECK_CTA = { href: "/check", label: "Check my status" };
 
 /**
  * The three finding routes, nested under the dashboard they belong to.
@@ -132,19 +122,18 @@ const FINDING_NAV = [
 ];
 
 const EXAMPLE_NAV = [
-  { href: "/student", label: "Priya's standing", icon: GridIcon },
-  { href: "/student/journey", label: "Her timeline", icon: ClockIcon },
-  { href: "/student/next", label: "Her next steps", icon: CalendarIcon },
+  { href: "/student", label: "Priya's standing" },
+  { href: "/student/journey", label: "Her timeline" },
+  { href: "/student/next", label: "Her next steps" },
   // Outcomes rather than internal names. "What changed" invited "changed since when?" and wore a
   // tick, which reads as "done" on the one screen whose subject is a question the record cannot
   // yet settle. "When evidence lands" was evocative but not a thing a reader scans for; a document
   // arriving is the event they would actually recognise.
-  { href: "/student/changed", label: "When a document arrives", icon: CompareIcon },
-  { href: "/moment", label: "One event, many effects", icon: BoltIcon },
+  { href: "/student/changed", label: "When a document arrives" },
+  { href: "/moment", label: "One event, many effects" },
 ];
 
-// "Coverage map" wore a magnifying glass and did not say coverage of what.
-const SECONDARY_NAV = [{ href: "/coverage", label: "State coverage", icon: MapIcon }];
+const SECONDARY_NAV = [{ href: "/coverage", label: "State coverage" }];
 
 /**
  * The routes that show a FICTIONAL student's record — and WHICH ONE.
@@ -189,36 +178,31 @@ function formatVerifiedDate(iso: string): string {
   return `${Number(d)} ${months[Number(m) - 1]} ${y}`;
 }
 
-type NavItem = { href: string; label: string; icon: (p: { className?: string }) => JSX.Element };
+type NavItem = { href: string; label: string };
 
 /**
- * One rail link. The three navs rendered it identically three times over, which is how the three
- * were able to disagree about anything.
+ * One navigation pill.
  *
- * `aria-label` is the part that matters: `.sidebar-label` is `display: none` when the rail is
- * collapsed and on every viewport under 900px, and `display: none` takes an element out of the
- * accessibility tree as well as off the screen. That left every one of these links named nothing
- * at all on the layout a judge opening the link on a phone would get. Naming the link keeps the
- * name when the text goes, and matches the visible text exactly when it is there.
+ * The original design navigated with `.pill` — a small bordered lozenge on the surface colour —
+ * and had no rail at all. Every label is rendered as text rather than as an icon plus a label that
+ * disappears at narrow widths, so the accessible name and the visible name are the same string on
+ * every viewport, which is what the rail needed `aria-label` to work around.
  */
-function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
+function NavPill({ item, pathname }: { item: NavItem; pathname: string }) {
+  const active = pathname === item.href;
   return (
     <Link
       href={item.href}
-      className={`sidebar-item${pathname === item.href ? " active" : ""}`}
-      aria-label={item.label}
+      className={`pill navpill${active ? " active" : ""}`}
+      aria-current={active ? "page" : undefined}
     >
-      <span className="sidebar-item-icon">
-        <item.icon className="icon-20" />
-      </span>
-      <span className="sidebar-label">{item.label}</span>
+      {item.label}
     </Link>
   );
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
 
   // The landing page owns its own bare, chrome-free layout.
   if (pathname === "/") {
@@ -229,124 +213,81 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const parent = PARENT[pathname];
   const exampleStudent = EXAMPLE_STUDENT[pathname];
 
+  /**
+   * The original shell: one centred column under a slim topbar, and no permanent rail.
+   *
+   * Every responsibility the sidebar carried is still carried here — the tool, the worked-example
+   * routes, the three finding screens, the reference route, the verification stamp and the build
+   * sha. What changed is the geometry: they are pills under a brand line rather than a dark rail
+   * pinned beside the content, which is the difference between reading a document and operating an
+   * application. Nothing about routing, titles or the back-navigation contract moved.
+   */
   return (
-    <div className="app-shell">
-      {/* Seven links stand between the top of the document and the page's own content — eight on the
-          phone rail, where they are laid out horizontally and every one of them is a Tab stop. A
-          keyboard or screen-reader user had no way past them except through them, on every route.
-          First focusable element in the shell, and invisible until it is focused. */}
+    <div className="shell-wrap">
+      {/* First focusable element, invisible until focused — the nav below is a row of links and a
+          keyboard reader still needs a way past it on every route. */}
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <aside className={`sidebar${collapsed ? " collapsed" : ""}`}>
-        <div className="sidebar-logo-row">
-          {/* The wordmark is the way home now that "Home" is not a nav row. This is where readers
-              already click for it, and it frees the slot the duplicate was occupying. */}
-          <Link href="/" className="sidebar-logo" aria-label="PathWise home">
+
+      <header className="topbar">
+        <div className="brand">
+          <Link href="/" className="logo" aria-label="PathWise home">
             Path<span className="dot">Wise</span>
           </Link>
-          <button
-            type="button"
-            className="sidebar-collapse-btn"
-            onClick={() => setCollapsed((c) => !c)}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <ChevronIcon className="icon-16 sidebar-collapse-icon" />
-          </button>
+          <span className="tag">your standing across every system</span>
         </div>
-
-        {/* The tool, and the only control here that acts on the reader's own facts. It is a
-            button rather than a rail row because it is not a peer of the five demos below it —
-            that equivalence is what buried it. */}
-        <Link
-          href={CHECK_CTA.href}
-          className={`sidebar-cta${pathname === CHECK_CTA.href ? " active" : ""}`}
-          aria-label={CHECK_CTA.label}
-        >
-          <span className="sidebar-item-icon">
-            <CHECK_CTA.icon className="icon-20" />
-          </span>
-          <span className="sidebar-label">{CHECK_CTA.label}</span>
-        </Link>
-
-        {/* The heading a first-time reader needs before the five links under it, because without
-            it "Priya's standing" is a stranger's name with no explanation attached. */}
-        <div className="sidebar-section-label">Worked example</div>
-        <nav className="sidebar-nav" aria-label="Worked example">
-          {EXAMPLE_NAV.map((item) => (
-            <React.Fragment key={item.href}>
-              <NavLink item={item} pathname={pathname} />
-              {/* The findings hang off the dashboard, immediately under it, so the relationship is
-                  read rather than explained. A real nested list, so a screen reader hears three
-                  items inside the standing entry instead of eight flat siblings. */}
-              {item.href === "/student" ? (
-                <ul className="sidebar-subnav">
-                  {FINDING_NAV.map((sub) => (
-                    <li key={sub.href}>
-                      <Link
-                        href={sub.href}
-                        className={`sidebar-item sidebar-sub${
-                          pathname === sub.href ? " active" : ""
-                        }`}
-                        aria-label={sub.label}
-                      >
-                        <span className="sidebar-label">{sub.label}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </React.Fragment>
-          ))}
-        </nav>
-
-        <div className="sidebar-divider" />
-        <nav className="sidebar-secondary" aria-label="Reference">
-          {SECONDARY_NAV.map((item) => (
-            <NavLink key={item.href} item={item} pathname={pathname} />
-          ))}
-        </nav>
-
-        <div className="sidebar-spacer" />
-        <div className="sidebar-footer">
-          Rules verified: {formatVerifiedDate(RULES_VERIFIED_ON)}
-          <br />
-          Build: {BUILD_SHA}
-        </div>
-      </aside>
-
-      <div className="shell-main">
-        <header className="topbar">
-          <h1 className="topbar-title t-page-title">{title}</h1>
-          {/* Beside the page's own name, so the first thing read after "Her next steps" is that
-              the steps are not the reader's. Not a status: it uses none of the four status
-              colours, because "this is an example" is a fact about the RECORD, not a verdict on
-              it, and borrowing amber here would make it argue with the findings below. */}
+        <div className="topnav">
+          {/* Kept beside the page name, so the first thing read after "Her next steps" is that the
+              steps are not the reader's own. */}
           {exampleStudent ? (
-            <span className="topbar-example">
-              Worked example
-              <span className="tx-sep" aria-hidden="true">
-                ·
-              </span>
-              <span className="tx-who">{exampleStudent}</span>
+            <span className="pill pill-example">
+              Example student · {exampleStudent}
               <span className="sr-only"> — a fictional student, not your own record</span>
             </span>
           ) : null}
-          {/* This bar used to carry a search field that searched nothing and an avatar with an
-              initial in it. Both were dressing borrowed from products that have accounts, and on a
-              product whose first promise is "no account, nothing stored on a server" the avatar
-              contradicted the promise while the search box invited a judge to click something
-              inert. What sits here now is the one claim the whole page is entitled to make. */}
-          <p className="topbar-privacy">No account · nothing leaves this device</p>
-        </header>
+          <span className="pill pill-privacy">No account · nothing leaves this device</span>
+        </div>
+      </header>
 
-        {/* Above everything the page itself renders, and unconditional: a back affordance that
-            appears only once some workflow has been completed is missing exactly when a lost
-            reader needs it. */}
-        <main className="content" id="main">
-          {parent ? <BackLink href={parent.href} label={parent.label} /> : null}
-          {children}
-        </main>
+      {/* The tool first and visually distinct, then the worked example, then reference material —
+          the same three-part split the rail made, expressed as pills instead of a rail. */}
+      <nav className="sitenav" aria-label="Sections">
+        <Link
+          href={CHECK_CTA.href}
+          className={`pill navpill navpill-cta${pathname === CHECK_CTA.href ? " active" : ""}`}
+          aria-current={pathname === CHECK_CTA.href ? "page" : undefined}
+        >
+          {CHECK_CTA.label}
+        </Link>
+        <span className="sitenav-sep" aria-hidden="true" />
+        {EXAMPLE_NAV.map((item) => (
+          <NavPill key={item.href} item={item} pathname={pathname} />
+        ))}
+        <span className="sitenav-sep" aria-hidden="true" />
+        {SECONDARY_NAV.map((item) => (
+          <NavPill key={item.href} item={item} pathname={pathname} />
+        ))}
+      </nav>
+
+      {/* The three finding screens, shown on the routes they belong to. They were rail sub-items;
+          here they surface only where they are relevant, which keeps the pill row scannable. */}
+      {pathname.startsWith("/student") ? (
+        <nav className="sitenav sitenav-sub" aria-label="Findings">
+          {FINDING_NAV.map((item) => (
+            <NavPill key={item.href} item={item} pathname={pathname} />
+          ))}
+        </nav>
+      ) : null}
+
+      <main id="main">
+        {parent ? <BackLink href={parent.href} label={parent.label} /> : null}
+        <h1 className="page-title">{title}</h1>
+        {children}
+      </main>
+
+      <div className="shell-meta">
+        Rules verified: {formatVerifiedDate(RULES_VERIFIED_ON)} · Build: {BUILD_SHA}
       </div>
     </div>
   );

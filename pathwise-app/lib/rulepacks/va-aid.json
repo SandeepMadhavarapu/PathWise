@@ -45,6 +45,11 @@
       { "when": "immigration.status in ['F1','J1','M1']", "result": "ineligible", "headline": "F-1 status blocks Virginia state financial aid", "cite": "SCHEV VASA guidance" }
     ]
   },
+  "status_classification": {
+    "cite": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
+    "note": "The form-selection rule turns on whether the student is eligible to file the FAFSA. The list below is an IMPLEMENTATION BOUNDARY, not a legal category: it names the immigration statuses PathWise has actually read this pack's rule against — the three its block names, plus citizen and lawful permanent resident, for which PathWise returns the FAFSA answer. PathWise does not restate federal FAFSA eligibility criteria here and makes no claim about which other statuses can or cannot file. Statuses this pack does NOT cover include the undocumented and tuition-equity students its own rule names as the state alternative's audience: their route is real and is simply not modelled here. For any status outside the list PathWise reports which form applies neither way — never that the student is ineligible.",
+    "classified": ["citizen", "LPR", "F1", "J1", "M1"]
+  },
   "state_provisions": [
     { "id": "domicile", "note": "Qualifies through Virginia domicile, as determined under Virginia's residency rules.", "requires": ["domicile_established"] },
     { "id": "military_dependent", "note": "Qualifies as a dependent of military personnel stationed in VA.", "requires": ["military_orders", "dependent_proof"] },

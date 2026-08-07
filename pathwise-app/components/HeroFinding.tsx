@@ -14,8 +14,6 @@
 // consequences, then each one's status, then who decides it, then the authority.
 
 import { formatImmigrationStatus } from "@/lib/format";
-import { StatusGlyph } from "./StatusGlyph";
-import { Capsule } from "./Capsule";
 
 interface Door {
   /** The system this door belongs to, named for the jurisdiction that decides it. */
@@ -75,34 +73,37 @@ export function HeroFinding({
     <div className="hero surface">
       <div className="eyebrow">The cross-domain finding</div>
 
-      <div className="hero-fact">
-        <span className="hero-fact-k">One fact</span>
-        <h2 className="hero-fact-v">
-          {second ? "Your" : `${studentName}'s`} <strong>{statusDisplay}</strong> status.
-        </h2>
-      </div>
-
-      <div className="hero-split" aria-hidden="true">
-        <span className="hero-split-line" />
-        <span className="hero-split-note">closes two doors, in two different buildings</span>
-        <span className="hero-split-line" />
-      </div>
+      {/* The original hierarchy: one sentence carrying the whole claim, then the two doors under
+          it. The redesign split this into a boxed "ONE FACT" label, an oversized status line and a
+          hairline divider reading "closes two doors, in two different buildings" — three pieces of
+          chrome saying what this single sentence says. `h2`, not `h1`: the shell owns the page's
+          h1, and that heading structure is current behaviour worth keeping. */}
+      <h2 className="hero-h">
+        One fact — {second ? "your" : `${studentName}'s`} <strong>{statusDisplay}</strong> status —
+        closes two doors at once.
+      </h2>
+      <p className="hero-lede">
+        Three different offices each decide part of {possessive} future, and none of them sees the
+        others. But a single fact about {second ? "your" : "her"} status is the hidden variable
+        across all three. Here it is, with the regulation that says so:
+      </p>
 
       <div className="doors">
         {doors.map((door) => (
-          <div className="door blocked" key={door.system}>
-            <div className="door-head">
-              <StatusGlyph status="blocked" />
-              <span className="door-system">{door.system}</span>
-              <Capsule variant="tinted" status="blocked">
-                Blocked
-              </Capsule>
+          <div className="door" key={door.system}>
+            {/* The original small-caps key line, with the status said as a dotted pill rather than
+                a filled glyph square plus a tinted capsule. */}
+            <div className="k">
+              {door.system}
+              <span className="badge red">Blocked</span>
             </div>
-            <p className="door-why">{door.why}</p>
-            <div className="door-foot">
-              <span className="door-office">Decided by {door.office}</span>
-              {door.cite ? <span className="cite wrap">{door.cite}</span> : null}
+            <div className="v">
+              {door.why} {door.cite ? <span className="cite">{door.cite}</span> : null}
             </div>
+            {/* Kept from the current component: the office is a finding-derived fact and the
+                original hero simply never carried one. Removing it would drop real information to
+                match an older layout, which is not what a visual restoration is. */}
+            <div className="door-office">Decided by {door.office}</div>
           </div>
         ))}
       </div>

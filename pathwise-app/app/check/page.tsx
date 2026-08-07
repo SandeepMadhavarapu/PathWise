@@ -21,6 +21,7 @@ import {
   aidFormFor,
   jurisdictionFor,
   residencyFindingFor,
+  statusUnclassifiedFor,
 } from "@/lib/engines/jurisdiction";
 import type { StatusKey } from "@/lib/tokens";
 import type { CapabilityLevel } from "@/lib/rulepacks/schema";
@@ -358,6 +359,22 @@ export default function CheckPage() {
    * sentence cannot silently switch this off. Empty for Virginia, which states a gate.
    */
   const statusGateUnmodelled = Boolean(jx.packs && jx.packs.domicile.gates.length === 0);
+
+  /**
+   * A status this jurisdiction's pack was never authored against — the reader who picks "Other".
+   *
+   * A gate is a blacklist, so "no gate matched" used to be rendered as a durational answer: this
+   * screen showed "Domicile duration of 365 days appears satisfied" and "File the FAFSA — Virginia
+   * state aid is not blocked by status" to someone whose status PathWise cannot name, byte-identical
+   * to what it shows a U.S. citizen, with no open question anywhere on the page.
+   *
+   * Read off the router rather than off `finding.result`, because `unable_to_verify` is already the
+   * verdict for a different situation on this same card (no qualifying intent factor on record) and
+   * the two need different sentences. Never off the selected status: which statuses a pack has read
+   * is the pack's fact, and this screen does not get to have an opinion about it.
+   */
+  const residencyStatusUnclassified = statusUnclassifiedFor(jx, student, "residency");
+  const aidStatusUnclassified = statusUnclassifiedFor(jx, student, "aid");
 
 
   // The hero's whole claim is that ONE fact closed BOTH doors, so it renders when both findings
@@ -849,7 +866,16 @@ export default function CheckPage() {
                     ? // Not an error — a reasoned finding, in the pack's own words rather than a
                       // rule this page restates on every jurisdiction's behalf.
                       `Not an error — a reasoned finding. ${finding.rule_citation.text}`
-                    : statusGateUnmodelled
+                    : residencyStatusUnclassified
+                      ? // Two sentences, and the second is the load-bearing one. A reader who is
+                        // told only that PathWise cannot answer will supply the missing half
+                        // themselves, and the half they supply is "so I must not qualify" — which
+                        // is a denial PathWise has no source for and has not made.
+                        `PathWise has not read ${stateName}'s domicile rules for the status on this ` +
+                        `record, so it has not run the durational clock against it. This is not a ` +
+                        `finding that your status is barred — ${stateName} may well recognise it, ` +
+                        `and PathWise will not guess in either direction.`
+                      : statusGateUnmodelled
                       ? // Says what this reading did NOT check. Without it, a gateless jurisdiction
                         // tells an F-1 student "duration appears satisfied" and says nothing at all
                         // about visa status — while a gated one, on the same fact and the same
@@ -890,6 +916,23 @@ export default function CheckPage() {
                         : `Residency in ${stateName} is modelled; state aid is not, and the two are decided separately.`,
                       `This says nothing either way about federal aid.`,
                     ].join(" ")
+                  : aidStatusUnclassified
+                  ? // The aid side of the same gap, and the direction of the disclaimer matters more
+                    // here than anywhere on this page. Virginia HAS non-citizen aid routes — the
+                    // pack's own form-selection rule names the state alternative for students the
+                    // FAFSA does not fit — so a page that turned "PathWise cannot tell" into "no aid
+                    // for you" would be closing a door the source holds open.
+                    // Which routes stay open is the ENGINE's sentence, rendered through
+                    // `aidForm.remains` exactly as the blocked branch below renders its own. This
+                    // page names no form — that is the rule the suite enforces, and it is the same
+                    // rule that stopped "File the FAFSA path instead" being wrong here once before.
+                    [
+                      `PathWise has not read ${stateName}'s aid rules for the status on this record, so it cannot say which form applies.`,
+                      `This is not a finding that you are ineligible — no rule in this pack closes the door.`,
+                      aidForm?.remains ?? "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")
                   : aidFinding.result === "ineligible"
                     ? // Everything after the cross-domain framing is the engine's, so this card
                       // cannot recommend a form the finding behind it says is closed.

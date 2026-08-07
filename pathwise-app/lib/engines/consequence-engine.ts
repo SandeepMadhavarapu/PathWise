@@ -186,6 +186,37 @@ export function applyLifeEvent(
       continue;
     }
 
+    // A status this jurisdiction's pack was never authored against.
+    //
+    // `gateStatuses` is a BLACKLIST, so "not gated" was being read here as "the residency door is
+    // open" — and this engine went on to assert that the one-year clock would start today, for a
+    // status the domicile and aid engines both answer `unable_to_verify` for. Three readers of one
+    // record must not disagree about whether the record was readable.
+    //
+    // Deliberately its OWN branch rather than folding into `gated` above: that branch's sentence
+    // says the status "blocks domicile entirely", and an unclassified status is not barred — it is
+    // unread. Borrowing the gate's wording here would invent the very bar Claim #2 refused to
+    // invent. Unclassified is neither eligible nor ineligible; it is uncertain, and it is reported
+    // in the same voice as the no-pack branch below.
+    if (c.domain === 'residency' && v && !v.classifiesStatus(student.immigration.status)) {
+      out.push({
+        domain: 'residency',
+        kind: 'eligibility_changed',
+        effect: `PathWise has not read ${v.jurisdictionName}'s domicile rules for this immigration status, so it cannot say whether this event moves residency either way. This is not a finding that the status is barred.`,
+        counterintuitive: false,
+        applies: false,
+        tone: 'info',
+        cite: {
+          // The pack's own classification note and section reference — nothing composed here.
+          text: v.statusClassification!.note,
+          authority: v.authority(v.statusClassification!.cite),
+          source_url: v.sourceUrl,
+          verified_on: v.verifiedOn,
+        },
+      });
+      continue;
+    }
+
     // No pack for this state: PathWise cannot say whether the residency door is open, so it will
     // not say that this event moved it. No citation is attached, because there is none to attach.
     if (c.domain === 'residency' && gated === undefined) {

@@ -15,6 +15,7 @@
 
 import type { Student, Finding, ISODate } from '../types';
 import type { AidPack, JurisdictionPacks } from '../rulepacks';
+import type { StatusClassification } from '../rulepacks/schema';
 import { formatImmigrationStatus } from '../format';
 import { jurisdictionByCode } from '../coverage';
 
@@ -49,6 +50,13 @@ export interface AidView {
   confidentialityNote: string;
   confidentialityConsequence: string;
   volatility: { status: string; note: string };
+  /** How far this pack's status rule was read, or undefined where it states none. */
+  statusClassification?: StatusClassification;
+  /**
+   * Whether this pack has been authored against a given status. True where the pack states no
+   * classification, so a pack making no claim about its own reach is left exactly as it was.
+   */
+  classifiesStatus: (status: string) => boolean;
 }
 
 export function aidView(pack: AidPack): AidView {
@@ -69,6 +77,9 @@ export function aidView(pack: AidPack): AidView {
     confidentialityNote: pack.confidentiality.note,
     confidentialityConsequence: pack.confidentiality.product_consequence,
     volatility: { status: pack.volatility.status, note: pack.volatility.note },
+    statusClassification: pack.status_classification,
+    classifiesStatus: (status) =>
+      !pack.status_classification || pack.status_classification.classified.includes(status),
   };
 }
 
@@ -111,8 +122,14 @@ export type AidEligibilityRun = AidEligibilityInput & {
  * calls it something different (Virginia's is VASA), and the pack's own `form_selection.rule` is
  * where that name belongs. A union member spelled in one state's vocabulary is a Virginia binding
  * in a type every jurisdiction has to share.
+ *
+ * `undetermined` is the fourth answer, and it is not `none`. `none` is a determinate finding — both
+ * forms were considered and status closed both. `undetermined` says PathWise could not work out
+ * which form applies, because the pack's form-selection rule turns on a status it was never authored
+ * against. Collapsing the two would tell a student their doors are shut when what actually happened
+ * is that nobody looked.
  */
-export type AidForm = 'FAFSA' | 'state_alternative' | 'none';
+export type AidForm = 'FAFSA' | 'state_alternative' | 'none' | 'undetermined';
 
 export interface AidFormSelection {
   form: AidForm;
@@ -136,6 +153,19 @@ export interface AidFormSelection {
  */
 const REMAINING_ROUTE =
   'What remains is institutional and private aid, which the financial aid office administers directly.';
+
+/**
+ * The route left open when PathWise cannot tell which form applies — deliberately different from
+ * REMAINING_ROUTE above.
+ *
+ * REMAINING_ROUTE is what is left after a door was CLOSED. This one is said when no door was closed
+ * and none was opened either, so it must not narrow the student to the leftovers: every pathway the
+ * pack states is still available to them, and the office is being asked which one, not asked for
+ * charity.
+ */
+const UNDETERMINED_ROUTE =
+  'The financial aid office can say which form applies once it knows the exact status on the record — ' +
+  'and every pathway this pack states, including its state alternative, is still open until it does.';
 
 export interface ProvisionChecklist {
   id: string;
@@ -230,6 +260,30 @@ export function findStatusBlock(student: Student, v: AidView): RawBlock | undefi
 export function selectAidForm(student: Student, v: AidView): AidFormSelection {
   const block = findStatusBlock(student, v);
   if (!block) {
+    // The pack's rule is a POSITIVE predicate — "students ELIGIBLE FOR FAFSA should file FAFSA" —
+    // and this branch had been reading "no block matched" as though it established that eligibility.
+    // It does not. A block is a blacklist, and for a status the pack was never authored against
+    // (`other` is not a status; it is the absence of one) nothing here has been decided at all.
+    //
+    // Declining is the whole point, and the direction matters: this must NOT become "you are not
+    // eligible". Virginia has non-citizen aid pathways — the pack's own rule names VASA for students
+    // who cannot file the FAFSA, and its tuition-equity provision is one such route. Saying "no form
+    // for you" would close doors the source keeps open. Saying "PathWise cannot tell which form"
+    // leaves them exactly as open as they were and sends the student to the office that knows.
+    if (!v.classifiesStatus(student.immigration.status)) {
+      const sc = v.statusClassification!;
+      return {
+        form: 'undetermined',
+        label: `PathWise cannot determine which ${v.jurisdictionName} aid form applies`,
+        reason:
+          `${v.formSelectionRule} Which form applies therefore turns on the specific status held, and ` +
+          `this record's status is not one of the ${sc.classified.length} ${v.jurisdictionName}'s aid ` +
+          `pack has been authored against. That is a gap in PathWise's reading, not a closed door: ` +
+          `no status block applies either, so nothing here says this student is ineligible. ` +
+          `${UNDETERMINED_ROUTE}`,
+        remains: UNDETERMINED_ROUTE,
+      };
+    }
     return {
       form: 'FAFSA',
       label: 'File the FAFSA',
@@ -358,6 +412,25 @@ export function computeAidEligibility(input: AidEligibilityRun): Finding {
       from_events: [],
       from_evidence: [],
     });
+  } else if (!v.classifiesStatus(status)) {
+    // Says the two things separately, because they are two facts and only the first was ever true
+    // of an unclassified status: no block matched, AND that is not the same as the door being open.
+    steps.push({
+      claim:
+        `No status block in the aid rulepack applies to this student — but this status is not one of ` +
+        `the ${v.statusClassification!.classified.length} the ${v.jurisdictionName} aid pack has been ` +
+        `authored against, so "no block matched" establishes nothing here. ${v.statusClassification!.note}`,
+      from_events: [],
+      from_evidence: [],
+    });
+    steps.push({
+      claim:
+        `PathWise therefore cannot say which form opens ${v.jurisdictionName} state aid for this ` +
+        `student. It is not saying the door is closed: no rule in this pack closes it, and the ` +
+        `state alternative exists precisely for students the FAFSA route does not fit.`,
+      from_events: [],
+      from_evidence: [],
+    });
   } else {
     steps.push({
       claim: 'No status block in the aid rulepack applies to this student, so the state-aid door stays open.',
@@ -440,6 +513,23 @@ export function computeAidEligibility(input: AidEligibilityRun): Finding {
     }
   }
 
+  // The status gap leads the list, because it qualifies the whole finding rather than one document.
+  const unclassified = !block && !v.classifiesStatus(status);
+  if (unclassified) {
+    unknowns.unshift({
+      what: `Which immigration status does "${formatImmigrationStatus(status)}" stand for, and which ${v.jurisdictionName} aid pathway does it fall under?`,
+      why_it_matters:
+        `${v.jurisdictionName}'s form-selection rule turns on the specific status held, and PathWise ` +
+        `has read that rule for ${v.statusClassification!.classified.length} statuses — this is not ` +
+        `one of them. No status block closes this student's aid either, so this is PathWise declining ` +
+        `to answer, NOT a finding of ineligibility: the pathways this pack states, including its ` +
+        `state alternative, remain open.`,
+      how_to_resolve:
+        `Tell the financial aid office the exact status on the record (the visa category or ` +
+        `classification, not "other") and ask which application opens ${v.jurisdictionName} state aid for it.`,
+    });
+  }
+
   const missingDate = deadline.candidates.find((c) => !c.date);
   if (missingDate) {
     unknowns.push({
@@ -450,15 +540,24 @@ export function computeAidEligibility(input: AidEligibilityRun): Finding {
     });
   }
 
+  // `unable_to_verify`, never `ineligible`. The pack has not been read for this status, which is a
+  // statement about PathWise and not about the student — and the product already has a verdict that
+  // means exactly that, used for an unmodelled jurisdiction. This is the same situation one layer in.
   const result: Finding['result'] = block
     ? 'ineligible'
+    : unclassified
+    ? 'unable_to_verify'
     : unknowns.length > 0
     ? 'review_recommended'
     : 'no_issue';
 
   const headline = block
     ? block.headline
-    : `${form.label} — ${v.jurisdictionName} state aid is not blocked by status`;
+    : unclassified
+      ? // Names what PathWise has not done. It deliberately does not contain the words "not blocked",
+        // which is the determinate claim this branch exists to stop making.
+        `PathWise has not read ${v.jurisdictionName}'s aid rules for this immigration status`
+      : `${form.label} — ${v.jurisdictionName} state aid is not blocked by status`;
 
   // A provision under litigation is more specific to this student than the pack-wide note, so it
   // wins when one is actually in play.

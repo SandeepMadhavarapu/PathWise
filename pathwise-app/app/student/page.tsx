@@ -23,7 +23,7 @@ import {
   priyaJobOffer,
 } from "@/lib/fixtures/priya";
 import { formatCliffDistance, formatDecidingOffice, formatImmigrationStatus } from "@/lib/format";
-import { statusFromBand, type StatusKey } from "@/lib/tokens";
+import { type StatusKey } from "@/lib/tokens";
 import { HeroFinding } from "@/components/HeroFinding";
 import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
@@ -31,16 +31,11 @@ import { UnemploymentClock } from "@/components/UnemploymentClock";
 import { OptBudget } from "@/components/OptBudget";
 import { DeadlineExport } from "@/components/DeadlineExport";
 import { StatusGlyph } from "@/components/StatusGlyph";
-import { Callout } from "@/components/Callout";
 import { ScenarioNote } from "@/components/ScenarioNote";
 
 // Tab title only. The string is the one this route's topbar already renders, so the
 // browser tab and the page heading cannot disagree. Nothing visible changes.
 export const metadata: Metadata = { title: "Priya's standing" };
-
-// Visual scale for the immigration card's mini-track only — how much track to draw. The cliff
-// itself is the rulepack's, and the ledger reads it; nothing regulatory is set here.
-const CLIFF_TRACK_DAYS = 400;
 
 // The app's one status vocabulary, mapped onto the design system's glyphs.
 const STEP_STATUS: Record<StepStatus, { glyph: StatusKey; word: string }> = {
@@ -130,6 +125,11 @@ export default function StudentPage() {
         a regulation attached to it.
       </p>
       <div className="domain-cards">
+        {/* No progress rail on this card. The original Immigration card carried no bar: the two
+            numbers a reader needs — "23 days from the CPT cliff" and "342 full-time CPT days" —
+            are the status line and the detail line, and the full ledger with its cliff marker is a
+            section further down this same page. The rail restated a measure already stated twice.
+            Nothing computed is lost: `masters` still drives status, band and detail. */}
         <DomainCard
           domain="Immigration (F-1)"
           decidingOffice={formatDecidingOffice("SEVP")}
@@ -141,16 +141,6 @@ export default function StudentPage() {
               : ""
           }
           cite={SECTION_CITE}
-          progress={
-            masters
-              ? {
-                  segments: [
-                    { key: "used", status: statusFromBand(masters.band), value: masters.fullTimeDays },
-                    { key: "remaining", status: "idle", value: CLIFF_TRACK_DAYS - masters.fullTimeDays },
-                  ],
-                }
-              : undefined
-          }
         />
         <DomainCard
           domain={`In-state residency (${jx.name})`}

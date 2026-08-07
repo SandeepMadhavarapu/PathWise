@@ -23,6 +23,7 @@ import type {
   DomicilePack,
   Gate,
   PackDomain,
+  StatusClassification,
 } from '../rulepacks/schema';
 import { DETERMINATE_LEVELS } from '../rulepacks/schema';
 import { computeDomicileClock, type IntentFactorFact } from './domicile-clock';
@@ -66,6 +67,23 @@ export interface DomicileView {
   statusGateFor: (status: string) => Gate | undefined;
   /** The union of every status any gate in this pack closes the door on. */
   gateStatuses: ReadonlySet<string>;
+  /**
+   * How far this pack's status rule was actually read, or undefined where it states none.
+   *
+   * Undefined is NOT "everything is classified" — it is "this pack makes no claim either way", which
+   * is the honest description of Texas and Tennessee, and why `classifiesStatus` below leaves them
+   * untouched. Their status gap is already carried by `unmodelledStatusGateUnknowns`.
+   */
+  statusClassification?: StatusClassification;
+  /**
+   * Whether this pack has been authored against a given status.
+   *
+   * True where the pack states no classification at all: a pack that makes no claim about its own
+   * reach cannot have this check applied to it, and applying it anyway would silently convert every
+   * gateless jurisdiction to unable_to_verify — a change to two states' findings smuggled in under a
+   * fix for a third.
+   */
+  classifiesStatus: (status: string) => boolean;
   /**
    * The pack's durational clock, or undefined where the jurisdiction has none. Optional because
    * some states genuinely have no durational component, and a missing clock must not be read as a
@@ -207,6 +225,10 @@ export function domicileView(pack: DomicilePack): DomicileView {
     // Pack order is the source's order, so the first gate that matches is the one that decides.
     statusGateFor: (status) => byGate.find((g) => g.statuses.has(status))?.gate,
     gateStatuses: new Set(byGate.flatMap((g) => [...g.statuses])),
+    statusClassification: pack.status_classification,
+    // No classification block ⇒ the pack claims nothing about its reach ⇒ nothing to fail closed on.
+    classifiesStatus: (status) =>
+      !pack.status_classification || pack.status_classification.classified.includes(status),
     clock: pack.clock,
     durationDays: pack.clock?.duration_days,
     agencies: pack.agencies,
@@ -305,10 +327,99 @@ export interface DomicileInput {
 export type DomicileRun = DomicileInput & { packs: JurisdictionPacks };
 
 /**
- * The gate itself, as its own step: returns a Finding when the student's status closes domicile,
- * and undefined when it does not. Callers MUST run this before any other domicile reasoning —
- * SCHEV Part II §03(A) determines national-or-alien first, and the pack's own `stops_analysis`
- * flag says the answer ends the enquiry.
+ * A status the pack's own status rule was never written about.
+ *
+ * A gate is a BLACKLIST — `immigration.status in ['F1','J1','M1']` — and "no gate matched" was being
+ * read as "this jurisdiction permits this status". For an enumerated status somebody considered,
+ * that inference is sound. For `other` it is not: `other` is not a status, it is the absence of one,
+ * and no clause can have been authored about it. Virginia was returning, for a student whose status
+ * PathWise cannot name, output byte-identical to what it returns for a U.S. citizen — "Domicile
+ * duration of 365 days appears satisfied", with zero open questions, under a pack declaring its
+ * status gate `modelled`.
+ *
+ * So the pack now says which statuses it was read against, and one outside that list stops here.
+ *
+ * WHAT THIS IS NOT: it is not a finding that the status is barred, and it must never become one.
+ * The result is `unable_to_verify` — the same verdict the product gives an unmodelled jurisdiction —
+ * because the honest claim is about PathWise's reading, not about the student's rights. Turning an
+ * unclassified status into `ineligible` would be inventing a bar with no source, which is the same
+ * error pointed the other way and is exactly what this codebase refuses to do everywhere else.
+ *
+ * Every sentence below is composed from pack STRUCTURE — the size of the classified list, the
+ * jurisdiction's name, the pack's own cite and note — and none of it from a judgement about the
+ * jurisdiction's law. Same discipline as `unmodelledStatusGateUnknowns`, and it disappears on its
+ * own the day someone classifies that status in the pack.
+ */
+export function checkStatusClassification(
+  student: Student,
+  v: DomicileView,
+): Finding | undefined {
+  const status = student.immigration.status;
+  if (v.classifiesStatus(status)) return undefined;
+
+  const sc = v.statusClassification!;
+  const statusText = formatImmigrationStatus(status);
+
+  return {
+    rule_id: `${v.packId}:status-not-classified`,
+    domain: 'residency',
+    result: 'unable_to_verify',
+    headline: `PathWise has not read ${v.jurisdictionName}'s domicile rules for this immigration status`,
+    reasoning_steps: [
+      {
+        claim: `The record gives the student's immigration status as "${statusText}", which is not one of the ${sc.classified.length} statuses ${v.jurisdictionName}'s pack has been authored against.`,
+        from_events: [],
+        from_evidence: [],
+      },
+      {
+        claim: `${sc.note} PathWise therefore cannot say whether this status can establish domicile in ${v.jurisdictionName}, and does not run the durational clock on a status whose capacity to hold domicile it has not established.`,
+        from_events: [],
+        from_evidence: [],
+      },
+      {
+        // The sentence that stops a reader converting silence into a denial.
+        claim: `This is not a finding that the status is barred. ${v.jurisdictionName} may well recognise it; PathWise has not read the rule either way, and will not guess in either direction.`,
+        from_events: [],
+        from_evidence: [],
+      },
+    ],
+    rule_citation: {
+      text: sc.note,
+      authority: v.authority(sc.cite),
+      source_url: v.sourceUrl,
+      verified_on: v.verifiedOn,
+    },
+    unknowns: [
+      {
+        what: `Which immigration status does "${statusText}" stand for, and how does ${v.jurisdictionName} treat it?`,
+        why_it_matters:
+          `${v.jurisdictionName}'s domicile rules turn on the specific status held. PathWise has read ` +
+          `that source for ${sc.classified.length} statuses and this is not one of them, so any ` +
+          `durational or intent finding underneath it would rest on a question nobody has answered. ` +
+          `It is not a finding that the status is barred — it is PathWise declining to answer.`,
+        how_to_resolve:
+          `Give ${v.jurisdictionName}'s domicile officer the exact status on the record (the visa ` +
+          `category or classification, not "other") and ask whether it can establish domicile there.`,
+      },
+    ],
+    deciding_office: v.office,
+    volatility: v.volatility,
+  };
+}
+
+/**
+ * The gate itself, as its own step: returns a Finding when the pack's status rule DECIDES the
+ * question, and undefined when it leaves the question open for the analysis below to continue.
+ * Callers MUST run this before any other domicile reasoning — SCHEV Part II §03(A) determines
+ * national-or-alien first, and the pack's own `stops_analysis` flag says the answer ends the enquiry.
+ *
+ * Two ways it returns a Finding, and they mean opposite things: a gate fired and closed the door, or
+ * the pack was never authored against this status at all and cannot answer. The classification check
+ * lives HERE rather than in `runDomicileGate` on purpose — this function is the single entry point
+ * both the narrow gate path and the full analysis in domicile.ts call, and a check placed in one of
+ * them would let the two disagree about the same pack and the same record. That divergence is the
+ * defect this file's own history is a record of; there is one statement of the rule and both callers
+ * get it.
  */
 export function checkEligibleAlienGate(student: Student, v: DomicileView): Finding | undefined {
   const status = student.immigration.status;
@@ -317,8 +428,12 @@ export function checkEligibleAlienGate(student: Student, v: DomicileView): Findi
   // This used to read `gates[0]` only. Every value below comes off the gate that actually fired —
   // its own citation, its own office, its own headline — so a jurisdiction whose second gate closes
   // the door cannot be cited to its first.
+  //
+  // A firing gate wins over the classification check below, and the order is load-bearing: F-1 is
+  // both classified AND barred, and a pack that listed a status it also gates must still return the
+  // gate's determinate `ineligible` rather than "PathWise has not read this".
   const gate = v.statusGateFor(status);
-  if (!gate) return undefined;
+  if (!gate) return checkStatusClassification(student, v);
 
   // The code is what the gate matches on; this is only how it gets written for a reader.
   const statusText = formatImmigrationStatus(status);

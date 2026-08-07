@@ -208,6 +208,34 @@ export function aidDeadlineFor(
 }
 
 /**
+ * Whether this student's status is one the jurisdiction's pack for that domain was NEVER authored
+ * against — the condition behind the `unable_to_verify` findings the two engines now return.
+ *
+ * A screen needs this because the verdict alone cannot carry it: `unable_to_verify` already means
+ * several different things on the residency card (no qualifying intent factor is the common one),
+ * and a card that explained all of them the same way would be back to saying one thing where the
+ * engine said another.
+ *
+ * It DELEGATES to the same `classifiesStatus` the engines decide on rather than re-testing the
+ * pack's list here. A second implementation of this membership test is exactly how the gate path and
+ * the full analysis once came to disagree, and this file exists to stop that class of thing.
+ *
+ * False for a jurisdiction with no pack, and false for a pack that declares no classification —
+ * neither has made a claim this could contradict.
+ */
+export function statusUnclassifiedFor(
+  ctx: JurisdictionContext,
+  student: Student,
+  domain: 'residency' | 'aid',
+): boolean {
+  const status = student.immigration.status;
+  if (domain === 'residency') {
+    return ctx.packs ? !domicileView(ctx.packs.domicile).classifiesStatus(status) : false;
+  }
+  return ctx.packs?.aid ? !aidView(ctx.packs.aid).classifiesStatus(status) : false;
+}
+
+/**
  * The unmodelled description for a context that has no packs.
  *
  * A code coverage.json does not list at all (including the empty string, i.e. a student with no
