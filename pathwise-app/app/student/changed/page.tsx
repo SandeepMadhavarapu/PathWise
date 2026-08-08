@@ -288,7 +288,7 @@ export default function ChangedPage() {
           decides the outcome. Showing it before explaining it is the whole point; a reader now
           reaches the conclusion by looking, and everything beneath is the account of why.
           Nothing about the band's inputs, logic or wording changed — only where it sits. */}
-      <div className="section-head">The finding, against the cliff it turns on</div>
+      <h2 className="section-head">The finding, against the cliff it turns on</h2>
       {/* The settled verdict is read off the ledger's own band, exactly as the After panel below
           does — `afterStatus` is `BAND_STATUS[settled.band]`. */}
       <UncertaintyBand
@@ -450,7 +450,7 @@ export default function ChangedPage() {
         ) : null}
       </div>
 
-      <div className="section-head">Before → after</div>
+      <h2 className="section-head">Before → after</h2>
 
       <div className="wc-grid">
         <div className="wc-panel surface">
@@ -556,7 +556,7 @@ export default function ChangedPage() {
 
       {added && evidence && levelChange ? (
         <div className="wc-fade">
-          <div className="section-head">What changed</div>
+          <h2 className="section-head">What changed</h2>
           <ul className="wc-changes">
             {buildChanges(evidence, levelChange, settledEvents.length).map((c) => (
               <li className="wc-change" key={c.k}>

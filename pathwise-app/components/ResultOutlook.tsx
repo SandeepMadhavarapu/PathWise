@@ -77,7 +77,7 @@ export function ResultOutlook({
 
       {offices.length > 0 ? (
         <div className="outlook-block">
-          <div className="section-head">The offices that decide this</div>
+          <h3 className="section-head">The offices that decide this</h3>
           <ul className="outlook-offices">
             {offices.map((o) => (
               <li className="oo" key={o.domain}>
@@ -115,9 +115,9 @@ export function ResultOutlook({
 
       {n > 0 ? (
         <div className="outlook-block">
-          <div className="section-head">
+          <h3 className="section-head">
             Still open — {n} {n === 1 ? "question" : "questions"} this reading could not settle
-          </div>
+          </h3>
           <ul className="outlook-questions">
             {openQuestions.map((q, i) => (
               <li className="oq" key={i}>
@@ -145,7 +145,7 @@ export function ResultOutlook({
 
       {notChecked.length > 0 ? (
         <div className="outlook-block">
-          <div className="section-head">What PathWise did not check here</div>
+          <h3 className="section-head">What PathWise did not check here</h3>
           <ul className="outlook-gaps">
             {notChecked.map((g, i) => (
               <li key={i}>{g}</li>

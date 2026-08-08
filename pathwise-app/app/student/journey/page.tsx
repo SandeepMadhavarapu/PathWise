@@ -49,7 +49,7 @@ export default function JourneyPage() {
         </div>
       </div>
 
-      <div className="section-head">Her record, in order</div>
+      <h2 className="section-head">Her record, in order</h2>
 
       <JourneyTimeline student={priyaStudent} events={priyaEvents} ledger={ledger} />
 

@@ -130,12 +130,12 @@ export function FindingDetail({
         </Capsule>
       </div>
 
-      <div className="section-head">How PathWise reasoned</div>
+      <h3 className="section-head">How PathWise reasoned</h3>
       <ReasoningTree nodes={reasoningNodes} />
 
       {analysis}
 
-      <div className="section-head">The regulation itself</div>
+      <h3 className="section-head">The regulation itself</h3>
       <section className="citation-block">
         <p className="citation-quote">&ldquo;{finding.rule_citation.text}&rdquo;</p>
         <div className="citation-meta">{finding.rule_citation.authority}</div>
@@ -173,7 +173,7 @@ export function FindingDetail({
 
       {finding.unknowns.length > 0 ? (
         <section>
-          <div className="section-head">Open questions</div>
+          <h3 className="section-head">Open questions</h3>
           <ul className="unknowns">
             {finding.unknowns.map((u, i) => (
               <li className="unknown-item" key={i}>

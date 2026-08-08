@@ -32,7 +32,7 @@ export default function AidFindingPage() {
 
       {deadline ? (
         <>
-          <div className="section-head">Three dates, one that counts</div>
+          <h2 className="section-head">Three dates, one that counts</h2>
           <AidDeadline deadline={deadline} />
         </>
       ) : null}

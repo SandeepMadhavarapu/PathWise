@@ -486,10 +486,10 @@ export default function CoveragePage() {
           five as a rounding error rather than as the most careful thing on the screen. The
           legend below still carries the pack's own words for each level, unchanged — this only
           states, in PathWise's voice, why two of them are kept apart. */}
-      <div className="section-head">
+      <h2 className="section-head">
         What each level means — and why &ldquo;unable to verify&rdquo; is not &ldquo;not
         modelled&rdquo;
-      </div>
+      </h2>
       {/* Deliberately the one phrase the legend card below also carries, and nothing else it
           carries: the card is the glossary definition, this is the reason the distinction exists.
           An earlier draft of this note restated the card's other sentence too, which read as an
@@ -514,19 +514,19 @@ export default function CoveragePage() {
         })}
       </ul>
 
-      <div className="section-head">
+      <h2 className="section-head">
         Every jurisdiction, in order — residency and state aid rated separately
         {notModelled > 0
           ? `, including the ${notModelled} where the answer is still "not yet"`
           : ""}
-      </div>
+      </h2>
       <div className="cov-grid">
         {COVERAGE.map((j) => (
           <CoverageTile key={j.code} j={j} />
         ))}
       </div>
 
-      <div className="section-head">The rules themselves</div>
+      <h2 className="section-head">The rules themselves</h2>
       <RulePackViewer />
 
       <footer className="foot">

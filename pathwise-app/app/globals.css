@@ -35,7 +35,11 @@
   /* 4.75:1 on --surface. The previous #8a929c was 3.15:1 — under WCAG AA for normal text, and this
      token carries every section heading, micro-label, citation date and footer in the product, so
      the failure was the app's most widespread one rather than an edge case. */
-  --text-muted: #6b7789;
+  /* #6b7480, not the original palette's #6b7789. Measured on production: #6b7789 gives 4.28:1 on
+     --canvas, under WCAG AA's 4.5 for normal text, and this token carries the section labels, the
+     build stamp and the topbar tagline. #6b7480 is the value the app already used before the visual
+     restoration and clears AA on both --canvas and --surface. Visually indistinguishable. */
+  --text-muted: #6b7480;
   --text-inverse: #ffffff;
 
   /* Status — the original restrained band language: green / amber / red, and nothing else. */
@@ -2727,7 +2731,11 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 }
 .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .badge.green, .badge.done { background: var(--green-soft); color: var(--green); }
-.badge.amber, .badge.warn, .badge.active { background: var(--amber-soft); color: var(--amber); }
+/* `--amber` is a FILL colour. As text on --amber-soft it measures 3.31:1, the worst contrast in the
+   product. `--status-warn-text` is the token that already exists for exactly this — the same amber
+   mixed toward the ink so it can be read — and 17 other rules already use it. The dot keeps
+   `currentColor`, so the pill still reads as amber. */
+.badge.amber, .badge.warn, .badge.active { background: var(--amber-soft); color: var(--status-warn-text); }
 .badge.red, .badge.blocked { background: var(--red-soft); color: var(--red); }
 /* Not knowing is not a warning — the neutral band keeps its own quiet treatment. */
 .badge.idle { background: var(--canvas); color: var(--muted); border: 1px solid var(--line); }

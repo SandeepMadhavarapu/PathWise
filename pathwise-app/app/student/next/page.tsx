@@ -145,7 +145,7 @@ export default function NextStepsPage() {
         if (group.length === 0) return null;
         return (
           <section key={key}>
-            <div className="section-head">{heading}</div>
+            <h2 className="section-head">{heading}</h2>
             <ol className="nslist">
               {group.map((step) => (
                 <NextStepCard
@@ -160,7 +160,7 @@ export default function NextStepsPage() {
         );
       })}
 
-      <div className="section-head">Last — put the plan somewhere it will find you</div>
+      <h2 className="section-head">Last — put the plan somewhere it will find you</h2>
       <DeadlineExport steps={steps} asOf={asOf} />
 
       <footer className="foot">

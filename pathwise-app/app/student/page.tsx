@@ -117,7 +117,7 @@ export default function StudentPage() {
           As a subtitle it is read WITH the cards instead of in front of them, and it cannot be
           dismissed, so the claim is now made to every reader rather than to the ones who leave
           callouts open. Wording preserved apart from the join. */}
-      <div className="section-head">Her three offices, at a glance</div>
+      <h2 className="section-head">Her three offices, at a glance</h2>
       <p className="section-note">
         Every card is a live finding, not a summary — the status, the citation and the micro-label
         under each row are computed from the same events shown in{" "}
@@ -210,7 +210,7 @@ export default function StudentPage() {
 
       {masters ? (
         <>
-          <div className="section-head">The computation a chatbot can&apos;t do</div>
+          <h2 className="section-head">The computation a chatbot can&apos;t do</h2>
           <LedgerBar ledger={masters} />
           {/* The loudest secondary action on this page, deliberately: it is the route to the one
               screen where PathWise is seen refusing to guess, which is the thing worth remembering
@@ -231,7 +231,7 @@ export default function StudentPage() {
       {/* Two clocks, and they are the same KIND of object: a budget and a countdown, each measured
           against a cap the student did not choose. On a wide screen they sit side by side so they
           can be compared; below 1280 they stack, and each keeps its own heading either way. */}
-      <div className="section-head">Immigration — the two clocks already running</div>
+      <h2 className="section-head">Immigration — the two clocks already running</h2>
       <div className="gauge-pair">
         <div>
           <div className="gauge-pair-head">
@@ -256,7 +256,7 @@ export default function StudentPage() {
           quieter, and labelled as what it is: more of this example, for a reader who wants it.
 
           Every number below is still counted off the engines, not typed. */}
-      <div className="section-head">More of this example</div>
+      <h2 className="section-head">More of this example</h2>
       <div className="explore">
         <Link href="/student/journey" className="explore-row">
           <span className="explore-k">Her timeline</span>

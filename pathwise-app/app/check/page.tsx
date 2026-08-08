@@ -592,7 +592,7 @@ export default function CheckPage() {
           that rather than assuming a date.
         </p>
 
-        <div className="section-head">Your CPT authorizations</div>
+        <h2 className="section-head">Your CPT authorizations</h2>
         {/* Four blank date fields with no explanation is a question a reader cannot tell whether
             they are required to answer. Most people arriving here have no CPT at all, and the
             immigration finding is the one that suffers in silence for it: with nothing entered the
@@ -693,7 +693,7 @@ export default function CheckPage() {
           leads; this is what the answer will contain, which is a caption on a result, not a
           prerequisite for asking. Wording unchanged. */}
       <div className="check-expect-after surface">
-        <div className="section-head">What comes back</div>
+        <h2 className="section-head">What comes back</h2>
         <ul className="check-expect">
           {/* "Residency" is qualified here for a reason particular to this audience: to an
               international student the word already means something else, and an unqualified
@@ -808,7 +808,7 @@ export default function CheckPage() {
             />
           ) : null}
 
-          <div className="section-head">Your three offices, at a glance</div>
+          <h2 className="section-head">Your three offices, at a glance</h2>
           {/* `check-cards` scopes the arrival stagger to THIS screen. The dashboard renders the same
               component and must not animate: there the cards are simply the state of a record the
               reader navigated to, where here they are the output of a computation they just asked
@@ -956,7 +956,7 @@ export default function CheckPage() {
 
           {ledger.byLevel.length > 0 ? (
             <>
-              <div className="section-head">Your CPT ledger, computed live</div>
+              <h2 className="section-head">Your CPT ledger, computed live</h2>
               <div className="stack-gap">
                 {ledger.byLevel.map((l) => (
                   <LedgerBar key={l.level} ledger={l} voice="second" />
@@ -965,7 +965,7 @@ export default function CheckPage() {
             </>
           ) : null}
 
-          <div className="section-head">The full reasoning</div>
+          <h2 className="section-head">The full reasoning</h2>
           {showReasoning ? (
             /* BOTH findings, not one.
                This rendered the residency finding alone. The aid finding was computed on the very
