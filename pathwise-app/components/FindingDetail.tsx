@@ -137,7 +137,11 @@ export function FindingDetail({
 
       <h3 className="section-head">The regulation itself</h3>
       <section className="citation-block">
-        <p className="citation-quote">&ldquo;{finding.rule_citation.text}&rdquo;</p>
+        {/* The quote marks are joined to the text in ONE string rather than sitting beside the
+            interpolation as their own nodes. As separate nodes the browser had a break opportunity
+            in front of the closing mark, and on /student/finding/aid it took it — leaving a lone
+            ” on a line of its own. Same characters, same wording, one text run. */}
+        <p className="citation-quote">{`“${finding.rule_citation.text}”`}</p>
         <div className="citation-meta">{finding.rule_citation.authority}</div>
         {finding.rule_citation.verified_on ? (
           <div className="citation-meta">

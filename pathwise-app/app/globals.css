@@ -1242,10 +1242,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sh-refusal-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
   color: var(--text-muted); }
 .sh-refusal-go { font-size: 13px; font-weight: 600; color: var(--info); white-space: nowrap; }
-.sh-refusal-why { margin: var(--space-3) 0 0; font-size: 12px; line-height: 1.55; color: var(--text-secondary); }
+/* 74ch is the measure this stylesheet already uses most often for running text. Without it these
+   two paragraphs ran the full width of the systems-hero card — about 153 characters per line, more
+   than twice the paragraph directly above them, on the first screen a reader sees. */
+.sh-refusal-why { margin: var(--space-3) 0 0; font-size: 12px; line-height: 1.55; color: var(--text-secondary); max-width: 74ch; }
 @media (max-width: 480px) { .sh-refusal-go { white-space: normal; } }
 
-.sh-foot { margin: var(--space-4) 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.sh-foot { margin: var(--space-4) 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; max-width: 74ch; }
 
 @media (max-width: 640px) {
   .landing-refuse { padding: var(--space-5); }
