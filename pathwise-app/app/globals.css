@@ -38,8 +38,12 @@
   /* #6b7480, not the original palette's #6b7789. Measured on production: #6b7789 gives 4.28:1 on
      --canvas, under WCAG AA's 4.5 for normal text, and this token carries the section labels, the
      build stamp and the topbar tagline. #6b7480 is the value the app already used before the visual
-     restoration and clears AA on both --canvas and --surface. Visually indistinguishable. */
-  --text-muted: #6b7480;
+     restoration and clears AA on both --canvas and --surface. Visually indistinguishable.
+     Measured again after release: #6b7480 is 4.46:1 on --canvas — still 0.04 UNDER AA, because the
+     restored canvas (#f7f8fb) is lighter than the one that value was originally tuned against
+     (#f6f7f8). #66707e clears it with margin on both surfaces (4.73 / 5.02) and is two shades
+     darker, which is not a visible change at 11-13px. */
+  --text-muted: #66707e;
   --text-inverse: #ffffff;
 
   /* Status — the original restrained band language: green / amber / red, and nothing else. */
@@ -2608,7 +2612,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px;
   white-space: nowrap;
 }
-.pill-privacy { color: var(--green); border-color: color-mix(in srgb, var(--green) 26%, var(--line)); }
+/* `--green` is a FILL colour; as text on white it measures 4.33:1, under AA. `--status-done-text`
+   is the token that already exists for exactly this case (the same green mixed toward the ink) and
+   resolves to 7.24:1 here. Same pattern as `.badge.warn`. The BORDER still reads off --green, so
+   the pill's colour identity is unchanged. */
+.pill-privacy { color: var(--status-done-text); border-color: color-mix(in srgb, var(--green) 26%, var(--line)); }
 
 /* ---- section navigation, as pills ---- */
 .sitenav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 22px; }
@@ -2772,4 +2780,20 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 }
 @media (min-width: 1600px) {
   :root { --content-max: 940px; --gutter: var(--space-5); }
+}
+
+/* --------------------------------------------------------------------------------------------
+   A-01 — mobile touch targets.
+   `.back-link` renders 20px tall and `.domain-card-more` 21px; WCAG 2.5.8 asks for 24x24. Both are
+   already wide enough (107px / 124px), so only the vertical extent is short.
+   Extended with a transparent ::after rather than padding, which is the idiom this stylesheet
+   already uses for `.callout-close` — padding would move the text and change the spacing of every
+   card that carries these links. Nothing moves; the hit area grows to ~29px.
+   -------------------------------------------------------------------------------------------- */
+.back-link, .domain-card-more { position: relative; }
+.back-link::after,
+.domain-card-more::after {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
 }

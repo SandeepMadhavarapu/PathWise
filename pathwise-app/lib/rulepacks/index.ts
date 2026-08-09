@@ -87,12 +87,18 @@ export const REGISTERED_PACKS: ReadonlyArray<{ code: string; packs: Jurisdiction
 
 /** The packs for a jurisdiction, or undefined when PathWise has not modelled it. */
 export function resolveJurisdiction(code: string): JurisdictionPacks | undefined {
-  return REGISTRY[code];
+  // `Object.hasOwn`, not a bare index. REGISTRY is an object literal, so `REGISTRY['__proto__']`
+  // resolves up the prototype chain and hands back Object.prototype — truthy, and not a pack. The
+  // caller then reads `.domicile` off it and crashes with an uncaught TypeError, which out of a
+  // server component is a 500 rather than "PathWise has not modelled that". Every other unknown
+  // code already returns undefined and gets an honest unmodelled finding; these got an exception.
+  return Object.hasOwn(REGISTRY, code) ? REGISTRY[code] : undefined;
 }
 
 /** Whether PathWise can reason about this jurisdiction at all. The question /check asks first. */
 export function isModelled(code: string): boolean {
-  return code in REGISTRY;
+  // `in` walks the prototype chain too, so this answered true for 'toString' and 'constructor'.
+  return Object.hasOwn(REGISTRY, code);
 }
 
 /** The codes with packs, in coverage-file order so the UI never has to sort them itself. */

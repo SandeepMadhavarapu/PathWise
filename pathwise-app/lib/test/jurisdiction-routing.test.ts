@@ -34,15 +34,18 @@ import {
   unmodelledResidencyFinding,
 } from '../engines/unmodelled-jurisdiction';
 import {
+  aidDeadlineFor,
   aidFindingFor,
   aidFormFor,
+  currentJurisdictionCode,
   domicileAnalysisFor,
   jurisdictionFor,
   jurisdictionForCode,
   residencyFindingFor,
 } from '../engines/jurisdiction';
+import { computeCptLedger } from '../engines/cpt-ledger';
 import { applyLifeEvent } from '../engines/consequence-engine';
-import { humanizeId } from '../engines/domicile-gate';
+import { humanizeId, isUsableDate } from '../engines/domicile-gate';
 import { UNLISTED_REGISTRATIONS } from '../jurisdiction-coverage';
 import { JURISDICTIONS, jurisdictionByCode } from '../coverage';
 import { priyaJobOffer } from '../fixtures/priya';
@@ -1369,6 +1372,189 @@ console.log('An unclassified status fails CLOSED — and closed means "cannot ve
   // ---- determinism ----
   const runs = Array.from({ length: 5 }, () => JSON.stringify([residency('other'), aid('other')]));
   assert('the same unclassified input yields byte-identical output every time', new Set(runs).size === 1);
+}
+
+console.log('');
+console.log('Hostile and malformed input fails CLOSED — it never crashes and never gets more confident');
+
+// Every case below was found by a forensic pass over the released build. Each is here because it
+// either threw an uncaught exception (a 500 out of a server component) or turned input nobody could
+// read into a MORE confident answer than the readable case would have produced. Those are the two
+// directions this product cannot afford to fail in, so each gets a test.
+{
+  const HENT = '2026-08-08';
+  const person = (status: string, state = 'VA', history?: unknown): Student =>
+    ({
+      id: 'hostile',
+      immigration: { status, prior_statuses: [] },
+      dob: '2000-01-01',
+      institutions: [],
+      jurisdiction_history: history ?? [{ state, from: '2015-01-01' }],
+    }) as unknown as Student;
+  const vaJx = jurisdictionForCode('VA');
+  const residency = (factors: unknown[]) =>
+    residencyFindingFor(vaJx, {
+      student: person('citizen'),
+      events: [],
+      intentFactors: factors as IntentFactorFact[],
+      allegedEntitlementDate: HENT,
+    });
+
+  // ---- the shared date guard ----
+  assert('isUsableDate accepts a real date', isUsableDate('2020-01-01'));
+  assert('isUsableDate accepts a real leap day', isUsableDate('2024-02-29'));
+  assert('isUsableDate rejects 30 February (it rolls over to 2 March)', !isUsableDate('2025-02-30'));
+  assert('isUsableDate rejects 31 April', !isUsableDate('2025-04-31'));
+  assert('isUsableDate rejects 29 February in a non-leap year', !isUsableDate('2025-02-29'));
+  for (const bad of [undefined, null, '', 'not-a-date', '2020-1-1', '20200101', 12345, {}, []]) {
+    assert(`isUsableDate rejects ${String(JSON.stringify(bad))}`, !isUsableDate(bad));
+  }
+
+  // ---- intent factors: an unusable date declines, it does not throw ----
+  const dateCases: [string, unknown[]][] = [
+    ['a factor with no date', [{ id: 'continuous_residence' }]],
+    ['a factor with a null date', [{ id: 'continuous_residence', date: null }]],
+    ['a factor dated 30 February', [{ id: 'continuous_residence', date: '2025-02-30' }]],
+  ];
+  for (const [label, factors] of dateCases) {
+    let threw = false;
+    let f: Finding | undefined;
+    try {
+      f = residency(factors);
+    } catch {
+      threw = true;
+    }
+    assert(`${label} does not throw`, !threw);
+    assert(
+      `${label} yields unable_to_verify with an open question`,
+      !!f && f.result === 'unable_to_verify' && f.unknowns.length > 0,
+      f?.result,
+    );
+  }
+  const leap = residency([{ id: 'continuous_residence', date: '2024-02-29' }]);
+  assert(
+    'a real leap-day factor still starts the durational clock',
+    leap.rule_id === 'va-domicile:clock' && /appears satisfied/.test(leap.headline),
+    leap.headline,
+  );
+  const impossibleFull = domicileAnalysisFor(vaJx, {
+    student: person('citizen'),
+    events: [],
+    intentFactors: [{ id: 'continuous_residence', date: '2025-02-30' }] as unknown as IntentFactorFact[],
+    allegedEntitlementDate: HENT,
+  });
+  assert(
+    'the full analysis refuses the same impossible date the gate path refuses',
+    !impossibleFull.clock?.clockStart,
+    impossibleFull.clock?.clockStart,
+  );
+
+  // ---- jurisdiction lookup: a prototype key is not a jurisdiction ----
+  for (const key of ['__proto__', 'constructor', 'toString', 'valueOf', 'hasOwnProperty']) {
+    let threw = false;
+    let hasPacks = true;
+    try {
+      hasPacks = !!jurisdictionForCode(key).packs;
+    } catch {
+      threw = true;
+    }
+    assert(`jurisdictionForCode(${JSON.stringify(key)}) does not throw`, !threw);
+    assert(`jurisdictionForCode(${JSON.stringify(key)}) resolves to no packs`, !threw && !hasPacks);
+  }
+  assert('a real code still resolves to its packs', !!jurisdictionForCode('VA').packs);
+
+  // ---- jurisdiction history: unreadable entries are dropped, not fatal ----
+  const historyCases: [string, unknown][] = [
+    ['a null entry', [null, { state: 'VA', from: '2015-01-01' }]],
+    ['an entry with no state', [{ from: '2015-01-01' }]],
+    ['an entry with no from', [{ state: 'VA' }]],
+    ['every entry unreadable', [null, undefined]],
+  ];
+  for (const [label, history] of historyCases) {
+    let threw = false;
+    try {
+      currentJurisdictionCode(person('citizen', 'VA', history));
+    } catch {
+      threw = true;
+    }
+    assert(`jurisdiction history with ${label} does not throw`, !threw);
+  }
+  assert(
+    'a readable entry still wins beside an unreadable one',
+    currentJurisdictionCode(person('citizen', 'VA', [null, { state: 'VA', from: '2015-01-01' }])) === 'VA',
+  );
+
+  // ---- CPT ledger: hours are a number or they are refused, never coerced ----
+  const ftDays = (hours: unknown) =>
+    computeCptLedger([
+      {
+        id: 'c1',
+        type: 'cpt_auth',
+        date: '2025-01-01',
+        end_date: '2025-01-10',
+        program_level: 'masters',
+        attrs: { hours_per_week: hours },
+        evidence_ids: [],
+        confidence: 'asserted',
+      },
+    ] as never).forLevel('masters')?.fullTimeDays;
+  assert('numeric 40 counts 10 full-time days', ftDays(40) === 10, ftDays(40));
+  assert('numeric 21 is full-time (strictly over 20)', ftDays(21) === 10, ftDays(21));
+  assert('numeric 20 is part-time, not full-time', ftDays(20) === 0, ftDays(20));
+  assert('a negative hours value counts no full-time days', ftDays(-40) === 0, ftDays(-40));
+  // JS would evaluate "40" > 20 as true. The ledger requires an actual number, so a string is
+  // refused rather than believed — the safe direction for a counter that ends OPT eligibility.
+  for (const bad of ['40', ' 40', '40.0', true, null, undefined, NaN]) {
+    const d = ftDays(bad);
+    assert(
+      `hours_per_week ${String(JSON.stringify(bad))} is refused, not coerced`,
+      d === undefined || d === 0,
+      d,
+    );
+  }
+
+  // ---- aid: a provision the pack does not state is an open question, not silence ----
+  const aidInput = (provisions?: string[]) => ({
+    student: person('citizen'),
+    provisions,
+    evidence: ['domicile_established'],
+    deadlines: { asOf: HENT, collegePriority: '2027-02-01', federal: '2027-06-30' },
+  });
+  const ghost = aidFindingFor(vaJx, aidInput(['not_a_provision']));
+  assert('an unknown provision id never yields no_issue', ghost.result !== 'no_issue', ghost.result);
+  assert(
+    'an unknown provision id is named as an open question',
+    ghost.unknowns.some((u) => u.what.includes('not_a_provision')),
+    ghost.unknowns.map((u) => u.what),
+  );
+  const realProvision = aidFindingFor(vaJx, aidInput(['domicile']));
+  assert(
+    'a provision the pack DOES state raises no such question',
+    realProvision.unknowns.every((u) => !u.what.includes('is not a provision')),
+    realProvision.unknowns.map((u) => u.what),
+  );
+
+  // ---- aid: an unreadable asOf bands red, never green ----
+  // Non-null: `aidDeadlineFor` is undefined only for a jurisdiction with no aid pack, and VA has one.
+  const bogusDeadline = aidDeadlineFor(vaJx, {
+    student: person('citizen'),
+    deadlines: { asOf: 'not-a-date', collegePriority: '2027-02-01' },
+  })!;
+  assert('an unreadable asOf yields no margin', bogusDeadline.daysOfMargin === undefined);
+  assert(
+    'an unreadable asOf bands red, not green',
+    bogusDeadline.marginBand === 'red',
+    bogusDeadline.marginBand,
+  );
+  const goodDeadline = aidDeadlineFor(vaJx, {
+    student: person('citizen'),
+    deadlines: { asOf: HENT, collegePriority: '2027-02-01' },
+  })!;
+  assert(
+    'a readable asOf still computes a finite margin',
+    typeof goodDeadline.daysOfMargin === 'number' && Number.isFinite(goodDeadline.daysOfMargin),
+    goodDeadline.daysOfMargin,
+  );
 }
 
 console.log('');

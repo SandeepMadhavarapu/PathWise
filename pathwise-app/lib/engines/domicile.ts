@@ -21,7 +21,7 @@
 
 import type { Event, Finding, ISODate, ProgramLevel, Student } from '../types';
 import type { DomicilePack } from '../rulepacks';
-import { formatImmigrationStatus } from '../format';
+import { formatDomicileDate, formatImmigrationStatus } from '../format';
 import {
   CAVEAT_FACTS,
   checkEligibleAlienGate,
@@ -29,6 +29,7 @@ import {
   domicileView,
   evaluateStatusClause,
   humanizeId,
+  isUsableDate,
   lowerLabel,
   toOrdinal,
   unmodelledStatusGateUnknowns,
@@ -91,13 +92,11 @@ function domicileRules(pack: DomicilePack): DomicileRules {
 
 // ---- prose helpers -----------------------------------------------------------------------------
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-/** Exported so the screen prints a date exactly as the reasoning steps print it. */
-export function formatDomicileDate(iso: ISODate): string {
-  const [y, m, d] = iso.split('-');
-  return `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`;
-}
+/**
+ * Re-exported from lib/format.ts, where it now lives so that domicile-gate.ts can reach it too —
+ * see the note there. Every existing caller imports it from this file and is unaffected.
+ */
+export { formatDomicileDate };
 
 // `humanizeId` lives in domicile-gate.ts, which the gate's own unknowns also need it for, and is
 // re-exported here because this is where every screen already imports it from.
@@ -421,6 +420,16 @@ export function analyseIntentFactors(input: DomicileRun): IntentAnalysis {
       } else {
         row.caveatResolution = 'does_not_apply';
       }
+    }
+
+    // Same guard as the gate path's `counts()`: a fact on the record whose date is missing or is
+    // not a real calendar day cannot start the durational clock, and must not be handed to it —
+    // `qualifying` is mapped straight into the clock with `r.date!`, so an unusable date here is
+    // the crash that guard exists to stop. It stays visible as a row; it just does not count.
+    if (!isUsableDate(fact.date)) {
+      row.state = 'does_not_count';
+      row.counts = false;
+      return row;
     }
 
     row.state = 'satisfied';

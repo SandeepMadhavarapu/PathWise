@@ -362,7 +362,12 @@ export function resolveAidDeadline(input: AidEligibilityRun): AidDeadline {
     c.note = `${later} days later — waiting for this one forfeits the aid the earlier date controls.`;
   }
 
-  const daysOfMargin = binding ? toOrdinal(binding.date!) - toOrdinal(asOf) : undefined;
+  // NaN is not a margin. An unparseable `asOf` made every comparison below false, so the chain fell
+  // through to its last branch — `green`, the most reassuring band the product has, produced from a
+  // date nobody could read. `undefined` is the shape this type already uses for "no margin known",
+  // and it bands `red`, which is the direction an unreadable input has to fail in.
+  const rawMargin = binding ? toOrdinal(binding.date!) - toOrdinal(asOf) : undefined;
+  const daysOfMargin = Number.isFinite(rawMargin) ? rawMargin : undefined;
   const marginBand: AidDeadline['marginBand'] =
     daysOfMargin === undefined ? 'red' : daysOfMargin < 0 ? 'red' : daysOfMargin <= 30 ? 'amber' : 'green';
 
@@ -527,6 +532,37 @@ export function computeAidEligibility(input: AidEligibilityRun): Finding {
       how_to_resolve:
         `Tell the financial aid office the exact status on the record (the visa category or ` +
         `classification, not "other") and ask which application opens ${v.jurisdictionName} state aid for it.`,
+    });
+  }
+
+  /**
+   * A provision id this pack does not state.
+   *
+   * `buildProvisionChecklists` filters the caller's ids against the pack's own and keeps the
+   * intersection, so an id the pack has never heard of contributed nothing at all — no checklist,
+   * no reasoning step, no unknown. Ask about a provision that does not exist and the engine
+   * answered `no_issue`: the most confident verdict it can give, produced by a question it did not
+   * understand. That is absence-of-rule read as affirmative finding, which is the one inference
+   * this product exists to refuse.
+   *
+   * Reported the same way the domicile engine reports an intent factor it could not credit — as an
+   * open question naming the id — rather than by inventing a status. A finding carrying an unknown
+   * can no longer be `no_issue`, which is exactly the outcome that was wrong.
+   */
+  const statedProvisionIds = new Set(v.provisions.map((p) => p.id));
+  for (const id of input.provisions ?? []) {
+    if (statedProvisionIds.has(id)) continue;
+    unknowns.push({
+      what: `"${id}" is not a provision ${v.jurisdictionName}'s aid pack states.`,
+      why_it_matters:
+        `This record asked whether the student qualifies under it, and PathWise has no rule of that ` +
+        `name to check — so the answer below is silent about it rather than negative about it. The ` +
+        `${v.provisions.length} provisions this pack does state are ${v.provisions
+          .map((p) => label(p.id).toLowerCase())
+          .join(', ')}.`,
+      how_to_resolve:
+        `Check the id against the pack, or ask ${v.jurisdictionName}'s financial aid office whether ` +
+        `the route you have in mind is one they administer under another name.`,
     });
   }
 

@@ -219,6 +219,26 @@ export default function CheckPage() {
   // ---- Live client-side computation. Nothing here touches the network. ----
   const today = new Date().toISOString().slice(0, 10);
 
+  /**
+   * The latest date any of these fields can honestly carry, for the date pickers.
+   *
+   * Every date this form collects is a record of something that HAS happened — residence that began,
+   * an authorization that was issued. A date in the future is not a fact about the past, and without
+   * a bound the pickers accepted one: entering 2099 produced "earliest eligibility 2100-01-01", and
+   * a CPT block dated 2090-2099 produced "2923 days past the CPT cliff — OPT eligibility lost for
+   * this level". Both are arithmetically correct and neither is a finding about a real student.
+   *
+   * Set after mount rather than from `today` directly. This route is prerendered, so an attribute
+   * derived from the clock would be baked at BUILD time and recomputed at hydration — a mismatch on
+   * every deploy older than a day. Undefined on the server means the attribute is simply absent
+   * until the browser fills it in, which is the honest degradation: the bound is an input aid, and
+   * the engines stay the authority on what a date means.
+   */
+  const [maxDate, setMaxDate] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    setMaxDate(new Date().toISOString().slice(0, 10));
+  }, []);
+
   const events: Event[] = rows
     .filter((r) => r.start && r.end && r.hours !== "")
     .map((r, i) => ({
@@ -235,8 +255,10 @@ export default function CheckPage() {
   /**
    * Rows that are filled in but cannot be counted, named rather than dropped.
    *
-   * The ledger is correctly defensive: a reversed range or an implausible year yields zero days,
-   * no crash and no negative. But the SCREEN then reported "0 full-time CPT days" beside a green
+   * The ledger is correctly defensive: a reversed range yields zero days, no crash and no negative.
+   * (An implausible YEAR is a different problem and is not what this guard catches — the date
+   * pickers now carry a `max` so a future date cannot be entered here at all.) But the SCREEN
+   * then reported "0 full-time CPT days" beside a green
    * tick and "OPT still available" — a confident finding computed from input it had silently
    * discarded. On a product whose entire posture is saying what it could not use, quietly ignoring
    * a row the reader filled in is the one thing it must not do.
@@ -581,6 +603,7 @@ export default function CheckPage() {
             <input
               id="presence"
               type="date"
+              max={maxDate}
               value={presenceSince}
               onChange={(e) => setPresenceSince(e.target.value)}
             />
@@ -610,6 +633,7 @@ export default function CheckPage() {
               <input
                 id={`start-${i}`}
                 type="date"
+                max={maxDate}
                 value={row.start}
                 onChange={(e) => updateRow(i, { start: e.target.value })}
               />
@@ -619,6 +643,7 @@ export default function CheckPage() {
               <input
                 id={`end-${i}`}
                 type="date"
+                max={maxDate}
                 value={row.end}
                 onChange={(e) => updateRow(i, { end: e.target.value })}
               />

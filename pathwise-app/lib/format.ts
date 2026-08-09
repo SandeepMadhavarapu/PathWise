@@ -2,6 +2,25 @@ import type { Agency, PackDomain } from "./rulepacks/schema";
 import type { DecidingOffice } from "./types";
 
 // Display-format the visa status code (display text only): F1 -> F-1, J1 -> J-1, M1 -> M-1.
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * A date as this product writes one: "1 Jun 2027".
+ *
+ * It lived in engines/domicile.ts, which meant engines/domicile-gate.ts could not reach it —
+ * domicile.ts imports the gate, so the dependency only runs one way. The gate therefore printed
+ * raw ISO into user-facing prose ("earliest eligibility 2027-06-01") while the full analysis one
+ * file over printed "1 Jun 2027" for the same value. The narrow gate path is the one /check uses,
+ * so the unformatted half was the half real visitors saw.
+ *
+ * Here rather than there because this is where the product already keeps its one spelling of a
+ * thing. domicile.ts re-exports it, so its existing callers are untouched.
+ */
+export function formatDomicileDate(iso: string): string {
+  const [y, m, d] = iso.split('-');
+  return `${Number(d)} ${MONTHS[Number(m) - 1]} ${y}`;
+}
+
 export function formatImmigrationStatus(statusLabel: string): string {
   const map: Record<string, string> = { F1: "F-1", J1: "J-1", M1: "M-1" };
   return map[statusLabel] ?? statusLabel;

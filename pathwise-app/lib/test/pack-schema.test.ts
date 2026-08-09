@@ -326,13 +326,11 @@ rejects('a non-object is rejected', () => parseDomicilePack('not a pack'), PackS
 // And the runtime half of the same lock: even if a bad value reached the engine, the lookup throws.
 rejects(
   'the clock start lookup throws on an unknown rule rather than defaulting',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   () => clockStartFor('made_up_rule' as any),
   ClockStrategyError,
 );
 rejects(
   'the clock anchor lookup throws on an unknown anchor rather than defaulting',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   () => clockAnchorFor('made_up_anchor' as any),
   ClockStrategyError,
 );

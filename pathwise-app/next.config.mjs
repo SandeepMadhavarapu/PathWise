@@ -36,11 +36,37 @@ function isDirty() {
   }
 }
 
+/**
+ * Response headers.
+ *
+ * PathWise has no account, no cookie and no stored state, so the usual session-theft surface does
+ * not exist here. What DOES matter for a product a student is asked to trust with immigration facts
+ * is that it cannot be framed by someone else's page and passed off as their own, and that a
+ * response is never sniffed into a different content type than it was served as.
+ *
+ * `frame-ancestors` is the only CSP directive set. A full script/style CSP on Next's App Router
+ * needs per-request nonces for its inline bootstrap, which a statically exported site cannot supply
+ * — adding one here would either break hydration or be neutered by 'unsafe-inline', and a CSP that
+ * says 'unsafe-inline' is a CSP that is only pretending. frame-ancestors is unaffected by inline
+ * content and is the directive that actually buys something here.
+ */
+const securityHeaders = [
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  // No feature this product uses needs any of these; naming them denies them to anything embedded.
+  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()' },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_BUILD_SHA: `${buildSha()}${isDirty() ? '+dirty' : ''}`,
+  },
+  async headers() {
+    return [{ source: '/:path*', headers: securityHeaders }];
   },
 };
 

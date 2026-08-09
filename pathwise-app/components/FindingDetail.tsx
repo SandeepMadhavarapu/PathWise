@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Event, Finding, FindingResult } from "@/lib/types";
 import { statusFromFindingResult, type StatusKey } from "@/lib/tokens";
-import { formatDecidingBody } from "@/lib/format";
+import { formatDecidingBody, formatDomicileDate } from "@/lib/format";
 import type { Agency } from "@/lib/rulepacks/schema";
 import { describeEvent, describeEvidence } from "@/lib/labels";
 import { StatusGlyph } from "./StatusGlyph";
@@ -141,7 +141,11 @@ export function FindingDetail({
         <div className="citation-meta">{finding.rule_citation.authority}</div>
         {finding.rule_citation.verified_on ? (
           <div className="citation-meta">
-            Verified on {finding.rule_citation.verified_on}
+            {/* The product's one date spelling ("24 Jul 2026"). This printed the raw ISO string
+                while the shell footer rendered the SAME date as "24 Jul 2026" — two formats for one
+                value, both on screen at once. /coverage still shows raw ISO deliberately: that page
+                is the rule-pack viewer and prints pack metadata verbatim. */}
+            Verified on {formatDomicileDate(finding.rule_citation.verified_on)}
           </div>
         ) : null}
         {finding.rule_citation.source_url ? (

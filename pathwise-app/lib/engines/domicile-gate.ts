@@ -27,7 +27,7 @@ import type {
 } from '../rulepacks/schema';
 import { DETERMINATE_LEVELS } from '../rulepacks/schema';
 import { computeDomicileClock, type IntentFactorFact } from './domicile-clock';
-import { formatImmigrationStatus } from '../format';
+import { formatDomicileDate, formatImmigrationStatus } from '../format';
 import { jurisdictionByCode } from '../coverage';
 
 // The pack owns the condition as a clause. Same deliberately small reader as aid-eligibility's
@@ -149,6 +149,31 @@ export interface DomicileView {
 // a second implementation of a rule is a second thing to keep in sync, which is how the divergence
 // started.
 // ---------------------------------------------------------------------------------------------
+
+/**
+ * Is this value a real calendar date this engine can count from?
+ *
+ * Two failures it exists to stop, both of which reached the clock before it:
+ *
+ *   · A MISSING or null date. `toOrdinal(undefined)` is NaN, and the first `addDays` on a NaN
+ *     ordinal throws `RangeError: Invalid time value` — an uncaught exception out of a server
+ *     component, which is a 500 rather than a finding. A factor whose date nobody supplied is a
+ *     factor PathWise cannot place on a timeline, and this codebase's answer to that is to decline
+ *     it and say so, not to crash.
+ *
+ *   · A date that does not EXIST. `Date.parse('2025-02-30')` silently rolls over to 2 March, so the
+ *     clock would start from a day the record never claimed. The round-trip below is what catches
+ *     it: a real date survives being formatted back, and 30 February does not. Genuine leap days
+ *     (2024-02-29) round-trip cleanly and are accepted.
+ *
+ * Deliberately NOT a range check. "Is this date plausible for a student?" is a judgement about a
+ * record, not about a calendar, and inventing a bound here would be inventing a rule.
+ */
+export function isUsableDate(value: unknown): value is ISODate {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
 
 /**
  * Evaluate a pack clause about immigration status — `in ['F1','J1']`, `== 'citizen'`,
@@ -567,6 +592,9 @@ export function runDomicileGate(run: DomicileRun): Finding {
   const counts = (f: IntentFactorFact): boolean => {
     const factor = declared.get(f.id);
     if (!factor) return false;
+    // A factor PathWise cannot place on a timeline cannot start a clock. Declined rather than
+    // thrown, and surfaced through `ignoredFactors` below like every other uncounted factor.
+    if (!isUsableDate(f.date)) return false;
     if (factor.inapplicable_when && evaluateStatusClause(factor.inapplicable_when, student) === true) {
       return false;
     }
@@ -692,15 +720,15 @@ export function runDomicileGate(run: DomicileRun): Finding {
     result: clock.meetsDuration ? 'review_recommended' : 'potential_risk',
     headline: clock.meetsDuration
       ? `Domicile duration of ${clock.durationDays} days appears satisfied (officer confirms)`
-      : `Domicile clock is running; earliest eligibility ${clock.earliestEntitlement}`,
+      : `Domicile clock is running; earliest eligibility ${formatDomicileDate(clock.earliestEntitlement!)}`,
     reasoning_steps: [
       {
-        claim: `The last qualifying intent factor ("${clock.startFactor!.id}") occurred on ${clock.clockStart}; the ${clock.durationDays}-day clock starts there, not on arrival.`,
+        claim: `The last qualifying intent factor ("${clock.startFactor!.id}") occurred on ${formatDomicileDate(clock.clockStart!)}; the ${clock.durationDays}-day clock starts there, not on arrival.`,
         from_events: [],
         from_evidence: [],
       },
       {
-        claim: `Earliest date of alleged entitlement that satisfies the duration requirement is ${clock.earliestEntitlement}.`,
+        claim: `Earliest date of alleged entitlement that satisfies the duration requirement is ${formatDomicileDate(clock.earliestEntitlement!)}.`,
         from_events: [],
         from_evidence: [],
       },

@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
+import { SITE_URL } from "./site";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
 // The one description, written once and reused by the page meta, the Open Graph card and the
 // X card, so the three cannot drift into saying different things about the same product.
@@ -20,7 +14,10 @@ export const metadata: Metadata = {
   // Absolute base for every relative URL below. Without it Next emits `og:image` as a relative
   // path and most unfurlers drop the image entirely — which was the whole defect: the product
   // rendered as a bare link everywhere it was shared.
-  metadataBase: new URL("https://path-wise-amber.vercel.app"),
+  metadataBase: new URL(SITE_URL),
+  // Every route resolves its own canonical against metadataBase, so a page reached through a
+  // preview deployment or a query string still names one address as the real one.
+  alternates: { canonical: "/" },
   title: {
     default: SITE,
     // Every route below supplies only its own name; this is what wraps it. Each route's title is
@@ -53,7 +50,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en">
       <body>
         <AppShell>{children}</AppShell>
       </body>

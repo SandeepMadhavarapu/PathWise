@@ -80,7 +80,14 @@ export interface JurisdictionContext {
  * such rather than defaulted to anything.
  */
 export function currentJurisdictionCode(student: Student, asOf?: ISODate): string | undefined {
-  const history = student.jurisdiction_history;
+  // Entries that cannot be read are dropped before anything is decided from them. A null entry, or
+  // one with no `state`/`from`, previously reached `.find` and `.sort` and threw — an exception
+  // instead of "no jurisdiction on the record", which is the answer this function already has a way
+  // to give. Nothing is inferred from a dropped entry; it simply cannot vote.
+  const history = student.jurisdiction_history?.filter(
+    (h): h is { state: string; from: ISODate; to?: ISODate } =>
+      !!h && typeof h.state === 'string' && typeof h.from === 'string',
+  );
   if (!history?.length) return undefined;
   if (asOf) {
     const containing = history.find((h) => h.from <= asOf && (!h.to || h.to >= asOf));
