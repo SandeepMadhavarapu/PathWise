@@ -209,7 +209,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
-  const title = PAGE_TITLES[pathname] ?? "PathWise";
+  // The fallback is reachable on exactly one screen: the not-found page. Every real route has an
+  // entry above, and `/` returned before this line. It used to read "PathWise", which put the
+  // site name in the page heading of a 404 — and, once not-found.tsx supplied a heading of its
+  // own, produced two h1s on the only route in the product that had them.
+  const title = PAGE_TITLES[pathname] ?? "No page at this address";
   const parent = PARENT[pathname];
   const exampleStudent = EXAMPLE_STUDENT[pathname];
 

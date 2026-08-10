@@ -53,6 +53,9 @@ const DEPENDENCY_CHIP: Record<DependencyDetermination["status"], { state: StateK
   independent: { state: "verified", word: "Independent" },
   not_presumed: { state: "verified", word: "No presumption applies" },
   presumed_dependent: { state: "attention", word: "Presumed dependent" },
+  // A pack that states no dependency rule. Neutral, not "verified": nothing was verified — the
+  // question was never asked, which is a different thing from being answered in the student's favour.
+  not_modelled: { state: "unknown", word: "Not modelled here" },
 };
 
 // How the pack words a caveat's outcome. The caveat text itself is always quoted verbatim.
@@ -124,8 +127,12 @@ export function DomicileAnalysisDetail({
           <Chip state={dep.state} word={dep.word} />
           <span className="dm-fact">
             {dependency.ageAtEntitlement} years old on{" "}
-            {formatDomicileDate(clock.allegedEntitlementDate)} — the presumption applies under{" "}
-            {dependency.thresholdAge}
+            {formatDomicileDate(clock.allegedEntitlementDate)}
+            {/* The threshold is the PACK's number. A pack that states no dependency rule has none,
+                and printing "under 0" there was inventing a rule — see DependencyStatus. */}
+            {dependency.thresholdAge === undefined
+              ? " — PathWise has not read a dependency rule for this jurisdiction"
+              : ` — the presumption applies under ${dependency.thresholdAge}`}
           </span>
         </div>
 

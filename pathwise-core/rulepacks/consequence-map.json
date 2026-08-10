@@ -1,4 +1,5 @@
 {
+  "_ARCHIVED_SNAPSHOT": "NOT THE RUNTIME RULE PACK. This is a frozen blueprint copy kept only so the project could be rebuilt from zero; it is not imported, built, tested or served by anything, and it has NOT been kept in step with the live packs. The authoritative pack this file is a stale copy of lives at pathwise-app/lib/rulepacks/consequence-map.json. Read that one. Any verified_on date below describes the snapshot as it stood when it was taken, not a verification of this file.",
   "pack_id": "consequence-map",
   "description": "The Event Consequence Engine's core table. One life event -> consequences across all three domains. This is the product's central originality: it is why PathWise is one product, not three.",
   "verified_on": "2026-07-24",

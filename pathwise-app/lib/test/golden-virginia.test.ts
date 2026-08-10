@@ -89,8 +89,9 @@ function differences(a: unknown, b: unknown, path: string, out: Difference[]): v
  *
  * Note what is NOT in here: not one number. The demo's arithmetic — 342, 552, 210, 288, 54, 23, the
  * 365-day cliff, the 12-month budget, the 90/150 unemployment caps, the aid deadline set, the step
- * ORDER and the step COUNT — is untouched by every change below. All thirty-eight are prose,
- * citation scoping, or two added fields.
+ * ORDER and the step COUNT — is untouched by every change below. All forty are prose, citation
+ * scoping, two added fields, the two SCHEV source URLs that went dead, or the removal of one
+ * construction rule that no official source supports.
  */
 const INTENDED_CHANGES: Difference[] = [
   // ---- 1. Volatility now describes the rule it is attached to. -------------------------------
@@ -328,21 +329,11 @@ const INTENDED_CHANGES: Difference[] = [
   // unchanged. What appears below is the new field arriving on the analysis object — and it is the
   // ONLY thing the whole Phase 1 architecture change moved in Virginia's output. Not one reasoning
   // string, number, citation, headline or deciding office differs.
-  {
-    path: "marcus:domicile-analysis.construction[0].kind",
-    before: undefined,
-    after: "favor_student_in_complex_cases",
-  },
-  {
-    path: "marcus:domicile-analysis.construction[1].kind",
-    before: undefined,
-    after: "determinations_not_transferable",
-  },
-  {
-    path: "marcus:domicile-analysis.construction[2].kind",
-    before: undefined,
-    after: "parental_status_alone_insufficient",
-  },
+  // Superseded by group 10 below. These three pinned the `kind` field arriving on each
+  // construction rule. Removing the Virginia rule at index 0 changes the ARRAY LENGTH, and
+  // `differences()` reports a length change as one whole-array difference rather than
+  // per-element ones — so these paths can no longer occur and the staleness assertion below
+  // would fail on them. The `kind` fields are still pinned, inside the arrays in group 10.
 
   // ---- 8. One provision sentence stops printing an internal file id, and reads as English. ------
   //
@@ -370,6 +361,241 @@ const INTENDED_CHANGES: Difference[] = [
       "Domicile provision — Qualifies via VA domicile (see va-domicile pack). none of its one required item on record yet; still missing: Domicile established.",
     after:
       "Domicile provision — Qualifies through Virginia domicile, as determined under Virginia's residency rules. Its one required item is not yet on record; still missing: Domicile established.",
+  },
+  // ---- 9. The two SCHEV source URLs, because the old ones 404. --------------------------------
+  //
+  // Both Virginia source_urls pointed into schev.edu/students/resources-for-students/…, a path
+  // family SCHEV has since retired. Production served "Read the source →" on four routes and
+  // "Official Virginia source →" on /check, and every one of them landed on a real SCHEV
+  // "Page Not Found". The packs said "Verified on 24 Jul 2026" directly above the dead link.
+  //
+  // The replacements were opened and read before being written here, not merely pinged for a 200:
+  //
+  //   · va-domicile -> .../in-state-residency/guidelines-for-in-state-residency-tuition, the page
+  //     titled "Guidelines for In-State Residency & Tuition". It states "These Domicile Guidelines
+  //     are updated effective January 11, 2021", which is the pack's own `guidelines_effective`
+  //     value to the day, and "established under the authority of the Code of Virginia,
+  //     § 23.1-510(D)", which is the pack's own `authority` string. It also carries the
+  //     parental-status rule this pack encodes as a construction rule, verbatim.
+  //   · va-aid -> .../financial-aid/federal-state-financial-aid, which names both FAFSA and VASA
+  //     and states the form-selection rule the pack models ("students submit a FAFSA or VASA
+  //     application to their preferred institution").
+  //
+  // `verified_on` is deliberately NOT bumped. What was re-verified on 2026-08-09 is where the
+  // source lives, not every section the pack cites; moving the date would claim a re-reading of
+  // Part II §03(A), §05(C)(1) and §09(C)(1) that nobody performed. lib/test/source-urls.test.ts
+  // now fails the build if either URL goes dead again.
+  //
+  // Location only. No rule, threshold, citation string, authority, office or verdict moves.
+  {
+    path: "priya:domicile-gate.rule_citation.source_url",
+    before: "https://www.schev.edu/students/resources-for-students/paying-for-college/determining-domicile",
+    after: "https://www.schev.edu/financial-aid/in-state-residency/guidelines-for-in-state-residency-tuition",
+  },
+  {
+    path: "marcus:domicile-analysis.finding.rule_citation.source_url",
+    before: "https://www.schev.edu/students/resources-for-students/paying-for-college/determining-domicile",
+    after: "https://www.schev.edu/financial-aid/in-state-residency/guidelines-for-in-state-residency-tuition",
+  },
+  {
+    path: "priya:aid-eligibility.rule_citation.source_url",
+    before: "https://www.schev.edu/students/resources-for-students/paying-for-college",
+    after: "https://www.schev.edu/financial-aid/financial-aid/federal-state-financial-aid",
+  },
+  // ---- 10. The unsupported SCHEV construction rule was removed. ------------------------------
+  //
+  // va-domicile.json carried `favor_student_in_complex_cases`: "In complex cases, construe the
+  // facts in the light most favorable to the student", attributed to "SCHEV guidance". It was
+  // searched for and NOT FOUND in any official source:
+  //
+  //   · SCHEV Domicile Guidelines, 32pp, effective 11 Jan 2021 (the document the pack cites)
+  //   · Addendum A (alien categories), Addendum B (forms and definitions), Addendum C
+  //   · Code of Virginia Title 23.1 Chapter 5, and § 23.1-502 / § 23.1-503 in full
+  //
+  // Across all of them "favorab", "in favor", "most favorable" and "light most" return zero
+  // matches. The single "construe" hit is a savings clause pointing the other way: "nothing
+  // herein is intended, nor shall be construed, to repeal or modify any provision of federal or
+  // state law". § 23.1-503 runs the other way too, putting the burden on the student to rebut by
+  // clear and convincing evidence.
+  //
+  // The engine also amplified it, adding "and the officer is directed to do the same" — a
+  // direction to an official that no source contains. Rule and reasoner both removed; a
+  // student-favourable invention is still an invention.
+  //
+  // WHAT DID NOT MOVE: the verdict (potential_risk), the deciding office, the authority string,
+  // the headline, the 365-day clock, the earliest entitlement date (2027-06-08) and the open
+  // question count (1) are all identical. Only the removed claim's own step and rule are gone.
+  //
+  // The two `after` arrays below also carry two later wording corrections to the rule that REMAINS,
+  // `parental_status_alone_insufficient`. Its subject is the parent's LEGAL STATUS — SCHEV's
+  // assurance that "no student shall be denied in-state tuition ... due solely to the legal status
+  // of the individual's parent(s)" — and both the pack's quoted note and the engine's three
+  // relevance sentences had said "domicile" instead:
+  //
+  //   · the note read "...solely because of parental status", which names a different (broader)
+  //     subject than the source, and DomicileAnalysis.tsx renders it inside quote marks — so a
+  //     paraphrase was being shown to a reader as a quotation of SCHEV;
+  //   · one relevance branch said the parents' domicile "cannot be the sole ground for a denial",
+  //     which the Guidelines contradict: a dependent student "is rebuttably presumed to have the
+  //     domicile of the parent providing substantial financial support", and the review "always
+  //     begins with the parent's domicile". Parental domicile IS the presumptive route.
+  //
+  // Both now say legal status, and the branch that affirms the domicile presumption still affirms
+  // it. Nothing else moved: same rule id, same `kind`, same trigger, same verdict, same counts.
+  {
+    path: "marcus:domicile-analysis.finding.reasoning_steps",
+    before: [
+        {
+          "claim": "The student holds LPR status, which is not one of the statuses that close domicile in Virginia (F-1, J-1 and M-1). The gate does not fire, so the analysis continues — Part II, Section 03(A) & Section 02(4).",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "At the date of alleged entitlement the student is 22, under the pack's threshold of 24, so dependency is rebuttably presumed. It is rebutted: the \"graduate or professional student\" exception is established by the record itself. The timeline carries a masters-level program starting 24 Aug 2026 at School Z, on or before the date of alleged entitlement. The student's own acts are therefore what the intent analysis reads — Section 09(C)(1).",
+          "from_events": [
+            "prog-start-z"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "Of the 6 intent factors the guidelines weigh, 3 are satisfied and count: continuous residence (primary), drivers license (secondary) and VA job offer accepted (primary); 1 is satisfied but does not count: employment — \"Co-op employment confers no domicile.\"; 1 cannot apply to this student: voter registration (immigration.status != 'citizen'); 1 is not on the record: VA income tax filed (primary) — SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D).",
+          "from_events": [
+            "mv-va",
+            "lease-va-signed",
+            "lic-va",
+            "offer-va"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "1 of the qualifying factors is named in the pack's auxiliary-acts warning — drivers license (secondary). \"Acts auxiliary to educational objectives, or routinely performed by temporary residents, carry little weight.\" They support the case; they do not carry it. — Section 06(B).",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "The last qualifying factor is VA job offer accepted on 8 Jun 2026, and the clock starts there. The clock does NOT start on arrival; look at the date on which the LAST of the qualifying factors occurred. Counting from the earliest factor instead (continuous residence, 1 Aug 2024) is the mistake this rule exists to prevent. — Section 05(C)(1).",
+          "from_events": [
+            "offer-va"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "365 days from 8 Jun 2026 is 8 Jun 2027 — the earliest date of alleged entitlement that satisfies the duration requirement. The date claimed here is 24 Aug 2026 (first official day of class of the term), which falls 288 days short.",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "In complex cases, construe the facts in the light most favorable to the student. This record is not a simple one: 1 satisfied factor that a pack caveat takes back out, 1 factor that cannot apply to this status, 1 earlier immigration status on the record and 1 open question. Every reading above that could go either way has gone the student's way, and the officer is directed to do the same. — SCHEV guidance",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "A prior determination by one institution is not binding on another. The record spans 2 institutions. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status.",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "No student shall be denied in-state tuition solely because of parental status. The age presumption applied and was rebutted by the graduate or professional student exception — so the student's own acts are what is weighed, and their parents' domicile is not by itself a reason to deny in-state status.",
+          "from_events": [],
+          "from_evidence": []
+        }
+      ],
+    after: [
+        {
+          "claim": "The student holds LPR status, which is not one of the statuses that close domicile in Virginia (F-1, J-1 and M-1). The gate does not fire, so the analysis continues — Part II, Section 03(A) & Section 02(4).",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "At the date of alleged entitlement the student is 22, under the pack's threshold of 24, so dependency is rebuttably presumed. It is rebutted: the \"graduate or professional student\" exception is established by the record itself. The timeline carries a masters-level program starting 24 Aug 2026 at School Z, on or before the date of alleged entitlement. The student's own acts are therefore what the intent analysis reads — Section 09(C)(1).",
+          "from_events": [
+            "prog-start-z"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "Of the 6 intent factors the guidelines weigh, 3 are satisfied and count: continuous residence (primary), drivers license (secondary) and VA job offer accepted (primary); 1 is satisfied but does not count: employment — \"Co-op employment confers no domicile.\"; 1 cannot apply to this student: voter registration (immigration.status != 'citizen'); 1 is not on the record: VA income tax filed (primary) — SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D).",
+          "from_events": [
+            "mv-va",
+            "lease-va-signed",
+            "lic-va",
+            "offer-va"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "1 of the qualifying factors is named in the pack's auxiliary-acts warning — drivers license (secondary). \"Acts auxiliary to educational objectives, or routinely performed by temporary residents, carry little weight.\" They support the case; they do not carry it. — Section 06(B).",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "The last qualifying factor is VA job offer accepted on 8 Jun 2026, and the clock starts there. The clock does NOT start on arrival; look at the date on which the LAST of the qualifying factors occurred. Counting from the earliest factor instead (continuous residence, 1 Aug 2024) is the mistake this rule exists to prevent. — Section 05(C)(1).",
+          "from_events": [
+            "offer-va"
+          ],
+          "from_evidence": []
+        },
+        {
+          "claim": "365 days from 8 Jun 2026 is 8 Jun 2027 — the earliest date of alleged entitlement that satisfies the duration requirement. The date claimed here is 24 Aug 2026 (first official day of class of the term), which falls 288 days short.",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "A prior determination by one institution is not binding on another. The record spans 2 institutions. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status.",
+          "from_events": [],
+          "from_evidence": []
+        },
+        {
+          "claim": "No student shall be denied in-state tuition solely because of a parent's legal status. The age presumption applied and was rebutted by the graduate or professional student exception — so the student's own acts are what is weighed, and the parents' own legal status is not by itself a reason to deny in-state tuition.",
+          "from_events": [],
+          "from_evidence": []
+        }
+      ]
+  },
+  {
+    path: "marcus:domicile-analysis.construction",
+    before: [
+        {
+          "id": "favor_student_in_complex_cases",
+          "cite": "SCHEV guidance",
+          "note": "In complex cases, construe the facts in the light most favorable to the student.",
+          "label": "Favor student in complex cases",
+          "relevant": true,
+          "relevance": "This record is not a simple one: 1 satisfied factor that a pack caveat takes back out, 1 factor that cannot apply to this status, 1 earlier immigration status on the record and 1 open question. Every reading above that could go either way has gone the student's way, and the officer is directed to do the same."
+        },
+        {
+          "id": "determinations_not_transferable",
+          "note": "A prior determination by one institution is not binding on another.",
+          "label": "Determinations not transferable",
+          "relevant": true,
+          "relevance": "The record spans 2 institutions. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status."
+        },
+        {
+          "id": "parental_status_alone_insufficient",
+          "note": "No student shall be denied in-state tuition solely because of parental status.",
+          "label": "Parental status alone insufficient",
+          "relevant": true,
+          "relevance": "The age presumption applied and was rebutted by the graduate or professional student exception — so the student's own acts are what is weighed, and their parents' domicile is not by itself a reason to deny in-state status."
+        }
+      ],
+    after: [
+        {
+          "id": "determinations_not_transferable",
+          "note": "A prior determination by one institution is not binding on another.",
+          "kind": "determinations_not_transferable",
+          "label": "Determinations not transferable",
+          "relevant": true,
+          "relevance": "The record spans 2 institutions. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status."
+        },
+        {
+          "id": "parental_status_alone_insufficient",
+          "note": "No student shall be denied in-state tuition solely because of a parent's legal status.",
+          "kind": "parental_status_alone_insufficient",
+          "label": "Parental status alone insufficient",
+          "relevant": true,
+          "relevance": "The age presumption applied and was rebutted by the graduate or professional student exception — so the student's own acts are what is weighed, and the parents' own legal status is not by itself a reason to deny in-state tuition."
+        }
+      ]
   },
 ];
 

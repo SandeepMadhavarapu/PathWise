@@ -11,7 +11,9 @@ import { Capsule } from "@/components/Capsule";
 
 // Tab title only. The string is the one this route's topbar already renders, so the
 // browser tab and the page heading cannot disagree. Nothing visible changes.
-export const metadata: Metadata = { alternates: { canonical: "/student/finding/domicile" }, title: "The domicile analysis in full" };
+export const metadata: Metadata = { alternates: { canonical: "/student/finding/domicile" }, description:
+  "A full domicile determination — dependency, intent factors, the durational clock and the rules of construction — worked through with every section cited.",
+  title: "The domicile analysis in full" };
 
 // The other branch of Engine B. Priya's record ends at the gate; Marcus's passes it, and everything
 // past the gate — dependency, the intent factors and their weights, the durational clock, the rules

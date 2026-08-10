@@ -10,7 +10,9 @@ import type { Metadata } from "next";
  * The string is the one the topbar already shows for this route, so the tab and the page
  * heading cannot disagree.
  */
-export const metadata: Metadata = { alternates: { canonical: "/student/journey" }, title: "Her timeline" };
+export const metadata: Metadata = { alternates: { canonical: "/student/journey" }, description:
+  "One student's whole timeline in one place — every authorization, enrolment and status change the three offices each see only part of.",
+  title: "Her timeline" };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;

@@ -17,6 +17,7 @@
 
 import type { ISODate, ProgramLevel } from '../types';
 import pack from '../rulepacks/f1-practical-training.json';
+import { isUsableDate } from './domicile-gate';
 
 const opt = pack.opt;
 
@@ -66,14 +67,37 @@ export interface OptUsageLine {
   chargedMonths: number;      // authorizedMonths * rate — what actually left the budget
 }
 
+/**
+ * An authorization whose dates PathWise cannot place on a calendar, named rather than counted.
+ *
+ * Same discipline as the domicile gate's `ignoredFactors`: input that was supplied and could not be
+ * used is reported, never dropped in silence. See the note on `unreadable` below for why this
+ * mattered enough to add a field for.
+ */
+export interface UnreadableOptAuthorization {
+  id?: string;
+  start: ISODate;
+  end: ISODate;
+  /** Which of the two dates could not be read. */
+  reason: 'start_unreadable' | 'end_unreadable' | 'both_unreadable';
+}
+
 export interface LevelOptBudget {
   level: ProgramLevel;
   budgetMonths: number;       // 12, from the rulepack
-  monthsUsed: number;         // sum of chargedMonths at this level
+  monthsUsed: number;         // sum of chargedMonths at this level — always a finite number
   monthsRemaining: number;    // budgetMonths - monthsUsed (never below 0 for display; see overBy)
   overByMonths: number;       // months spent beyond the cap, 0 when inside it
   band: OptBudgetBand;
   lines: OptUsageLine[];
+  /**
+   * Authorizations excluded from every number above because their dates could not be read.
+   *
+   * Empty on every valid record, which is why no existing output moves. When it is NOT empty the
+   * band is held off `green` — see the note in computeOptBudget. A caller that wants to say "PathWise
+   * could not read N of your authorizations" has the list to say it from.
+   */
+  unreadable: UnreadableOptAuthorization[];
 }
 
 export interface OptBudgetResult {
@@ -107,6 +131,17 @@ function addMonths(d: Date, n: number): Date {
  * "six months" because the dates say six months, not because of a day count.
  */
 export function monthsInPeriod(start: ISODate, endInclusive: ISODate): number {
+  // A date this engine cannot place on a calendar yields no months, and callers MUST separate such
+  // authorizations before they get here — computeOptBudget does, via `readability` below.
+  //
+  // This guard is not cosmetic. Without it `parse('zzz').getTime()` is NaN, and `NaN <= NaN` is
+  // FALSE, so the "empty period" guard on the next line did not fire and the arithmetic ran on to
+  // `NaN`. That NaN reached bandFor, where `NaN <= 0` and `NaN <= 2` are both false, and the
+  // function returned its final branch: 'green'. An authorization PathWise could not read produced
+  // the most reassuring answer it has. Returning 0 here is safe only BECAUSE the caller no longer
+  // counts unreadable periods at all; it reports them separately instead.
+  if (!isUsableDate(start) || !isUsableDate(endInclusive)) return 0;
+
   const s = parse(start);
   const e = new Date(parse(endInclusive).getTime() + 86_400_000); // exclusive end = last day + 1
 
@@ -124,6 +159,21 @@ export function monthsInPeriod(start: ISODate, endInclusive: ISODate): number {
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100;
+}
+
+/**
+ * Can this authorization be placed on a calendar at all? `null` means yes.
+ *
+ * Uses the same `isUsableDate` the domicile clock does, so "a date PathWise can count from" means
+ * one thing across the product: a real YYYY-MM-DD that survives a round trip. 30 February does not;
+ * 29 February 2024 does.
+ */
+function readability(a: OptAuthorization): UnreadableOptAuthorization['reason'] | null {
+  const startOk = isUsableDate(a.start);
+  const endOk = isUsableDate(a.end);
+  if (startOk && endOk) return null;
+  if (!startOk && !endOk) return 'both_unreadable';
+  return startOk ? 'end_unreadable' : 'start_unreadable';
 }
 
 function bandFor(monthsRemaining: number): OptBudgetBand {
@@ -166,7 +216,16 @@ export function computeOptBudget(input: OptBudgetInput): OptBudgetResult {
   const byLevel: LevelOptBudget[] = [];
 
   for (const level of levels) {
-    const auths = input.authorizations.filter((a) => (a.level ?? input.level) === level);
+    const all = input.authorizations.filter((a) => (a.level ?? input.level) === level);
+
+    // Split before counting. An authorization whose dates cannot be read contributes no months and
+    // is named in `unreadable` instead — it is neither charged to the budget nor quietly treated as
+    // a zero-length period that happens to leave the budget looking full.
+    const auths = all.filter((a) => readability(a) === null);
+    const unreadable: UnreadableOptAuthorization[] = all.flatMap((a) => {
+      const reason = readability(a);
+      return reason === null ? [] : [{ id: a.id, start: a.start, end: a.end, reason }];
+    });
 
     const lines: OptUsageLine[] = auths.map((a) => {
       const phase = phaseOf(a);
@@ -189,14 +248,25 @@ export function computeOptBudget(input: OptBudgetInput): OptBudgetResult {
     const monthsUsed = round2(lines.reduce((sum, l) => sum + l.chargedMonths, 0));
     const remaining = round2(budgetMonths - monthsUsed);
 
+    // Green says "there is budget left". PathWise cannot say that on a record it could not finish
+    // reading: the months it failed to count could be the ones that exhaust the budget. Held at
+    // amber rather than pushed to red, because "I could not read this" is not a finding that the
+    // budget is spent either — that would be the same error pointed the other way. `unreadable`
+    // above carries WHY, so a screen can say which authorizations were not counted.
+    //
+    // Empty on every valid record, so no existing output moves.
+    const computed = bandFor(remaining);
+    const band: OptBudgetBand = unreadable.length > 0 && computed === 'green' ? 'amber' : computed;
+
     byLevel.push({
       level,
       budgetMonths,
       monthsUsed,
       monthsRemaining: Math.max(0, remaining),
       overByMonths: remaining < 0 ? round2(-remaining) : 0,
-      band: bandFor(remaining),
+      band,
       lines,
+      unreadable,
     });
   }
 

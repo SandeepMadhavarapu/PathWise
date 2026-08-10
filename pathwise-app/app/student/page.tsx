@@ -35,7 +35,9 @@ import { ScenarioNote } from "@/components/ScenarioNote";
 
 // Tab title only. The string is the one this route's topbar already renders, so the
 // browser tab and the page heading cannot disagree. Nothing visible changes.
-export const metadata: Metadata = { alternates: { canonical: "/student" }, title: "Priya's standing" };
+export const metadata: Metadata = { alternates: { canonical: "/student" }, description:
+  "One fact — F-1 status — closes two doors at once. An international student's standing across immigration, in-state tuition and state financial aid, on one screen.",
+  title: "Priya's standing" };
 
 // The app's one status vocabulary, mapped onto the design system's glyphs.
 const STEP_STATUS: Record<StepStatus, { glyph: StatusKey; word: string }> = {

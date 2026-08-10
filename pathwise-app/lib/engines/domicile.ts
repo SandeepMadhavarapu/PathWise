@@ -59,7 +59,8 @@ interface DomicileRules {
   auxiliaryCite: string;
   auxiliaryNote: string;
   auxiliaryActs: readonly string[];
-  dependencyAgeThreshold: number;
+  /** The pack's dependency threshold, or undefined where it states no dependency rule. */
+  dependencyAgeThreshold?: number;
   dependencyCite: string;
   dependencyExceptions: readonly string[];
   // The pack gives a section reference to the auxiliary-acts warning but not to the factor list
@@ -83,7 +84,9 @@ function domicileRules(pack: DomicilePack): DomicileRules {
     auxiliaryCite: pack.auxiliary_acts_warning?.cite ?? '',
     auxiliaryNote: pack.auxiliary_acts_warning?.note ?? '',
     auxiliaryActs: pack.auxiliary_acts_warning?.acts ?? [],
-    dependencyAgeThreshold: pack.dependency?.presumed_dependent_under_age ?? 0,
+    // No `?? 0`. A pack with no dependency rule has no threshold, and zero is a rule this
+    // codebase would be inventing — the same error `durationDays` stays optional to avoid.
+    dependencyAgeThreshold: pack.dependency?.presumed_dependent_under_age,
     dependencyCite: pack.dependency?.cite ?? '',
     dependencyExceptions: pack.dependency?.exceptions ?? [],
     intentFactorsAuthority: pack.authority,
@@ -144,11 +147,29 @@ function stems(id: string): Set<string> {
 // which is why it lives here and not in the rulepack.
 const GRADUATE_LEVELS: ProgramLevel[] = ['masters', 'doctoral'];
 
-export type DependencyStatus = 'presumed_dependent' | 'independent' | 'not_presumed';
+/**
+ * `not_modelled` is the honest answer for a pack that states no dependency rule at all.
+ *
+ * It is NOT the same as `not_presumed`. `not_presumed` says "this jurisdiction has a dependency
+ * presumption and this student is over its threshold" — a finding. `not_modelled` says PathWise has
+ * not read whether this jurisdiction has such a rule, which is a fact about PathWise.
+ *
+ * Before this existed the two collapsed: `presumed_dependent_under_age ?? 0` invented a threshold of
+ * zero for a pack with no dependency block, and the analysis then reported "at or over the pack's
+ * threshold of 0, so no dependency presumption applies" — a regulatory conclusion, printed with a
+ * fabricated number, derived from a rule that does not exist. Texas has no dependency block, so
+ * Texas got exactly that sentence for a fourteen-year-old.
+ */
+export type DependencyStatus =
+  | 'presumed_dependent'
+  | 'independent'
+  | 'not_presumed'
+  | 'not_modelled';
 
 export interface DependencyDetermination {
   ageAtEntitlement: number;
-  thresholdAge: number;
+  /** The pack's own threshold. Absent where the pack states no dependency rule — never defaulted. */
+  thresholdAge?: number;
   /** Whether the age presumption applies at all. */
   presumptionApplies: boolean;
   status: DependencyStatus;
@@ -202,6 +223,21 @@ export function determineDependency(input: DomicileRun): DependencyDetermination
   const { student, events, allegedEntitlementDate } = input;
   const R = domicileRules(input.packs.domicile);
   const age = ageOn(student.dob, allegedEntitlementDate);
+
+  // A pack that states no dependency rule gets no dependency finding. Not "no presumption applies"
+  // — that is a claim about the jurisdiction — but "PathWise has not read one", which is a claim
+  // about PathWise and the only one it can support. The open question is raised below.
+  if (R.dependencyAgeThreshold === undefined) {
+    return {
+      ageAtEntitlement: age,
+      thresholdAge: undefined,
+      presumptionApplies: false,
+      status: 'not_modelled',
+      openExceptions: [],
+      cite: R.dependencyCite,
+    };
+  }
+
   const presumptionApplies = age < R.dependencyAgeThreshold;
 
   // Only exception ids the pack actually lists are honoured; anything else on the input is not a
@@ -471,28 +507,8 @@ function applyConstructionRules(
   input: DomicileRun,
   dependency: DependencyDetermination,
   intent: IntentAnalysis,
-  openQuestions: number,
 ): ConstructionRuleApplied[] {
   const R = domicileRules(input.packs.domicile);
-  // What makes this record a "complex case" — stated as the things an officer actually has to
-  // weigh, so the rule is never invoked as decoration.
-  const complications: string[] = [];
-  if (intent.disqualified.length > 0)
-    complications.push(
-      `${count(intent.disqualified.length, 'satisfied factor')} that a pack caveat takes back out`,
-    );
-  if (intent.inapplicable.length > 0)
-    complications.push(`${count(intent.inapplicable.length, 'factor')} that cannot apply to this status`);
-  if (intent.auxiliaryOnly)
-    complications.push('every qualifying factor being an act the guidelines warn carries little weight');
-  if (intent.unresolvedMilestones.length > 0)
-    complications.push(`a milestone the timeline cannot date (${list(intent.unresolvedMilestones)})`);
-  if (dependency.status === 'presumed_dependent')
-    complications.push('an unrebutted dependency presumption');
-  if (input.student.immigration.prior_statuses.length > 0)
-    complications.push(`${count(input.student.immigration.prior_statuses.length, 'earlier immigration status')} on the record`);
-  if (openQuestions > 0) complications.push(count(openQuestions, 'open question'));
-
   const institutionCount = input.student.institutions.length;
   const transferred =
     institutionCount > 1 || input.events.some((e) => e.type === 'transfer');
@@ -501,21 +517,22 @@ function applyConstructionRules(
     // Dispatch on the pack's declared `kind`, never on its `id`.
     //
     // This switched on the id, which is the pack's own name for its own rule — so any jurisdiction
-    // that happened to name a rule `favor_student_in_complex_cases` would have silently inherited
+    // that happened to name a rule `determinations_not_transferable` would have silently inherited
     // the reasoning written against SCHEV's wording of it, and any jurisdiction that named the same
     // rule differently would have lost that reasoning without either side saying so. `kind` is an
     // explicit opt-in: a pack asks for a reasoner by name, and a rule that asks for none is
     // surfaced verbatim rather than being fitted to the nearest one.
+    //
+    // A third reasoner, `favor_student_in_complex_cases`, was removed along with the Virginia rule
+    // that was its only caller. The rule read "In complex cases, construe the facts in the light
+    // most favorable to the student", attributed to "SCHEV guidance", and no such guidance exists:
+    // the phrase appears nowhere in the 32-page Domicile Guidelines, Addenda A-C, or Code of
+    // Virginia Title 23.1 Chapter 5 — which run the other way, putting the burden on the student to
+    // establish domicile by clear and convincing evidence. The reasoner went with it rather than
+    // being left behind for a future pack to reach, because it did not merely restate the rule: it
+    // added "and the officer is directed to do the same", which is a direction to an official that
+    // no source contains. A student-favourable invention is still an invention.
     switch (rule.kind) {
-      case 'favor_student_in_complex_cases':
-        return {
-          ...rule,
-          label: humanizeId(rule.id, R.jurisdictionCode),
-          relevant: complications.length > 0,
-          relevance: complications.length
-            ? `This record is not a simple one: ${list(complications)}. Every reading above that could go either way has gone the student's way, and the officer is directed to do the same.`
-            : 'Nothing in this record is ambiguous, so there is no reading to construe either way.',
-        };
       case 'determinations_not_transferable':
         return {
           ...rule,
@@ -525,6 +542,19 @@ function applyConstructionRules(
             ? `The record spans ${count(institutionCount, 'institution')}. A domicile determination made by one of them — favourable or not — does not bind the next, so this analysis has to be made again wherever the student is claiming in-state status.`
             : 'Only one institution is on the record, so there is no earlier determination to carry over.',
         };
+      // LEGAL STATUS, not domicile. The rule this reasoner explains is SCHEV's assurance that "no
+      // student shall be denied in-state tuition ... due solely to the legal status of the
+      // individual's parent(s)" — an immigration-status protection. All three sentences below used
+      // to say "domicile" instead, which stated something the source does not: that the parents'
+      // DOMICILE could not be the sole ground for a denial. The Guidelines say close to the
+      // opposite about domicile — a dependent student "is rebuttably presumed to have the domicile
+      // of the parent providing substantial financial support", and the review "always begins with
+      // the parent's domicile". Parental domicile IS the presumptive route; what cannot stand alone
+      // as a ground for denial is the parent's legal status. The two are separate questions and the
+      // paraphrase had merged them.
+      //
+      // The trigger is unchanged (`dependency.presumptionApplies`), and so is every value the
+      // finding turns on. Only the sentence describing how the rule meets this record moved.
       case 'parental_status_alone_insufficient':
         return {
           ...rule,
@@ -532,9 +562,9 @@ function applyConstructionRules(
           relevant: dependency.presumptionApplies,
           relevance: dependency.presumptionApplies
             ? dependency.exception
-              ? `The age presumption applied and was rebutted by the ${lowerLabel(dependency.exception.label)} exception — so the student's own acts are what is weighed, and their parents' domicile is not by itself a reason to deny in-state status.`
-              : "The student is presumed dependent, so the parents' domicile is the presumptive route — but it cannot be the sole ground for a denial."
-            : 'The age presumption does not apply, so parental domicile is not the route being examined.',
+              ? `The age presumption applied and was rebutted by the ${lowerLabel(dependency.exception.label)} exception — so the student's own acts are what is weighed, and the parents' own legal status is not by itself a reason to deny in-state tuition.`
+              : "The student is presumed dependent, so the parents' domicile is the presumptive route — but the parents' own legal status is not by itself a ground for denying in-state tuition."
+            : "The age presumption does not apply, so the parents' own legal status is not what this determination turns on.",
         };
       default:
         // A rule with no reasoner — either it declares no `kind`, or a `kind` this engine has not
@@ -607,6 +637,18 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
   // gated pack, so Virginia's unknowns are untouched.
   const unknowns: Finding['unknowns'] = [...unmodelledStatusGateUnknowns(v)];
 
+  if (dependency.status === 'not_modelled') {
+    unknowns.push({
+      what: `Does ${v.jurisdictionName} presume a dependent student takes their parents' domicile?`,
+      why_it_matters:
+        `PathWise has not modelled a dependency rule for ${v.jurisdictionName}, so the analysis below reads ` +
+        `the student's own acts without having established that those are the acts that count. Where such a ` +
+        `presumption exists it decides whose domicile is examined at all, which changes the answer rather ` +
+        `than refining it.`,
+      how_to_resolve: `Ask ${v.jurisdictionName}'s deciding office whether a dependency presumption applies at your age, and on what evidence it is rebutted.`,
+    });
+  }
+
   if (dependency.status === 'presumed_dependent') {
     unknowns.push({
       what: `Does any of the ${R.dependencyExceptions.length} exceptions to the dependency presumption apply — ${list(
@@ -653,7 +695,7 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
     });
   }
 
-  const construction = applyConstructionRules(input, dependency, intent, unknowns.length);
+  const construction = applyConstructionRules(input, dependency, intent);
   const relevantRules = construction.filter((r) => r.relevant);
 
   // ---- the reasoning, in the guidelines' own order ----
@@ -666,7 +708,9 @@ export function runDomicileAnalysis(input: DomicileRun): DomicileAnalysis {
   });
 
   steps.push({
-    claim: dependency.presumptionApplies
+    claim: dependency.status === 'not_modelled'
+      ? `${v.jurisdictionName}'s pack states no dependency rule PathWise has modelled, so PathWise does not decide whose acts are weighed here. It is not a finding that no presumption applies — some states presume a dependent student takes the parents' domicile, and a reading with no dependency rule modelled would not have detected one. The intent factors below are read on the student's own acts because that is all this record carries.`
+      : dependency.presumptionApplies
       ? dependency.exception
         ? `At the date of alleged entitlement the student is ${dependency.ageAtEntitlement}, under the pack's threshold of ${dependency.thresholdAge}, so dependency is rebuttably presumed. It is rebutted: the "${lowerLabel(dependency.exception.label)}" exception is ${
             dependency.exception.derived ? 'established by the record itself' : 'asserted on the record'

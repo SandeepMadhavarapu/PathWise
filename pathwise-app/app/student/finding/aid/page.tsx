@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import Link from "next/link";
 import { aidDeadlineFor, aidFindingFor, jurisdictionFor } from "@/lib/engines/jurisdiction";
 import { priyaAid, priyaEvents, priyaStudent } from "@/lib/fixtures/priya";
 import { FindingDetail } from "@/components/FindingDetail";
@@ -7,7 +8,9 @@ import { AidDeadline } from "@/components/AidDeadline";
 
 // Tab title only. The string is the one this route's topbar already renders, so the
 // browser tab and the page heading cannot disagree. Nothing visible changes.
-export const metadata: Metadata = { alternates: { canonical: "/student/finding/aid" }, title: "Why state aid is blocked" };
+export const metadata: Metadata = { alternates: { canonical: "/student/finding/aid" }, description:
+  "Why a student visa can close state financial aid, with the rule quoted, the office that decides it, and the questions this reading could not settle.",
+  title: "Why state aid is blocked" };
 
 export default function AidFindingPage() {
   // Resolved from the student's own record, so this screen answers under the rules of the state she
@@ -36,6 +39,19 @@ export default function AidFindingPage() {
           <AidDeadline deadline={deadline} />
         </>
       ) : null}
+
+      {/* The closing footer every other route carries. These two finding pages were the only
+          screens in the product that ended without it — so the privacy line and the pointer to the
+          rule pack were missing from exactly the two screens that deliver a "Blocked" verdict.
+          ("PathWise advises, the office decides" was never missing: FindingDetail renders it on
+          every finding. What was missing is the footer landmark, the privacy sentence and the
+          coverage link.) */}
+      <footer className="foot">
+        <span className="privacy">No account. Nothing stored on a server.</span> · Every provision,
+        deadline and citation on this page is read from the {jx.name} state aid rules, printed in
+        full on the <Link href="/coverage">coverage page</Link>. PathWise advises; the office
+        decides.
+      </footer>
     </>
   );
 }

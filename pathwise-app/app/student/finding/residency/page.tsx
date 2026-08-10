@@ -7,7 +7,9 @@ import { FindingDetail } from "@/components/FindingDetail";
 
 // Tab title only. The string is the one this route's topbar already renders, so the
 // browser tab and the page heading cannot disagree. Nothing visible changes.
-export const metadata: Metadata = { alternates: { canonical: "/student/finding/residency" }, title: "Why residency is blocked" };
+export const metadata: Metadata = { alternates: { canonical: "/student/finding/residency" }, description:
+  "Why a student visa can block in-state domicile, with the clause quoted, the date it was verified, and the deciding office named.",
+  title: "Why residency is blocked" };
 
 export default function ResidencyFindingPage() {
   // Same inputs as the /student dashboard — the finding shown here IS the finding shown there.
@@ -47,6 +49,18 @@ export default function ResidencyFindingPage() {
         packLabel={`${jx.name} residency rules`}
       />
 
+      {/* The closing footer every other route carries. These two finding pages were the only
+          screens in the product that ended without it — so the privacy line and the pointer to the
+          rule pack were missing from exactly the two screens that deliver a "Blocked" verdict.
+          ("PathWise advises, the office decides" was never missing: FindingDetail renders it on
+          every finding. What was missing is the footer landmark, the privacy sentence and the
+          coverage link.) */}
+      <footer className="foot">
+        <span className="privacy">No account. Nothing stored on a server.</span> · Every threshold,
+        exception and section reference on this page is read from the {jx.name} residency rules,
+        printed in full on the <Link href="/coverage">coverage page</Link>. PathWise advises; the
+        office decides.
+      </footer>
     </>
   );
 }

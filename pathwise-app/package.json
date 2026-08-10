@@ -2,7 +2,7 @@
   "name": "pathwise-app",
   "version": "0.1.0",
   "private": true,
-  "description": "PathWise — a student's standing across every system that governs their college journey. Stellic Pathfinders 2026.",
+  "description": "PathWise \u2014 a student's standing across every system that governs their college journey. Stellic Pathfinders 2026.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,12 +12,15 @@
     "test:evidence": "tsc -p tsconfig.test.json && node .test-out/lib/test/evidence-flow.test.js",
     "test:jurisdiction": "tsc -p tsconfig.test.json && node .test-out/lib/test/jurisdiction-routing.test.js",
     "test:golden": "tsc -p tsconfig.test.json && node .test-out/lib/test/golden-virginia.test.js",
-    "test": "npm run test:schema && npm run test:evidence && npm run test:jurisdiction && npm run test:golden",
+    "test": "npm run test:schema && npm run test:sources && npm run test:evidence && npm run test:jurisdiction && npm run test:hardening && npm run test:golden",
     "golden:capture": "tsc -p tsconfig.test.json && node .test-out/lib/test/capture-golden.js",
-    "test:schema": "tsc -p tsconfig.test.json && node .test-out/lib/test/pack-schema.test.js"
+    "test:schema": "tsc -p tsconfig.test.json && node .test-out/lib/test/pack-schema.test.js",
+    "test:sources": "tsc -p tsconfig.test.json && node .test-out/lib/test/source-urls.test.js",
+    "check:sources": "node scripts/check-source-urls.mjs",
+    "test:hardening": "tsc -p tsconfig.test.json && node .test-out/lib/test/engine-hardening.test.js"
   },
   "dependencies": {
-    "next": "14.2.5",
+    "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },

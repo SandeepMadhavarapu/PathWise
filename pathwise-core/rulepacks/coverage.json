@@ -1,4 +1,5 @@
 {
+  "_ARCHIVED_SNAPSHOT": "NOT THE RUNTIME RULE PACK. This is a frozen blueprint copy kept only so the project could be rebuilt from zero; it is not imported, built, tested or served by anything, and it has NOT been kept in step with the live packs. The authoritative pack this file is a stale copy of lives at pathwise-app/lib/rulepacks/coverage.json. Read that one. Any verified_on date below describes the snapshot as it stood when it was taken, not a verification of this file.",
   "pack_id": "coverage",
   "description": "All 50 states + DC, each with an honest coverage status. Unimplemented states are shown honestly in the UI with a source link \u2014 the same 'unable to verify' philosophy applied to our own coverage.",
   "verified_on": "2026-07-24",

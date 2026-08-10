@@ -8,6 +8,7 @@ import {
 } from "@/lib/engines/opt-budget";
 import { levelLabel } from "@/lib/engines/cpt-ledger";
 import { statusFromBand } from "@/lib/tokens";
+import { formatDomicileDate } from "@/lib/format";
 import { SegmentedProgress, type ProgressLegendItem } from "./SegmentedProgress";
 
 function fmtMonths(n: number) {
@@ -18,15 +19,10 @@ function plural(n: number, word: string) {
   return `${fmtMonths(n)} ${n === 1 ? word : word + "s"}`;
 }
 
+// A range, but each end is spelled the product's way. This built its own "Oct 1, 2025" with
+// `toLocaleDateString`, a third date format on a page that already had two.
 function formatRange(start: string, end: string) {
-  const f = (iso: string) =>
-    new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      timeZone: "UTC",
-    });
-  return `${f(start)} – ${f(end)}`;
+  return `${formatDomicileDate(start)} – ${formatDomicileDate(end)}`;
 }
 
 function lineLabel(l: OptUsageLine) {

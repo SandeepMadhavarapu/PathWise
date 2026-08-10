@@ -78,10 +78,10 @@
       "code": "CT",
       "name": "Connecticut",
       "authority": "Connecticut Office of Higher Education",
-      "source_url": "https://www.ohe.ct.gov/",
+      "source_url": "https://portal.ct.gov/ohe",
       "source_check": "fetched",
       "aid_authority": "Connecticut Office of Higher Education",
-      "aid_source_url": "https://www.ohe.ct.gov/",
+      "aid_source_url": "https://portal.ct.gov/ohe",
       "aid_source_check": "fetched"
     },
     {

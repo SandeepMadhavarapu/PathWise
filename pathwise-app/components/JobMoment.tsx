@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatDomicileDate } from "@/lib/format";
 import { applyLifeEvent } from "@/lib/engines/consequence-engine";
 import type { DerivedConsequence } from "@/lib/engines/consequence-engine";
 import { jurisdictionFor } from "@/lib/engines/jurisdiction";
@@ -47,14 +48,11 @@ function listPhrase(items: string[]): string {
   return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-}
+// The product has ONE date spelling and it lives in lib/format.ts. This component used to
+// carry its own `toLocaleDateString("en-US", { month: "long" })`, which rendered "September 15,
+// 2026" beside the shell footer's "24 Jul 2026" — two spellings of the same kind of value on one
+// screen. Both were timezone-safe; they were simply different.
+const formatDate = formatDomicileDate;
 
 export function JobMoment() {
   const [revealed, setRevealed] = useState(false);

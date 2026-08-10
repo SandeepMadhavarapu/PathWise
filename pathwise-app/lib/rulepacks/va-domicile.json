@@ -4,7 +4,7 @@
   "domain": "residency",
   "jurisdiction": "VA",
   "authority": "SCHEV Domicile Guidelines, Code of Virginia 23.1-510(D)",
-  "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college/determining-domicile",
+  "source_url": "https://www.schev.edu/financial-aid/in-state-residency/guidelines-for-in-state-residency-tuition",
   "guidelines_effective": "2021-01-11",
   "verified_on": "2026-07-24",
   "agencies": [
@@ -13,7 +13,7 @@
       "name": "State Council of Higher Education for Virginia",
       "short_name": "SCHEV",
       "decides": ["residency"],
-      "source_url": "https://www.schev.edu/students/resources-for-students/paying-for-college/determining-domicile"
+      "source_url": "https://www.schev.edu/financial-aid/in-state-residency/guidelines-for-in-state-residency-tuition"
     }
   ],
   "capabilities": [
@@ -88,8 +88,7 @@
     "acts": ["drivers_license", "vehicle_registration", "post_admission_employment", "va_tax_filing"]
   },
   "construction_rules": [
-    { "id": "favor_student_in_complex_cases", "kind": "favor_student_in_complex_cases", "cite": "SCHEV guidance", "note": "In complex cases, construe the facts in the light most favorable to the student." },
     { "id": "determinations_not_transferable", "kind": "determinations_not_transferable", "note": "A prior determination by one institution is not binding on another." },
-    { "id": "parental_status_alone_insufficient", "kind": "parental_status_alone_insufficient", "note": "No student shall be denied in-state tuition solely because of parental status." }
+    { "id": "parental_status_alone_insufficient", "kind": "parental_status_alone_insufficient", "note": "No student shall be denied in-state tuition solely because of a parent's legal status." }
   ]
 }

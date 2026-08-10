@@ -369,10 +369,18 @@ export default function ChangedPage() {
 
         {!added ? (
           <div className="wc-ev-actions">
+            {/* Not a tab stop. This input is the MECHANISM — both visible buttons below drive it
+                through the ref — and as a focusable `.sr-only` element it was a 1x1 stop in the
+                keyboard order: a sighted keyboard user tabbed to it and the focus ring landed on a
+                single pixel, with nothing on screen to show where they were. `tabIndex={-1}` keeps
+                it fully operable (a click on either button still opens the picker, and its
+                aria-label still describes it) while the two 43px-tall buttons are what the keyboard
+                actually reaches. */}
             <input
               ref={fileInput}
               type="file"
               className="sr-only"
+              tabIndex={-1}
               onChange={onPick}
               aria-label="Choose the document recording the level change"
             />

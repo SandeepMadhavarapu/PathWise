@@ -14,7 +14,7 @@
 // 8 CFR rules that do not care which state the student sits in, so they keep answering in full.
 
 import type { Finding, FindingResult } from '../types';
-import type { UnmodelledJurisdiction } from '../rulepacks';
+import { isModelled, type UnmodelledJurisdiction } from '../rulepacks';
 import { COVERAGE_VERIFIED_ON } from '../coverage';
 
 /** The result an unmodelled jurisdiction always yields. Named so the screens can match on it. */
@@ -25,19 +25,35 @@ export const UNMODELLED_RESULT: FindingResult = 'unable_to_verify';
  * does not. The absent case is deliberately a sentence rather than a blank: a student reading it
  * should learn that PathWise has not verified the source, not wonder whether the screen is broken.
  */
-function authorityLine(j: UnmodelledJurisdiction): string {
+function authorityLine(j: UnmodelledJurisdiction, domain: PackedDomain): string {
   return j.authority
     ? `${j.authority} — not yet modelled by PathWise`
-    : `${j.name} residency rules — no source verified by PathWise yet`;
+    : `${j.name} ${domain === 'aid' ? 'state aid' : 'residency'} rules — no source verified by PathWise yet`;
+}
+
+/** Which half of a jurisdiction this finding is refusing to answer. */
+type PackedDomain = 'residency' | 'aid';
+
+/** "a Ohio heading" was reaching a reader. Cheap, and it is the sort of thing a judge screenshots. */
+function article(name: string): string {
+  return /^[AEIOU]/i.test(name) ? 'an' : 'a';
 }
 
 /** The shared explanation of why there is no answer, in the jurisdiction's own terms. */
-function whyNoAnswer(j: UnmodelledJurisdiction): string {
+function whyNoAnswer(j: UnmodelledJurisdiction, domain: PackedDomain): string {
   const known = j.note ? ` What PathWise does record about ${j.name}: ${j.note}` : '';
+  const answer = domain === 'aid' ? 'state-aid' : 'residency';
+  // A jurisdiction with SOME pack registered is not one PathWise "has not authored a rule pack for".
+  // Texas and Tennessee ship residency rules and no aid rules, and the flat sentence below told a
+  // reader the opposite of what the residency card beside it was doing.
+  const opening = isModelled(j.code)
+    ? `PathWise has modelled ${j.name}'s residency rules but has not authored and verified its ` +
+      `state-aid rules, so it will not compute a ${answer} answer here.`
+    : `PathWise has not authored and verified a rule pack for ${j.name}, so it will not compute a ` +
+      `${answer} answer here.`;
   return (
-    `PathWise has not authored and verified a rule pack for ${j.name}, so it will not compute a ` +
-    `residency answer here. Running another state's rules under a ${j.name} heading would produce ` +
-    `a confident answer sourced to the wrong statute, which is worse than no answer.${known}`
+    `${opening} Running another state's rules under ${article(j.name)} ${j.name} heading would ` +
+    `produce a confident answer sourced to the wrong statute, which is worse than no answer.${known}`
   );
 }
 
@@ -48,10 +64,10 @@ function howToResolve(j: UnmodelledJurisdiction): string {
     : `Ask the residency or domicile officer at your institution which ${j.name} rule applies. PathWise has not yet verified an official source to link.`;
 }
 
-function citation(j: UnmodelledJurisdiction): Finding['rule_citation'] {
+function citation(j: UnmodelledJurisdiction, domain: PackedDomain): Finding['rule_citation'] {
   return {
-    text: whyNoAnswer(j),
-    authority: authorityLine(j),
+    text: whyNoAnswer(j, domain),
+    authority: authorityLine(j, domain),
     // Present only where verified. An absent source_url stays absent — the UI renders that as
     // "no verified source" rather than as a broken link.
     source_url: j.source_url,
@@ -81,12 +97,12 @@ export function unmodelledResidencyFinding(j: UnmodelledJurisdiction): Finding {
         from_evidence: [],
       },
       {
-        claim: whyNoAnswer(j),
+        claim: whyNoAnswer(j, 'residency'),
         from_events: [],
         from_evidence: [],
       },
     ],
-    rule_citation: citation(j),
+    rule_citation: citation(j, 'residency'),
     unknowns: [
       {
         what: `${j.name}'s residency statute: its durational requirement, what starts the clock, and whether a student visa holder can establish domicile there at all.`,
@@ -113,7 +129,9 @@ export function unmodelledAidFinding(j: UnmodelledJurisdiction): Finding {
     headline: `PathWise has not modelled ${j.name} state aid rules`,
     reasoning_steps: [
       {
-        claim: `State financial aid eligibility in most states turns on that state's own residency determination, which PathWise has not modelled for ${j.name}.`,
+        claim: isModelled(j.code)
+          ? `State financial aid eligibility in most states turns on that state's own residency determination. PathWise has modelled ${j.name}'s residency rules, but its state-aid rules are a separate source and PathWise has not read them — so residency being answerable here does not make the aid question answerable.`
+          : `State financial aid eligibility in most states turns on that state's own residency determination, which PathWise has not modelled for ${j.name}.`,
         from_events: [],
         from_evidence: [],
       },
@@ -123,7 +141,7 @@ export function unmodelledAidFinding(j: UnmodelledJurisdiction): Finding {
         from_evidence: [],
       },
     ],
-    rule_citation: citation(j),
+    rule_citation: citation(j, 'aid'),
     unknowns: [
       {
         what: `Which ${j.name} state aid programs exist, and what they require of a non-resident or a student-visa holder.`,

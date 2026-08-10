@@ -5,7 +5,9 @@ import { JobMoment } from "@/components/JobMoment";
 
 // Tab title only. The string is the one this route's topbar already renders, so the
 // browser tab and the page heading cannot disagree. Nothing visible changes.
-export const metadata: Metadata = { alternates: { canonical: "/moment" }, title: "One event, many effects" };
+export const metadata: Metadata = { alternates: { canonical: "/moment" }, description:
+  "One student signs a job offer. Watch a single fact move through immigration, in-state residency and financial aid at once — and see what each office would decide.",
+  title: "One event, many effects" };
 
 // The back link that used to sit here is now rendered by the shell from the PARENT map in
 // AppShell, so this route's way out cannot say something different from every other route's.

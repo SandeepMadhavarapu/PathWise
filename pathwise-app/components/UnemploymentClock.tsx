@@ -7,16 +7,14 @@ import {
 } from "@/lib/engines/unemployment-clock";
 import { formatCapRemaining } from "@/lib/format";
 import { statusFromBand } from "@/lib/tokens";
+import { formatDomicileDate } from "@/lib/format";
 import { SegmentedProgress } from "./SegmentedProgress";
 
-function formatDate(iso: string) {
-  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-}
+// The product has ONE date spelling and it lives in lib/format.ts. This component used to
+// carry its own `toLocaleDateString("en-US", { month: "long" })`, which rendered "September 15,
+// 2026" beside the shell footer's "24 Jul 2026" — two spellings of the same kind of value on one
+// screen. Both were timezone-safe; they were simply different.
+const formatDate = formatDomicileDate;
 
 export function UnemploymentClock({
   input,

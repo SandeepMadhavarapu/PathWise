@@ -20,6 +20,7 @@
 
 import type { Finding, ISODate, Student } from '../types';
 import {
+  describeFromCoverage,
   describeUnmodelled,
   resolveJurisdiction,
   type JurisdictionPacks,
@@ -158,7 +159,7 @@ export function jurisdictionFor(student: Student, asOf?: ISODate): JurisdictionC
  * when PathWise has no rules to apply.
  */
 export function residencyFindingFor(ctx: JurisdictionContext, input: DomicileInput): Finding {
-  if (!ctx.packs) return unmodelledResidencyFinding(unmodelledOf(ctx));
+  if (!ctx.packs) return unmodelledResidencyFinding(unmodelledOf(ctx, 'residency'));
   return runDomicileGate({ ...input, packs: ctx.packs });
 }
 
@@ -166,7 +167,7 @@ export function residencyFindingFor(ctx: JurisdictionContext, input: DomicileInp
 export function aidFindingFor(ctx: JurisdictionContext, input: AidEligibilityInput): Finding {
   // No jurisdiction pack at all, or one with no aid rules authored: either way PathWise has no aid
   // rules for this state and says so, rather than reaching for the nearest pack that has some.
-  if (!ctx.packs?.aid) return unmodelledAidFinding(unmodelledOf(ctx));
+  if (!ctx.packs?.aid) return unmodelledAidFinding(unmodelledOf(ctx, 'aid'));
   return computeAidEligibility({ ...input, packs: { ...ctx.packs, aid: ctx.packs.aid } });
 }
 
@@ -181,7 +182,7 @@ export function domicileAnalysisFor(
 ): DomicileAnalysis {
   if (!ctx.packs) {
     return {
-      finding: unmodelledResidencyFinding(unmodelledOf(ctx)),
+      finding: unmodelledResidencyFinding(unmodelledOf(ctx, 'residency')),
       gated: false,
       construction: [],
     };
@@ -250,9 +251,22 @@ export function statusUnclassifiedFor(
  * authority, no source link. The unmodelled findings render that as "PathWise has not verified an
  * official source", which is the truth about a state it has never heard of.
  */
-function unmodelledOf(ctx: JurisdictionContext): UnmodelledJurisdiction {
+function unmodelledOf(
+  ctx: JurisdictionContext,
+  domain: 'residency' | 'aid',
+): UnmodelledJurisdiction {
+  // `ctx.unmodelled` is set only when the jurisdiction has NO packs at all. A PARTIALLY modelled one
+  // — Texas and Tennessee ship residency and no aid — arrives here with packs present and
+  // `ctx.unmodelled` undefined, and used to fall through to the bare `{code, name}` below. With no
+  // authority, no source and no note, the aid finding then said "PathWise has not yet verified an
+  // official source to link" on a screen already showing "Official Texas source →". The claim was
+  // not just contradictory, it was false: PathWise has verified a Texas source and links it.
+  //
+  // The coverage index knows the answer for either domain whether or not a pack exists, so ask it.
+  // Asking PER DOMAIN is what stops an aid finding being sourced to a residency page.
   return (
-    ctx.unmodelled ?? {
+    ctx.unmodelled ??
+    describeFromCoverage(ctx.code, domain) ?? {
       code: ctx.code,
       name: ctx.name || 'this jurisdiction',
     }

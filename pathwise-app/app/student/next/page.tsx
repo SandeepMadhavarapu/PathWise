@@ -24,7 +24,9 @@ import { ScenarioNote } from "@/components/ScenarioNote";
 
 // Tab title only. The string is the one this route's topbar already renders, so the
 // browser tab and the page heading cannot disagree. Nothing visible changes.
-export const metadata: Metadata = { alternates: { canonical: "/student/next" }, title: "Her next steps" };
+export const metadata: Metadata = { alternates: { canonical: "/student/next" }, description:
+  "What this student can act on now, what is waiting on a document, and which deadline actually binds — each step tied to the rule behind it.",
+  title: "Her next steps" };
 
 // Why the plan is in this order. The headings are the ordering rule, said out loud.
 //

@@ -781,9 +781,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* The affordance for the disclosure beside it. aria-hidden and untabbable on purpose: the chevron
    is the real control and already carries the accessible name, so this must not be a second stop
    on the keyboard path announcing the same thing. */
+/* Same trick as `.rtree-toggle` above, for the same reason. Drawn at 11px so it stays a footnote
+   beside the claim; measured 57x15, which is under the 24px WCAG 2.5.8 minimum and — unlike the
+   inline links elsewhere on this page — it is a standalone control, so the inline exception does
+   not cover it. The inset pseudo-element lifts the target to ~73x31 without moving any layout. */
 .rtree-sources { flex: none; background: none; border: none; padding: 0; cursor: pointer;
+  position: relative;
   font-family: var(--font-sans); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
   font-weight: 700; color: var(--text-muted); }
+.rtree-sources::after { content: ""; position: absolute; inset: -8px; }
 .rtree-sources:hover { color: var(--info); }
 
 /* =============================================================================
@@ -915,7 +921,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .door-why { margin: var(--space-2) 0 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
 .door-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); margin-top: var(--space-3);
   padding-top: var(--space-3); border-top: 1px solid var(--blocked-border); }
-.door-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+/* --text-muted was tuned against --canvas and --surface (4.73 / 5.02) and clears AA on both. This
+   label does not sit on either: a door is tinted by its own status, and on `.door.blocked`'s
+   --blocked-soft the same token measures 4.39:1 — 0.11 short. One step up the same neutral ramp
+   clears every door tint with margin and keeps the label in the ink family it already belonged to. */
+.door-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
 
 .hero-foot { margin: var(--space-4) 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
 
@@ -1241,7 +1251,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-3); }
 .sh-refusal-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
   color: var(--text-muted); }
-.sh-refusal-go { font-size: 13px; font-weight: 600; color: var(--info); white-space: nowrap; }
+/* Same inset-pseudo hit area as `.rtree-toggle` and `.rtree-sources`. Drawn at 13px and measured
+   161x20 — under the 24px WCAG 2.5.8 minimum, and this one is a standalone call to action at the
+   end of a card rather than a link inside a sentence, so the inline exception does not cover it. */
+.sh-refusal-go { font-size: 13px; font-weight: 600; color: var(--info); white-space: nowrap;
+  position: relative; }
+.sh-refusal-go::after { content: ""; position: absolute; inset: -6px -4px; }
 /* 74ch is the measure this stylesheet already uses most often for running text. Without it these
    two paragraphs ran the full width of the systems-hero card — about 153 characters per line, more
    than twice the paragraph directly above them, on the first screen a reader sees. */
@@ -2676,9 +2691,15 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
   background: var(--surface); border: 1px solid var(--line); color: var(--muted);
 }
-.capsule--tinted.done { background: var(--green-soft); color: var(--green); border-color: transparent; }
+/* Same correction the `.badge.amber` rule below already carries, applied to the two siblings it was
+   never applied to. `--green` and `--amber` are FILL colours: as text on their own soft fills they
+   measure 3.85:1 and 3.31:1, both under WCAG AA for normal text, and this capsule carries the
+   verdict word ("Potential risk") and the margin figure ("23 days of margin") — the two strings a
+   reader is most likely to be reading at 12px. The `*-text` tokens are the same hues mixed toward
+   the ink so they can be READ; the fills are untouched, so the chip is still green and still amber. */
+.capsule--tinted.done { background: var(--green-soft); color: var(--status-done-text); border-color: transparent; }
 .capsule--tinted.active,
-.capsule--tinted.warn { background: var(--amber-soft); color: var(--amber); border-color: transparent; }
+.capsule--tinted.warn { background: var(--amber-soft); color: var(--status-warn-text); border-color: transparent; }
 .capsule--tinted.blocked { background: var(--red-soft); color: var(--red); border-color: transparent; }
 
 /* SEGMENTED PROGRESS → the original track: taller, cooler, 8px corners.
@@ -2711,9 +2732,14 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--accent); font-weight: 600; margin-bottom: 10px;
 }
+/* 22px/600, which is what `.finding-headline` and /coverage's lede already use — the app's own
+   step down from the 25px/700 page title. This rule was 25px/700, i.e. IDENTICAL to `.page-title`,
+   so on /student the h1 and the first h2 rendered as the same thing and the hierarchy flattened.
+   Every other route already stepped down; this is the outlier being brought into line, not a new
+   size being introduced. */
 .hero-h {
-  font-size: 25px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em;
-  font-weight: 700; color: var(--ink);
+  font-size: 22px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em;
+  font-weight: 600; color: var(--ink);
 }
 .hero-h strong { font-weight: 700; }
 .hero-lede { margin: 0 0 16px; color: var(--ink-soft); font-size: 15.5px; }
@@ -2729,8 +2755,12 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   text-transform: uppercase; letter-spacing: 0.05em;
 }
 .door .v { font-size: 14px; color: var(--ink); margin-top: 5px; }
+/* This rule wins over the one ~1800 lines up, so the contrast correction has to live here too.
+   `--muted` is --text-muted, tuned against --canvas and --surface; a door is tinted by its own
+   status, and on `.door.blocked`'s --blocked-soft it measures 4.39:1 — 0.11 under AA. One step up
+   the same neutral ramp clears every door tint and keeps the label in its own ink family. */
 .door-office {
-  margin-top: 8px; font-size: 11.5px; color: var(--muted);
+  margin-top: 8px; font-size: 11.5px; color: var(--ink-soft);
   text-transform: uppercase; letter-spacing: 0.05em;
 }
 .hero-foot { margin: 16px 0 0; color: var(--ink-soft); font-size: 14px; }
@@ -2741,7 +2771,9 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
 }
 .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.badge.green, .badge.done { background: var(--green-soft); color: var(--green); }
+/* `--green` as text on --green-soft is 3.85:1. Same fix, same reason, same token pair as the amber
+   rule three lines down; the dot stays `currentColor`, so the pill still reads green. */
+.badge.green, .badge.done { background: var(--green-soft); color: var(--status-done-text); }
 /* `--amber` is a FILL colour. As text on --amber-soft it measures 3.31:1, the worst contrast in the
    product. `--status-warn-text` is the token that already exists for exactly this — the same amber
    mixed toward the ink so it can be read — and 17 other rules already use it. The dot keeps

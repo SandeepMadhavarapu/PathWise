@@ -160,12 +160,38 @@ export interface UnmodelledJurisdiction {
 export function describeUnmodelled(code: string): UnmodelledJurisdiction | undefined {
   const j = jurisdictionByCode(code);
   if (!j || isModelled(code)) return undefined;
+  return describeFromCoverage(code, 'residency');
+}
+
+/**
+ * What the coverage index knows about a jurisdiction in ONE domain, whether or not a pack exists.
+ *
+ * `describeUnmodelled` above answers "PathWise has no rules for this state at all", and returns
+ * undefined the moment any pack is registered. That is right for the whole-jurisdiction question and
+ * wrong for the per-domain one, and the gap was reachable: Texas and Tennessee ship residency rules
+ * and no aid rules, so `aidFindingFor` fell through to the unmodelled aid finding with NOTHING to
+ * describe the jurisdiction from. The finding then took its "no source verified" wording and told a
+ * reader "PathWise has not yet verified an official source to link" on the same screen as a working
+ * "Official Texas source →" link and "Verified 2026-07-28".
+ *
+ * The domain matters and is not cosmetic. An aid finding must never be sourced to a residency page:
+ * the coverage entry carries `aid_authority`/`aid_source_url` separately, and for four states
+ * (CA, DC, NC, TX) they are genuinely different pages. Passing the domain is what keeps an aid claim
+ * cited to an aid source.
+ */
+export function describeFromCoverage(
+  code: string,
+  domain: 'residency' | 'aid',
+): UnmodelledJurisdiction | undefined {
+  const j = jurisdictionByCode(code);
+  if (!j) return undefined;
+  const aid = domain === 'aid';
   return {
     code: j.code,
     name: j.name,
     note: j.note,
-    authority: j.authority,
-    source_url: j.source_url,
+    authority: (aid ? j.aid_authority : j.authority) ?? undefined,
+    source_url: (aid ? j.aid_source_url : j.source_url) ?? undefined,
     unverifiable: j.unverifiable,
   };
 }
