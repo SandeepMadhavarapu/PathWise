@@ -949,15 +949,25 @@ export default function CheckPage() {
               reader navigated to, where here they are the output of a computation they just asked
               for, and the stagger is what says so. */}
           <div className="domain-cards check-cards">
+            {/* Three states, not two, and the third is the one this card used to get wrong.
+                With a row half-filled there is no ledger to show — but "No CPT on record" beside a
+                green "On track" is a confident claim about a record the reader HAS partly supplied,
+                and the green is a reassurance computed from input the ledger discarded. The form
+                names the missing field; this card has to agree with it rather than contradict it
+                one screen below. Amber, because there is something here for the reader to do — not
+                `idle`, which is this product's vocabulary for a rule PathWise could not read, and
+                the federal CPT rules are modelled in full. */}
             <DomainCard
               domain="Immigration (F-1)"
               decidingOffice={formatDecidingOffice("SEVP")}
               status={
                 closestLevel
                   ? formatCliffDistance(closestLevel.daysToCliff)
-                  : "No CPT on record"
+                  : uncountedRows > 0
+                    ? "No complete CPT row"
+                    : "No CPT on record"
               }
-              band={closestLevel ? closestLevel.band : "green"}
+              band={closestLevel ? closestLevel.band : uncountedRows > 0 ? "amber" : "green"}
               detail={
                 closestLevel
                   ? // `levelLabel`, not the raw enum. This printed "at the masters level" — the
@@ -969,7 +979,11 @@ export default function CheckPage() {
                     ).toLowerCase()} level${
                       closestLevel.optEligible ? "; OPT still available." : "; OPT eligibility lost for this level."
                     }`
-                  : "Add a CPT authorization above to see your ledger."
+                  : uncountedRows > 0
+                    ? `${
+                        uncountedRows === 1 ? "A CPT row above is" : `${uncountedRows} CPT rows above are`
+                      } unfinished, so nothing was counted. PathWise will not guess the missing field.`
+                    : "Add a CPT authorization above to see your ledger."
               }
               cite={SECTION_CITE}
             />
