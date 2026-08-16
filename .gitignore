@@ -11,3 +11,16 @@ Thumbs.db
 # per-state PNGs are not (the contact sheets contain them).
 visual-audit/screenshots/
 visual-audit/node_modules/
+
+# Internal planning, rehearsal and submission-strategy material. Kept locally,
+# never published: these are notes about how to present the project rather than
+# documentation of what it does, and a reader of this repository is owed the
+# second thing and not the first.
+PathWise_Plan_and_Progress.docx
+PATHWISE_*.md
+PATHWISE_*.docx
+STORY-AUDIT/STORY-*.md
+
+# The film's working directory. Its own .gitignore excludes the renders; this
+# keeps the pipeline itself out of the application repository too.
+pathwise-video/

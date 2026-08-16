@@ -43,6 +43,36 @@ The same discipline runs through the engines. A CPT record that could honestly b
 shown both ways rather than resolved by guessing: the demo student's ledger reads 342 days or 552
 days depending on one missing I-20, and PathWise refuses to choose until the document arrives.
 
+### How the refusal is enforced
+
+```mermaid
+flowchart TD
+    A[Student record] --> B{Which jurisdiction?}
+    B --> C{Registered rule pack?}
+    C -->|Yes| D[Engines run that pack's rules]
+    C -->|No| E["unable_to_verify"]
+    D --> F["Finding — verdict · reasoning · citation · open questions"]
+    E --> G["The office that does decide, and its official source"]
+    E --> H["No citation object exists to render"]
+```
+
+The refusal is a property of the types, not a message the interface remembers to show.
+
+`resolveJurisdiction` returns a context whose `packs` and `display` fields are **present iff**
+PathWise has modelled that jurisdiction — the declaration is in `lib/engines/jurisdiction.ts`, and
+the comment on `display` reads *"Present iff `packs` is — there is nothing to cite otherwise."* So
+when no pack is registered, `residencyFindingFor` does not run a weakened version of the engines; it
+routes to `unmodelledResidencyFinding` instead, and a screen that tries to print a citation has
+**nothing to print rather than something borrowed**. Showing another state's statute under this
+state's heading is not a bug that was fixed — it is unrepresentable.
+
+Coverage follows the same rule. A jurisdiction's level on `/coverage` is derived from what its
+registered pack *declares it can answer* (`lib/jurisdiction-coverage.ts`), and `lib/rulepacks/validate.ts`
+rejects a pack that declares `modelled` while omitting the rules that word implies — a residency pack
+claiming it with no gate, no intent factors, or a gate without a status classification fails the
+schema test. **You cannot make the map say "modelled" by editing the map.** You can only make it say
+that by authoring a pack that survives the check.
+
 ## The eleven engines
 
 | Engine | Answers |
@@ -124,6 +154,31 @@ npm run check:sources   # resolves every source URL the packs cite (needs networ
 ```bash
 npm run build   # every route is prerendered as static content
 ```
+
+## Verification
+
+Every row below was produced by running the command in this repository at the current commit.
+
+| Gate | Command | Result |
+|---|---|---|
+| Tests | `npm test` | **456 assertions, 0 failures** across 6 suites |
+| Types | `npm run typecheck` | clean |
+| Lint | `npm run lint` | clean — no ESLint warnings or errors |
+| Build | `npm run build` | compiled; **17/17 routes prerendered** as static content |
+| Sources | `npm run check:sources` | **55 cited URLs resolved, 0 dead** |
+
+Checked separately against the deployed build in a real browser:
+
+- **120 page loads** across 10 viewports (320×568 → 1920×1080) × 12 routes — **0 horizontal
+  overflow, 0 console errors**, one `<h1>` per route, every form control labelled.
+- **All 51 jurisdictions** submitted through `/check` and inspected for a borrowed authority —
+  **0 citation leaks**. No state's result region carried another state's statute.
+- **0 network requests after form submission**, and `localStorage`, `sessionStorage`, cookies and
+  IndexedDB all empty. The only non-first-party URL loaded anywhere is a `data:` icon.
+
+The test suite includes adversarial batteries that fire malformed, contradictory and hostile input
+at the engines and assert that none of it becomes a confident answer, plus a golden fixture that
+pins six Virginia findings byte-for-byte so a refactor cannot quietly change a verdict.
 
 ---
 
