@@ -23,6 +23,7 @@ import {
   residencyFindingFor,
   statusUnclassifiedFor,
 } from "@/lib/engines/jurisdiction";
+import { article } from "@/lib/engines/unmodelled-jurisdiction";
 import type { StatusKey } from "@/lib/tokens";
 import type { CapabilityLevel } from "@/lib/rulepacks/schema";
 import { JURISDICTIONS } from "@/lib/coverage";
@@ -98,6 +99,23 @@ type CptRow = {
 function blankRow(): CptRow {
   return { start: "", end: "", hours: "", level: "masters" };
 }
+
+/**
+ * The three fields a CPT row needs before the ledger can count it, and what to call each one when
+ * it is the one missing.
+ *
+ * `level` is not here on purpose: it carries a value from the moment the row exists, so it can
+ * never be the thing a reader forgot, and listing it would mean an untouched row read as
+ * two-thirds complete.
+ *
+ * The labels are the words used in the sentence, not the field names — a reader who left a box
+ * empty is looking for the box, and "hours per week" is what is printed above it.
+ */
+const ROW_FIELDS: { key: "start" | "end" | "hours"; label: string }[] = [
+  { key: "start", label: "its start date" },
+  { key: "end", label: "its end date" },
+  { key: "hours", label: "its hours per week" },
+];
 
 export default function CheckPage() {
   const [status, setStatus] = useState<ImmigrationStatus>("F1");
@@ -267,8 +285,54 @@ export default function CheckPage() {
    */
   const unusableRows = rows
     .map((r, i) => ({ r, i }))
-    .filter(({ r }) => r.start && r.end && r.end < r.start)
+    // `r.hours !== ""` is what keeps one row from being reported twice. A row with reversed dates
+    // AND no hours is caught by the incompleteness check below, which names the field the reader
+    // still has to supply; once they supply it, this guard is what tells them the dates disagree.
+    // One row, one reason, in the order the reader can act on them.
+    .filter(({ r }) => r.start && r.end && r.hours !== "" && r.end < r.start)
     .map(({ i }) => i + 1);
+
+  /**
+   * Rows the reader began and did not finish, named rather than dropped.
+   *
+   * `events` above counts a row only when start, end and hours are ALL present, so a row carrying
+   * two of the three is invisible to the ledger — and the screen then announces "no CPT
+   * authorization on record", which is an affirmative claim about a record the reader has just
+   * partly supplied. That is the same failure the reversed-date guard exists to prevent, one field
+   * earlier: an incomplete answer becoming a confident one.
+   *
+   * The commonest way to reach it is not a mistake. A CPT that is currently running has no end date
+   * yet, so a reader enters the start and the hours and leaves the third box alone — the most
+   * honest thing they can do — and PathWise reports that they have no authorization at all.
+   *
+   * A row nobody has touched is not incomplete, it is unused, and says nothing. That is why the
+   * filter needs at least one field present as well as at least one absent.
+   */
+  const incompleteRows = rows
+    .map((r, i) => ({
+      n: i + 1,
+      missing: ROW_FIELDS.filter((f) => r[f.key] === "").map((f) => f.label),
+    }))
+    .filter(({ missing }) => missing.length > 0 && missing.length < ROW_FIELDS.length);
+
+  // One sentence per unfinished row, naming the row and the field. Kept as sentences rather than a
+  // count because "2 rows are incomplete" tells a reader that something is wrong and not what to do
+  // about it, and the whole point of saying this at all is that it is actionable.
+  const incompleteNotes = incompleteRows.map(
+    ({ n, missing }) =>
+      `CPT row ${n} is missing ${missing.join(" and ")}, so it is not counted below.`,
+  );
+
+  // Everything the reader typed into a CPT row that the ledger did not read — unfinished or
+  // self-contradictory. Both notes above are visual; this count is what the spoken summary uses, so
+  // a screen-reader user is told a row was dropped even if they never reach the form note.
+  const uncountedRows = unusableRows.length + incompleteRows.length;
+  const uncountedNote =
+    uncountedRows === 0
+      ? ""
+      : uncountedRows === 1
+        ? "One CPT row was not counted, because it is unfinished or ends before it starts; the form says which. "
+        : `${uncountedRows} CPT rows were not counted, because they are unfinished or end before they start; the form says which. `;
 
   const student: Student = {
     id: "self",
@@ -430,10 +494,18 @@ export default function CheckPage() {
       `Immigration: ${
         closestLevel
           ? formatCliffDistance(closestLevel.daysToCliff)
-          : "no CPT authorization on record"
+          : // "no CPT authorization on record" is only true when the reader entered none. With a
+            // row half-filled it is a claim about a record they have partly supplied, and this
+            // summary is the ONE place a screen-reader user hears the outcome — the note on the
+            // form is above them and easy to pass. The qualifier is what makes the sentence
+            // survive being read on its own.
+            uncountedRows > 0
+            ? "no complete CPT authorization on record"
+            : "no CPT authorization on record"
       }. ` +
       `Residency: ${RESULT_WORD[finding.result]}. ` +
       `State financial aid: ${RESULT_WORD[aidFinding.result]}. ` +
+      uncountedNote +
       `The full findings, their citations and the offices that decide them are below.`
     : "";
 
@@ -555,16 +627,35 @@ export default function CheckPage() {
             cannot carry a claim that is checkable and wrong.
             So the promise now says only what is true, and names the exception itself rather than
             waiting to be caught by it — which is the same move the coverage counts make. */}
-        <p className="check-lifetime">
-          <span className="check-lifetime-k">Nothing you type leaves your device.</span> There is no
-          account, no server and no request — the reasoning runs in this tab.{" "}
-          <span className="check-lifetime-k">Nothing is saved, either.</span> This workspace lives
-          in this tab alone: nothing is written to disk — no cookie, no stored session, nothing this
-          browser still has tomorrow. Refreshing or closing the tab clears everything you have
-          entered. Your browser may re-fill the form if you press Back; that copy belongs to the
-          browser, not to PathWise, and it goes when the tab does. That is deliberate: once the tab
-          is closed, on a shared or public computer, nothing of yours is left behind.
-        </p>
+        {/* The promise stays; the essay folds.
+            Measured at 390x844 — the commonest phone a judge link is opened on — this block ran to
+            about 100 words and pushed the first form control to y=882, a full viewport below the
+            fold, and the submit button to y=1,724. So on a phone the product's only tool opened on
+            two screens of prose about privacy, and a reader had to take it on faith that there was
+            a tool at all.
+            The two sentences that ARE the promise are still ink on the page, unfolded, exactly as
+            before. What moved behind the summary is the elaboration — which is worth reading and is
+            not worth a viewport of a reader's attention before they can use anything. `details` and
+            not a custom disclosure: it is open to find-in-page, it is keyboard-operable and
+            announced without an aria attribute, and it needs no state. */}
+        <div className="check-lifetime">
+          <p className="cl-lede">
+            <span className="check-lifetime-k">Nothing you type leaves your device.</span> There is
+            no account, no server and no request — the reasoning runs in this tab.{" "}
+            <span className="check-lifetime-k">Nothing is saved, either.</span>
+          </p>
+          <details className="cl-more">
+            <summary>What that means, exactly</summary>
+            <p>
+              This workspace lives in this tab alone: nothing is written to disk — no cookie, no
+              stored session, nothing this browser still has tomorrow. Refreshing or closing the tab
+              clears everything you have entered. Your browser may re-fill the form if you press
+              Back; that copy belongs to the browser, not to PathWise, and it goes when the tab
+              does. That is deliberate: once the tab is closed, on a shared or public computer,
+              nothing of yours is left behind.
+            </p>
+          </details>
+        </div>
       </div>
 
       <form className="check-form surface" onSubmit={onSubmit}>
@@ -650,11 +741,20 @@ export default function CheckPage() {
             </div>
             <div className="field">
               <label htmlFor={`hours-${i}`}>Hours / week</label>
+              {/* `step` is here because its default is 1, and the default was rejecting real
+                  authorizations. An I-20 that reads 37.5 hours a week produced "Please enter a
+                  valid value. The two nearest valid values are 37 and 38" — a browser refusing a
+                  number the student is copying off their own document. 0.5 rather than "any"
+                  because half-hours are the granularity these are actually written in, and it
+                  keeps the browser's nearest-value hint useful for anything typed in between.
+                  `min`/`max` stay: below 0 and above 168 are not hours in a week, and both refuse
+                  out loud rather than silently. */}
               <input
                 id={`hours-${i}`}
                 type="number"
                 min={0}
                 max={168}
+                step={0.5}
                 value={row.hours}
                 onChange={(e) => updateRow(i, { hours: e.target.value })}
               />
@@ -695,6 +795,16 @@ export default function CheckPage() {
               ? `CPT row ${unusableRows[0]} ends before it starts, so it is not counted below.`
               : `CPT rows ${unusableRows.join(" and ")} end before they start, so they are not counted below.`}{" "}
             PathWise will not guess which date you meant.
+          </p>
+        ) : null}
+
+        {/* A row the reader started and has not finished. Same treatment and same voice as the
+            reversed-date note above, because it is the same promise being kept: the screen says
+            what it will not be counting BEFORE the button is pressed, rather than reporting a
+            confident "no CPT authorization on record" afterwards. */}
+        {incompleteNotes.length > 0 ? (
+          <p className="row-unusable" role="status">
+            {incompleteNotes.join(" ")} PathWise will not guess.
           </p>
         ) : null}
 
@@ -882,7 +992,10 @@ export default function CheckPage() {
               qualifier={qualifierFor("residency")}
               detail={
                 unmodelled
-                  ? `PathWise will not run another state's rules under a ${stateName} heading. ${
+                  ? // `article` comes from the engine that owns this sentence, rather than an `a`
+                    // typed in here. Hardcoding it put "a Ohio heading" in front of a reader on
+                    // twelve states — on the one screen whose whole job is to refuse carefully.
+                    `PathWise will not run another state's rules under ${article(stateName)} ${stateName} heading. ${
                       unmodelled.authority
                         ? `${unmodelled.authority} decides this.`
                         : "PathWise has not yet verified an official source to link."

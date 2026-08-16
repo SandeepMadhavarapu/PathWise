@@ -1306,6 +1306,16 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .citation-block { background: var(--canvas); border: 1px solid var(--border); border-left: 3px solid var(--info); border-radius: var(--radius-input); padding: var(--space-4); }
 .citation-quote { margin: 0 0 var(--space-2); font-size: 14px; color: var(--text); font-style: italic; line-height: 1.55; }
 .citation-meta { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+/* Same inset-pseudo hit area as `.rtree-toggle`, `.rtree-sources` and `.sh-refusal-go`. "Read the
+   source" is the sole content of its own row rather than a link inside a sentence, so WCAG 2.5.8's
+   inline exception does not cover it — measured 107x17 on a phone, against a 24px minimum. A
+   pseudo-element rather than padding because padding on an inline anchor would push the dashed
+   rule under `.citation-pack` down and reflow every citation block in the product.
+   ::before and not ::after, because the print stylesheet at the foot of this file already claims
+   `.citation-meta a::after` to print the href beside the link — same specificity, so an ::after
+   here would be overridden in print and would leave that URL absolutely positioned. */
+.citation-meta > a { position: relative; }
+.citation-meta > a::before { content: ""; position: absolute; inset: -4px -6px; }
 /* The last step of the descent: verdict → regulation → the file the engine read. Given its own
    spacing and a rule above it, because it is a different KIND of link from "read the source" —
    that one leaves for the agency's website, this one stays inside the product and shows the data. */
@@ -1332,6 +1342,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .unknowns { list-style: none; padding: 0; margin: var(--space-2) 0 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .unknown-item { background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
 .unknown-what { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+/* The 404 offers its three destinations in this list, and there they are whole standalone controls
+   rather than links inside a sentence — measured 143x19, 155x19 and 238x19 on a phone, under the
+   24px WCAG 2.5.8 minimum. Everywhere else `.unknown-what` holds plain text (an open question the
+   engine raised), so this rule reaches nothing but the 404's links. */
+.unknown-what > a { position: relative; }
+.unknown-what > a::before { content: ""; position: absolute; inset: -4px -6px; }
 .unknown-why, .unknown-how { font-size: 13px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
 .unknown-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
 
@@ -1401,6 +1417,36 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   max-width: 78ch;
 }
 .check-lifetime-k { color: var(--text); font-weight: 650; }
+.check-lifetime .cl-lede { margin: 0; }
+/* The elaboration, folded. `list-style` is reset on both the modern and the WebKit pseudo-element
+   because Safari still draws its own triangle from the second one, and two markers on one summary
+   is the sort of detail a judge notices before they notice anything else. */
+.cl-more { margin: var(--space-2) 0 0; }
+.cl-more > summary {
+  cursor: pointer;
+  color: var(--info);
+  font-weight: 600;
+  list-style: none;
+  /* 24px minimum target on a control that sits in 13px text — see the target-size block below. */
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+}
+.cl-more > summary::-webkit-details-marker { display: none; }
+.cl-more > summary::before {
+  content: "›";
+  display: inline-block;
+  font-size: 15px;
+  line-height: 1;
+  transition: transform var(--motion-fast, 140ms) var(--motion-ease, ease);
+}
+.cl-more[open] > summary::before { transform: rotate(90deg); }
+.cl-more > p { margin: var(--space-2) 0 0; }
+@media (prefers-reduced-motion: reduce) {
+  .cl-more > summary::before { transition: none; }
+}
 
 /* A reset, not a destruction and not a navigation — so neither the red of `.row-remove` nor the
    blue of a link. Neutral, bordered, and quieter than the submit it sits beside. */

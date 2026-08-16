@@ -22,6 +22,8 @@ import {
   residencyFindingFor,
 } from '../engines/jurisdiction';
 import { priyaOptBudget } from '../fixtures/priya';
+import { JURISDICTIONS } from '../coverage';
+import { article } from '../engines/unmodelled-jurisdiction';
 import type { ProgramLevel, Student } from '../types';
 
 let failures = 0;
@@ -265,9 +267,27 @@ for (const [code, name] of [['OH', 'Ohio'], ['AL', 'Alabama']] as const) {
 }
 
 // Article agreement — "a Ohio heading" was reaching a reader.
+//
+// Utah is deliberately NOT in the list below, and used to be. It is the one jurisdiction whose
+// first LETTER and first SOUND disagree: /ˈjuːtɑː/ opens on a consonant, so "a Utah" is correct and
+// "an Utah" is not. The old regex asserted the opposite. It never fired — this block only scans
+// Ohio and Alabama, so Utah was never in the text being tested — but it encoded a wrong belief that
+// would have failed the moment anyone widened the scan, which is exactly what the helper assertion
+// below now does directly.
 {
   const text = JSON.stringify(aidFor('OH')) + JSON.stringify(residencyFor('AL'));
-  assert('vowel-initial state names take "an"', !/\ba (Ohio|Alabama|Alaska|Arizona|Arkansas|Idaho|Illinois|Indiana|Iowa|Oklahoma|Oregon|Utah)\b/.test(text));
+  assert('vowel-initial state names take "an"', !/\ba (Ohio|Alabama|Alaska|Arizona|Arkansas|Idaho|Illinois|Indiana|Iowa|Oklahoma|Oregon)\b/.test(text));
+
+  // The helper itself, across every jurisdiction the coverage index actually lists — so the rule is
+  // checked once for all 51 rather than inferred from the two states this block renders.
+  const wrong = JURISDICTIONS.filter((j) => {
+    const expected = j.name === 'Utah' ? 'a' : /^[AEIOU]/i.test(j.name) ? 'an' : 'a';
+    return article(j.name) !== expected;
+  }).map((j) => j.name);
+  assert(`article() is right for all ${JURISDICTIONS.length} jurisdictions`, wrong.length === 0, wrong);
+  assert('Utah takes "a", not "an" — letter and sound disagree', article('Utah') === 'a');
+  assert('Ohio takes "an"', article('Ohio') === 'an');
+  assert('Virginia takes "a"', article('Virginia') === 'a');
 }
 
 // =================================================================================================

@@ -1,5 +1,14 @@
 # 02 — Research & Citations (the rules survive here)
 
+> **ARCHIVED RESEARCH NOTE — NOT A DESCRIPTION OF THE SHIPPING PRODUCT.**
+> This file is the original research log, kept as a record of what was read and when. It is not
+> imported, built, tested or served by anything, and it has **not** been kept in step with the
+> live rule packs. The authoritative statement of what PathWise encodes is
+> `pathwise-app/lib/rulepacks/` and the engines that read it.
+> At least one rule recorded below was later searched for in the primary sources, **not found**,
+> and removed from the product — see the correction marked **[SUPERSEDED]** in section C. Where
+> this file and the app disagree, the app is right.
+
 Every rule the product encodes, quoted with its source. If all code is lost, the product's
 *knowledge* is preserved in this file plus the `rulepacks/`. **Re-verify every citation against its
 primary source in the final week — this policy area moved five times in the last 18 months.**
@@ -84,8 +93,19 @@ statewide rule set — which is why it's our flagship.
 - **Auxiliary-acts warning.** Acts auxiliary to educational objectives, or routinely performed by
   temporary residents (driver's license, vehicle registration, post-admission employment, VA tax
   filing), carry little weight. Cite: **§06(B).**
-- **The single most important quote:** SCHEV's own guidance says *"In complex cases, construe [the
-  facts] in the light most favorable to the student."* — this is our tie-breaker philosophy.
+- ~~**The single most important quote:** SCHEV's own guidance says *"In complex cases, construe [the
+  facts] in the light most favorable to the student."* — this is our tie-breaker philosophy.~~
+  **[SUPERSEDED — the quote could not be found and the rule was removed.]** The phrase was searched
+  for in the SCHEV Domicile Guidelines (32pp, effective 11 Jan 2021), Addenda A–C, and Code of
+  Virginia Title 23.1 Chapter 5 including §§ 23.1-502 and 23.1-503. *"favorab"*, *"in favor"*,
+  *"most favorable"* and *"light most"* return **zero matches** across all of them. The only
+  *"construe"* hit is a savings clause pointing the other way, and § 23.1-503 puts the burden on
+  the **student** to establish domicile by clear and convincing evidence — the opposite of a
+  student-favourable tie-breaker. PathWise never shipped this: the rule
+  `favor_student_in_complex_cases` and its reasoner were both removed from
+  `pathwise-app/lib/rulepacks/va-domicile.json` and `lib/engines/domicile.ts`, which records the
+  search in full. **This is not PathWise's tie-breaker philosophy and must not be quoted as one.**
+  A student-favourable invention is still an invention.
 - **Determinations do not transfer.** A prior determination by one institution is **not binding** on
   another.
 - **Parental status alone cannot deny a student.** No student shall be denied in-state tuition solely

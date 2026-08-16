@@ -43,10 +43,10 @@ cliff, the finding sits in "unable to verify" — and adding the document makes 
 It requires no account and sends nothing to a server. For a population that reasonably fears data
 collection, that is not a feature; it is the difference between using the tool and closing the tab.
 
-Virginia is fully modelled; all fifty states and DC are listed with an honest coverage status,
-including the forty-five where the answer is still "not yet". Adding a jurisdiction means authoring
-one more rule pack, not writing code — and a regression test asserts that no state is ever shown
-another state's citation.
+Virginia is modelled in full, two more partially; the other 48 of fifty-one carry an honest status
+— 43 source captured, 5 unable to verify. Adding a jurisdiction means authoring one more rule pack,
+not writing code — and a regression test asserts that no state is ever shown another state's
+citation.
 
 Students shouldn't need to become paralegals to keep their status. PathWise holds the history,
 does the arithmetic, shows its work, and says what to do next.

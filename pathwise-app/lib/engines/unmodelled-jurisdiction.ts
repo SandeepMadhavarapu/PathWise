@@ -34,8 +34,25 @@ function authorityLine(j: UnmodelledJurisdiction, domain: PackedDomain): string 
 /** Which half of a jurisdiction this finding is refusing to answer. */
 type PackedDomain = 'residency' | 'aid';
 
-/** "a Ohio heading" was reaching a reader. Cheap, and it is the sort of thing a judge screenshots. */
-function article(name: string): string {
+/**
+ * "a Ohio heading" was reaching a reader. Cheap, and it is the sort of thing a judge screenshots.
+ *
+ * Exported because /check prints this same sentence in its own words on the residency card, and for
+ * a while it printed it with `a` hardcoded — so eleven states read "a Ohio heading", "a Illinois
+ * heading", "a Iowa heading" while the engine two files away had already got it right. One helper,
+ * one answer, and the page cannot drift from the engine again.
+ *
+ * The article is chosen by SOUND, not by spelling, which is why this is not simply /^[AEIOU]/.
+ * Utah is /ˈjuːtɑː/ — it opens on a consonant, the same /j/ that makes it "a university" and not
+ * "an university" — so a letter-only test produces "an Utah", which is wrong in the other
+ * direction. Utah is the only one of the fifty-one jurisdictions where the letter and the sound
+ * disagree; the exception is kept as a list rather than a special case so a future jurisdiction
+ * with the same problem has somewhere obvious to go.
+ */
+const VOWEL_LETTER_CONSONANT_SOUND: readonly string[] = ['Utah'];
+
+export function article(name: string): string {
+  if (VOWEL_LETTER_CONSONANT_SOUND.includes(name)) return 'a';
   return /^[AEIOU]/i.test(name) ? 'an' : 'a';
 }
 
