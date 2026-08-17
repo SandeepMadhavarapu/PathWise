@@ -5,96 +5,101 @@
    constants).
    ============================================================================= */
 /* ---------------------------------------------------------------------------------------------
-   ORIGINAL PATHWISE VISUAL LANGUAGE (restored from 8ac1c3f).
+   VISUAL POLISH PASS — warm cream / sage palette, replacing the cool slate-and-blue one.
    ---------------------------------------------------------------------------------------------
-   The token NAMES below are the ones ~2,700 lines of component CSS already reference; only their
-   VALUES return to the original palette. That is deliberate and is the whole reason this change is
-   safe: every card, gauge, chip and callout in the product re-reads its colour, radius and shadow
-   from here, so the look moves and not one component's markup or behaviour has to.
+   Same story as the palette swap this replaces: the token NAMES below are the ones ~2,700 lines
+   of component CSS already reference; only their VALUES moved. Every card, gauge, chip and
+   callout in the product re-reads its colour, radius and shadow from here, so the look moves and
+   not one component's markup or behaviour has to.
 
-   The original palette, verbatim from 8ac1c3f:
-     --ink #12203a  --ink-soft #3d4a63  --muted #6b7789  --line #e4e7ee
+   The previous (slate/blue) palette, for reference:
+     --ink #12203a  --ink-soft #3d4a63  --muted #66707e  --line #e4e7ee
      --bg  #f7f8fb  --surface #ffffff   --accent #2f5fe0 --accent-soft #eaf0ff
      --green #1f8a5b  --amber #b7791f   --red #c0392b    (+ soft variants)
      --radius 14px    --radius-sm 9px
    The old names are re-exported as aliases at the end of this block so shell rules written in the
-   original vocabulary read the way they did then.
+   original vocabulary still resolve.
    --------------------------------------------------------------------------------------------- */
 :root {
-  /* Surfaces */
-  --canvas: #f7f8fb;
-  --surface: #ffffff;
-  --sidebar: #12203a;
-  --sidebar-active: #24365a;
-  --border: #e4e7ee;
-  --border-strong: #cfd5e0;
+  /* =============================================================================
+     PALETTE — warm cream / sage. Replaces the cool slate-and-blue palette above.
+     Every name below is the one ~2,700 lines of component CSS already reference; only the
+     VALUES moved, which is why this pass is safe — no component's markup changed.
+     ============================================================================= */
 
-  /* Text */
-  --text: #12203a;
-  --text-secondary: #3d4a63;
-  /* 4.75:1 on --surface. The previous #8a929c was 3.15:1 — under WCAG AA for normal text, and this
-     token carries every section heading, micro-label, citation date and footer in the product, so
-     the failure was the app's most widespread one rather than an edge case. */
-  /* #6b7480, not the original palette's #6b7789. Measured on production: #6b7789 gives 4.28:1 on
-     --canvas, under WCAG AA's 4.5 for normal text, and this token carries the section labels, the
-     build stamp and the topbar tagline. #6b7480 is the value the app already used before the visual
-     restoration and clears AA on both --canvas and --surface. Visually indistinguishable.
-     Measured again after release: #6b7480 is 4.46:1 on --canvas — still 0.04 UNDER AA, because the
-     restored canvas (#f7f8fb) is lighter than the one that value was originally tuned against
-     (#f6f7f8). #66707e clears it with margin on both surfaces (4.73 / 5.02) and is two shades
-     darker, which is not a visible change at 11-13px. */
-  --text-muted: #66707e;
+  /* Surfaces */
+  --bg-page: #f5f2e8;
+  --bg-surface: #fffdf7;
+  --bg-sunken: #ede9db;
+  --border: #e3decd;
+  --border-strong: #d2cbb4;
+  --canvas: var(--bg-page);
+  --surface: var(--bg-surface);
+
+  /* Text — warm near-blacks, never pure #000 */
+  --text-primary: #2a2a26;
+  --text-secondary: #63604f;
+  --text-muted: #8b8775;
+  --text: var(--text-primary);
   --text-inverse: #ffffff;
 
-  /* Status — the original restrained band language: green / amber / red, and nothing else. */
-  --status-done: #1f8a5b;
-  --status-active: #b7791f;
-  --status-warn: #b7791f;
-  --status-blocked: #c0392b;
-  --status-idle: #dfe3ea;
-  --info: #2f5fe0;
-  --callout-bg: #fdf3e0;
-  --callout-border: #ecd9ae;
+  /* Primary accent — sage. Replaces the bright blue everywhere: links, primary buttons,
+     active nav, progress fills, focus rings. */
+  --sage-deep: #4a6350;
+  --sage-hover: #3b5040;
+  --sage-tint: #dde5dc;
 
-  /* Derived: --status-warn on its own fails text contrast on white, so warn-as-text
-     (not warn-as-fill) uses this darker mix of the same token instead of a second hex.
-     At 55% warn this still only reached ~4.1:1 on --callout-bg, which is where it is most often
-     used; 45% takes it to ~5.2:1 there and ~5.6:1 on --surface. */
-  --status-warn-text: color-mix(in srgb, var(--status-warn) 45%, var(--text));
+  /* Secondary accents — tints are surfaces (badge/container fills), deeps are ink (text on
+     top of the matching tint only). Never a tint as a button fill with white text; never a
+     deep as a large background. */
+  --lilac-tint: #e4deee;
+  --lilac-deep: #574b73;
+  --rose-tint: #f0dedb;
+  --rose-deep: #8a554f;
+  --ice-tint: #dbe5eb;
+  --ice-deep: #3e5a69;
+  --peach-tint: #f6e3ce;
+  --peach-deep: #855a2a;
 
-  /* Derived, for the same reason and by the same method: --status-done and --status-active are
-     legible as FILLS and fail as TEXT. Measured on --surface, #3ea76f lands near 3.0:1 and #e8833a
-     near 2.7:1 — both under WCAG AA for normal text, and both carry 11-13px labels ("On track", the
-     privacy line, the ledger's own subtitle, the coverage badge). This is the same failure the
-     --text-muted and --status-warn-text tokens above were introduced to fix; two of the five status
-     colours were simply left behind when it was.
-     Mixed with --text rather than darkened by hand, so a status can still only ever be RESTATED,
-     never redefined. Both land near 5.3-5.5:1 on --surface and stay above 4.5:1 on their own soft
-     fills, which is where each is most often used. The fills themselves are untouched. */
-  --status-done-text: color-mix(in srgb, var(--status-done) 62%, var(--text));
-  --status-active-text: color-mix(in srgb, var(--status-active) 60%, var(--text));
+  /* Status — done/success and warn/warning now read as distinct hues (sage vs. peach) rather
+     than sharing one amber, and "active" (an open task, not yet a warning) gets its own tint
+     (ice) instead of doubling the warn colour. */
+  --status-done: var(--sage-deep);
+  --status-active: var(--ice-deep);
+  --status-warn: var(--peach-deep);
+  --status-blocked: var(--rose-deep);
+  --status-idle: var(--border-strong);
+  --info: var(--sage-deep);
+  --callout-bg: var(--peach-tint);
+  --callout-border: color-mix(in srgb, var(--peach-deep) 40%, transparent);
 
-  /* Derived: the soft fill / hairline-border pair for each status and for --info. Every tinted
-     panel in the app resolves to one of these rather than to a second hex, so a status can only
-     ever be restated — never redefined — further down the file. */
-  --info-soft: color-mix(in srgb, var(--info) 8%, var(--surface));
-  --info-border: color-mix(in srgb, var(--info) 30%, transparent);
-  --done-soft: color-mix(in srgb, var(--status-done) 10%, var(--surface));
-  --done-border: color-mix(in srgb, var(--status-done) 30%, transparent);
-  --warn-soft: color-mix(in srgb, var(--status-warn) 14%, var(--surface));
-  --warn-border: color-mix(in srgb, var(--status-warn) 40%, transparent);
-  --blocked-soft: color-mix(in srgb, var(--status-blocked) 8%, var(--surface));
-  --blocked-border: color-mix(in srgb, var(--status-blocked) 30%, transparent);
-  --idle-soft: color-mix(in srgb, var(--status-idle) 30%, var(--surface));
+  /* Text-on-tint: the palette hands us pre-vetted deep/tint pairs, so status text is the deep
+     colour directly rather than a derived mix. */
+  --status-warn-text: var(--peach-deep);
+  --status-done-text: var(--sage-deep);
+  --status-active-text: var(--ice-deep);
+  --status-blocked-text: var(--rose-deep);
 
-  /* Derived: white-on-dark text, for the sidebar and the dark CTA — three fixed opacities
-     covering primary-on-dark (labels), secondary-on-dark (icons/eyebrows), and the footer sliver. */
+  /* Soft fill / hairline-border pair for each status and for the primary accent. Every tinted
+     panel in the app resolves to one of these. */
+  --info-soft: var(--sage-tint);
+  --info-border: color-mix(in srgb, var(--sage-deep) 30%, transparent);
+  --done-soft: var(--sage-tint);
+  --done-border: color-mix(in srgb, var(--sage-deep) 30%, transparent);
+  --warn-soft: var(--peach-tint);
+  --warn-border: color-mix(in srgb, var(--peach-deep) 40%, transparent);
+  --blocked-soft: var(--rose-tint);
+  --blocked-border: color-mix(in srgb, var(--rose-deep) 30%, transparent);
+  --idle-soft: var(--bg-sunken);
+
+  /* White-on-dark text, for the one dark fill left (the CTA pill / primary button). */
   --text-inverse-secondary: rgba(255, 255, 255, 0.75);
   --text-inverse-muted: rgba(255, 255, 255, 0.6);
   --text-inverse-faint: rgba(255, 255, 255, 0.45);
   --divider-inverse: rgba(255, 255, 255, 0.1);
 
-  /* Spacing scale */
+  /* Spacing scale — unchanged, already 4/8/12/16/24/32/48; two steps added for section-level
+     rhythm (banner/sidebar geometry, page-level gaps). */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -102,45 +107,42 @@
   --space-5: 24px;
   --space-6: 32px;
   --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
 
-  /* Radii — the original 14px card / 9px inner pair. */
-  --radius-input: 9px;
-  --radius-card: 14px;
+  /* Radii — 6px inputs/buttons, 10px cards, pill for badges. */
+  --radius-input: 6px;
+  --radius-card: 10px;
   --radius-pill: 999px;
 
-  /* The original two-layer shadow. Cards had lift in the old design; the hairline-only treatment
-     was part of the redesign, so this token carries the original value under its current name. */
-  --shadow-hairline: 0 1px 2px rgba(18, 32, 58, 0.04), 0 8px 28px rgba(18, 32, 58, 0.06);
+  /* Elevation — 1px borders by default; shadow reserved for dropdowns/modals/popovers only. */
+  --shadow-hairline: 0 1px 2px rgba(42, 42, 38, 0.04), 0 1px 2px rgba(42, 42, 38, 0.03);
+  --shadow-popover: 0 8px 24px rgba(42, 42, 38, 0.12), 0 2px 6px rgba(42, 42, 38, 0.08);
 
-  /* Motion */
-  --ease: cubic-bezier(0.2, 0, 0, 1);
-  --dur-fast: 140ms;
-  --dur-slow: 220ms;
+  /* Motion — one duration, one easing, applied to colour/background/border only. */
+  --ease: ease-out;
+  --dur-fast: 150ms;
+  --dur-slow: 150ms;
 
   /* Shell */
-  /* 224 rather than 208 so the longest rail label ("Check your status", "When evidence lands")
-     fits without the ellipsis that made two destinations read as the same truncated word. */
-  /* 244, not 224. Two rail labels needed 182px and 173px in a 164px box and were being cut to
-     "When a document ar…" and "One event, many eff…" — their accessible names were complete, so
-     only sighted readers saw the ellipsis, which is the worst way for a label to be wrong. The
-     twenty pixels come out of a content column that is capped by --content-max anyway. */
-  /* Retained so the (now unrendered) rail rules stay valid CSS; the shell is a topbar again. */
-  --sidebar-width: 0px;
-  --sidebar-width-collapsed: 0px;
+  --sb-width: 240px;
+  --sb-width-collapsed: 64px;
+  --banner-height: 56px;
   --topbar-height: auto;
-  /* The two containers. They step up at 1024 / 1280 / 1600 rather than stretching — see the
-     scale-up block at the end of this file. Variables so the steps have one thing to move. */
-  /* 940px — the original centred measure. The redesign's 1200px two-column geometry is what made
-     the product feel like an application shell rather than a document, and it is the single
-     largest contributor to the difference. */
-  --content-max: 940px;
-  --landing-max: 760px;
-  /* The page gutter, which grows with the container so a wider page does not mean a tighter edge. */
+  /* Containers step up at 1024 / 1280 / 1600 rather than stretching — see the scale-up block at
+     the end of this file. Capped near 1200px per the layout spec rather than the old 940px
+     document measure. */
+  --content-max: 1200px;
+  --landing-max: 1080px;
   --gutter: var(--space-5);
 
-  /* The original stack: system UI, no webfont. Inter is part of the redesign's voice. */
+  /* One family only. Kept as the existing system stack rather than fetching a webfont, so the
+     build has no network dependency; visually the closest thing to Inter on every platform this
+     already renders on. --font-mono folds into the same stack — the few elements that used it
+     for alignment (citations, derivations) get font-variant-numeric: tabular-nums instead, see
+     `.tabular-nums` below. */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --font-mono: var(--font-sans);
 
   /* ---- the original names, re-exported ----
      So shell rules below can be written in the vocabulary the 8ac1c3f stylesheet used, without a
@@ -151,19 +153,21 @@
   --line: var(--border);
   --bg: var(--canvas);
   --accent: var(--info);
-  --accent-soft: #eaf0ff;
+  --accent-soft: var(--sage-tint);
   --green: var(--status-done);
-  --green-soft: #e6f5ee;
+  --green-soft: var(--sage-tint);
   --amber: var(--status-warn);
-  --amber-soft: #fdf3e0;
+  --amber-soft: var(--peach-tint);
   --red: var(--status-blocked);
-  --red-soft: #fdecea;
+  --red-soft: var(--rose-tint);
   --radius: var(--radius-card);
   --radius-sm: var(--radius-input);
   --shadow: var(--shadow-hairline);
   --sans: var(--font-sans);
   --mono: var(--font-mono);
 }
+
+.tabular-nums { font-variant-numeric: tabular-nums; }
 
 /* =============================================================================
    Reset + base
@@ -181,6 +185,17 @@ button, input, select, textarea { font-family: inherit; }
 ul, ol { margin: 0; }
 a { color: var(--info); text-decoration: none; }
 a:hover { text-decoration: underline; }
+/* Body-copy links specifically: colour alone is not enough to read as a link, so prose and list
+   links carry an underline by default rather than only on hover. Lower specificity than every
+   component's own link class (`.sb-item`, `.pill`, `.back-link`, `.domain-card-more`, …), so
+   those keep their own no-underline-by-default treatment untouched. */
+p a, li a, dd a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--dur-fast) var(--ease);
+}
+p a:hover, li a:hover, dd a:hover,
+p a:active, li a:active, dd a:active { color: var(--sage-hover); }
 
 /* =============================================================================
    Focus. One treatment, declared once, for everything that takes focus.
@@ -221,9 +236,8 @@ a:hover { text-decoration: underline; }
   border-top: none;
   border-radius: 0 0 var(--radius-input) var(--radius-input);
   padding: 10px var(--space-4);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  box-shadow: var(--shadow-hairline);
   transition: transform var(--dur-fast) var(--ease);
 }
 .skip-link:focus-visible { transform: translateY(0); text-decoration: none; }
@@ -236,15 +250,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 
 .t-page-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 1.25;
+  line-height: 1.3;
   color: var(--text);
   margin: 0;
 }
 .t-card-title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.3;
@@ -253,12 +267,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .t-row-title {
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.4;
   color: var(--text);
 }
 .t-body {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1.55;
   color: var(--text);
@@ -319,7 +333,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cite {
   display: inline;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
   background: var(--canvas);
   border: 1px solid var(--border);
@@ -346,26 +360,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
 /* `min-height` and `flex-wrap`, not a fixed height and `nowrap`.
-   The bar carries three things — the page's name, the worked-example badge, and the privacy line —
-   and the badge grew when it started naming the example student. On the route with the longest
-   heading that tipped the total past the available width between roughly 1000px and 1085px, and a
-   nowrap row with a fixed height has nowhere to put the overflow: the privacy line ran off the
-   right edge and took the page into horizontal scroll. It now wraps, exactly as it already did
-   below 900px, so the same three items behave the same way at every width instead of having one
-   band where they silently do not fit. Truncating was the alternative and was rejected — the item
-   that would have been cut is the product's privacy promise. */
-.topbar {
-  min-height: var(--topbar-height);
-  flex: none;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
-  padding: var(--space-2) var(--space-5);
-}
-.topbar-title { flex: none; }
+   The page's name, the worked-example badge, and the privacy line now live in `.shell-context`,
+   inside the content column below the banner — see the PHASE 1 block near the end of this file.
+   ============================================================================= */
 
 /* The top of the /check answer, and the element focus is moved to when a result arrives.
    `scroll-margin-top` is the part that is easy to leave out: focusing an element scrolls it to the
@@ -375,7 +372,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    as a rendering fault rather than as guidance. Keyboard users still get every real control's ring. */
 .check-result-head {
   font-size: 20px;
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text);
   margin: var(--space-2) 0 0;
@@ -393,7 +390,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   margin-top: var(--space-2);
 }
 .check-result-head-row .check-result-head { margin-top: 0; }
-.check-again { font-size: 13px; font-weight: 500; color: var(--info); flex: none; }
+.check-again { font-size: 13px; font-weight: 400; color: var(--info); flex: none; }
 .check-again:hover { text-decoration: underline; }
 
 .check-result-head:focus { outline: none; }
@@ -412,7 +409,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   flex-direction: column;
   gap: var(--space-5);
 }
-.outlook-head { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; color: var(--text); margin: 0; }
+.outlook-head { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); margin: 0; }
 .outlook-block { display: flex; flex-direction: column; gap: var(--space-2); }
 
 /* One row per domain: what is being decided, who decides it, under what, and where to read it.
@@ -428,11 +425,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-top: 1px solid var(--border);
 }
 .oo:first-child { border-top: none; }
-.oo-domain { font-size: 14px; font-weight: 600; color: var(--text); }
+.oo-domain { font-size: 15px; font-weight: 600; color: var(--text); }
 .oo-body { font-size: 13px; color: var(--text-secondary); }
 .oo .cite { justify-self: start; }
-.oo-src { grid-column: 1 / -1; font-size: 13px; font-weight: 500; }
-.outlook-foot { margin: var(--space-2) 0 0; font-size: 12px; color: var(--text-muted); }
+.oo-src { grid-column: 1 / -1; font-size: 13px; font-weight: 400; }
+.outlook-foot { margin: var(--space-2) 0 0; font-size: 13px; color: var(--text-muted); }
 
 /* Open questions. The resolution is the load-bearing line, so it gets the weight and the arrow;
    the reasoning behind it sits in a disclosure rather than competing with it. */
@@ -443,7 +440,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-radius: var(--radius-input);
   padding: var(--space-3) var(--space-4);
 }
-.oq-what { margin: 0; font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; }
+.oq-what { margin: 0; font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.4; }
 .oq-do {
   margin: var(--space-2) 0 0;
   font-size: 13px;
@@ -452,12 +449,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   display: flex;
   gap: var(--space-2);
 }
-.oq-arrow { flex: none; color: var(--status-warn-text); font-weight: 700; }
+.oq-arrow { flex: none; color: var(--status-warn-text); font-weight: 600; }
 .oq-why { margin-top: var(--space-2); }
 /* 12px text on a 12px line is a ~16px target. The vertical padding takes it past 24px without
    changing where anything sits, because the block below it is spaced by the list's own gap. */
 .oq-why > summary {
-  font-size: 12px; font-weight: 600; color: var(--info); cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--info); cursor: pointer;
   list-style: none; display: inline-flex; align-items: center; gap: 4px;
   padding: var(--space-1) 0;
 }
@@ -478,48 +475,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .outlook .volatility { display: flex; flex-direction: column; gap: 4px; margin: 0; }
 .outlook .volatility-sep { display: none; }
 
-.outlook-more { font-size: 13px; font-weight: 500; align-self: flex-start; }
+.outlook-more { font-size: 13px; font-weight: 400; align-self: flex-start; }
 
 @media (max-width: 640px) {
   .outlook { padding: var(--space-4); gap: var(--space-4); }
   .oo { grid-template-columns: 1fr; gap: 4px; }
   .oo .cite { justify-self: start; }
-}
-
-/* "This is not your record", said next to the page's own name.
-   Warm and bordered so it reads as a label on the page rather than another finding, and
-   deliberately built from NO status colour — the four status tints mean something specific on the
-   cards below, and a badge that borrowed one would look like a verdict about the record instead of
-   a statement about whose record it is. */
-.topbar-example {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--callout-bg);
-  border: 1px solid var(--border-strong);
-  color: var(--text-secondary);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-/* The name carries the weight, because it is the half that changes: seven of the eight example
-   routes are one student and the eighth is another, and a reader crossing that boundary from a row
-   on the first one's dashboard has no other warning that the person changed. */
-.topbar-example .tx-sep { margin: 0 5px; opacity: 0.5; }
-.topbar-example .tx-who { color: var(--text); }
-
-/* The right of the bar. It held a search field and an account avatar, neither of which PathWise
-   has; it now holds the promise the product is actually built around, on every screen. Deliberately
-   uncoloured: chroma in this product means finding status, and a dot here would read as one. */
-.topbar-privacy {
-  flex: none;
-  margin: 0 0 0 auto;
-  font-size: 13px;
-  color: var(--text-secondary);
 }
 
 .content {
@@ -544,7 +505,6 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-hairline);
 }
 .surface-pad { padding: var(--space-5); }
 
@@ -563,7 +523,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   flex: none;
   width: 22px;
   height: 22px;
-  border-radius: 6px;
+  border-radius: var(--radius-input);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -578,7 +538,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border: 1.5px dashed var(--border-strong);
   color: var(--text-muted);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .status-glyph svg { width: 13px; height: 13px; }
 
@@ -587,7 +547,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border: 1.5px solid var(--status-blocked);
   color: var(--status-blocked);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
 }
 /* The border keeps the pure status colour — it is a shape, not text. The numeral inside it is
    11px/700 on white and takes the derived text token. */
@@ -602,8 +562,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 400;
   padding: 4px 8px;
   border-radius: var(--radius-input);
   line-height: 1.2;
@@ -643,19 +603,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
-/* The width is set inline, server-side and correct. `width: 0%` used to be the base here and the
-   real width arrived from JavaScript, so with JS off every bar in the product was empty — the CPT
-   ledger, the OPT budget and the unemployment clock all rendered as blank rails. The animation
-   below grows the bar FROM zero TO the width it already has, so the motion is decoration on a
-   correct state rather than the thing that produces it. Under prefers-reduced-motion the global
-   reset drops the animation and the bar sits at its true width immediately. */
+/* The width is set inline, server-side and correct — no mount animation needed to reach it. */
 .segprog-seg {
   height: 100%;
-  animation: segGrow 500ms var(--ease) backwards;
-}
-@keyframes segGrow {
-  from { width: 0%; }
-  to { width: var(--seg-w, 0%); }
 }
 .segprog-seg.done { background: var(--status-done); }
 .segprog-seg.active { background: var(--status-active); }
@@ -760,18 +710,18 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* The derivation line under a claim. Deliberately set as data rather than prose — it is a pointer
    into the record, not another sentence of the argument — and deliberately silent when the step
    cites nothing, because an empty "from" would imply a source that does not exist. */
-.rtree-lead { margin: 3px 0 0; font-size: 12px; line-height: 1.45; color: var(--text-secondary); }
-.rtree-lead-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+.rtree-lead { margin: 3px 0 0; font-size: 13px; line-height: 1.4; color: var(--text-secondary); }
+.rtree-lead-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
   color: var(--text-muted); margin-right: 6px; }
 .rtree-lead-more { color: var(--text-muted); }
 
 /* The step's place in the argument. Deliberately achromatic: a reasoning step carries no verdict,
    and the status glyph it replaced was lending it one. */
 .rtree-ord {
-  flex: none; width: 22px; height: 22px; border-radius: 6px;
+  flex: none; width: 22px; height: 22px; border-radius: var(--radius-input);
   display: flex; align-items: center; justify-content: center;
   background: var(--canvas); border: 1px solid var(--border-strong);
-  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
   color: var(--text-secondary); font-variant-numeric: tabular-nums;
 }
 
@@ -788,7 +738,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .rtree-sources { flex: none; background: none; border: none; padding: 0; cursor: pointer;
   position: relative;
   font-family: var(--font-sans); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
-  font-weight: 700; color: var(--text-muted); }
+  font-weight: 600; color: var(--text-muted); }
 .rtree-sources::after { content: ""; position: absolute; inset: -8px; }
 .rtree-sources:hover { color: var(--info); }
 
@@ -840,19 +790,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* The /check result only. Three findings arriving 90ms apart, on the same curve and the same
    spacing as the landing hero's three system rows — deliberately, so the tool's output rhymes with
    the argument the landing makes. One fact went in; three offices answered.
-   `backwards` for the same reason it is used in the hero: the cards are correct and present in the
-   DOM from the first frame, and the animation decorates a state that JavaScript never has to undo.
-   It plays on the first submission and not on a re-submission, because React reuses these nodes
-   rather than remounting them — which is the right trade: forcing a remount to replay a flourish
-   would disturb the focus management this screen is carefully built around. */
-@keyframes checkCardIn {
-  from { opacity: 0; transform: translate3d(0, 10px, 0); }
-}
-.check-cards > .domain-card { animation: checkCardIn 460ms var(--ease) backwards; }
-.check-cards > .domain-card:nth-child(2) { animation-delay: 90ms; }
-.check-cards > .domain-card:nth-child(3) { animation-delay: 180ms; }
+   Entrance animation removed for the visual-polish pass; the cards render in place immediately. */
 
-.domain-card { padding: var(--space-4); display: flex; flex-direction: column; }
+.domain-card {
+  padding: var(--space-5); display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card);
+}
 .domain-card-head { display: flex; align-items: flex-start; gap: var(--space-2); }
 .domain-card-head-text { min-width: 0; }
 /* The card title can carry a short qualifier capsule ("partial rules") beside it — see DomainCard. */
@@ -868,8 +811,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-top: 1px solid var(--border);
 }
 .domain-card-findings .domain-card-finding-row:first-child { border-top: none; padding-top: var(--space-1); }
-.domain-card-more { display: inline-block; margin-top: var(--space-3); font-size: 13px; font-weight: 500; color: var(--info); }
-.back-link { display: inline-block; font-size: 13px; font-weight: 500; color: var(--info); }
+.domain-card-more { display: inline-block; margin-top: var(--space-3); font-size: 13px; font-weight: 400; color: var(--info); }
+.back-link { display: inline-block; font-size: 13px; font-weight: 400; color: var(--info); }
 /* `.content` is a flex column, and a flex child is blockified and stretched — so the back link
    would span the full content width and hand a 13px label a page-wide click target, which reads
    as a broken row on hover and is a trap for anyone aiming at something below it. It takes the
@@ -887,9 +830,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    accent rule on the card. */
 .hero-fact { border-left: 3px solid var(--info); padding-left: var(--space-4); }
 .hero-fact-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
-  font-weight: 700; color: var(--info); margin-bottom: 2px; }
-.hero-fact-v { margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 500; color: var(--text); }
-.hero-fact-v strong { font-weight: 700; }
+  font-weight: 600; color: var(--info); margin-bottom: 2px; }
+.hero-fact-v { margin: 0; font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 400; color: var(--text); }
+.hero-fact-v strong { font-weight: 600; }
 
 /* One fact becoming two consequences, drawn once. Purely a connector: no colour of its own, so it
    cannot be mistaken for a status. */
@@ -904,7 +847,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    `min-width: auto` floors it at its content size, so `flex: 0 1 auto` alone would still refuse to
    shrink below 287px. Two components drew the same connector and only one of them had been fixed. */
 .hero-split-note { flex: 0 1 auto; min-width: 0; font-size: 11px; text-transform: uppercase;
-  letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); text-align: center; }
+  letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); text-align: center; }
 
 .hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
 
@@ -925,14 +868,14 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    label does not sit on either: a door is tinted by its own status, and on `.door.blocked`'s
    --blocked-soft the same token measures 4.39:1 — 0.11 short. One step up the same neutral ramp
    clears every door tint with margin and keeps the label in the ink family it already belonged to. */
-.door-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
+.door-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-secondary); }
 
 .hero-foot { margin: var(--space-4) 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
 
 @media (max-width: 640px) {
   .hero .doors { grid-template-columns: 1fr; }
-  .hero-fact-v { font-size: 22px; }
-  .hero-split-note { font-size: 10px; }
+  .hero-fact-v { font-size: 20px; }
+  .hero-split-note { font-size: 11px; }
 }
 /* A second `.door` declaration used to sit here, left over from the version of the hero that
    rendered `.k` / `.v` rows. It was pure cascade damage and it was invisible in review because the
@@ -964,7 +907,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .gauge-head .gauge-sub.warn { color: var(--status-warn-text); }
 .gauge-head .gauge-sub.blocked { color: var(--status-blocked); }
 
-.gauge-cap-note { margin-top: var(--space-2); font-size: 12px; color: var(--text-muted); }
+.gauge-cap-note { margin-top: var(--space-2); font-size: 13px; color: var(--text-muted); }
 
 /* Cliff / cap marker overlaid on a SegmentedProgress track. A sibling of .segprog so the
    track's own overflow never clips the label sitting above it. */
@@ -997,8 +940,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .opt-line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px var(--space-3); font-size: 13px; color: var(--text-secondary);
   padding-bottom: var(--space-2); border-bottom: 1px dashed var(--border); }
 .opt-line:last-child { padding-bottom: 0; border-bottom: none; }
-.opt-line .ol-what { font-weight: 500; color: var(--text); }
-.opt-line .ol-when { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+.opt-line .ol-what { font-weight: 400; color: var(--text); }
+.opt-line .ol-when { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
 .opt-line .ol-cost { margin-left: auto; white-space: nowrap; }
 .opt-line .ol-cost strong { color: var(--text); }
 
@@ -1008,7 +951,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cta {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
   background: var(--text); color: var(--text-inverse); border-radius: var(--radius-card);
-  padding: var(--space-4) var(--space-5); box-shadow: var(--shadow-hairline);
+  padding: var(--space-4) var(--space-5);
   transition: background var(--dur-fast) var(--ease);
 }
 .cta:hover { text-decoration: none; background: color-mix(in srgb, var(--text) 85%, black); }
@@ -1027,14 +970,14 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    because only one of them had a mobile step-down — so the two diverged exactly where the
    difference is most visible. Six screens use one and this uses the other; a reader moving between
    them was being told, quietly and wrongly, that these are different kinds of heading. */
-.moment h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-2); letter-spacing: -0.015em; font-weight: 600; }
-.moment-sub { margin: 0; color: var(--text-secondary); font-size: 14px; max-width: 46ch; }
+.moment h2 { font-size: 20px; line-height: 1.3; margin: 0 0 var(--space-2); letter-spacing: -0.015em; font-weight: 600; }
+.moment-sub { margin: 0; color: var(--text-secondary); font-size: 15px; max-width: 46ch; }
 .btn {
   flex: none; background: var(--info); color: var(--text-inverse); border: none; border-radius: var(--radius-input);
-  padding: 11px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
+  padding: 11px 18px; font-size: 15px; font-weight: 600; cursor: pointer;
   transition: background var(--dur-fast) var(--ease);
 }
-.btn:hover { background: color-mix(in srgb, var(--info) 85%, black); }
+.btn:hover { background: var(--sage-hover); }
 
 /* The frozen-scenario label. Quiet by design — it is a caption on the record, not a status. */
 /* Each gauge keeps its own heading when the pair sits side by side, so neither one inherits the
@@ -1046,9 +989,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* Stacked below 1280 — the second heading needs air from the card above it. */
 .gauge-pair > div + div { margin-top: var(--space-5); }
 
-.scenario-note { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.scenario-note { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 .scenario-note strong { color: var(--text-secondary); font-weight: 600; }
-.scenario-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+.scenario-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 .scenario-sep { margin: 0 6px; }
 
 .moment-count { margin: var(--space-5) 0 var(--space-2); display: flex; flex-direction: column; gap: var(--space-1); }
@@ -1058,11 +1001,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .conseq-item {
   display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-input); border: 1px solid var(--border); background: var(--surface);
-  opacity: 0; transform: translateY(12px);
 }
-.conseq-item.in { animation: conseqIn var(--dur-slow) var(--ease) forwards; }
-@keyframes conseqIn { to { opacity: 1; transform: translateY(0); } }
-@media (prefers-reduced-motion: reduce) { .conseq-item { opacity: 1; transform: none; } }
 
 /* The surprise, given the weight its content already carries. No new colour: the accent rule and
    the raised surface are the same devices the hero and the finding pages use for "this is the one
@@ -1076,20 +1015,20 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .ci-body { flex: 1; min-width: 0; }
 .ci-top { display: flex; align-items: center; gap: var(--space-2); margin-bottom: 4px; flex-wrap: wrap; }
-.ci-effect { font-size: 14px; color: var(--text); }
+.ci-effect { font-size: 15px; color: var(--text); }
 .ci-deadline { margin-top: var(--space-2); font-size: 13px; color: var(--text); }
-.ci-derivation { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
-.ci-miss { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-.ci-stale { margin-top: 6px; font-size: 12px; color: var(--status-blocked); font-weight: 600; }
+.ci-derivation { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+.ci-miss { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+.ci-stale { margin-top: 6px; font-size: 13px; color: var(--status-blocked); font-weight: 600; }
 .ci-cite { margin-top: var(--space-2); }
-.moment-foot { margin-top: var(--space-5); font-size: 14px; color: var(--text-secondary); }
+.moment-foot { margin-top: var(--space-5); font-size: 15px; color: var(--text-secondary); }
 
 /* =============================================================================
    Landing
    ============================================================================= */
 .landing { padding: var(--space-7) 44px; margin-top: var(--space-6); }
 .landing-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-4); }
-.landing-line { font-size: 32px; line-height: 1.22; margin: 0 0 var(--space-4); letter-spacing: -0.02em; max-width: 20ch; color: var(--text); font-weight: 600; }
+.landing-line { font-size: 32px; line-height: 1.2; margin: 0 0 var(--space-4); letter-spacing: -0.02em; max-width: 20ch; color: var(--text); font-weight: 600; }
 .landing-lede { margin: 0 0 var(--space-5); color: var(--text-secondary); font-size: 15px; max-width: 60ch; line-height: 1.55; }
 .landing-cta { display: inline-block; text-decoration: none; }
 .landing-cta:hover { text-decoration: none; }
@@ -1108,10 +1047,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-radius: var(--radius-card);
 }
 .ls-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
-  font-weight: 700; color: var(--text-muted); margin-bottom: var(--space-3); }
+  font-weight: 600; color: var(--text-muted); margin-bottom: var(--space-3); }
 .ls-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .ls-list li { display: flex; align-items: baseline; gap: var(--space-3); font-size: 13px; color: var(--text-secondary); }
-.ls-list strong { min-width: 2.2ch; font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+.ls-list strong { min-width: 2.2ch; font-size: 20px; font-weight: 600; letter-spacing: -0.02em;
   color: var(--text); font-variant-numeric: tabular-nums; }
 .ls-foot { margin: var(--space-3) 0 0; padding-top: var(--space-3); border-top: 1px dashed var(--border);
   font-size: 11px; line-height: 1.5; color: var(--text-muted); }
@@ -1129,37 +1068,37 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 @media (max-width: 519px) {
   .landing-cta-row .btn { flex: 1 1 100%; text-align: center; }
 }
-.landing-cta-alt { font-size: 14px; font-weight: 600; color: var(--info); }
+.landing-cta-alt { font-size: 15px; font-weight: 600; color: var(--info); }
 
 /* Says whose findings the hero below is showing. The shell badges every other screen that renders
    the example student; this is the one page with no shell, and the first thing anyone reads. */
 /* Needs air above it. With no top margin it sat flush against the bottom edge of the button row —
    touching it, at every width — which read as a rendering fault rather than as a caption on the
    panel below. It captions the instrument, so it belongs nearer to the instrument than to the CTAs. */
-.landing-proof-label { margin: var(--space-5) 0 var(--space-2); font-size: 12px; color: var(--text-muted); }
-.lpl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
+.landing-proof-label { margin: var(--space-5) 0 var(--space-2); font-size: 13px; color: var(--text-muted); }
+.lpl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-secondary); }
 .lpl-sep { margin: 0 6px; }
 /* Her name at the weight of a name, not of a caption — this is the only place in the product a
    person is introduced rather than labelled. */
-.lpl-who { font-size: 13px; font-weight: 700; color: var(--text); }
+.lpl-who { font-size: 13px; font-weight: 600; color: var(--text); }
 /* The introduction itself. Body size, not caption size: it is read, not scanned, and it is the
    one sentence on this page carrying a person rather than a claim. The number inside it is the
    only bold, so the eye lands on the margin before the prose. */
 .landing-proof-who {
   margin: 0 0 var(--space-4);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.55;
   color: var(--text-secondary);
   max-width: 74ch;
 }
-.landing-proof-who strong { color: var(--text); font-weight: 700; }
+.landing-proof-who strong { color: var(--text); font-weight: 600; }
 
 /* The footer is two site-level statements rather than a run of sections, so it keeps the same
    rhythm as the stack above it without introducing a new one. */
 .landing-footer { display: block; }
 
 .landing-refuse { padding: var(--space-7) 44px; margin-top: var(--space-4); }
-.landing-h2 { font-size: 24px; line-height: 1.25; margin: 0 0 var(--space-3); letter-spacing: -0.02em; font-weight: 600; color: var(--text); }
+.landing-h2 { font-size: 20px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.02em; font-weight: 600; color: var(--text); }
 .landing-guarantees { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: flex; flex-direction: column; }
 /* Three columns: the promise, what it means, and the thing itself. A grid rather than the flex row
    this was, because the artifact in the third column has to line up down the list — five atoms in a
@@ -1176,10 +1115,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   padding: var(--space-3) 0; border-top: 1px solid var(--border); }
 .landing-guarantees li:first-child { border-top: none; }
 .lg-k { font-size: 13px; font-weight: 600; color: var(--text); }
-.lg-v { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.lg-v { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
 .lg-demo { justify-self: end; display: inline-flex; align-items: center; }
 /* The deciding office, in the same treatment it carries on a finding row. */
-.lg-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+.lg-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
   color: var(--text-muted); white-space: nowrap; }
 
 /* Below 760 the three columns stop fitting: the citation alone runs to 30 characters. The label
@@ -1198,8 +1137,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .sh-fact { border-left: 3px solid var(--info); padding-left: var(--space-4); }
 .sh-fact-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
-  font-weight: 700; color: var(--info); margin-bottom: 2px; }
-.sh-fact-v { margin: 0; font-size: 17px; line-height: 1.35; color: var(--text); letter-spacing: -0.01em; }
+  font-weight: 600; color: var(--info); margin-bottom: 2px; }
+.sh-fact-v { margin: 0; font-size: 16px; line-height: 1.3; color: var(--text); letter-spacing: -0.01em; }
 .sh-fact-v strong { font-weight: 600; }
 
 /* The connector: a hairline, a caption, a hairline. The "one thing becomes three" beat, drawn
@@ -1217,21 +1156,17 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    `min-width: 0` is the half that is easy to omit: a flex item's default `min-width: auto` floors it
    at its content size, so `flex: 0 1 auto` alone would still refuse to shrink below 347px. */
 .sh-flow-note { flex: 0 1 auto; min-width: 0; font-size: 11px; text-transform: uppercase;
-  letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); text-align: center; }
+  letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); text-align: center; }
 
-/* `perspective` on the parent is what makes the settle below a real depth move rather than a scale:
-   the cards come forward along Z toward the reader, which is the difference between "three things
-   appeared" and "three things resolved". 1200px is shallow on purpose — enough to read as depth,
-   not enough to read as a trick. */
 .sh-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column;
-  gap: var(--space-2); perspective: 1200px; }
+  gap: var(--space-2); }
 .sh-row { display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4);
   background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border-strong);
   border-radius: var(--radius-input);
-  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
-/* Each system is its own plane, and lifting one says so. A finding, not a button — no cursor
-   change, no colour change, just the depth that distinguishes it from the two beside it. */
-.sh-row:hover { transform: translateZ(6px); box-shadow: 0 4px 14px rgba(16, 24, 40, 0.07); }
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+/* Hover lift removed for the visual-polish pass (no transform-based motion) — the border now
+   carries the same "this plane is distinct" signal. */
+.sh-row:hover { border-color: var(--border-strong); }
 .sh-row.blocked { border-left-color: var(--status-blocked); background: var(--blocked-soft); }
 .sh-row.warn { border-left-color: var(--status-warn); background: var(--warn-soft); }
 .sh-row.done { border-left-color: var(--status-done); background: var(--done-soft); }
@@ -1241,7 +1176,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sh-row-system { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
 .sh-row-finding { margin: var(--space-1) 0 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
 .sh-row-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); margin-top: var(--space-2); }
-.sh-row-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.sh-row-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); }
 
 /* The refusal, beneath the three findings. Separated by a rule rather than made into a fourth
    card, because it is a different KIND of statement from the three above it — those are answers,
@@ -1249,28 +1184,30 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .sh-refusal { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border-strong); }
 .sh-refusal-head { display: flex; align-items: baseline; justify-content: space-between;
   flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-3); }
-.sh-refusal-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+.sh-refusal-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
   color: var(--text-muted); }
 /* Same inset-pseudo hit area as `.rtree-toggle` and `.rtree-sources`. Drawn at 13px and measured
    161x20 — under the 24px WCAG 2.5.8 minimum, and this one is a standalone call to action at the
    end of a card rather than a link inside a sentence, so the inline exception does not cover it. */
 .sh-refusal-go { font-size: 13px; font-weight: 600; color: var(--info); white-space: nowrap;
   position: relative; }
-.sh-refusal-go::after { content: ""; position: absolute; inset: -6px -4px; }
+.sh-refusal-go::before { content: ""; position: absolute; inset: -6px -4px; }
+/* Decoration, not part of the accessible name — see the equivalent comment on `.domain-card-more`. */
+.sh-refusal-go::after { content: " →"; }
 /* 74ch is the measure this stylesheet already uses most often for running text. Without it these
    two paragraphs ran the full width of the systems-hero card — about 153 characters per line, more
    than twice the paragraph directly above them, on the first screen a reader sees. */
-.sh-refusal-why { margin: var(--space-3) 0 0; font-size: 12px; line-height: 1.55; color: var(--text-secondary); max-width: 74ch; }
+.sh-refusal-why { margin: var(--space-3) 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); max-width: 74ch; }
 @media (max-width: 480px) { .sh-refusal-go { white-space: normal; } }
 
-.sh-foot { margin: var(--space-4) 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; max-width: 74ch; }
+.sh-foot { margin: var(--space-4) 0 0; font-size: 13px; color: var(--text-muted); line-height: 1.5; max-width: 74ch; }
 
 @media (max-width: 640px) {
   .landing-refuse { padding: var(--space-5); }
   .landing-h2 { font-size: 20px; }
   .lg-k { min-width: 0; }
   .sh { padding: var(--space-4); }
-  .sh-flow-note { font-size: 10px; }
+  .sh-flow-note { font-size: 11px; }
 }
 
 /* Wrapping alone stops the overflow, but it does it by letting the caption eat the whole row and
@@ -1285,13 +1222,13 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 
 .landing-brand { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: var(--space-2); }
-.landing-brand .logo { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; color: var(--text); }
+.landing-brand .logo { font-weight: 600; font-size: 16px; letter-spacing: -0.02em; color: var(--text); }
 .landing-brand .dot { color: var(--info); }
 
 /* =============================================================================
    Footer
    ============================================================================= */
-.foot { margin-top: var(--space-6); font-size: 12px; color: var(--text-muted); text-align: center; padding-bottom: var(--space-5); }
+.foot { margin-top: var(--space-6); font-size: 13px; color: var(--text-muted); text-align: center; padding-bottom: var(--space-5); }
 .foot .privacy { color: var(--status-done-text); font-weight: 600; }
 
 /* =============================================================================
@@ -1300,11 +1237,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .finding { padding: var(--space-5); }
 .finding-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .finding-headline-row { display: flex; align-items: flex-start; gap: var(--space-3); }
-.finding-headline { font-size: 22px; line-height: 1.3; margin: 0; letter-spacing: -0.015em; font-weight: 600; color: var(--text); }
+.finding-headline { font-size: 20px; line-height: 1.3; margin: 0; letter-spacing: -0.015em; font-weight: 600; color: var(--text); }
 .finding .capsule { flex: none; margin-top: 4px; }
 
 .citation-block { background: var(--canvas); border: 1px solid var(--border); border-left: 3px solid var(--info); border-radius: var(--radius-input); padding: var(--space-4); }
-.citation-quote { margin: 0 0 var(--space-2); font-size: 14px; color: var(--text); font-style: italic; line-height: 1.55; }
+.citation-quote { margin: 0 0 var(--space-2); font-size: 15px; color: var(--text); font-style: italic; line-height: 1.55; }
 .citation-meta { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
 /* Same inset-pseudo hit area as `.rtree-toggle`, `.rtree-sources` and `.sh-refusal-go`. "Read the
    source" is the sole content of its own row rather than a link inside a sentence, so WCAG 2.5.8's
@@ -1321,10 +1258,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    that one leaves for the agency's website, this one stays inside the product and shows the data. */
 .citation-pack { display: inline-block; margin-top: var(--space-2); padding-top: var(--space-2);
   border-top: 1px dashed var(--border); font-size: 13px; font-weight: 600; }
-.citation-pack code { font-family: var(--font-mono); font-size: 12px; }
+.citation-pack code { font-family: var(--font-mono); font-size: 13px; }
 
 /* Names which finding is which when /check shows both. */
-.reasoning-sub { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+.reasoning-sub { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--text-muted); margin: 0 0 var(--space-2); }
 
 /* How the reading was routed, above the answer it produced. A statement about PathWise's own
@@ -1333,15 +1270,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .routing { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3);
   padding: var(--space-3) var(--space-4); background: var(--canvas);
   border: 1px solid var(--border); border-radius: var(--radius-input); }
-.routing-k { flex: none; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
-  font-weight: 700; color: var(--text-muted); }
+.routing-k { flex: none; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+  font-weight: 600; color: var(--text-muted); }
 .routing-v { flex: 1 1 240px; min-width: 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
 .routing-v strong { color: var(--text); font-weight: 600; }
 .routing-v .cite { margin-right: 4px; }
 
 .unknowns { list-style: none; padding: 0; margin: var(--space-2) 0 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .unknown-item { background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
-.unknown-what { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.unknown-what { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 /* The 404 offers its three destinations in this list, and there they are whole standalone controls
    rather than links inside a sentence — measured 143x19, 155x19 and 238x19 on a phone, under the
    24px WCAG 2.5.8 minimum. Everywhere else `.unknown-what` holds plain text (an open question the
@@ -1349,7 +1286,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .unknown-what > a { position: relative; }
 .unknown-what > a::before { content: ""; position: absolute; inset: -4px -6px; }
 .unknown-why, .unknown-how { font-size: 13px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
-.unknown-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
+.unknown-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--status-warn-text); }
 
 .finding-foot { margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-secondary); }
 
@@ -1358,7 +1295,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    in FindingDetail.tsx for the mis-scoped warning that made that necessary. */
 .volatility { margin-top: var(--space-3); background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: var(--radius-input);
   padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
-.volatility-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
+.volatility-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--status-warn-text); }
 .volatility-sep { margin: 0 6px; opacity: 0.55; }
 .volatility-v { font-size: 13px; line-height: 1.5; color: var(--text); }
 
@@ -1370,7 +1307,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .field { display: flex; flex-direction: column; gap: 6px; flex: 1 1 180px; }
 .field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--text-muted); }
 .field input, .field select {
-  font-family: var(--font-sans); font-size: 14px; color: var(--text); background: var(--surface);
+  font-family: var(--font-sans); font-size: 15px; color: var(--text); background: var(--surface);
   border: 1px solid var(--border-strong); border-radius: var(--radius-input); padding: 9px 11px; width: 100%;
 }
 .field input:focus, .field select:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px color-mix(in srgb, var(--info) 15%, transparent); }
@@ -1416,7 +1353,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   color: var(--text-secondary);
   max-width: 78ch;
 }
-.check-lifetime-k { color: var(--text); font-weight: 650; }
+.check-lifetime-k { color: var(--text); font-weight: 600; }
 .check-lifetime .cl-lede { margin: 0; }
 /* The elaboration, folded. `list-style` is reset on both the modern and the WebKit pseudo-element
    because Safari still draws its own triangle from the second one, and two markers on one summary
@@ -1440,7 +1377,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   display: inline-block;
   font-size: 15px;
   line-height: 1;
-  transition: transform var(--motion-fast, 140ms) var(--motion-ease, ease);
+  transition: transform var(--dur-fast) var(--ease);
 }
 .cl-more[open] > summary::before { transform: rotate(90deg); }
 .cl-more > p { margin: var(--space-2) 0 0; }
@@ -1465,7 +1402,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .check-clear:hover { background: var(--canvas); color: var(--text); }
 /* A note under a field row — explains what an optional input does before it is filled in. */
-.field-note { margin: var(--space-3) 0 0; font-size: 12px; color: var(--text-muted);
+.field-note { margin: var(--space-3) 0 0; font-size: 13px; color: var(--text-muted);
   line-height: 1.5; max-width: 74ch; }
 
 /* Now stated AFTER the form rather than in front of it — a caption on the answer, not a
@@ -1487,8 +1424,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    ============================================================================= */
 .jintro { padding: var(--space-5); }
 .jintro-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
-.jintro h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; }
-.jintro p { margin: 0; color: var(--text-secondary); font-size: 14px; max-width: 62ch; line-height: 1.55; }
+.jintro h2 { font-size: 20px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; }
+.jintro p { margin: 0; color: var(--text-secondary); font-size: 15px; max-width: 62ch; line-height: 1.55; }
 /* The stakes line under a jintro heading. One notch above the panel's body copy in colour and
    weight, because it is the sentence the drawing below is worth reading FOR — but not a status
    and not a warning, so it takes no chroma from the four status colours. */
@@ -1513,7 +1450,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .jgroup-mark { position: absolute; left: 10px; top: 34px; width: 12px; height: 12px; border-radius: 3px;
   background: var(--canvas); border: 2px solid var(--text-muted); transform: translateY(-50%) rotate(45deg); }
 .jgroup-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
-.jgroup-meta { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+.jgroup-meta { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
 
 .jlist { list-style: none; padding: 0; margin: 0; }
 .jitem { position: relative; margin-bottom: var(--space-2); }
@@ -1525,7 +1462,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .jdot.idle { background: var(--surface); border: 2px dashed var(--text-muted); }
 
 .jcard { margin-left: 46px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-card); box-shadow: var(--shadow-hairline);
+  border-radius: var(--radius-card);
   transition: border-color var(--dur-fast) var(--ease); }
 .jcard:hover { border-color: var(--border-strong); }
 .jitem.open .jcard { border-color: var(--border-strong); }
@@ -1535,8 +1472,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   font-family: var(--font-sans); color: var(--text); padding: var(--space-3) var(--space-4); cursor: pointer; border-radius: var(--radius-card); }
 .jrow:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
 .jrow-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); }
-.jdate { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
-.jtitle { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--text); }
+.jdate { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+.jtitle { font-size: 15px; font-weight: 400; letter-spacing: -0.01em; color: var(--text); }
 .jinst { font-size: 13px; color: var(--text-muted); }
 .jchev {
   margin-left: auto; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
@@ -1551,29 +1488,29 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .jfacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-4);
   padding-top: var(--space-3); border-top: 1px dashed var(--border); }
 @media (max-width: 640px) { .jfacts { grid-template-columns: 1fr; } }
-.jfact .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
-.jfact .v { font-size: 14px; color: var(--text); margin-top: 4px; }
+.jfact .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
+.jfact .v { font-size: 15px; color: var(--text); margin-top: 4px; }
 .jsub { color: var(--text-secondary); font-size: 13px; }
 
 .jev-block { margin-top: var(--space-4); }
 .jev { list-style: none; padding: 0; margin: 7px 0 0; display: flex; flex-wrap: wrap; gap: 7px; }
-.jev li { font-size: 12px; color: var(--text); background: var(--canvas); border: 1px solid var(--border);
+.jev li { font-size: 13px; color: var(--text); background: var(--canvas); border: 1px solid var(--border);
   border-radius: var(--radius-input); padding: 3px 9px; }
 .jev-id { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
-.jev-note { font-size: 12px; color: var(--text-muted); margin-top: 7px; }
+.jev-note { font-size: 13px; color: var(--text-muted); margin-top: 7px; }
 
 .jgap { margin-top: var(--space-4); background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-3); }
-.jgap .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+.jgap .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
 .jgap .v { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
 
 .jwhy { margin-top: var(--space-4); background: var(--callout-bg); border: 1px solid var(--callout-border);
   border-radius: var(--radius-input); padding: var(--space-3); }
-.jwhy .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); font-weight: 700; }
+.jwhy .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); font-weight: 600; }
 .jwhy .v { font-size: 13px; color: var(--text); margin-top: 4px; }
 
 @media (max-width: 640px) {
   .jintro { padding: var(--space-4); }
-  .jintro h2, .moment h2 { font-size: 19px; }
+  .jintro h2, .moment h2 { font-size: 16px; }
   /* The chevron stays. It was hidden here to save width, and what it actually saved was the only
      visible sign that a timeline row opens — on the screen where opening a row is how a reader
      reaches the evidence beneath an event. A phone reader got a list of dates that looked inert.
@@ -1581,10 +1518,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .jchev { margin-top: 2px; }
 }
 
-.statuschip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+.statuschip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 400; color: var(--text-secondary); white-space: nowrap; }
 
 .memorystrip { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
-  padding: var(--space-3) var(--space-4); color: var(--text-secondary); font-size: 14px;
+  padding: var(--space-3) var(--space-4); color: var(--text-secondary); font-size: 15px;
   transition: border-color var(--dur-fast) var(--ease); }
 .memorystrip:hover { text-decoration: none; border-color: var(--border-strong); }
 
@@ -1614,7 +1551,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 .explore-row:first-child { border-top: none; }
 .explore-row:hover { text-decoration: none; background: var(--info-soft); }
-.explore-k { font-size: 14px; font-weight: 600; color: var(--text); }
+.explore-k { font-size: 15px; font-weight: 600; color: var(--text); }
 /* Sits under the row label on the one route that changes student. Quiet, because it is a caveat
    on the destination rather than part of its name. */
 .explore-who {
@@ -1655,7 +1592,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    things that say "external authority" in this product. Dashed underline instead, which is the
    vocabulary already used for "not established". */
 .cite-self {
-  font-size: 12px;
+  font-size: 13px;
   font-style: italic;
   color: var(--text-muted);
   border-bottom: 1px dashed var(--border-strong);
@@ -1685,11 +1622,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .landing-privacy {
   margin: var(--space-5) 0 0;
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.55;
   color: var(--text-secondary);
   max-width: 78ch;
 }
-.landing-privacy strong { color: var(--text); font-weight: 650; }
+.landing-privacy strong { color: var(--text); font-weight: 600; }
 
 /* ---- Dashboard → next steps ---- */
 .nextcard {
@@ -1714,7 +1651,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .rem { border-left: 3px solid var(--info); padding: var(--space-5); }
 .rem-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
-.rem-v { font-size: 18px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-1) 0 0; max-width: 44ch; color: var(--text); }
+.rem-v { font-size: 16px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-1) 0 0; max-width: 44ch; color: var(--text); }
 .rem-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-4); }
 /* Confirmation of a purely local action — done-green, because nothing left the device. */
 .rem-said:not(:empty) { font-size: 13px; color: var(--status-done-text); font-weight: 600; max-width: 40ch; }
@@ -1724,14 +1661,14 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .rem-note strong { color: var(--text); font-weight: 600; }
 .rem-inline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); }
 .rem-inline .rem-hint { font-size: 13px; color: var(--text-muted); max-width: 52ch; }
-@media (max-width: 640px) { .rem { padding: var(--space-4); } .rem-v { font-size: 17px; } }
+@media (max-width: 640px) { .rem { padding: var(--space-4); } .rem-v { font-size: 16px; } }
 
 /* ---- The aid deadline: three dates, one that binds ---- */
 .dl { border-left: 3px solid var(--info); padding: var(--space-5); }
 .dl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
 .dl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
-.dl-v { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-top: var(--space-1); color: var(--text); }
-.dl-v .dl-which { font-size: 14px; font-weight: 400; color: var(--text-muted); }
+.dl-v { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin-top: var(--space-1); color: var(--text); }
+.dl-v .dl-which { font-size: 15px; font-weight: 400; color: var(--text-muted); }
 .dl-rows {
   list-style: none; padding: var(--space-4) 0 0; margin: var(--space-4) 0 0;
   border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: var(--space-2);
@@ -1743,17 +1680,17 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .dl-row.binding { background: var(--info-soft); border-color: var(--info-border); }
 .dl-row.unknown { background: transparent; border-style: dashed; }
 .dl-date { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); white-space: nowrap; }
-.dl-row.binding .dl-date { color: var(--text); font-weight: 700; }
-.dl-label { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.dl-row.binding .dl-date { color: var(--text); font-weight: 600; }
+.dl-label { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 15px; font-weight: 600; color: var(--text); }
 /* Word, not colour alone — the binding row says so in text as well as in tint. */
 .dl-flag {
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--info); background: var(--surface); border: 1px solid var(--info-border);
   border-radius: var(--radius-pill); padding: 1px var(--space-2);
 }
 .dl-note { grid-column: 2; font-size: 13px; color: var(--text-secondary); }
-.dl-consequence { margin: var(--space-4) 0 0; padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 14px; color: var(--text); }
-.dl-foot { margin-top: var(--space-2); font-size: 12px; color: var(--text-muted); }
+.dl-consequence { margin: var(--space-4) 0 0; padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 15px; color: var(--text); }
+.dl-foot { margin-top: var(--space-2); font-size: 13px; color: var(--text-muted); }
 @media (max-width: 640px) {
   .dl-row { grid-template-columns: 1fr; }
   .dl-note { grid-column: 1; }
@@ -1765,7 +1702,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .nsitem { position: relative; padding-left: 46px; }
 .nsnum {
   position: absolute; left: 0; top: var(--space-4); width: 30px; height: 30px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600;
   box-shadow: 0 0 0 4px var(--canvas);
 }
 /* The number carries the same four-state colour as the chip, and never carries it alone —
@@ -1786,15 +1723,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .nslist { gap: var(--space-2); }
 .nsnum { top: var(--space-3); }
 .nshead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
-.nsdomain { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
-.nstitle { font-size: 17px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 44ch; color: var(--text); }
-.nswhy { margin: 0; font-size: 14px; color: var(--text-secondary); max-width: 66ch; line-height: 1.55; }
+.nsdomain { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); }
+.nstitle { font-size: 16px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 44ch; color: var(--text); }
+.nswhy { margin: 0; font-size: 15px; color: var(--text-secondary); max-width: 66ch; line-height: 1.55; }
 
 /* The collapsed card's one answer to "do I have to care about this today?". */
-.nswhen { margin-top: var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.nswhen { margin-top: var(--space-2); font-size: 15px; font-weight: 600; color: var(--text); }
 .nswhen.warn { color: var(--status-warn-text); }
 .nswhen.blocked { color: var(--status-blocked); }
-.nswhen.unknown { color: var(--text-secondary); font-weight: 500; }
+.nswhen.unknown { color: var(--text-secondary); font-weight: 400; }
 
 .nsmore { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3);
   background: none; border: none; padding: var(--space-1) 0; cursor: pointer;
@@ -1809,7 +1746,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* A step that exists so the record stays complete, not so the student does something today. Muted
    rather than coloured: it is not a status, and chroma in this product means status. */
 .nsitem.informational .nscard { background: transparent; box-shadow: none; border-style: dashed; }
-.nsitem.informational .nstitle { font-weight: 500; color: var(--text-secondary); }
+.nsitem.informational .nstitle { font-weight: 400; color: var(--text-secondary); }
 
 /* The deadline block. Never a bare date: the student's own date first, the office's date and the
    lead time that separates them second, the consequence last. */
@@ -1818,22 +1755,22 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .nsdl.warn { background: var(--warn-soft); border-color: var(--warn-border); }
 .nsdl.blocked { background: var(--blocked-soft); border-color: var(--blocked-border); }
 .nsdl.idle { background: var(--idle-soft); border-color: var(--border); }
-.nsdl-do { font-size: 14px; font-weight: 600; color: var(--text); }
+.nsdl-do { font-size: 15px; font-weight: 600; color: var(--text); }
 .nsdl-hard { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-1); }
 .nsdl-miss { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px dashed var(--border-strong); }
-.nsdl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); margin-right: var(--space-1); }
+.nsdl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); margin-right: var(--space-1); }
 /* The uncertainty pattern's "what you can do" line, on the open questions. */
 .nsresolve { margin-top: var(--space-3); font-size: 13px; color: var(--text); background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-input); padding: var(--space-3); }
-.nsfoot { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); font-size: 12px; color: var(--text-muted); }
+.nsfoot { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-muted); }
 
 /* ---- What changed? — the same engine, run twice ---- */
 .wc-gap { border-left: 3px solid var(--text-muted); padding: var(--space-5); transition: border-left-color var(--dur-slow) var(--ease); }
 .wc-gap.done { border-left-color: var(--status-done); }
 .wc-gap-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-5); flex-wrap: wrap; }
-.wc-gap-title { font-size: 18px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 40ch; color: var(--text); }
+.wc-gap-title { font-size: 16px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 40ch; color: var(--text); }
 .wc-gap-rows { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-5); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.wc-gap-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; padding-top: 3px; white-space: nowrap; }
-.wc-gap-v { font-size: 14px; color: var(--text); }
+.wc-gap-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; padding-top: 3px; white-space: nowrap; }
+.wc-gap-v { font-size: 15px; color: var(--text); }
 .wc-undo { background: none; border: none; padding: 0; cursor: pointer; font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--info); }
 @media (max-width: 640px) {
   .wc-gap { padding: var(--space-4); }
@@ -1851,11 +1788,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-panel { padding: var(--space-4) var(--space-5); }
 /* Waiting on evidence: present, but visibly not yet computed. */
 .wc-panel.pending { background: transparent; border-style: dashed; box-shadow: none; }
-.wc-when { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.wc-when { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); }
 .wc-panel-head { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin: var(--space-2) 0 var(--space-3); }
 .wc-result { font-size: 15px; color: var(--text); }
-.wc-sub { font-size: 12px; color: var(--text-muted); }
-.wc-pending-note { font-size: 14px; color: var(--text-muted); margin-top: var(--space-3); max-width: 36ch; }
+.wc-sub { font-size: 13px; color: var(--text-muted); }
+.wc-pending-note { font-size: 15px; color: var(--text-muted); margin-top: var(--space-3); max-width: 36ch; }
 /* The two readings sit side by side down to a very narrow viewport, because the comparison IS the
    finding: two numbers from one engine, on opposite sides of one cliff. Stacking them turns a
    comparison into a list. */
@@ -1866,11 +1803,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-reading.attention { border-left-color: var(--status-warn); background: var(--warn-soft); border-color: var(--warn-border); }
 .wc-reading.blocked { border-left-color: var(--status-blocked); background: var(--blocked-soft); border-color: var(--blocked-border); }
 .wc-reading.verified { border-left-color: var(--status-done); background: var(--done-soft); border-color: var(--done-border); }
-.wc-reading-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-.wc-reading-n { margin-top: var(--space-2); font-size: 30px; line-height: 1.05; font-weight: 600;
+.wc-reading-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.wc-reading-n { margin-top: var(--space-2); font-size: 26px; line-height: 1.15; font-weight: 600;
   letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; }
-.wc-reading-of { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-muted); }
-.wc-reading-v { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1); line-height: 1.4; }
+.wc-reading-of { font-size: 15px; font-weight: 400; letter-spacing: -0.01em; color: var(--text-muted); }
+.wc-reading-v { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-1); line-height: 1.4; }
 @media (max-width: 400px) { .wc-readings { grid-template-columns: 1fr; } }
 
 /* The two ways into the evidence flow, at equal weight. */
@@ -1880,11 +1817,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-fact strong { color: var(--text); font-weight: 600; white-space: nowrap; }
 .wc-changes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .wc-change { display: flex; gap: var(--space-3); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
-.wc-change-k { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
+.wc-change-k { display: block; font-size: 15px; font-weight: 600; color: var(--text); }
 .wc-change-v { display: block; font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
 .wc-why { margin-top: var(--space-4); background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-card); padding: var(--space-4) var(--space-5); }
 .wc-why-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
-.wc-why-v { font-size: 14px; color: var(--text); margin-top: var(--space-2); line-height: 1.55; }
+.wc-why-v { font-size: 15px; color: var(--text); margin-top: var(--space-2); line-height: 1.55; }
 .wc-fade { display: flex; flex-direction: column; gap: var(--space-4); }
 
 /* =============================================================================
@@ -1927,11 +1864,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   padding: var(--space-6);
-  box-shadow: var(--shadow-hairline);
 }
 .ub-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
 .ub-verdict {
-  font-size: 20px; font-weight: 650; letter-spacing: -0.015em; color: var(--text-muted);
+  font-size: 20px; font-weight: 600; letter-spacing: -0.015em; color: var(--text-muted);
   transition: color var(--dur-slow) var(--ease) 240ms;
 }
 /* The settled verdict takes the colour the ENGINE reached, not the colour "settled" suggests.
@@ -1944,7 +1880,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .ub--settled.ub--blocked .ub-verdict { color: var(--status-blocked); }
 .ub--settled.ub--idle .ub-verdict { color: var(--text-muted); }
 .ub-range { font-size: 15px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-.ub-range strong { color: var(--text); font-weight: 700; }
+.ub-range strong { color: var(--text); font-weight: 600; }
 
 /* The track is EMPTY space, and has to look it. It was painted --canvas, which is the same value the
    page behind it uses — and the span sat on it in --idle-soft, which computes to #f3f4f5 against the
@@ -1965,7 +1901,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .ub-cliff { position: absolute; top: -18px; bottom: -18px; width: 3px; background: var(--status-blocked); border-radius: 2px; }
 .ub-cliff-lbl {
   position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--status-blocked); white-space: nowrap;
 }
 
@@ -2024,26 +1960,23 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   background: var(--text-muted);
 }
 /* The two readings are the finding. At 15px they were smaller than the body text explaining them. */
-.ub-tick-n { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+.ub-tick-n { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
 .ub-tick--lo { transform: translateX(-1px); }
 .ub-tick--lo::before { left: 0; }
 .ub-tick--hi { text-align: right; transform: translateX(1px); }
 .ub-tick--hi::before { right: 0; }
 
 /* The consequence of there being one answer: the distance left before the line. */
-.ub-margin { position: absolute; top: 50%; height: 1px; background: var(--border-strong);
-  animation: ubMarginIn 200ms var(--ease) 420ms backwards; }
+.ub-margin { position: absolute; top: 50%; height: 1px; background: var(--border-strong); }
 /* Below the endpoint tick, not on top of it. At 6px this label and the "342" tick were drawn into
    the same 80px of space and struck through each other — visible only in a screenshot, which is
    where it was found. */
 .ub-margin-lbl {
   /* Clears the taller endpoint numerals below the rail. */
   position: absolute; top: 50px; right: 0;
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--text-muted); white-space: nowrap;
 }
-@keyframes ubMarginIn { from { opacity: 0; } }
-
 /* `.ub-ends` and its parts were removed with the legend they styled — see UncertaintyBand.tsx. It
    repeated the reading cards' own captions verbatim one screen apart, and collapsed to a restatement
    of this component's header once settled. */
@@ -2061,10 +1994,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    numbers were being drawn hard against the card's bottom border. */
 .ub--compact .ub-track { height: 12px; margin: 26px 0 30px; }
 .ub--compact .ub-head { align-items: center; }
-.ub--compact .ub-verdict { font-size: 14px; }
+.ub--compact .ub-verdict { font-size: 15px; }
 .ub--compact .ub-range { font-size: 13px; }
 .ub--compact .ub-cliff { top: -11px; bottom: -11px; width: 2px; }
-.ub--compact .ub-cliff-lbl { bottom: calc(100% + 4px); font-size: 10px; letter-spacing: 0.05em; }
+.ub--compact .ub-cliff-lbl { bottom: calc(100% + 4px); font-size: 11px; letter-spacing: 0.05em; }
 .ub--compact .ub-span {
   top: -3px; bottom: -3px;
   background-image: repeating-linear-gradient(45deg, transparent 0 3px, var(--border-strong) 3px 6px);
@@ -2082,7 +2015,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .ub { padding: var(--space-4); }
   .ub-track { height: 22px; margin: 38px 0 58px; }
   .ub-tick-n { font-size: 20px; }
-  .ub-verdict { font-size: 17px; }
+  .ub-verdict { font-size: 16px; }
   .ub-cliff { top: -15px; bottom: -15px; }
 }
 
@@ -2098,28 +2031,20 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .wc-ev-read { display: flex; flex-direction: column; gap: var(--space-2); }
 .wc-ev-file { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-3); }
 .wc-ev-name { font-family: var(--font-mono); font-size: 13px; color: var(--text); word-break: break-all; }
-.wc-ev-sample { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
+.wc-ev-sample { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
 .wc-ev-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-2) var(--space-4); margin: 0; }
 .wc-ev-facts > div { min-width: 0; }
-/* Measurements returning, one after another — not prose appearing. Each of these is a fact PathWise
-   established by passing over the file's bytes, and 60ms between them is enough to read as a
-   sequence of readings being taken rather than a block of text being shown. Short, because there is
-   nothing to wait for: the read has already happened by the time this renders. */
-@keyframes evFactIn { from { opacity: 0; transform: translate3d(0, 4px, 0); } }
-.wc-ev-facts > div { animation: evFactIn 320ms var(--ease) backwards; }
-.wc-ev-facts > div:nth-child(2) { animation-delay: 60ms; }
-.wc-ev-facts > div:nth-child(3) { animation-delay: 120ms; }
-.wc-ev-facts > div:nth-child(4) { animation-delay: 180ms; }
-.wc-ev-facts dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+/* Entrance animation removed for the visual-polish pass; the facts render in place immediately. */
+.wc-ev-facts dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; }
 .wc-ev-facts dd { margin: 2px 0 0; font-size: 13px; color: var(--text); }
 .wc-ev-hash { grid-column: 1 / -1; }
 .wc-ev-hash dd { font-family: var(--font-mono); word-break: break-all; }
-.wc-ev-note { font-size: 12px; color: var(--text-muted); margin: 0; max-width: 62ch; line-height: 1.5; }
+.wc-ev-note { font-size: 13px; color: var(--text-muted); margin: 0; max-width: 62ch; line-height: 1.5; }
 
 /* The attestation. Its own bordered block because it is the one claim on this screen that comes
    from the student rather than from a rule or a measurement. */
 .wc-ev-attest { display: flex; flex-direction: column; gap: var(--space-3); width: 100%; background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-input); padding: var(--space-4); }
-.wc-ev-check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: 14px; color: var(--text); cursor: pointer; }
+.wc-ev-check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: 15px; color: var(--text); cursor: pointer; }
 .wc-ev-check input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--info); cursor: pointer; }
 .wc-ev-attest-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); }
 .wc-ev-attest .btn:disabled { opacity: 0.45; cursor: default; }
@@ -2137,9 +2062,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   gap: var(--space-3) var(--space-5);
 }
 .cov-counts--lead .cov-count { font-size: 15px; }
-.cov-counts--lead .cov-count strong { font-size: 22px; }
+.cov-counts--lead .cov-count strong { font-size: 20px; }
 .cov-count { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; color: var(--text-secondary); }
-.cov-count strong { font-size: 16px; font-weight: 700; color: var(--text); }
+.cov-count strong { font-size: 16px; font-weight: 600; color: var(--text); }
 .cov-sep { color: var(--border-strong); }
 
 .cov-legend { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
@@ -2149,7 +2074,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cov-legend-k.done { color: var(--status-done-text); }
 .cov-legend-k.warn { color: var(--status-warn-text); }
 .cov-legend-k.idle { color: var(--text-muted); }
-.cov-legend-v { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1); }
+.cov-legend-v { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-1); }
 
 /* The map itself — compact, quiet, one tile per jurisdiction. */
 /* Wider tiles than before: each one now carries two domain badges rather than one word, and a
@@ -2194,14 +2119,14 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .cov-detail { padding: 0 var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
 .cov-detail-row { display: flex; flex-direction: column; gap: 2px; padding-top: var(--space-2); border-top: 1px dashed var(--border); }
-.cov-detail-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
-.cov-detail-v { font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
+.cov-detail-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); }
+.cov-detail-v { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
 .cov-detail-v strong { color: var(--text); font-weight: 600; }
 .cov-detail-v a { display: inline-block; margin-top: 2px; }
 .cov-source { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
 /* Deliberately quiet and deliberately present: the difference between a page PathWise read and a
    host that merely answered is small, and rounding it off is how a product starts overclaiming. */
-.cov-check { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+.cov-check { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
   color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-pill);
   padding: 1px 6px; cursor: help; }
 .cov-answers { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--space-2); }
@@ -2210,30 +2135,30 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .rp-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .rp-tab {
-  font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); background: var(--surface);
+  font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); background: var(--surface);
   border: 1px solid var(--border); border-radius: var(--radius-pill); padding: var(--space-1) var(--space-3);
   cursor: pointer; transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
 .rp-tab:hover { border-color: var(--border-strong); color: var(--text); }
 .rp-tab:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
-.rp-tab.active { background: var(--info-soft); border-color: var(--info-border); color: var(--info); font-weight: 700; }
+.rp-tab.active { background: var(--info-soft); border-color: var(--info-border); color: var(--info); font-weight: 600; }
 .rp-panel { padding: var(--space-5); }
-.rp-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--text); }
+.rp-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--text); }
 .rp-blurb { margin: var(--space-1) 0 0; font-size: 13px; color: var(--text-secondary); max-width: 66ch; }
 .rp-meta { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-5); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.rp-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; padding-top: 2px; white-space: nowrap; }
+.rp-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 600; padding-top: 2px; white-space: nowrap; }
 .rp-v { font-size: 13px; color: var(--text); overflow-wrap: anywhere; }
 .rp-v.absent { color: var(--text-muted); }
 @media (max-width: 640px) { .rp-meta { grid-template-columns: 1fr; gap: 2px; } .rp-k { padding-top: var(--space-2); } }
-.rp-filebar { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin-top: var(--space-4); font-size: 12px; color: var(--text-muted); }
+.rp-filebar { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin-top: var(--space-4); font-size: 13px; color: var(--text-muted); }
 .rp-filename { font-family: var(--font-mono); color: var(--text-secondary); overflow-wrap: anywhere; }
 .rp-json {
   margin: var(--space-2) 0 0; max-height: 440px; overflow: auto; background: var(--canvas);
   border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-4);
-  font-family: var(--font-mono); font-size: 12px; line-height: 1.6; color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 13px; line-height: 1.55; color: var(--text-secondary);
   white-space: pre; tab-size: 2;
 }
-.rp-frame { margin: 0 0 var(--space-3); font-size: 14px; color: var(--text); }
+.rp-frame { margin: 0 0 var(--space-3); font-size: 15px; color: var(--text); }
 
 /* ---- Engine B past the gate — the worked domicile analysis inside a finding ---- */
 .dm { margin-top: var(--space-1); }
@@ -2245,18 +2170,18 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .dm-card-top { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
 .dm-fact { font-size: 13px; color: var(--text-secondary); }
 .dm-sub { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); }
-.dm-sub-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.dm-sub-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 15px; font-weight: 600; color: var(--text); }
 .dm-sub-v { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-1); }
 .dm-sub .dm-tags { margin-top: var(--space-2); }
 .dm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .dm-tag {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--info); background: var(--info-soft); border: 1px solid var(--info-border);
   border-radius: var(--radius-pill); padding: 1px var(--space-2);
 }
 .dm-tag.off { color: var(--text-muted); background: var(--idle-soft); border-color: var(--border); }
 .dm-inline { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: var(--space-2) 0 0; }
-.dm-inline li { font-size: 12px; color: var(--text-secondary); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
+.dm-inline li { font-size: 13px; color: var(--text-secondary); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
 
 .dm-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .dm-row { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--status-done); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
@@ -2266,7 +2191,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    so it is muted and dashed rather than given a status colour of its own. */
 .dm-row.inapplicable { border-left-color: var(--border); border-style: dashed; background: transparent; }
 .dm-row-top { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
-.dm-factor { font-size: 14px; font-weight: 600; color: var(--text); }
+.dm-factor { font-size: 15px; font-weight: 600; color: var(--text); }
 .dm-weight {
   font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
   border-radius: var(--radius-input); padding: 2px 7px; color: var(--info);
@@ -2279,24 +2204,24 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border);
   border-radius: var(--radius-pill); padding: 2px var(--space-2);
 }
-.dm-when { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
-.dm-na { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.dm-when { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+.dm-na { font-size: 13px; font-weight: 600; color: var(--text-muted); }
 .dm-row-top .statuschip, .dm-row-top .dm-na { margin-left: auto; }
 .dm-row-note { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2); }
 .dm-clause-wrap { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-left: var(--space-2); }
-.dm-clause-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.dm-clause-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text-muted); }
 .dm-clause { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); background: var(--idle-soft); border: 1px solid var(--border); border-radius: var(--radius-input); padding: 1px 6px; overflow-wrap: anywhere; }
 .dm-row .dm-tags { margin-top: var(--space-2); }
 
 .dm-warn { margin-top: var(--space-3); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: var(--space-4); }
-.dm-warn-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 13px; font-weight: 700; color: var(--status-warn-text); }
-.dm-warn-v { margin: var(--space-2) 0 0; font-size: 14px; color: var(--text); font-style: italic; }
+.dm-warn-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 13px; font-weight: 600; color: var(--status-warn-text); }
+.dm-warn-v { margin: var(--space-2) 0 0; font-size: 15px; color: var(--text); font-style: italic; }
 .dm-acts { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: var(--space-2); }
 .dm-act { background: var(--surface); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: var(--space-2) var(--space-3); }
 .dm-act.off { background: transparent; border-style: dashed; border-color: var(--border); }
 .dm-act-k { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
 .dm-act.off .dm-act-k { color: var(--text-muted); }
-.dm-act-v { display: block; font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.dm-act-v { display: block; font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
 
 .dm-calc { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .dm-calc-row {
@@ -2307,8 +2232,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .dm-calc-row.binding { background: var(--info-soft); border-color: var(--info-border); }
 .dm-calc-row.pending { background: transparent; border-style: dashed; }
 .dm-calc-date { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); white-space: nowrap; }
-.dm-calc-row.binding .dm-calc-date { color: var(--text); font-weight: 700; }
-.dm-calc-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text); }
+.dm-calc-row.binding .dm-calc-date { color: var(--text); font-weight: 600; }
+.dm-calc-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--text); }
 .dm-calc-v { grid-column: 2; font-size: 13px; color: var(--text-secondary); }
 .dm-calc-v .statuschip { margin-left: var(--space-1); }
 .dm-rule { margin: var(--space-4) 0 0; padding-top: var(--space-3); border-top: 1px dashed var(--border); font-size: 13px; color: var(--text); font-style: italic; }
@@ -2316,7 +2241,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .dm-cons { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .dm-con { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--info); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
 .dm-con.off { border-left-color: var(--border); border-style: dashed; background: transparent; }
-.dm-con-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.dm-con-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 15px; font-weight: 600; color: var(--text); }
 .dm-con.off .dm-con-k { color: var(--text-muted); }
 .dm-con-note { margin: var(--space-2) 0 0; font-size: 13px; color: var(--text); font-style: italic; }
 .dm-con.off .dm-con-note { color: var(--text-secondary); }
@@ -2349,10 +2274,6 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   .content {
     padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
-  .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); height: auto; min-height: var(--topbar-height); flex-wrap: wrap; }
-  /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
-     rather than being dropped the way the search field it replaced was. */
-  .topbar-privacy { margin-left: 0; font-size: 12px; }
   /* One lever. Setting --gutter here rather than .content's padding keeps the landing and the
      shell on the same measurement at every width. */
   :root { --gutter: var(--space-4); }
@@ -2360,10 +2281,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 @media (max-width: 640px) {
   .t-page-title { font-size: 20px; }
   .landing { padding: var(--space-5); }
-  .landing-line { font-size: 24px; max-width: none; }
+  .landing-line { font-size: 20px; max-width: none; }
   .hero, .finding, .check-form, .rp-panel, .wc-panel, .nscard, .rem, .dl { padding: var(--space-4); }
   .finding-head { flex-direction: column; gap: var(--space-3); }
-  .finding-headline { font-size: 19px; }
+  .finding-headline { font-size: 16px; }
   .bare-page-inner { padding: var(--space-5) var(--gutter) 64px; }
 }
 
@@ -2417,7 +2338,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
      width reads as unfinished. The cap rises with the container and the size rises with it, so the
      sentence sets in three lines and fills the measure it is given. Still capped in `ch`, so the
      line length stays readable rather than stretching. */
-  .landing-line { font-size: 38px; max-width: 26ch; }
+  .landing-line { font-size: 32px; max-width: 26ch; }
 }
 
 @media (min-width: 1280px) {
@@ -2469,78 +2390,12 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 
 /* =============================================================================
-   The landing hero's choreography.
-
-   This is the one place in the product where motion is doing explanatory work, so it is worth being
-   exact about what each beat is FOR. The claim the hero makes is that a single fact about a student
-   is read, independently, by three bodies that never speak to each other. Rendered flat, that reads
-   as a list — one thing after another. The sequence below makes it read as a distribution:
-
-     1  the fact settles first, alone. It is the input; everything under it is derived.
-     2  the connector scales out from its caption, left and right. One thing becoming several.
-     3  the three systems settle FORWARD along Z, staggered 90ms apart, so they arrive as three
-        separate planes resolving rather than one block appearing.
-     4  each system's citation arrives LAST, after its own card. That ordering is the argument:
-        an answer is not trustworthy until its authority is attached, and the animation says so
-        without a sentence.
-
-   ---- why there is no JavaScript here ----
-
-   The hero is above the fold, so there is nothing to wait for — no scroll trigger, no
-   IntersectionObserver, no client component, no hydration. The landing stays a server component at
-   ~1.2 kB of page JS.
-
-   `animation-fill-mode: backwards` is what makes this safe. It applies the `from` frame during the
-   delay only; once the animation ends the element falls back to its ordinary styles. So:
-     · content is VISIBLE in the served HTML and needs no JS to become visible;
-     · there is no flash of hidden content, because nothing is hidden by a rule that JS must undo;
-     · `:hover` still works afterwards, which `forwards` would have blocked;
-     · and under `prefers-reduced-motion` the global reset at the top of this file sets
-       `animation: none`, which lands every element on its ordinary styles — fully visible, in
-       place, instantly. The reduced-motion path is the no-animation path, not a shorter one.
+   The landing hero used a staggered entrance animation here (fact, then connector, then each
+   system's card, then its citation). Removed for the visual-polish pass — motion is now limited
+   to background/border/colour on interaction, nothing on mount. Elements render in their resting
+   state immediately, which is also what this animation already fell back to under
+   prefers-reduced-motion, so nothing about the accessible experience changes.
    ============================================================================= */
-
-@keyframes shFactIn {
-  from { opacity: 0; transform: translate3d(0, 6px, 0); }
-}
-@keyframes shLineIn {
-  from { transform: scaleX(0); }
-}
-@keyframes shNoteIn {
-  from { opacity: 0; }
-}
-/* Back along Z and slightly down, coming forward into place. */
-@keyframes shRowIn {
-  from { opacity: 0; transform: translate3d(0, 10px, -48px); }
-}
-@keyframes shCiteIn {
-  from { opacity: 0; transform: translate3d(-4px, 0, 0); }
-}
-
-.sh-fact { animation: shFactIn 420ms var(--ease) backwards; }
-.sh-flow-line { animation: shLineIn 480ms var(--ease) 220ms backwards; }
-.sh-flow-note { animation: shNoteIn 360ms var(--ease) 300ms backwards; }
-
-/* One delay per row, declared once and reused by the row and by its citation, so the two can never
-   drift out of order. */
-.sh-row { --row-delay: 0ms; animation: shRowIn 560ms var(--ease) calc(420ms + var(--row-delay)) backwards; }
-.sh-row:nth-child(2) { --row-delay: 90ms; }
-.sh-row:nth-child(3) { --row-delay: 180ms; }
-/* The citation lands after its own card has settled — 320ms later, not on a shared clock. */
-.sh-row .cite { animation: shCiteIn 380ms var(--ease) calc(740ms + var(--row-delay)) backwards; }
-
-/* The fifth beat: the refusal.
-   The three findings finish arriving when the last citation settles — row 3 starts at 920ms and
-   runs 380ms, so ~1300ms. This waits until then and deliberately leaves a gap rather than
-   overlapping: the first four beats are one continuous statement ("one fact, read three ways"),
-   and this is a different KIND of statement, so a beat of silence in front of it is doing the same
-   work the dashed rule above it does. It arrives as one block — the band inside it is not
-   separately choreographed, because a span drawing itself open would read as the finding becoming
-   LESS certain, which is the opposite of the direction this product ever moves. */
-@keyframes shRefusalIn {
-  from { opacity: 0; transform: translate3d(0, 8px, 0); }
-}
-.sh-refusal { animation: shRefusalIn 480ms var(--ease) 1200ms backwards; }
 
 /* =============================================================================
    Print.
@@ -2558,7 +2413,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
   /* Chrome, navigation and anything that offers to take you elsewhere. On paper every one of these
      is either a dead control or an advertisement. */
-  .topbar, .skip-link, .back-link, .explore, .memorystrip, .cta, .nextcard,
+  .pw-banner, .sidebar, .sb-scrim, .skip-link, .back-link, .explore, .memorystrip, .cta, .nextcard,
   .landing-cta-row, .sh-refusal-go, .outlook-more, .domain-card-more, .rp-tabs,
   .wc-ev-actions, .rem-actions, .callout-close, .btn, .row-add, .row-remove,
   .check-again, .nsmore, .wc-undo {
@@ -2574,7 +2429,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
     display: block;
   }
 
-  body { background: #fff; color: #000; font-size: 11pt; line-height: 1.45; }
+  body { background: #fff; color: #000; font-size: 11pt; line-height: 1.4; }
 
   /* Cards become ruled blocks. The hairline borders survive; the fills and shadows do not, because
      a soft tint costs a third of a cartridge and carries no meaning a word is not already carrying. */
@@ -2612,11 +2467,6 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
-/* A stem draws downward, so it scales on Y — scaleX would collapse a 1px line sideways. */
-@keyframes shStemIn {
-  from { transform: scaleY(0); }
-}
-
 /* At three columns the connector reads as a distribution bar: the caption's lines span the full
    width and each column drops a short stem up to it. One fact, three branches, drawn rather than
    captioned. Below 1280 the rows are stacked and a stem would point at nothing, so it only exists
@@ -2632,85 +2482,173 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
     width: 1px;
     height: 20px;
     background: var(--border-strong);
-    transform-origin: top center;
-    animation: shStemIn 380ms var(--ease) calc(360ms + var(--row-delay)) backwards;
   }
   /* The stem belongs to the card, so it lifts with it. */
   .sh-row:hover::before { background: var(--border-strong); }
 }
 
 /* =================================================================================================
-   PHASE 1 — THE ORIGINAL PATHWISE SHELL, RESTORED (reference: 8ac1c3f).
-
-   The redesign's geometry was a dark 244px rail beside a 1200px content column. The original was a
-   centred 940px document under a slim topbar. This block restores the second and neutralises the
-   first. It sits last in the file on purpose: everything above is component CSS that now reads the
-   original palette from :root, and only the SHELL needed replacing rather than retuning.
-
-   The `.sidebar*` rules were removed in Phase 3 once it was verified that no component emits that
-   markup any more — dead CSS, provably unreferenced, not merely unused-looking.
+   PHASE 1 — SHELL: a persistent top banner and a collapsible left sidebar (visual-polish pass +
+   Step 6), replacing the pill-row topbar this shell used before. The nav DATA (CHECK_CTA,
+   EXAMPLE_NAV, SECONDARY_NAV, FINDING_NAV) and the routing behind every link are unchanged — see
+   AppShell.tsx — only the geometry they render in moved.
    ================================================================================================= */
 
-/* The rail is gone; the shell is a plain block, and the centred `.wrap` inside it does the work. */
 .app-shell,
 .shell-main { display: block; width: 100%; min-height: 0; background: transparent; }
 
-.shell-wrap { max-width: var(--content-max); margin: 0 auto; padding: 32px 24px 80px; }
+.shell-wrap { min-height: 100vh; background: var(--bg-page); }
 
-/* ---- topbar: brand left, pills right ---- */
-.shell-wrap > .topbar {
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: 16px; margin-bottom: 22px; padding: 0; border: 0; background: transparent;
-  position: static; height: auto; min-height: 0; box-shadow: none;
+/* ---- the persistent top banner ---- */
+.pw-banner {
+  position: sticky; top: 0; z-index: 40;
+  height: var(--banner-height); min-height: var(--banner-height);
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 0 var(--space-5);
+  background: var(--bg-surface); border-bottom: 1px solid var(--border);
 }
-.brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-.brand .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.02em; color: var(--ink); }
-.brand .logo:hover { text-decoration: none; }
-.brand .dot { color: var(--accent); }
-.brand .tag { font-size: 13px; color: var(--muted); }
-.topnav { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.pw-banner-logo { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; color: var(--text-primary); }
+.pw-banner-logo:hover { text-decoration: none; }
+.pw-banner-logo .dot { color: var(--accent); }
 
-/* ---- the original pill ---- */
+/* ---- the sidebar toggle. Two instances share this shape — one pinned in the sidebar (desktop
+   collapse/expand), one in the banner (mobile drawer) — CSS shows only the one that applies. ---- */
+.sb-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; flex: none;
+  background: transparent; border: none; border-radius: var(--radius-input);
+  color: var(--text-secondary); cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.sb-toggle:hover { background: var(--bg-sunken); }
+.sb-toggle-icon { width: 20px; height: 20px; transition: transform var(--dur-fast) var(--ease); }
+.sb-toggle-icon.is-open { transform: rotate(180deg); }
+.sb-toggle-mobile { display: none; }
+
+/* ---- layout: sidebar + content, below the banner ---- */
+.shell-body { display: flex; align-items: flex-start; min-height: calc(100vh - var(--banner-height)); }
+
+.sidebar {
+  flex: 0 0 var(--sb-width); width: var(--sb-width);
+  position: sticky; top: var(--banner-height); z-index: 2;
+  height: calc(100vh - var(--banner-height));
+  display: flex; flex-direction: column;
+  background: var(--bg-surface); border-right: 1px solid var(--border);
+  padding: var(--space-3);
+  transition: width var(--dur-fast) var(--ease), flex-basis var(--dur-fast) var(--ease);
+}
+/* `.sidebar` and `main` are both flex items of `.shell-body`, and flex items paint in DOM order
+   regardless of `position` when z-index is auto — without an explicit z-index here, `main`
+   (later in the DOM) would paint over the collapsed-state tooltip below. */
+/* Not `overflow: hidden` on the sidebar itself — that would clip the collapsed-state tooltip,
+   which is deliberately positioned to pop out past the rail's own edge. Each item already clips
+   its own (sr-only, in collapsed mode) label text, so nothing wide enough to need it lives here. */
+.sidebar.collapsed { flex-basis: var(--sb-width-collapsed); width: var(--sb-width-collapsed); }
+.sidebar > .sb-toggle { align-self: flex-start; margin-bottom: var(--space-3); }
+
+.sb-scroll { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+
+.sb-sep { height: 1px; background: var(--border); margin: var(--space-2) 0; flex: none; }
+.sb-group-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted); padding: var(--space-2) var(--space-3) 4px;
+}
+
+.sb-item {
+  position: relative;
+  display: flex; align-items: center; gap: var(--space-2);
+  height: 40px; padding: 8px 12px; border-radius: var(--radius-input);
+  color: var(--text-secondary); background: transparent;
+  font-size: 15px; line-height: 1.2; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.sb-item:hover { background: var(--bg-sunken); color: var(--text-primary); text-decoration: none; }
+.sb-item.active { background: var(--sage-tint); color: var(--text-primary); font-weight: 600; }
+/* Truncation lives on the label itself, not on `.sb-item` — `.sb-item` is the tooltip's
+   containing block too, and `overflow: hidden` there would clip the tooltip along with the
+   label it was meant for. */
+.sb-item-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.sb-item-cta { background: var(--accent); color: var(--text-inverse); font-weight: 600; margin-bottom: var(--space-2); }
+.sb-item-cta:hover { background: var(--sage-hover); color: var(--text-inverse); }
+.sb-item-cta.active { background: var(--accent); color: var(--text-inverse); }
+
+.sb-item-avatar {
+  flex: none; width: 32px; height: 32px; border-radius: var(--radius-input);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; background: var(--bg-sunken); color: var(--text-secondary);
+}
+.sb-item-cta .sb-item-avatar { background: rgba(255, 255, 255, 0.2); color: var(--text-inverse); }
+.sb-item.active .sb-item-avatar { background: var(--sage-deep); color: var(--text-inverse); }
+
+.sidebar.collapsed .sb-item { padding: 8px 4px; justify-content: center; gap: 0; }
+
+/* `position: fixed`, not `absolute` — see the comment on SidebarItem in AppShell.tsx for why:
+   `.sb-scroll`'s vertical scrollbar makes its horizontal overflow clip too, by CSS spec, so an
+   absolutely-positioned tooltip escaping to the right was invisible despite every computed style
+   on it checking out. Fixed positioning escapes that ancestor; `top` comes from AppShell's own
+   measurement of the hovered/focused item, passed as an inline style. The collapsed label's
+   accessible name lives in the sr-only span next to it, so this is a visual aid only
+   (aria-hidden), rendered only while hovered/focused rather than toggled by opacity. */
+.sb-tooltip {
+  position: fixed; left: calc(var(--sb-width-collapsed) + 8px); transform: translateY(-50%);
+  background: var(--text-primary); color: var(--bg-surface);
+  font-size: 13px; font-weight: 400; white-space: nowrap;
+  padding: 4px 8px; border-radius: var(--radius-input);
+  box-shadow: var(--shadow-popover);
+  pointer-events: none; z-index: 50;
+}
+
+/* ---- content column ---- */
+.shell-body > main {
+  flex: 1; min-width: 0; position: relative; z-index: 1;
+  padding: var(--space-6) var(--gutter) var(--space-9);
+}
+.shell-body > main > * { max-width: var(--content-max); margin-left: auto; margin-right: auto; }
+
+.shell-context {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.shell-context .tag { font-size: 13px; color: var(--text-muted); }
+
 .pill {
-  font-size: 12px; color: var(--muted); background: var(--surface);
-  border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px;
+  font-size: 13px; color: var(--text-muted); background: var(--bg-surface);
+  border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 4px 11px;
   white-space: nowrap;
 }
-/* `--green` is a FILL colour; as text on white it measures 4.33:1, under AA. `--status-done-text`
-   is the token that already exists for exactly this case (the same green mixed toward the ink) and
-   resolves to 7.24:1 here. Same pattern as `.badge.warn`. The BORDER still reads off --green, so
-   the pill's colour identity is unchanged. */
-.pill-privacy { color: var(--status-done-text); border-color: color-mix(in srgb, var(--green) 26%, var(--line)); }
+.pill-privacy { color: var(--status-done-text); border-color: color-mix(in srgb, var(--green) 26%, var(--border)); }
 
-/* ---- section navigation, as pills ---- */
-.sitenav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 22px; }
-.sitenav-sep { width: 1px; height: 16px; background: var(--line); margin: 0 2px; }
-a.navpill { color: var(--ink-soft); transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
-a.navpill:hover { text-decoration: none; border-color: var(--accent); color: var(--accent); }
-a.navpill.active { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); color: var(--accent); font-weight: 600; }
-a.navpill-cta { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 650; }
-a.navpill-cta:hover { background: color-mix(in srgb, var(--accent) 88%, black); border-color: transparent; color: #fff; }
-a.navpill-cta.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-.sitenav-sub { margin-top: -12px; margin-bottom: 22px; }
-.sitenav-sub .navpill { font-size: 11.5px; }
-
-/* ---- the page's own name, at the original scale ---- */
+/* ---- the page's own name ---- */
 .page-title {
-  font-size: 25px; line-height: 1.3; letter-spacing: -0.01em; font-weight: 700;
-  color: var(--ink); margin: 0 0 18px;
+  font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 600;
+  color: var(--text-primary); margin: 0 0 var(--space-4);
 }
 
-.shell-meta { margin-top: 28px; font-size: 12px; color: var(--muted); text-align: center; }
+.shell-meta { margin-top: var(--space-7); font-size: 13px; color: var(--text-muted); text-align: center; }
 
-/* The old shell had no inner scroll container; content flows in the page. */
-.shell-wrap > main { display: block; padding: 0; max-width: none; }
+/* ---- mobile: sidebar becomes an off-canvas drawer; its toggle relocates into the banner ---- */
+@media (max-width: 767px) {
+  .sb-toggle-mobile { display: inline-flex; }
+  .sidebar > .sb-toggle { display: none; }
+  .sidebar {
+    position: fixed; top: var(--banner-height); left: 0; z-index: 45;
+    width: var(--sb-width) !important; flex-basis: var(--sb-width) !important;
+    height: calc(100vh - var(--banner-height));
+    transform: translateX(-100%);
+    transition: transform var(--dur-fast) var(--ease);
+    box-shadow: var(--shadow-popover);
+  }
+  .sidebar.drawer-open { transform: translateX(0); }
+  .sb-scrim { position: fixed; inset: var(--banner-height) 0 0 0; z-index: 44; background: rgba(42, 42, 38, 0.32); }
+  .shell-body > main { padding: var(--space-5) var(--gutter) var(--space-8); }
+  /* The drawer is always full width, so items always render with their full label (AppShell.tsx
+     passes collapsed=false to every item here) — this cancels the rail's icon-centering padding,
+     which would otherwise still apply from the (still-present at this width) `.collapsed` class. */
+  .sidebar.collapsed .sb-item { padding: 8px 12px; justify-content: flex-start; gap: var(--space-2); }
+}
 
 @media (max-width: 640px) {
-  .shell-wrap { padding: 20px 16px 56px; }
-  .shell-wrap > .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .topnav { justify-content: flex-start; }
-  .brand .tag { display: none; }
-  .page-title { font-size: 21px; }
+  .page-title { font-size: 20px; }
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -2734,7 +2672,7 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 
 /* CAPSULE → the original `.pill`. */
 .capsule {
-  font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; padding: 3px 9px; border-radius: var(--radius-pill);
   background: var(--surface); border: 1px solid var(--line); color: var(--muted);
 }
 /* Same correction the `.badge.amber` rule below already carries, applied to the two siblings it was
@@ -2746,18 +2684,17 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 .capsule--tinted.done { background: var(--green-soft); color: var(--status-done-text); border-color: transparent; }
 .capsule--tinted.active,
 .capsule--tinted.warn { background: var(--amber-soft); color: var(--status-warn-text); border-color: transparent; }
-.capsule--tinted.blocked { background: var(--red-soft); color: var(--red); border-color: transparent; }
+.capsule--tinted.blocked { background: var(--red-soft); color: var(--status-blocked-text); border-color: transparent; }
 
 /* SEGMENTED PROGRESS → the original track: taller, cooler, 8px corners.
    The redesign's thin multi-segment rail was the dominant visual rhythm of the product; the
    original was a single substantial bar the eye reads as a measure. Segment COLOURS are left to the
    status tokens, which now carry the original green/amber/red. */
 .segprog-track {
-  height: 28px; background: #eef1f6; border-radius: 8px; overflow: hidden; gap: 0;
+  height: 28px; background: var(--bg-sunken); border-radius: var(--radius-input); overflow: hidden; gap: 0;
 }
 .segprog-seg { border-radius: 0; }
-.segprog-seg.done { background: linear-gradient(180deg, #3a6ae4, #2f5fe0); }
-.segprog-legend { margin-top: 12px; font-size: 12.5px; color: var(--ink-soft); }
+.segprog-legend { margin-top: 12px; font-size: 13px; color: var(--ink-soft); }
 .segprog-dot { border-radius: 3px; }
 
 /* =================================================================================================
@@ -2768,14 +2705,15 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 
 /* ---- HERO: one sentence, then two doors ---- */
 .hero {
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-left: 4px solid var(--accent);
   border-radius: var(--radius);
-  padding: 26px 28px;
-  box-shadow: var(--shadow);
-  margin-bottom: 22px;
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
 }
 .hero .eyebrow {
-  font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--accent); font-weight: 600; margin-bottom: 10px;
 }
 /* 22px/600, which is what `.finding-headline` and /coverage's lede already use — the app's own
@@ -2784,11 +2722,11 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
    Every other route already stepped down; this is the outlier being brought into line, not a new
    size being introduced. */
 .hero-h {
-  font-size: 22px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em;
+  font-size: 20px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em;
   font-weight: 600; color: var(--ink);
 }
-.hero-h strong { font-weight: 700; }
-.hero-lede { margin: 0 0 16px; color: var(--ink-soft); font-size: 15.5px; }
+.hero-h strong { font-weight: 600; }
+.hero-lede { margin: 0 0 16px; color: var(--ink-soft); font-size: 15px; }
 .hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
 @media (max-width: 640px) { .hero .doors { grid-template-columns: 1fr; } }
 .door {
@@ -2797,24 +2735,24 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 }
 .door .k {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  font-size: 12px; color: var(--red); font-weight: 600;
+  font-size: 13px; color: var(--red); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.05em;
 }
-.door .v { font-size: 14px; color: var(--ink); margin-top: 5px; }
+.door .v { font-size: 15px; color: var(--ink); margin-top: 5px; }
 /* This rule wins over the one ~1800 lines up, so the contrast correction has to live here too.
    `--muted` is --text-muted, tuned against --canvas and --surface; a door is tinted by its own
    status, and on `.door.blocked`'s --blocked-soft it measures 4.39:1 — 0.11 under AA. One step up
    the same neutral ramp clears every door tint and keeps the label in its own ink family. */
 .door-office {
-  margin-top: 8px; font-size: 11.5px; color: var(--ink-soft);
+  margin-top: 8px; font-size: 11px; color: var(--ink-soft);
   text-transform: uppercase; letter-spacing: 0.05em;
 }
-.hero-foot { margin: 16px 0 0; color: var(--ink-soft); font-size: 14px; }
+.hero-foot { margin: 16px 0 0; color: var(--ink-soft); font-size: 15px; }
 
 /* ---- the original band pill, with its dot ---- */
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; padding: 3px 9px; border-radius: var(--radius-pill);
 }
 .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 /* `--green` as text on --green-soft is 3.85:1. Same fix, same reason, same token pair as the amber
@@ -2825,24 +2763,26 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
    mixed toward the ink so it can be read — and 17 other rules already use it. The dot keeps
    `currentColor`, so the pill still reads as amber. */
 .badge.amber, .badge.warn, .badge.active { background: var(--amber-soft); color: var(--status-warn-text); }
-.badge.red, .badge.blocked { background: var(--red-soft); color: var(--red); }
+.badge.red, .badge.blocked { background: var(--red-soft); color: var(--status-blocked-text); }
 /* Not knowing is not a warning — the neutral band keeps its own quiet treatment. */
 .badge.idle { background: var(--canvas); color: var(--muted); border: 1px solid var(--line); }
 .door .k .badge { text-transform: none; letter-spacing: 0; }
 
-/* ---- DOMAIN CARD: domain label, status, pill, detail ---- */
-.domain-card { padding: 18px; border-radius: var(--radius); box-shadow: var(--shadow); }
+/* ---- DOMAIN CARD: domain label, status, pill, detail ----
+   Padding/radius/border now live on the single `.domain-card` rule above — this used to
+   redeclare them with a raw 18px and a shadow, which won the cascade and silently diverged
+   from the tokenized version. */
 .domain-card .domain-card-head { display: block; margin: 0; padding: 0; border: 0; }
 .domain-card .domain {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--muted); font-weight: 600;
 }
-.domain-office { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.domain-status { font-size: 16px; font-weight: 650; margin: 8px 0 6px; color: var(--ink); line-height: 1.35; }
-.domain-detail { font-size: 13.5px; color: var(--ink-soft); margin-top: 8px; }
+.domain-office { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.domain-status { font-size: 16px; font-weight: 600; margin: 8px 0 6px; color: var(--ink); line-height: 1.3; }
+.domain-detail { font-size: 13px; color: var(--ink-soft); margin-top: 8px; }
 .domain-card .domain-card-progress { margin: 12px 0 0; }
-.domain-card-more { display: inline-block; margin-top: 10px; font-size: 13.5px; align-self: flex-start; }
+.domain-card-more { display: inline-block; margin-top: 10px; font-size: 13px; align-self: flex-start; }
 /* The card is a flex column, so an inline-flex pill would otherwise stretch to the full card
    width and stop reading as a pill. */
 .domain-card .badge { align-self: flex-start; }
@@ -2872,9 +2812,15 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
    card that carries these links. Nothing moves; the hit area grows to ~29px.
    -------------------------------------------------------------------------------------------- */
 .back-link, .domain-card-more { position: relative; }
-.back-link::after,
-.domain-card-more::after {
+.back-link::before,
+.domain-card-more::before {
   content: "";
   position: absolute;
   inset: -4px 0;
 }
+/* The trailing arrow is decoration, not part of the link's accessible name — added here rather
+   than typed into the label text, so it can't be read as an icon-as-text button label. `::after`
+   so it lands at the end of the text; the hit-area extension above uses `::before` instead so the
+   two don't collide on the same pseudo-element. */
+.domain-card-more::after { content: " →"; }
+.memorystrip .ms-go::after { content: " →"; }

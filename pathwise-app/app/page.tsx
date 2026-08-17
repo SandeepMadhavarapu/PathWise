@@ -151,10 +151,10 @@ export default function Landing() {
   
               <div className="landing-cta-row">
                 <Link href="/check" className="btn landing-cta">
-                  Check my status →
+                  Check my status
                 </Link>
                 <Link href="/student" className="btn ghost landing-cta">
-                  See the worked example →
+                  See example
                 </Link>
               </div>
               </div>
@@ -167,6 +167,10 @@ export default function Landing() {
               <span className="lpl-who">Priya</span>
             </p>
             <p className="landing-proof-who">
+              No single office can see the whole picture. Each of the three below decides one of
+              these answers, and none of them sees the other two.
+            </p>
+            <p className="landing-proof-who">
               A {levelLabel("masters")} student at {priyaStudent.institutions.length} institutions
               {masters ? (
                 <>
@@ -174,9 +178,8 @@ export default function Landing() {
                   eligibility at that level
                 </>
               ) : null}
-              . No single office is in a position to tell her: each of the three below decides one
-              of these answers and none of them sees the other two. Every one was computed live, on
-              this page, by the same engines the app runs on.
+              . Every one of these was computed live, on this page, by the same engines the app
+              runs on.
             </p>
 
             <SystemsHero />
@@ -202,7 +205,7 @@ export default function Landing() {
               ))}
             </ul>
             <Link href="/student/changed" className="landing-cta-alt">
-              Watch it refuse to guess, then change its mind when evidence arrives →
+              Change its mind
             </Link>
           </section>
         </main>
@@ -237,7 +240,7 @@ export default function Landing() {
               linked, and all {STATE_COUNT} states and DC carry a status derived from the packs
               themselves — including the ones PathWise could not verify at all.
             </span>
-            <span className="ms-go">See the coverage map →</span>
+            <span className="ms-go">See coverage</span>
           </Link>
 
           {/* The privacy promise, and it is a PROMISE. It was rendered in the warm amber callout —
@@ -246,6 +249,8 @@ export default function Landing() {
               matching the line the topbar carries on every other screen. */}
           <p className="landing-privacy">
             <strong>Nothing leaves this device.</strong> No account. Nothing stored on a server.
+          </p>
+          <p className="landing-privacy">
             PathWise reasons on your device — the app makes no network requests once it has loaded,
             and a document you pick is read in the tab and never uploaded.
           </p>

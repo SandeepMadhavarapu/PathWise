@@ -144,7 +144,7 @@ export function SystemsHero() {
           <div className="sh-refusal-head">
             <span className="sh-refusal-k">And one it would not make</span>
             <Link href="/student/changed" className="sh-refusal-go">
-              Watch it change its mind →
+              Change its mind
             </Link>
           </div>
           {/* The settled props are unreachable here — this band is never settled on the landing —

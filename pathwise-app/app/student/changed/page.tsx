@@ -266,8 +266,9 @@ export default function ChangedPage() {
           One document is missing from Priya&apos;s file. Without it the same engine reads her own
           CPT record two honest ways, {pooled.fullTimeDays - settled.fullTimeDays} days apart, on
           either side of the line that decides whether she has any work authorization left at this
-          level after she graduates. So PathWise will not pick one.
+          level after she graduates.
         </p>
+        <p className="jintro-stakes">So PathWise will not pick one.</p>
         <div className="jstats">
           <span className="jstat">
             <strong>1</strong> finding affected
@@ -309,8 +310,11 @@ export default function ChangedPage() {
       <p className="section-note section-note--after">
         Priya&apos;s bachelor&apos;s CPT at School X only stays out of her master&apos;s count if the
         level change between the two schools is established. The document that records it is
-        missing — so PathWise runs the count both ways, finds that the two answers fall on opposite
-        sides of the {CLIFF_DAYS}-day cliff, and says so rather than guessing.
+        missing.
+      </p>
+      <p className="section-note section-note--after">
+        So PathWise runs the count both ways, finds that the two answers fall on opposite sides of
+        the {CLIFF_DAYS}-day cliff, and says so rather than guessing.
       </p>
 
       <div className={`wc-gap surface${added ? " done" : ""}`}>
@@ -321,7 +325,7 @@ export default function ChangedPage() {
           </div>
           {added ? (
             <button className="wc-undo" onClick={reset}>
-              Take the document back out
+              Remove document
             </button>
           ) : null}
         </div>
@@ -400,7 +404,7 @@ export default function ChangedPage() {
                     disabled={busy}
                     onClick={() => void ingest(makeSampleDocument(), "sample")}
                   >
-                    {busy ? "Reading…" : "Use a sample document →"}
+                    {busy ? "Reading…" : "Use sample"}
                   </button>
                   <button
                     type="button"
@@ -408,7 +412,7 @@ export default function ChangedPage() {
                     disabled={busy}
                     onClick={() => fileInput.current?.click()}
                   >
-                    Choose a file from this device
+                    Choose file
                   </button>
                 </div>
                 <p className="wc-ev-note">
@@ -435,10 +439,10 @@ export default function ChangedPage() {
                     disabled={!attestChecked}
                     onClick={() => setCommitted(true)}
                   >
-                    Add to my record
+                    Add to record
                   </button>
                   <button type="button" className="wc-undo" onClick={reset}>
-                    Choose a different file
+                    Change file
                   </button>
                 </div>
                 <p className="wc-ev-note">
@@ -614,7 +618,7 @@ export default function ChangedPage() {
               <span className="ms-k">Her dashboard now reads the settled count.</span> Same record,
               same engines, one fewer open question.
             </span>
-            <span className="ms-go">See her standing now →</span>
+            <span className="ms-go">See her standing</span>
           </Link>
         </div>
       ) : null}

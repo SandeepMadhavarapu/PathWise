@@ -649,10 +649,15 @@ export default function CheckPage() {
             <p>
               This workspace lives in this tab alone: nothing is written to disk — no cookie, no
               stored session, nothing this browser still has tomorrow. Refreshing or closing the tab
-              clears everything you have entered. Your browser may re-fill the form if you press
-              Back; that copy belongs to the browser, not to PathWise, and it goes when the tab
-              does. That is deliberate: once the tab is closed, on a shared or public computer,
-              nothing of yours is left behind.
+              clears everything you have entered.
+            </p>
+            <p>
+              Your browser may re-fill the form if you press Back; that copy belongs to the
+              browser, not to PathWise, and it goes when the tab does.
+            </p>
+            <p>
+              That is deliberate: once the tab is closed, on a shared or public computer, nothing
+              of yours is left behind.
             </p>
           </details>
         </div>
@@ -714,8 +719,11 @@ export default function CheckPage() {
             broken. Saying both things — optional, and what it buys — costs one line. */}
         <p className="field-note">
           Optional. CPT is work authorization tied to your programme; full-time CPT is what counts
-          against the 365-day cliff that ends OPT eligibility. Leave this blank if you have had
-          none — PathWise will say it has no CPT on record rather than assume you have none.
+          against the 365-day cliff that ends OPT eligibility.
+        </p>
+        <p className="field-note">
+          Leave this blank if you have had none — PathWise will say it has no CPT on record rather
+          than assume you have none.
         </p>
         {rows.map((row, i) => (
           <div className="cpt-row" key={i}>
@@ -784,7 +792,7 @@ export default function CheckPage() {
         ))}
 
         <button type="button" className="row-add" onClick={addRow}>
-          + Add another CPT row
+          + Add CPT
         </button>
 
         {/* Says what will NOT be counted, before the reader presses the button — not after, and not
@@ -810,7 +818,7 @@ export default function CheckPage() {
 
         <div className="form-actions">
           <button type="submit" className="btn">
-            Check my status →
+            Check my status
           </button>
           {/* `type="button"` is load-bearing: the default inside a form is submit, so without it
               this control would compute a finding instead of clearing one. */}
@@ -1046,7 +1054,7 @@ export default function CheckPage() {
               // and a reader who wants to check the citation should not have to leave the page to
               // find where it came from.
               detailHref={residencySource}
-              detailLabel={residencySource ? `Official ${stateName} source →` : undefined}
+              detailLabel={residencySource ? `${stateName} source` : undefined}
             />
             <DomainCard
               domain={`Financial aid (${stateName})`}
@@ -1102,7 +1110,7 @@ export default function CheckPage() {
               }
               cite={jx.display?.aidCite}
               detailHref={aidSource}
-              detailLabel={aidSource ? `Official ${stateName} aid source →` : undefined}
+              detailLabel={aidSource ? `${stateName} aid source` : undefined}
             />
           </div>
 
@@ -1153,7 +1161,7 @@ export default function CheckPage() {
               className="domain-card-more btn-link"
               onClick={() => setShowReasoning(true)}
             >
-              See full reasoning for both →
+              See full reasoning
             </button>
           )}
 

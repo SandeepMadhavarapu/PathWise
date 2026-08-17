@@ -91,7 +91,7 @@ export function ResultOutlook({
                     target="_blank"
                     rel="noreferrer noopener"
                   >
-                    {o.sourceLabel ?? "Read the source"} →
+                    {o.sourceLabel ?? "Read the source"}
                   </a>
                 ) : null}
               </li>
@@ -156,7 +156,7 @@ export function ResultOutlook({
 
       {exampleHref ? (
         <Link className="outlook-more" href={exampleHref}>
-          See this reasoning worked through in full →
+          See full reasoning
         </Link>
       ) : null}
     </section>

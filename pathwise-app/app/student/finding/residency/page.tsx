@@ -39,7 +39,7 @@ export default function ResidencyFindingPage() {
           weights, the clock. They are shown on Marcus, a second example student the same gate lets
           through.
         </span>
-        <span className="ms-go">See Marcus&apos;s full analysis →</span>
+        <span className="ms-go">See full analysis</span>
       </Link>
 
       <FindingDetail

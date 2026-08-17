@@ -62,6 +62,8 @@ export const SPACING = {
   5: "24px",
   6: "32px",
   7: "48px",
+  8: "64px",
+  9: "96px",
 } as const;
 
 export const RADIUS = {
@@ -71,7 +73,7 @@ export const RADIUS = {
 } as const;
 
 export const MOTION = {
-  ease: "cubic-bezier(0.2, 0, 0, 1)",
-  fast: "140ms",
-  slow: "220ms",
+  ease: "ease-out",
+  fast: "150ms",
+  slow: "150ms",
 } as const;

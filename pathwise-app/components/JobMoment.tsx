@@ -79,7 +79,7 @@ export function JobMoment() {
         </div>
         {!revealed && (
           <button className="btn" onClick={() => setRevealed(true)}>
-            I got a job →
+            Got a job
           </button>
         )}
       </div>
@@ -164,7 +164,7 @@ export function JobMoment() {
                         <>
                           {" "}
                           <a href={c.cite.source_url} target="_blank" rel="noreferrer noopener">
-                            Official source →
+                            Official source
                           </a>
                         </>
                       )}

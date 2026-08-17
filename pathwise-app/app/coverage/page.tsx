@@ -214,7 +214,7 @@ function CoverageTile({ j }: { j: JurisdictionCoverage }) {
                 {d.source_url ? (
                   <span className="cov-source">
                     <a href={d.source_url} target="_blank" rel="noopener noreferrer">
-                      Official source →
+                      Official source
                     </a>
                     {d.sourceCheck ? (
                       <span className="cov-check" title={CHECK_TITLE[d.sourceCheck]}>
@@ -468,15 +468,21 @@ export default function CoveragePage() {
         </div>
         <p>
           Residency and state aid are decided state by state, so a system that only ever worked in
-          one of them would not be a system. PathWise keeps every rule in a versioned rule pack — the
-          authority, the source URL, the date it was verified, and the conditions themselves — and
-          the engines read those files.{" "}
+          one of them would not be a system.
+        </p>
+        <p>
+          PathWise keeps every rule in a versioned rule pack — the authority, the source URL, the
+          date it was verified, and the conditions themselves — and the engines read those files.
+        </p>
+        <p>
           <strong>
             Nothing below is typed into this page: each status is derived from what that
             jurisdiction&apos;s registered pack declares it can answer.
-          </strong>{" "}
-          A state cannot be shown as modelled by editing the map — only by authoring a pack that says
-          so and passing the tests that check the claim.
+          </strong>
+        </p>
+        <p>
+          A state cannot be shown as modelled by editing the map — only by authoring a pack that
+          says so and passing the tests that check the claim.
         </p>
       </div>
 

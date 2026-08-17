@@ -85,7 +85,7 @@ export function DomainCard({
 
       {detailHref ? (
         <Link href={detailHref} className="domain-card-more">
-          {detailLabel ?? "See full reasoning →"}
+          {detailLabel ?? "See full reasoning"}
         </Link>
       ) : null}
     </div>

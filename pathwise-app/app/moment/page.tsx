@@ -25,7 +25,7 @@ export default function MomentPage() {
           The same engine reads her CPT record two ways, lands on opposite sides of the cliff, and
           refuses to pick between them until a document settles it.
         </span>
-        <span className="ms-go">See it refuse to guess →</span>
+        <span className="ms-go">See the refusal</span>
       </Link>
 
       <footer className="foot">

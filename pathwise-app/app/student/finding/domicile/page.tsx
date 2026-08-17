@@ -36,14 +36,21 @@ export default function DomicileAnalysisPage() {
         </h2>
         <p>
           Marcus was on the same student visa Priya holds until he became a lawful permanent
-          resident. PathWise reads the identical clause for both of them; for him it does not fire, so
-          the analysis carries on past it. What follows is the whole determination: whether his own
-          acts or his parents&apos; are the ones weighed, which factors the guidelines credit and what
-          each is worth, which cannot apply to him at all, which ones the guidelines themselves warn
-          carry little weight — and the {jx.display?.durationDays}-day clock, started where the rule
-          says it starts rather than where a student would assume.{" "}
+          resident. PathWise reads the identical clause for both of them — for him it does not
+          fire, so the analysis carries on past it.{" "}
           <span className="cite wrap">{jx.display?.residencyFullCite}</span>
         </p>
+        <p className="field-note">What follows is the whole determination:</p>
+        <ul className="outlook-gaps">
+          <li>Whether his own acts or his parents&apos; are the ones weighed</li>
+          <li>Which factors the guidelines credit, and what each is worth</li>
+          <li>Which factors cannot apply to him at all</li>
+          <li>Which ones the guidelines themselves warn carry little weight</li>
+          <li>
+            The {jx.display?.durationDays}-day clock, started where the rule says it starts rather
+            than where a student would assume
+          </li>
+        </ul>
         <div className="jstats">
           <span className="jstat">
             <strong>{formatImmigrationStatus(marcusStudent.immigration.status)}</strong> status — the gate
@@ -81,7 +88,7 @@ export default function DomicileAnalysisPage() {
           <span className="ms-k">One engine, two answers.</span> Priya&apos;s record stops at the same
           clause this one clears — and PathWise says why rather than shrugging.
         </span>
-        <span className="ms-go">See the finding that refuses →</span>
+        <span className="ms-go">See the refusal</span>
       </Link>
 
       <footer className="foot">

@@ -52,7 +52,7 @@ export default function NotFound() {
       <ul className="unknowns">
         <li className="unknown-item">
           <div className="unknown-what">
-            <Link href="/check">Check your own status</Link>
+            <Link href="/check">Check status</Link>
           </div>
           <div className="unknown-why">
             Your immigration status and state, run through the same engines — in this tab, stored
@@ -61,7 +61,7 @@ export default function NotFound() {
         </li>
         <li className="unknown-item">
           <div className="unknown-what">
-            <Link href="/student">See the worked example</Link>
+            <Link href="/student">See example</Link>
           </div>
           <div className="unknown-why">
             One student&apos;s record read by three offices at once, with every finding cited.
@@ -69,7 +69,7 @@ export default function NotFound() {
         </li>
         <li className="unknown-item">
           <div className="unknown-what">
-            <Link href="/coverage">Read the coverage and the rule packs</Link>
+            <Link href="/coverage">Read coverage</Link>
           </div>
           <div className="unknown-why">
             Which jurisdictions PathWise has modelled, which it has only sourced, and the rule files

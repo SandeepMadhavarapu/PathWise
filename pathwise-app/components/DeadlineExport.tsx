@@ -75,7 +75,7 @@ export function DeadlineExport({
     return (
       <div className="rem-inline">
         <button type="button" className="btn ghost sm" onClick={download}>
-          Add these to your calendar
+          Add to calendar
         </button>
         <span className="rem-hint">
           {dated.length * EVENTS_PER_DATED_STEP} events, the first on {firstDate} — a file your
@@ -98,7 +98,7 @@ export function DeadlineExport({
 
       <div className="rem-actions">
         <button type="button" className="btn" onClick={download}>
-          Add these to your calendar
+          Add to calendar
         </button>
         <a className="btn ghost" href={buildMailtoHref(steps, { asOf })}>
           Email this to myself
@@ -112,23 +112,35 @@ export function DeadlineExport({
         <p>
           <strong>PathWise cannot email you, and will not pretend otherwise.</strong> There is no
           account and no server here, so there is nothing holding your address and nothing running
-          once you close this tab. What it can do is hand the dates to a calendar you already own —
-          and that calendar will remind you whether or not PathWise is open. The second button opens
-          your own mail client with the plan already written: addressed to nobody until you address
-          it, sent from your outbox, never seen by us.
+          once you close this tab.
+        </p>
+        <p>
+          What it can do is hand the dates to a calendar you already own — and that calendar will
+          remind you whether or not PathWise is open.
+        </p>
+        <p>
+          The second button opens your own mail client with the plan already written: addressed to
+          nobody until you address it, sent from your outbox, never seen by us.
         </p>
         <p>
           <strong>Each reminder fires before the deadline, not on it.</strong> Every event sits on
           the date <em>you</em> have to act — the office&apos;s deadline less the lead time that
-          action actually needs, {leadRange(dated)} in this plan. The office&apos;s own date is added
-          as a second event, so both are visible and neither is mistaken for the other.
+          action actually needs, {leadRange(dated)} in this plan.
+        </p>
+        <p>
+          The office&apos;s own date is added as a second event, so both are visible and neither is
+          mistaken for the other.
         </p>
         <p>
           Some calendars quietly ignore the alarms inside an imported file, so nothing here depends
-          on them: the urgency is written into the event title, and the event sits on your act-by
-          date, which means even a calendar&apos;s own default notification arrives at the right
-          moment. The alarms are in the file too — {ALARM_OFFSETS_COPY} — for the clients that honour
-          them.
+          on them.
+        </p>
+        <p>
+          The urgency is written into the event title, and the event sits on your act-by date,
+          which means even a calendar&apos;s own default notification arrives at the right moment.
+        </p>
+        <p>
+          The alarms are in the file too — {ALARM_OFFSETS_COPY} — for the clients that honour them.
         </p>
       </div>
     </section>

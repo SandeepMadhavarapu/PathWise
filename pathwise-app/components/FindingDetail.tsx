@@ -159,7 +159,7 @@ export function FindingDetail({
               target="_blank"
               rel="noreferrer"
             >
-              Read the source →
+              Read the source
             </a>
           </div>
         ) : null}
@@ -173,7 +173,7 @@ export function FindingDetail({
                 (`va-aid.json`) in the sentence itself; the id now lives only in the href, where it
                 belongs, and the visible text says which rules are being opened. */}
             <Link className="citation-pack" href={`/coverage#rp-tab-${packId}`}>
-              Open the {packLabel ?? "rule pack"} this finding was decided by →
+              Open {packLabel ?? "rule pack"}
             </Link>
           </div>
         ) : null}

@@ -110,9 +110,12 @@ export default function NextStepsPage() {
               voice nobody would ever receive it in. */}
           Below is Priya&apos;s plan as she would receive it, addressed to her. Every step is read out
           of the same engines as the rest of the record — the CPT ledger, the unemployment clock, the
-          OPT budget, the domicile gate and the aid finding. PathWise adds the two things a correct
-          finding still leaves out: how long the action actually takes to arrange, and therefore the
-          date she has to work to rather than the one the office prints.
+          OPT budget, the domicile gate and the aid finding.
+        </p>
+        <p>
+          PathWise adds the two things a correct finding still leaves out: how long the action
+          actually takes to arrange, and therefore the date she has to work to rather than the one
+          the office prints.
         </p>
         <div className="jstats">
           <span className="jstat">

@@ -152,7 +152,7 @@ export default function StudentPage() {
           detail={`Not an error — a reasoned finding. ${domicile.rule_citation.text}`}
           cite={jx.display?.residencyCite}
           detailHref="/student/finding/residency"
-          detailLabel="See full reasoning →"
+          detailLabel="See full reasoning"
         />
         <DomainCard
           domain={`Financial aid (${jx.name})`}
@@ -172,7 +172,7 @@ export default function StudentPage() {
             .join(" ")}
           cite={jx.display?.aidCite}
           detailHref="/student/finding/aid"
-          detailLabel="See full reasoning →"
+          detailLabel="See full reasoning"
         />
       </div>
 
@@ -204,7 +204,7 @@ export default function StudentPage() {
               </span>
             </div>
           </div>
-          <span className="nc-go">Her next steps →</span>
+          <span className="nc-go">Her next steps</span>
         </Link>
       ) : null}
 
@@ -225,7 +225,7 @@ export default function StudentPage() {
                 sides of the cliff — and refuse to pick one
               </div>
             </div>
-            <span className="cta-arrow">→</span>
+            <span className="cta-arrow" aria-hidden="true">→</span>
           </Link>
         </>
       ) : null}

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import coverage from "@/lib/rulepacks/coverage.json";
 import { BackLink } from "./BackLink";
+import { ChevronIcon } from "./icons";
 
 const RULES_VERIFIED_ON: string = (coverage as { verified_on?: string }).verified_on ?? "unknown";
 // Resolved at build time from the commit actually being built — see next.config.mjs. Not typed by
@@ -86,7 +87,7 @@ const PARENT: Record<string, { href: string; label: string }> = {
  *
  * The split below is the fix, and it is structural rather than cosmetic:
  *
- *   · THE TOOL is not navigation. It is an action, and it renders as one — see `.sidebar-cta`.
+ *   · THE TOOL is not navigation. It is an action, and it renders as one — see `.sb-item-cta`.
  *   · THE WORKED EXAMPLE is grouped under a heading that says so, in third person throughout.
  *     "Her timeline" cannot be mistaken for the reader's timeline the way "My journey" was.
  *   · The reference material sits below a divider, quieter than both.
@@ -110,10 +111,9 @@ const CHECK_CTA = { href: "/check", label: "Check my status" };
  * are the dashboard's cards opened up. Marcus is named on his row for the same reason the topbar
  * badges him: that row crosses from one student's record into another's.
  *
- * Rendered only in the vertical rail. Below 900px the rail is a horizontally-scrolling strip that
- * is already carrying more than it can show at 375px, and adding three more items would make a
- * measured problem worse to solve a problem that does not exist there — on a phone these screens
- * are reached by tapping the card that states the finding, which is directly above the fold.
+ * Rendered only in the sidebar, never as peers to it. Below 768px the sidebar is an off-canvas
+ * drawer rather than a permanent column, so these three still reach a phone reader — through the
+ * drawer, or by tapping the card that states the finding, which is directly above the fold.
  */
 const FINDING_NAV = [
   { href: "/student/finding/residency", label: "Why residency is blocked" },
@@ -180,29 +180,137 @@ function formatVerifiedDate(iso: string): string {
 
 type NavItem = { href: string; label: string };
 
+const SIDEBAR_KEY = "pathwise-sidebar-collapsed";
+
 /**
- * One navigation pill.
+ * One sidebar item — the same destination NavPill used to render as a horizontal pill.
  *
- * The original design navigated with `.pill` — a small bordered lozenge on the surface colour —
- * and had no rail at all. Every label is rendered as text rather than as an icon plus a label that
- * disappears at narrow widths, so the accessible name and the visible name are the same string on
- * every viewport, which is what the rail needed `aria-label` to work around.
+ * Collapsed state has no icon set to fall back to (see icons.tsx: one hand-rolled chevron,
+ * nothing else), so it shows the label's first letter in a 32px square instead, per the
+ * collapsible-sidebar spec. The accessible name is the full label either way — collapsed mode
+ * keeps it as visually-hidden text rather than relying on the avatar's letter or a native
+ * `title` tooltip, neither of which a screen reader announces reliably on focus.
+ *
+ * The tooltip itself is `position: fixed`, placed via the item's own measured rect rather than
+ * plain CSS `position: absolute` + `:hover`. `.sb-scroll` needs `overflow-y: auto` so a long list
+ * can scroll, and per the CSS overflow spec, setting one axis to a non-visible value silently
+ * computes the OTHER axis to `auto` too — so an absolutely-positioned tooltip escaping to the
+ * right was being clipped by its own scroll ancestor even though every computed style on it
+ * (opacity, position, z-index) looked correct. `position: fixed` escapes that ancestor entirely.
  */
-function NavPill({ item, pathname }: { item: NavItem; pathname: string }) {
+function SidebarItem({
+  item,
+  pathname,
+  collapsed,
+  cta,
+}: {
+  item: NavItem;
+  pathname: string;
+  collapsed: boolean;
+  cta?: boolean;
+}) {
   const active = pathname === item.href;
+  const letter = item.label.trim().charAt(0).toUpperCase();
+  const [tooltipTop, setTooltipTop] = useState<number | null>(null);
+  const showTooltip = useCallback((e: React.SyntheticEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltipTop(rect.top + rect.height / 2);
+  }, []);
+  const hideTooltip = useCallback(() => setTooltipTop(null), []);
+
   return (
     <Link
       href={item.href}
-      className={`pill navpill${active ? " active" : ""}`}
+      className={`sb-item${active ? " active" : ""}${cta ? " sb-item-cta" : ""}`}
       aria-current={active ? "page" : undefined}
+      onMouseEnter={collapsed ? showTooltip : undefined}
+      onMouseLeave={collapsed ? hideTooltip : undefined}
+      onFocus={collapsed ? showTooltip : undefined}
+      onBlur={collapsed ? hideTooltip : undefined}
     >
-      {item.label}
+      {collapsed ? (
+        <span className="sb-item-avatar" aria-hidden="true">
+          {letter}
+        </span>
+      ) : null}
+      <span className={collapsed ? "sb-item-label sr-only" : "sb-item-label"}>{item.label}</span>
+      {collapsed && tooltipTop !== null ? (
+        <span className="sb-tooltip" aria-hidden="true" style={{ top: tooltipTop }}>
+          {item.label}
+        </span>
+      ) : null}
     </Link>
   );
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+
+  // Desktop/tablet: expanded vs. collapsed, remembered across page loads. Mobile: an off-canvas
+  // drawer, open only for the current view — CSS decides which of the two applies at the current
+  // width, so neither state fights the other.
+  const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  // Below 768px the sidebar is always the full-width drawer, even while `collapsed` (the
+  // desktop/tablet rail state) is true — a phone that loaded with the tablet default of
+  // collapsed=true would otherwise open its drawer showing icon-only rows with 240px to spare.
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    let storageOk = true;
+    let stored: string | null = null;
+    try {
+      stored = window.localStorage.getItem(SIDEBAR_KEY);
+    } catch {
+      storageOk = false;
+    }
+    // Unavailable storage (private-mode restrictions etc.) silently defaults to expanded, per
+    // spec, rather than guessing from the viewport. A stored choice always wins; absent one, a
+    // narrow viewport (<1024) starts collapsed.
+    if (!storageOk) {
+      setCollapsed(false);
+    } else if (stored === "1") {
+      setCollapsed(true);
+    } else if (stored === "0") {
+      setCollapsed(false);
+    } else {
+      setCollapsed(window.innerWidth < 1024);
+    }
+  }, []);
+
+  // A route change is a completed selection — the drawer's job on mobile is done.
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDrawerOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [drawerOpen]);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(SIDEBAR_KEY, next ? "1" : "0");
+      } catch {
+        // Nothing to persist; the toggle still works for the rest of this session.
+      }
+      return next;
+    });
+  }, []);
 
   // The landing page owns its own bare, chrome-free layout.
   if (pathname === "/") {
@@ -216,82 +324,113 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const title = PAGE_TITLES[pathname] ?? "No page at this address";
   const parent = PARENT[pathname];
   const exampleStudent = EXAMPLE_STUDENT[pathname];
+  const showFindingNav = pathname.startsWith("/student");
+  // What the ITEMS render as. `collapsed` (the rail's own state) is meaningless on mobile, where
+  // the sidebar is either a closed drawer or a full-width open one — never an icon-only rail.
+  const itemsCollapsed = collapsed && !isMobile;
 
   /**
-   * The original shell: one centred column under a slim topbar, and no permanent rail.
-   *
-   * Every responsibility the sidebar carried is still carried here — the tool, the worked-example
-   * routes, the three finding screens, the reference route, the verification stamp and the build
-   * sha. What changed is the geometry: they are pills under a brand line rather than a dark rail
-   * pinned beside the content, which is the difference between reading a document and operating an
-   * application. Nothing about routing, titles or the back-navigation contract moved.
+   * The shell: a persistent top banner, a collapsible left sidebar carrying the same tool /
+   * worked-example / reference split the pill row made, and the content column. Nothing about
+   * routing, titles, the back-navigation contract, or the underlying nav data (CHECK_CTA,
+   * EXAMPLE_NAV, SECONDARY_NAV, FINDING_NAV) moved — only the geometry the same links render in.
    */
   return (
     <div className="shell-wrap">
-      {/* First focusable element, invisible until focused — the nav below is a row of links and a
-          keyboard reader still needs a way past it on every route. */}
+      {/* First focusable element, invisible until focused — the sidebar below is a list of links
+          and a keyboard reader still needs a way past it on every route. */}
       <a href="#main" className="skip-link">
         Skip to content
       </a>
 
-      <header className="topbar">
-        <div className="brand">
-          <Link href="/" className="logo" aria-label="PathWise home">
-            Path<span className="dot">Wise</span>
-          </Link>
-          <span className="tag">your standing across every system</span>
-        </div>
-        <div className="topnav">
-          {/* Kept beside the page name, so the first thing read after "Her next steps" is that the
-              steps are not the reader's own. */}
-          {exampleStudent ? (
-            <span className="pill pill-example">
-              Example student · {exampleStudent}
-              <span className="sr-only"> — a fictional student, not your own record</span>
-            </span>
-          ) : null}
-          <span className="pill pill-privacy">No account · nothing leaves this device</span>
-        </div>
+      <header className="pw-banner">
+        {/* Mobile-only: the sidebar's toggle relocates here below 768px, where the sidebar itself
+            becomes an off-canvas drawer instead of a permanent column. */}
+        <button
+          type="button"
+          className="sb-toggle sb-toggle-mobile"
+          aria-expanded={drawerOpen}
+          aria-controls="pw-sidebar"
+          aria-label={drawerOpen ? "Close menu" : "Open menu"}
+          onClick={() => setDrawerOpen((v) => !v)}
+        >
+          <ChevronIcon className={`sb-toggle-icon${drawerOpen ? " is-open" : ""}`} />
+        </button>
+        <Link href="/" className="pw-banner-logo" aria-label="PathWise home">
+          Path<span className="dot">Wise</span>
+        </Link>
       </header>
 
-      {/* The tool first and visually distinct, then the worked example, then reference material —
-          the same three-part split the rail made, expressed as pills instead of a rail. */}
-      <nav className="sitenav" aria-label="Sections">
-        <Link
-          href={CHECK_CTA.href}
-          className={`pill navpill navpill-cta${pathname === CHECK_CTA.href ? " active" : ""}`}
-          aria-current={pathname === CHECK_CTA.href ? "page" : undefined}
-        >
-          {CHECK_CTA.label}
-        </Link>
-        <span className="sitenav-sep" aria-hidden="true" />
-        {EXAMPLE_NAV.map((item) => (
-          <NavPill key={item.href} item={item} pathname={pathname} />
-        ))}
-        <span className="sitenav-sep" aria-hidden="true" />
-        {SECONDARY_NAV.map((item) => (
-          <NavPill key={item.href} item={item} pathname={pathname} />
-        ))}
-      </nav>
-
-      {/* The three finding screens, shown on the routes they belong to. They were rail sub-items;
-          here they surface only where they are relevant, which keeps the pill row scannable. */}
-      {pathname.startsWith("/student") ? (
-        <nav className="sitenav sitenav-sub" aria-label="Findings">
-          {FINDING_NAV.map((item) => (
-            <NavPill key={item.href} item={item} pathname={pathname} />
-          ))}
-        </nav>
+      {drawerOpen ? (
+        <div className="sb-scrim" aria-hidden="true" onClick={() => setDrawerOpen(false)} />
       ) : null}
 
-      <main id="main">
-        {parent ? <BackLink href={parent.href} label={parent.label} /> : null}
-        <h1 className="page-title">{title}</h1>
-        {children}
-      </main>
+      <div className="shell-body">
+        <nav
+          id="pw-sidebar"
+          aria-label="Sections"
+          className={`sidebar${collapsed ? " collapsed" : ""}${drawerOpen ? " drawer-open" : ""}`}
+        >
+          <button
+            type="button"
+            className="sb-toggle"
+            aria-expanded={!collapsed}
+            aria-label={collapsed ? "Expand menu" : "Collapse menu"}
+            onClick={toggleCollapsed}
+          >
+            <ChevronIcon className={`sb-toggle-icon${collapsed ? "" : " is-open"}`} />
+          </button>
 
-      <div className="shell-meta">
-        Rules verified: {formatVerifiedDate(RULES_VERIFIED_ON)} · Build: {BUILD_SHA}
+          <div className="sb-scroll">
+            {/* The tool — not navigation, an action, and rendered as one. */}
+            <SidebarItem item={CHECK_CTA} pathname={pathname} collapsed={itemsCollapsed} cta />
+
+            <div className="sb-sep" role="separator" aria-hidden="true" />
+            {!itemsCollapsed ? <div className="sb-group-label">Worked example</div> : null}
+            {EXAMPLE_NAV.map((item) => (
+              <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
+            ))}
+
+            <div className="sb-sep" role="separator" aria-hidden="true" />
+            {SECONDARY_NAV.map((item) => (
+              <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
+            ))}
+
+            {/* The three finding screens, shown on the routes they belong to. */}
+            {showFindingNav ? (
+              <>
+                <div className="sb-sep" role="separator" aria-hidden="true" />
+                {!itemsCollapsed ? <div className="sb-group-label">Findings</div> : null}
+                {FINDING_NAV.map((item) => (
+                  <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
+                ))}
+              </>
+            ) : null}
+          </div>
+        </nav>
+
+        <main id="main">
+          <div className="shell-context">
+            <span className="tag">your standing across every system</span>
+            {/* Kept beside the page name, so the first thing read after "Her next steps" is that
+                the steps are not the reader's own. */}
+            {exampleStudent ? (
+              <span className="pill pill-example">
+                Example student · {exampleStudent}
+                <span className="sr-only"> — a fictional student, not your own record</span>
+              </span>
+            ) : null}
+            <span className="pill pill-privacy">No account · nothing leaves this device</span>
+          </div>
+
+          {parent ? <BackLink href={parent.href} label={parent.label} /> : null}
+          <h1 className="page-title">{title}</h1>
+          {children}
+
+          <div className="shell-meta">
+            Rules verified: {formatVerifiedDate(RULES_VERIFIED_ON)} · Build: {BUILD_SHA}
+          </div>
+        </main>
       </div>
     </div>
   );
