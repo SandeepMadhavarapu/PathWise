@@ -15,7 +15,12 @@ import { DomainCard } from "@/components/DomainCard";
 import { LedgerBar } from "@/components/LedgerBar";
 import { FindingDetail } from "@/components/FindingDetail";
 import { ResultOutlook } from "@/components/ResultOutlook";
-import { formatCliffDistance, formatDecidingBody, formatDecidingOffice } from "@/lib/format";
+import {
+  formatCliffDistance,
+  formatDecidingBody,
+  formatDecidingOffice,
+  formatDomicileDate,
+} from "@/lib/format";
 import {
   aidFindingFor,
   aidFormFor,
@@ -986,6 +991,13 @@ export default function CheckPage() {
                     : "Add a CPT authorization above to see your ledger."
               }
               cite={SECTION_CITE}
+              // The federal ledger's provenance. SEVP decides it, the authority is 8 CFR, and the
+              // rule pack carrying the 365-day cliff is federal rather than a state's — so there is
+              // no state verification date to show here and the row is simply absent.
+              evidence={{
+                office: formatDecidingOffice("SEVP"),
+                sources: `1 source · ${SECTION_CITE}`,
+              }}
             />
             <DomainCard
               domain={`In-state residency (${stateName})`}
@@ -1041,6 +1053,23 @@ export default function CheckPage() {
               // The citation is the jurisdiction's own or none at all. Never a borrowed one — and
               // now that is the type's doing, not this line's: `display` is absent without a pack.
               cite={jx.display?.residencyCite}
+              // Provenance on the face of the card. Every value is read off the resolved
+              // jurisdiction or the finding itself — nothing here is composed for display. A
+              // jurisdiction with no pack has no `packs`, therefore no verified_on and no cite, so
+              // the block renders empty rather than printing a placeholder.
+              evidence={{
+                office: formatDecidingBody(
+                  finding.deciding_office,
+                  jx.packs?.domicile.agencies,
+                  "residency",
+                ),
+                verified: jx.packs?.domicile.verified_on
+                  ? formatDomicileDate(jx.packs.domicile.verified_on)
+                  : undefined,
+                sources: jx.display?.residencyCite
+                  ? `1 source · ${jx.display.residencyCite}`
+                  : undefined,
+              }}
               // Linked for every jurisdiction PathWise has a recorded source for, not only the ones
               // it has no rules for. A registered pack carries the source it was authored against,
               // and a reader who wants to check the citation should not have to leave the page to
@@ -1101,6 +1130,17 @@ export default function CheckPage() {
                       `${aidForm?.label ?? aidFinding.headline} — but PathWise has none of your deadlines or evidence on record, so this is not a clearance. See the full reasoning for what is still open.`
               }
               cite={jx.display?.aidCite}
+              // The aid domain's own provenance, from the AID pack — never the residency one. A
+              // state can have residency rules and no aid rules (Texas, Tennessee), and in that
+              // case `packs.aid` is undefined and every row here disappears rather than borrowing
+              // the residency pack's date to look complete.
+              evidence={{
+                office: formatDecidingBody(aidFinding.deciding_office, jx.packs?.aid?.agencies, "aid"),
+                verified: jx.packs?.aid?.verified_on
+                  ? formatDomicileDate(jx.packs.aid.verified_on)
+                  : undefined,
+                sources: jx.display?.aidCite ? `1 source · ${jx.display.aidCite}` : undefined,
+              }}
               detailHref={aidSource}
               detailLabel={aidSource ? `Official ${stateName} aid source →` : undefined}
             />

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { statusFromBand, type EngineBand, type StatusKey } from "@/lib/tokens";
 import { SegmentedProgress, type ProgressSegment, type ProgressLegendItem } from "./SegmentedProgress";
+import { StatusGlyph } from "./StatusGlyph";
 
 export function DomainCard({
   domain,
@@ -14,6 +15,7 @@ export function DomainCard({
   progress,
   detailHref,
   detailLabel,
+  evidence,
 }: {
   domain: string;
   decidingOffice?: string;
@@ -43,6 +45,14 @@ export function DomainCard({
   progress?: { segments: ProgressSegment[]; legend?: ProgressLegendItem[] };
   detailHref?: string;
   detailLabel?: string;
+  /**
+   * The provenance behind this card's verdict, shown on the card itself.
+   *
+   * Each field is optional on purpose. An unmodelled jurisdiction has no citation and no
+   * verification date, and the correct rendering there is nothing at all — not "n/a", not a dash.
+   * A placeholder in a provenance block is the one thing this product must never print.
+   */
+  evidence?: { office?: string; verified?: string; sources?: string };
 }) {
   const statusKey = tone ?? statusFromBand(band);
   // The original card's own word for the band, restored. It reads the SAME `band`/`tone` the glyph
@@ -78,10 +88,44 @@ export function DomainCard({
       ) : null}
 
       <div className="domain-status">{status}</div>
-      <span className={`badge ${statusKey}`}>{bandLabel}</span>
+      <span className={`badge ${statusKey}`}>
+        <StatusGlyph status={statusKey} />
+        {bandLabel}
+      </span>
       <div className="domain-detail">
         {detail} {cite ? <span className="cite wrap">{cite}</span> : null}
       </div>
+
+      {/* EVIDENCE ON THE CARD.
+          The provenance for a finding existed only behind "See full reasoning" — a reader had to
+          take the verdict on trust and click to find out who decided it, on what authority, and how
+          old the reading was. Those three facts are the product's whole claim, so they belong on the
+          face of the card that makes the claim.
+          Every row is optional and renders only when the caller has the real value: a jurisdiction
+          with no pack has no citation and no verification date, and this block must stay empty
+          rather than print a placeholder. */}
+      {evidence && (evidence.office || evidence.verified || evidence.sources) ? (
+        <dl className="domain-evidence">
+          {evidence.office ? (
+            <>
+              <dt>Decision office</dt>
+              <dd>{evidence.office}</dd>
+            </>
+          ) : null}
+          {evidence.verified ? (
+            <>
+              <dt>Rule verified</dt>
+              <dd>{evidence.verified}</dd>
+            </>
+          ) : null}
+          {evidence.sources ? (
+            <>
+              <dt>Evidence</dt>
+              <dd>{evidence.sources}</dd>
+            </>
+          ) : null}
+        </dl>
+      ) : null}
 
       {detailHref ? (
         <Link href={detailHref} className="domain-card-more">

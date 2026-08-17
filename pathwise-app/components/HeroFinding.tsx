@@ -14,6 +14,7 @@
 // consequences, then each one's status, then who decides it, then the authority.
 
 import { formatImmigrationStatus } from "@/lib/format";
+import { StatusGlyph } from "./StatusGlyph";
 
 interface Door {
   /** The system this door belongs to, named for the jurisdiction that decides it. */
@@ -95,7 +96,13 @@ export function HeroFinding({
                 a filled glyph square plus a tinted capsule. */}
             <div className="k">
               {door.system}
-              <span className="badge red">Blocked</span>
+              {/* The hero's badges carry the same mark the domain cards do. Without it the two
+                  loudest "Blocked" verdicts in the product were the only ones stating their status
+                  in colour and word alone. */}
+              <span className="badge red">
+                <StatusGlyph status="blocked" />
+                Blocked
+              </span>
             </div>
             <div className="v">
               {door.why} {door.cite ? <span className="cite">{door.cite}</span> : null}

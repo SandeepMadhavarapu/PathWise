@@ -204,6 +204,47 @@ function NavPill({ item, pathname }: { item: NavItem; pathname: string }) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  /**
+   * Whether the rail's six secondary destinations are folded behind one line.
+   *
+   * False on the server and on first paint, so the markup always ships every link — a reader with
+   * no JavaScript, and any crawler, gets the whole rail. It flips to true only after a phone
+   * viewport is measured, which is the one case where the rail costs more than it gives: at 390px
+   * it wraps to three rows and pushes the first form control on /check below the fold.
+   *
+   * `matchMedia` rather than a resize listener: one event on the breakpoint crossing instead of one
+   * per pixel, and it stays correct through an orientation change.
+   */
+  const [railFolded, setRailFolded] = React.useState(false);
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setRailFolded(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  /**
+   * The six secondary destinations, defined once.
+   *
+   * Held as a fragment rather than a component so the two branches below render the SAME nodes in
+   * two different parents — the rail directly, or a `details` inside it. Two copies of this list
+   * would be two places for a destination to go missing.
+   */
+  const secondaryRail = (
+    <>
+      <span className="sitenav-group">Worked example</span>
+      {EXAMPLE_NAV.map((item) => (
+        <NavPill key={item.href} item={item} pathname={pathname} />
+      ))}
+      <span className="sitenav-sep" aria-hidden="true" />
+      <span className="sitenav-group">Reference</span>
+      {SECONDARY_NAV.map((item) => (
+        <NavPill key={item.href} item={item} pathname={pathname} />
+      ))}
+    </>
+  );
+
   // The landing page owns its own bare, chrome-free layout.
   if (pathname === "/") {
     return <>{children}</>;
@@ -264,14 +305,50 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >
           {CHECK_CTA.label}
         </Link>
-        <span className="sitenav-sep" aria-hidden="true" />
-        {EXAMPLE_NAV.map((item) => (
-          <NavPill key={item.href} item={item} pathname={pathname} />
-        ))}
-        <span className="sitenav-sep" aria-hidden="true" />
-        {SECONDARY_NAV.map((item) => (
-          <NavPill key={item.href} item={item} pathname={pathname} />
-        ))}
+        {/* One definition of the six secondary destinations, rendered in one of two SHAPES.
+            Unfolded, they are returned as a fragment and become DIRECT flex children of `.sitenav`,
+            exactly as they are on main — no wrapper, no `display: contents`. Folded, the same
+            fragment is placed inside a `details`.
+            This replaces the previous CSS-only approach, which wrapped them in a `details` at every
+            width and neutralised the wrapper with `display: contents`. That does not reliably
+            promote children into the parent's flex formatting context: measured at 768px the pills
+            computed to `display: inline`, stopped wrapping, and drove scrollWidth to 906 against a
+            768 viewport — 138px of horizontal overflow on five routes. A structural switch cannot
+            fail that way, because above the fold-point there is no wrapper element at all. */}
+        {/* The groups are LABELLED now, not just separated.
+            A bare divider told a reader that "Check my status" and "Her timeline" belong to
+            different sets; it did not tell them what the second set IS. So a first-time visitor met
+            "Her timeline" and "Her next steps" with no antecedent for "Her" — five of the seven
+            items in the rail are one fictional student's record, and nothing on the rail said so.
+            The heading is the antecedent, and it costs one line. */}
+        {/* On a phone these six collapse behind one line, and the tool above stays visible.
+            Measured at 390px: the rail wraps to three rows and costs ~102px of the first viewport,
+            which pushed the first form control on /check to y=709 — the product's only tool, below
+            the fold, behind its own navigation. Akshaya's branch solves this by making the whole
+            sidebar an off-canvas drawer; that works, but it hides the primary action too and it
+            replaces the rail with a sidebar the rest of this product does not have.
+            This keeps the rail — which is PathWise's own shape, not a dashboard's — and folds only
+            the six secondary destinations, using the same `details` disclosure the check page uses
+            for its privacy elaboration. `open` above 768px is handled in CSS, so the desktop rail is
+            byte-identical to what ships today. */}
+        {/* `open` is driven by viewport, not by CSS, and that is not a stylistic choice — it is the
+            only correct way to do this. A closed `<details>` hides its children in the browser's own
+            box tree, which `display: contents` does not override: a CSS-only version silently
+            removed six of the rail's seven destinations from the desktop tab order. Measured before
+            this fix: Tab went "Check my status" → "Back to", skipping the worked example and the
+            coverage map entirely.
+            Rendered OPEN by default so the server output and the no-JS case carry every link, and
+            collapsed only once a phone viewport is confirmed after mount. */}
+        {railFolded ? (
+          <details className="sitenav-more">
+            <summary>
+              <span className="sitenav-more-k">Worked example &amp; reference</span>
+            </summary>
+            <div className="sitenav-more-body">{secondaryRail}</div>
+          </details>
+        ) : (
+          secondaryRail
+        )}
       </nav>
 
       {/* The three finding screens, shown on the routes they belong to. They were rail sub-items;

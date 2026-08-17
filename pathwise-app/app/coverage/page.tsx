@@ -466,6 +466,26 @@ export default function CoveragePage() {
             {JURISDICTION_COUNT} jurisdictions · every source link checked {SOURCES_CHECKED_ON}
           </span>
         </div>
+
+        {/* The same four counts, to scale.
+            Read as numerals, "1 · 2 · 43 · 5" is four facts a reader skims. Drawn to width it is a
+            single fact they cannot skim: the modelled segment is one fifty-first of the bar, and the
+            honest remainder is the rest of it. This is the strongest argument the page makes and it
+            was being made in 13px type.
+            Widths are computed from LEVEL_COUNTS — the same derived object the numerals above read —
+            so the bar cannot disagree with them, and it cannot be made to overstate coverage by
+            editing this file. `aria-hidden` because the numerals immediately above already state
+            every value in text; a screen reader should hear them once. */}
+        <div className="cov-bar" aria-hidden="true">
+          {LEVEL_ORDER.filter((l) => LEVEL_COUNTS[l] > 0).map((level) => (
+            <span
+              key={level}
+              className={`cov-bar-seg cov-bar-seg--${LEVEL[level].glyph}`}
+              style={{ flexGrow: LEVEL_COUNTS[level] }}
+              title={`${LEVEL_COUNTS[level]} ${LEVEL[level].short}`}
+            />
+          ))}
+        </div>
         <p>
           Residency and state aid are decided state by state, so a system that only ever worked in
           one of them would not be a system. PathWise keeps every rule in a versioned rule pack — the

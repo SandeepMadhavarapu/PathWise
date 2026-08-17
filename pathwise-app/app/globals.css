@@ -46,9 +46,15 @@
   --text-muted: #66707e;
   --text-inverse: #ffffff;
 
-  /* Status — the original restrained band language: green / amber / red, and nothing else. */
+  /* Status — five epistemic states, five distinct hues.
+     `--status-active` was #b7791f, the SAME hex as --status-warn: measured at deltaE 0, literally
+     indistinguishable. They are not the same claim. `warn` is "there is a risk on your record";
+     `active` is "an office has an open task" — a step in a process, not a hazard. A product whose
+     thesis is that these states differ cannot render two of them in one colour.
+     Slate-teal, not blue: --info (#2f5fe0) is the link/CTA colour and an "open task" chip in that
+     hue would read as interactive. Measured against the other four: min deltaE 32. */
   --status-done: #1f8a5b;
-  --status-active: #b7791f;
+  --status-active: #2a7d8c;
   --status-warn: #b7791f;
   --status-blocked: #c0392b;
   --status-idle: #dfe3ea;
@@ -83,6 +89,10 @@
   --done-border: color-mix(in srgb, var(--status-done) 30%, transparent);
   --warn-soft: color-mix(in srgb, var(--status-warn) 14%, var(--surface));
   --warn-border: color-mix(in srgb, var(--status-warn) 40%, transparent);
+  /* `active` now has its own hue, so it needs its own soft/border pair like every other status.
+     Previously it borrowed warn's, which is how the two collapsed in the first place. */
+  --active-soft: color-mix(in srgb, var(--status-active) 10%, var(--surface));
+  --active-border: color-mix(in srgb, var(--status-active) 30%, transparent);
   --blocked-soft: color-mix(in srgb, var(--status-blocked) 8%, var(--surface));
   --blocked-border: color-mix(in srgb, var(--status-blocked) 30%, transparent);
   --idle-soft: color-mix(in srgb, var(--status-idle) 30%, var(--surface));
@@ -2724,13 +2734,138 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
    single most recognisable mark of that design. The original said the same thing with a 7px dot
    inside a pill (`.badge::before`). The icon is hidden rather than removed — StatusGlyph still
    renders it, and the `count` variant, which carries a NUMBER rather than a state, is untouched. */
+/* FORENSIC LAB: the dot becomes a mark again — but a stamped one, not a filled chip.
+   A 9px dot carries hue and nothing else, so a reader who cannot see hue was distinguishing five
+   epistemic states by the text label alone. This restores a third channel: the glyph is drawn in
+   the status colour on its own soft fill, inside a hairline ring of the same colour — the way a
+   verification stamp is drawn on a document, rather than the way an icon sits in a dashboard. */
 .status-glyph:not(.count) {
-  width: 9px; height: 9px; border-radius: 50%;
+  width: 17px; height: 17px; border-radius: 4px;
   align-self: center; box-shadow: none;
+  border: 1px solid currentColor;
 }
-.status-glyph:not(.count) > svg,
-.status-glyph:not(.count) > * { display: none; }
-.status-glyph.idle:not(.count) { border: 1px solid var(--border-strong); background: var(--surface); }
+.status-glyph:not(.count) > svg { display: block; width: 11px; height: 11px; }
+.status-glyph.done:not(.count)    { color: var(--status-done-text);    background: var(--done-soft); }
+.status-glyph.active:not(.count)  { color: var(--status-active-text);  background: var(--active-soft); }
+.status-glyph.warn:not(.count)    { color: var(--status-warn-text);    background: var(--warn-soft); }
+.status-glyph.blocked:not(.count) { color: var(--status-blocked);      background: var(--blocked-soft); }
+.status-glyph.idle:not(.count) {
+  color: var(--text-muted); background: var(--surface);
+  border: 1px dashed var(--border-strong);
+  font-size: 11px; font-weight: 700; line-height: 1;
+}
+
+/* -------------------------------------------------------------------------------------------------
+   FORENSIC LAB additions. Everything below is presentation only: no engine value is computed here
+   and no string is invented. Each block says which fact it is surfacing and where that fact
+   already came from.
+   ------------------------------------------------------------------------------------------------- */
+
+/* The badge now carries its glyph. `align-items: center` and the 6px gap keep the mark and the
+   word on one baseline; the glyph inherits the badge's status colour. */
+.badge { display: inline-flex; align-items: center; gap: 6px; }
+.badge .status-glyph:not(.count) { width: 14px; height: 14px; border-radius: 3px; }
+.badge .status-glyph:not(.count) > svg { width: 9px; height: 9px; }
+
+/* EVIDENCE ON THE CARD — a definition list, not a table: three label/value pairs, hairline-ruled
+   off the verdict above them. Monospace values because every one of them is a record (an office
+   name, a date, a section) rather than prose. */
+.domain-evidence {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px var(--space-4);
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+.domain-evidence dt {
+  font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  font-weight: 700; color: var(--text-muted); white-space: nowrap; padding-top: 1px;
+}
+.domain-evidence dd {
+  margin: 0; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.45;
+  color: var(--text-secondary); word-break: break-word;
+}
+
+/* EDITORIAL DISPLAY TYPE.
+   A serif for the page's own voice — the headline, the section titles — and the existing sans for
+   everything the product REPORTS. That split is the point: prose PathWise wrote is set in one
+   voice, values the engines computed stay in another, so a reader can tell an argument from a
+   finding at a glance.
+   `ui-serif` and Georgia, never a webfont: the product makes zero network requests after load and
+   a font file would be the first one. This is a system stack by requirement, not by economy. */
+:root {
+  --font-display: ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+}
+.landing-line,
+.landing-h2,
+.section-head,
+h1.topbar-title {
+  font-family: var(--font-display);
+  letter-spacing: -0.014em;
+  font-weight: 600;
+}
+.landing-line { letter-spacing: -0.02em; }
+
+/* COVERAGE, TO SCALE. One hairline bar, four segments, widths proportional to the real counts.
+   The modelled segment is deliberately tiny — that is the honest picture and the page's argument. */
+.cov-bar {
+  display: flex; gap: 2px; margin: var(--space-4) 0 var(--space-5);
+  height: 10px; border-radius: 3px; overflow: hidden; max-width: 74ch;
+}
+.cov-bar-seg { display: block; min-width: 3px; border-radius: 2px; }
+.cov-bar-seg--done    { background: var(--status-done); }
+.cov-bar-seg--warn    { background: var(--status-warn); }
+.cov-bar-seg--active  { background: var(--status-active); }
+.cov-bar-seg--blocked { background: var(--status-blocked); }
+/* `idle` is the one that must not read as a colour with a verdict in it: a hairline-outlined
+   ghost, the same treatment its glyph gets. */
+.cov-bar-seg--idle {
+  background: repeating-linear-gradient(
+    135deg, var(--idle-soft) 0 5px, var(--surface) 5px 10px
+  );
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+/* -------------------------------------------------------------------------------------------------
+   THE RAIL, FOLDED ON A PHONE.
+   Desktop (>=768px) is unchanged: the disclosure is transparent — its summary is hidden and its body
+   is display:contents, so the pills sit in the rail's flex row exactly as they do on main today.
+   Below 768px the six secondary destinations fold behind one line and the tool stays visible.
+   ------------------------------------------------------------------------------------------------- */
+/* `display: contents` is gone. The unfolded rail no longer has a wrapper to neutralise — AppShell
+   renders the pills as direct flex children above the fold-point — so the only rules needed here
+   are the folded ones. This is what removed 138px of horizontal overflow at 768px. */
+@media (max-width: 767px) {
+  .sitenav-more { display: block; width: 100%; }
+  .sitenav-more > summary {
+    display: inline-flex; align-items: center; gap: 6px;
+    cursor: pointer; list-style: none;
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    padding: 7px 2px; min-height: 32px; width: fit-content;
+  }
+  .sitenav-more > summary::-webkit-details-marker { display: none; }
+  .sitenav-more > summary::before {
+    content: "›"; display: inline-block; font-size: 14px; line-height: 1;
+    transition: transform var(--motion-fast, 140ms) var(--motion-ease, ease);
+  }
+  .sitenav-more[open] > summary::before { transform: rotate(90deg); }
+  .sitenav-more-body {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+    padding-top: var(--space-2);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sitenav-more > summary::before { transition: none; }
+  }
+}
+
+/* The rail's group labels. Set as quiet small-caps so they read as headings over the pills rather
+   than as another pill a reader might try to click. */
+.sitenav-group {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--text-muted); align-self: center; white-space: nowrap;
+  padding-right: 2px;
+}
 
 /* CAPSULE → the original `.pill`. */
 .capsule {
@@ -2817,6 +2952,12 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
 }
 .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+/* FORENSIC LAB: one mark per status, not two.
+   The badge's 7px dot and the glyph say the same thing, and rendering both produced "● ⊟ Blocked"
+   — a reader parsing two symbols for one state. The glyph supersedes the dot because it carries
+   shape as well as hue, so where a glyph is present the dot stands down. Badges without a glyph
+   (the coverage tiles, the deadline pill) keep their dot untouched. */
+.badge:has(.status-glyph)::before { display: none; }
 /* `--green` as text on --green-soft is 3.85:1. Same fix, same reason, same token pair as the amber
    rule three lines down; the dot stays `currentColor`, so the pill still reads green. */
 .badge.green, .badge.done { background: var(--green-soft); color: var(--status-done-text); }
