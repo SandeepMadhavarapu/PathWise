@@ -111,9 +111,11 @@ const CHECK_CTA = { href: "/check", label: "Check my status" };
  * are the dashboard's cards opened up. Marcus is named on his row for the same reason the topbar
  * badges him: that row crosses from one student's record into another's.
  *
- * Rendered only in the sidebar, never as peers to it. Below 768px the sidebar is an off-canvas
- * drawer rather than a permanent column, so these three still reach a phone reader — through the
- * drawer, or by tapping the card that states the finding, which is directly above the fold.
+ * Rendered only in the sidebar, never as peers to it, and only across the worked-example routes
+ * (see WORKED_EXAMPLE_ROUTES below) — not on /check or /coverage, which are not Priya's record.
+ * Below 768px the sidebar is an off-canvas drawer rather than a permanent column, so these three
+ * still reach a phone reader — through the drawer, or by tapping the card that states the
+ * finding, which is directly above the fold.
  */
 const FINDING_NAV = [
   { href: "/student/finding/residency", label: "Why residency is blocked" },
@@ -134,6 +136,15 @@ const EXAMPLE_NAV = [
 ];
 
 const SECONDARY_NAV = [{ href: "/coverage", label: "State coverage" }];
+
+// Every worked-example route, findings included — the set the sidebar's "Findings" group shows
+// on. It used to be `pathname.startsWith("/student")`, which dropped the group the moment a
+// reader followed the rail from /student/changed to /moment: both are the same worked example,
+// mid-flow, and the group disappearing read as a bug rather than a boundary.
+const WORKED_EXAMPLE_ROUTES = new Set([
+  ...EXAMPLE_NAV.map((item) => item.href),
+  ...FINDING_NAV.map((item) => item.href),
+]);
 
 /**
  * The routes that show a FICTIONAL student's record — and WHICH ONE.
@@ -324,7 +335,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const title = PAGE_TITLES[pathname] ?? "No page at this address";
   const parent = PARENT[pathname];
   const exampleStudent = EXAMPLE_STUDENT[pathname];
-  const showFindingNav = pathname.startsWith("/student");
+  const showFindingNav = WORKED_EXAMPLE_ROUTES.has(pathname);
   // What the ITEMS render as. `collapsed` (the rail's own state) is meaningless on mobile, where
   // the sidebar is either a closed drawer or a full-width open one — never an icon-only rail.
   const itemsCollapsed = collapsed && !isMobile;
@@ -387,16 +398,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
             <div className="sb-sep" role="separator" aria-hidden="true" />
             {!itemsCollapsed ? <div className="sb-group-label">Worked example</div> : null}
-            {EXAMPLE_NAV.map((item) => (
+            {/* Split around the findings group rather than mapped in one pass — the findings are
+                Priya's residency and aid record, reached from "When a document arrives" onward, so
+                they sit between that item and "One event, many effects" instead of trailing the
+                whole list. Same EXAMPLE_NAV array either way, just sliced at render time. */}
+            {EXAMPLE_NAV.slice(0, 4).map((item) => (
               <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
             ))}
 
-            <div className="sb-sep" role="separator" aria-hidden="true" />
-            {SECONDARY_NAV.map((item) => (
-              <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
-            ))}
-
-            {/* The three finding screens, shown on the routes they belong to. */}
             {showFindingNav ? (
               <>
                 <div className="sb-sep" role="separator" aria-hidden="true" />
@@ -404,8 +413,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {FINDING_NAV.map((item) => (
                   <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
                 ))}
+                <div className="sb-sep" role="separator" aria-hidden="true" />
               </>
             ) : null}
+
+            {EXAMPLE_NAV.slice(4).map((item) => (
+              <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
+            ))}
+
+            <div className="sb-sep" role="separator" aria-hidden="true" />
+            {SECONDARY_NAV.map((item) => (
+              <SidebarItem key={item.href} item={item} pathname={pathname} collapsed={itemsCollapsed} />
+            ))}
           </div>
         </nav>
 
