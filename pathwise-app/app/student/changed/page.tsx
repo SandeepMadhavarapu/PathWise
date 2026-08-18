@@ -250,10 +250,9 @@ export default function ChangedPage() {
   return (
     <>
       <div className="jintro surface">
-        {/* Matches the rail label and this page's own heading. It was left reading "When evidence
-            lands" when both of those were renamed — the same miss as the timeline page's eyebrow,
-            and the reason the terminology pass is swept for rather than trusted. */}
-        <div className="jintro-eyebrow">When a document arrives</div>
+        {/* No eyebrow. It was swept to match the rail label and this page's own heading, which is
+            exactly what made it redundant: it ended up printing the h1 word for word, immediately
+            above it. The sweep kept it accurate; accuracy was never the thing it lacked. */}
         <h2>One document arrives. Watch PathWise re-reason.</h2>
         {/* The stakes, on the page that is the climax of the product and stated them nowhere.
             The heading describes the MECHANISM — an engine re-running — and the two band labels

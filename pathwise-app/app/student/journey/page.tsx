@@ -23,10 +23,10 @@ export default function JourneyPage() {
   return (
     <>
       <div className="jintro surface">
-        {/* Was "My journey", directly above "Priya never has to explain HER history again" — the
-            possessive and the sentence under it were describing different people, and the
-            possessive reached the reader first. */}
-        <div className="jintro-eyebrow">Her timeline</div>
+        {/* No eyebrow. It read "Her timeline" — the h1 verbatim, one line above it. It was already
+            once corrected from "My journey" (the possessive described a different person than the
+            sentence beneath it); the correction made it accurate and left it redundant. An eyebrow
+            that repeats the heading spends a line to say nothing twice. */}
         <h2>Priya never has to explain her history again.</h2>
         <p>
           Two institutions, two education levels, and every authorization in between — held as one

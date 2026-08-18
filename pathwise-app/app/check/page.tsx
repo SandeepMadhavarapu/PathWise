@@ -595,8 +595,12 @@ export default function CheckPage() {
           statement of what came back. A visitor was being asked to type their immigration status
           into something that had not yet said what it would do with it — which, for this population
           in particular, is the point at which a tab gets closed. */}
-      <div className="jintro surface">
-        <div className="jintro-eyebrow">Check your status</div>
+      {/* No eyebrow here. It read "Check your status", which is the h1 sitting 32px above it and
+          the nav pill above that and the tab title above that — the same four words four times
+          before a visitor reaches a single input. An eyebrow earns its line when it says what the
+          heading cannot: /coverage keeps one because "Coverage · 50 states + DC" carries a count
+          the title does not. This one carried nothing. */}
+      <div className="jintro jintro--bare">
         <h2>Run the same engines over your own facts.</h2>
         <p>
           Enter your status, your state and any CPT you have been authorized for. PathWise reads them
@@ -643,6 +647,20 @@ export default function CheckPage() {
             not worth a viewport of a reader's attention before they can use anything. `details` and
             not a custom disclosure: it is open to find-in-page, it is keyboard-operable and
             announced without an aria attribute, and it needs no state. */}
+      </div>
+
+      <form className="check-form surface" onSubmit={onSubmit}>
+        {/* The promise moved into the form rather than sitting above it in a card of its own.
+            It must still be read BEFORE anything is typed — that ordering is the whole reason this
+            screen does not open on a bare form — and it is: it renders directly above the first
+            field, measured, at every width. What it no longer does is pay for a second surface.
+            The old arrangement cost 294px above the fold of which only 212px was content; the rest
+            was one card's padding, its bottom margin and the gap to the form. Measured at 1366x658
+            with browser chrome, the submit button sat at y=993 in a 658px viewport — a judge on the
+            commonest laptop opened the product's only tool and could not see the button that runs
+            it. Folding the promise into the form it qualifies removes a surface, not a sentence:
+            every word survives, 183px comes back, and the first field moves from 62% down the page
+            to 43%. */}
         <div className="check-lifetime">
           <p className="cl-lede">
             <span className="check-lifetime-k">Nothing you type leaves your device.</span> There is
@@ -661,9 +679,6 @@ export default function CheckPage() {
             </p>
           </details>
         </div>
-      </div>
-
-      <form className="check-form surface" onSubmit={onSubmit}>
         <div className="field-row">
           <div className="field">
             <label htmlFor="status">Immigration status</label>

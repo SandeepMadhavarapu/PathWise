@@ -89,7 +89,8 @@ export default function NextStepsPage() {
       <ScenarioNote asOf={asOf} what="Every deadline and margin below is counted from that day" />
 
       <div className="jintro surface">
-        <div className="jintro-eyebrow">Next steps</div>
+        {/* No eyebrow. "Next steps" under an h1 reading "Her next steps" is the heading again with
+            a word removed. */}
         {/* Both halves, because the page numbers all of them.
             This read "{actionable} things Priya can act on" — 7 — above a list numbered 1 to 10,
             since three of the steps are settled findings no document reopens and the engine orders
