@@ -217,7 +217,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
    */
   const [railFolded, setRailFolded] = React.useState(false);
   React.useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
+    // Width alone was the wrong question. A phone held sideways is 844px wide and 390px tall, so it
+    // failed `max-width: 767px`, took the full desktop rail, and spent 65px of a 390px screen on it —
+    // measured on /check, the first form field landed at y=518, or 133% of the viewport, and NONE of
+    // the seven fields were visible. The product's only tool, on a screen that had simply been
+    // rotated, looked like a page with no tool on it. 932x430 (120%) and a short desktop window at
+    // 1280x500 (104%) failed the same way.
+    //
+    // The condition is therefore "narrow OR short", and the stylesheet's fold block carries the same
+    // pair so the markup and the styling can never disagree about which rail is on screen. 500px is
+    // chosen to sit above every phone landscape height and below every tablet portrait height, so
+    // the 768-900px tablet fix this branch already shipped is untouched: those are 900px tall.
+    const mq = window.matchMedia("(max-width: 767px), (max-height: 500px)");
     const apply = () => setRailFolded(mq.matches);
     apply();
     mq.addEventListener("change", apply);

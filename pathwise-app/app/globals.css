@@ -2869,7 +2869,7 @@ h1.topbar-title {
 /* `display: contents` is gone. The unfolded rail no longer has a wrapper to neutralise — AppShell
    renders the pills as direct flex children above the fold-point — so the only rules needed here
    are the folded ones. This is what removed 138px of horizontal overflow at 768px. */
-@media (max-width: 767px) {
+@media (max-width: 767px), (max-height: 500px) {
   .sitenav-more { display: block; width: 100%; }
   .sitenav-more > summary {
     display: inline-flex; align-items: center; gap: 6px;
@@ -2890,6 +2890,32 @@ h1.topbar-title {
   @media (prefers-reduced-motion: reduce) {
     .sitenav-more > summary::before { transition: none; }
   }
+}
+
+/* ---- Short viewports: a phone held sideways ----
+   390px of height is not a small desktop, it is a different problem. At 844x390 the shell spent its
+   first 518px on chrome and orientation before reaching a form field — 133% of the viewport, with
+   0 of 7 fields visible. Measured, folding the rail alone recovers only 37px and still leaves the
+   form entirely below the fold (123%); compressing the vertical rhythm as well still leaves it at
+   112%. Nothing that keeps every element at full size fits, so the rhythm tightens AND the deck's
+   elaboration stands down — the heading it elaborates stays, and the paragraph returns in full at
+   any viewport over 500px tall, which includes every phone held upright.
+
+   What does NOT change: the privacy promise still renders above the first field, measured, at every
+   one of these sizes; no navigation is removed, only folded behind the same disclosure the phone
+   already uses; and nothing here touches width, so the 768-900px tablet fix is untouched. */
+@media (max-height: 500px) {
+  .shell-wrap { padding-top: 14px; }
+  .shell-wrap > .topbar { margin-bottom: 10px; }
+  .shell-wrap > nav { margin: 8px 0; }
+  .page-title { font-size: 21px; margin: 4px 0 6px; }
+  .jintro { margin-bottom: var(--space-2); }
+  .jintro h2 { margin: 0 0 var(--space-1, 4px); }
+  /* The elaboration, not the heading. On a screen this short the choice is between two lines of
+     orientation and the instrument itself. */
+  .jintro > p { display: none; }
+  .check-lifetime { padding: 8px 12px; margin-bottom: 10px; }
+  .check-form { padding-top: 14px; }
 }
 
 /* The rail's group labels. Set as quiet small-caps so they read as headings over the pills rather
