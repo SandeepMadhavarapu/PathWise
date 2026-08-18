@@ -328,6 +328,47 @@ export default function CheckPage() {
       `CPT row ${n} is missing ${missing.join(" and ")}, so it is not counted below.`,
   );
 
+  /**
+   * Rows that are identical in every field PathWise models, named because the ledger cannot tell
+   * what they mean.
+   *
+   * Two authorizations covering the same dates at the same hours and the same level are either two
+   * concurrent jobs or one authorization entered twice, and this record has no employer field to
+   * separate them. The distinction is not cosmetic. Because concurrent part-time hours are summed,
+   * a single 12-hour authorization contributes NO full-time days, and the same row entered twice
+   * contributes ten of them — 12 + 12 clears the 20-hour threshold on every day in the range.
+   * Duplicating one row can therefore manufacture full-time CPT the reader never had, and at the
+   * limit can move a finding to "OPT eligibility lost for this level".
+   *
+   * Measured on the engine: one 12h row = 0 full-time days; the same row twice = 10.
+   *
+   * The ledger counts them as two, which is the reading that reports MORE CPT used, and PathWise
+   * does not silently collapse them — deciding that two identical rows are one would as easily
+   * erase a real second job. What it must not do is choose between those readings without saying
+   * so, so the reader is told the rows are indistinguishable, told which way the count went, and
+   * left to remove one if it was a duplicate. Full-time rows are unaffected: their days are a
+   * union, so repeating one changes nothing.
+   */
+  const duplicateRowGroups = (() => {
+    const seen = new Map<string, number[]>();
+    rows.forEach((r, i) => {
+      if (!r.start || !r.end || r.hours === "") return;
+      const key = `${r.start}|${r.end}|${r.hours}|${r.level}`;
+      seen.set(key, [...(seen.get(key) ?? []), i + 1]);
+    });
+    return [...seen.values()].filter((g) => g.length > 1);
+  })();
+
+  const duplicateNote =
+    duplicateRowGroups.length === 0
+      ? ""
+      : duplicateRowGroups
+          .map(
+            (g) =>
+              `CPT rows ${g.slice(0, -1).join(", ")} and ${g[g.length - 1]} are identical in every field PathWise reads, so it cannot tell whether they are separate authorizations or one entered more than once. They are counted separately, which reports more CPT used, not less.`,
+          )
+          .join(" ");
+
   // Everything the reader typed into a CPT row that the ledger did not read — unfinished or
   // self-contradictory. Both notes above are visual; this count is what the spoken summary uses, so
   // a screen-reader user is told a row was dropped even if they never reach the form note.
@@ -338,6 +379,13 @@ export default function CheckPage() {
       : uncountedRows === 1
         ? "One CPT row was not counted, because it is unfinished or ends before it starts; the form says which. "
         : `${uncountedRows} CPT rows were not counted, because they are unfinished or end before they start; the form says which. `;
+
+  // Screen-reader users reach the spoken summary before the form notes, so the ambiguity travels
+  // with it for the same reason the uncounted-row count does.
+  const duplicateSpoken =
+    duplicateRowGroups.length === 0
+      ? ""
+      : "Some CPT rows are identical and PathWise cannot tell whether they are separate authorizations; they are counted separately. ";
 
   const student: Student = {
     id: "self",
@@ -511,6 +559,7 @@ export default function CheckPage() {
       `Residency: ${RESULT_WORD[finding.result]}. ` +
       `State financial aid: ${RESULT_WORD[aidFinding.result]}. ` +
       uncountedNote +
+      duplicateSpoken +
       `The full findings, their citations and the offices that decide them are below.`
     : "";
 
@@ -839,6 +888,12 @@ export default function CheckPage() {
         {incompleteNotes.length > 0 ? (
           <p className="row-unusable" role="status">
             {incompleteNotes.join(" ")} PathWise will not guess.
+          </p>
+        ) : null}
+
+        {duplicateNote ? (
+          <p className="row-unusable" role="status">
+            {duplicateNote}
           </p>
         ) : null}
 

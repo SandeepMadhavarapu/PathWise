@@ -14,6 +14,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { computeOptBudget, monthsInPeriod } from '../engines/opt-budget';
+import { computeCptLedger } from '../engines/cpt-ledger';
 import { formatDomicileDate } from '../format';
 import {
   aidFindingFor,
@@ -319,6 +320,45 @@ console.log('\n===== 4 · One date spelling, and only one =====');
     offenders.length === 0,
     offenders,
   );
+}
+
+// ---------------------------------------------------------------------------------------------
+// Duplicating one part-time authorization manufactures full-time CPT days.
+//
+// This is pinned, not fixed at the engine, and the distinction matters. Concurrent part-time hours
+// are summed — PathWise's own interpretation, labelled as such in the pack — so one 12-hour
+// authorization contributes NO full-time days while the same authorization listed twice clears the
+// 20-hour threshold on every day in its range and contributes all of them. A reader who enters one
+// CPT twice is therefore told they used CPT they never used, and at the limit can be told OPT
+// eligibility is gone.
+//
+// The engine cannot resolve this on its own: a cpt_auth carries no employer, so "the same row
+// twice" and "two concurrent jobs" are the same input. Collapsing duplicates would as readily erase
+// a genuine second job as remove a typo, and either silent choice is the thing this product exists
+// not to do. /check therefore names the ambiguity to the reader and says which way the count went,
+// and this test holds the engine numbers still so that behaviour cannot drift underneath it.
+//
+// Full-time duplicates are unaffected and are asserted here too: their days are a union, so
+// repeating one changes nothing. That asymmetry is the whole reason the part-time case surprises.
+{
+  const auth = (h: number) => ({
+    type: 'cpt_auth' as const,
+    date: '2024-01-01',
+    end_date: '2024-01-10',
+    program_level: 'masters' as ProgramLevel,
+    attrs: { hours_per_week: h },
+  });
+  const days = (evts: ReturnType<typeof auth>[]) =>
+    computeCptLedger(evts as never).forLevel('masters')?.fullTimeDays ?? -1;
+
+  assert('one 12h part-time authorization contributes no full-time days', days([auth(12)]) === 0, days([auth(12)]));
+  assert(
+    'the SAME 12h authorization listed twice contributes ten — the case /check must warn about',
+    days([auth(12), auth(12)]) === 10,
+    days([auth(12), auth(12)]),
+  );
+  assert('20h exactly is still not full-time', days([auth(20)]) === 0, days([auth(20)]));
+  assert('duplicating a FULL-TIME authorization changes nothing', days([auth(40)]) === days([auth(40), auth(40)]));
 }
 
 console.log('');
