@@ -386,6 +386,45 @@ console.log('\n===== 4 · One date spelling, and only one =====');
   );
 }
 
+// ---------------------------------------------------------------------------------------------
+// WCAG 1.4.4 Resize Text — typography must be expressed in a unit the reader can scale.
+//
+// The audit that found this was not the automated one. Nine passes reported "200% zoom passes"
+// because a probe measured horizontal overflow and found none — and there was none, because
+// NOTHING MOVED. A test that measures the absence of a symptom is not evidence of the capability.
+// Rendering the page at a 32px root and reading it was what exposed it: h1 25px -> 25px, body
+// 14px -> 14px, every value frozen. A reader who sets a browser font preference, which is the
+// commonest non-magnifier accommodation there is, got nothing.
+//
+// So this test asserts the property directly rather than a downstream symptom: no font-size in the
+// stylesheet may be expressed in px, because px does not answer to the root. rem does. At a 16px
+// root the arithmetic is identical, which is why the 100% rendering is unchanged; at a 32px root
+// every value doubles, which is the point.
+//
+// Line-heights are deliberately NOT checked for a unit: all 66 are unitless, which is already
+// correct — they multiply whatever font-size resolves to and scale for free.
+{
+  const css = readFileSync(join(process.cwd(), 'app', 'globals.css'), 'utf8');
+  const pxFontSizes = css.match(/font-size:\s*[0-9.]+px/g) ?? [];
+  const remFontSizes = css.match(/font-size:\s*[0-9.]+rem/g) ?? [];
+  assert(
+    "no font-size is declared in px — px cannot answer to the reader's root font size",
+    pxFontSizes.length === 0,
+    pxFontSizes.slice(0, 8),
+  );
+  assert(
+    'typography is declared in rem, so a 200% root doubles every value',
+    remFontSizes.length > 250,
+    `${remFontSizes.length} rem font-size declarations`,
+  );
+  const pxLineHeights = css.match(/line-height:\s*[0-9.]+px/g) ?? [];
+  assert(
+    'no line-height is pinned in px, which would clip text as it grows',
+    pxLineHeights.length === 0,
+    pxLineHeights.slice(0, 5),
+  );
+}
+
 console.log('');
 if (failures === 0) {
   console.log('ALL TESTS PASSED — an unreadable record stays unreadable, and a missing rule stays missing.');

@@ -231,7 +231,7 @@ a:hover { text-decoration: underline; }
   border-top: none;
   border-radius: 0 0 var(--radius-input) var(--radius-input);
   padding: 10px var(--space-4);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   box-shadow: var(--shadow-hairline);
   transition: transform var(--dur-fast) var(--ease);
@@ -246,7 +246,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 }
 
 .t-page-title {
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.25;
@@ -254,7 +254,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   margin: 0;
 }
 .t-card-title {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.3;
@@ -262,24 +262,24 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   margin: 0;
 }
 .t-row-title {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 500;
   line-height: 1.4;
   color: var(--text);
 }
 .t-body {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.55;
   color: var(--text);
 }
 .t-meta {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 400;
   color: var(--text-secondary);
 }
 .t-micro {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -298,7 +298,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .micro-label .sep { color: var(--border-strong); }
 
 .section-head {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -314,7 +314,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 .section-note {
   margin: calc(var(--space-3) * -1) 0 var(--space-4);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.55;
   color: var(--text-secondary);
   max-width: 78ch;
@@ -329,7 +329,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cite {
   display: inline;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   background: var(--canvas);
   border: 1px solid var(--border);
@@ -384,7 +384,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    programmatic — the reader did not Tab to it, and a focus ring on a heading nobody aimed at reads
    as a rendering fault rather than as guidance. Keyboard users still get every real control's ring. */
 .check-result-head {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 650;
   letter-spacing: -0.01em;
   color: var(--text);
@@ -403,7 +403,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   margin-top: var(--space-2);
 }
 .check-result-head-row .check-result-head { margin-top: 0; }
-.check-again { font-size: 13px; font-weight: 500; color: var(--info); flex: none; }
+.check-again { font-size: 0.8125rem; font-weight: 500; color: var(--info); flex: none; }
 .check-again:hover { text-decoration: underline; }
 
 .check-result-head:focus { outline: none; }
@@ -422,7 +422,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   flex-direction: column;
   gap: var(--space-5);
 }
-.outlook-head { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; color: var(--text); margin: 0; }
+.outlook-head { font-size: 1.125rem; font-weight: 650; letter-spacing: -0.01em; color: var(--text); margin: 0; }
 .outlook-block { display: flex; flex-direction: column; gap: var(--space-2); }
 
 /* One row per domain: what is being decided, who decides it, under what, and where to read it.
@@ -438,11 +438,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-top: 1px solid var(--border);
 }
 .oo:first-child { border-top: none; }
-.oo-domain { font-size: 14px; font-weight: 600; color: var(--text); }
-.oo-body { font-size: 13px; color: var(--text-secondary); }
+.oo-domain { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.oo-body { font-size: 0.8125rem; color: var(--text-secondary); }
 .oo .cite { justify-self: start; }
-.oo-src { grid-column: 1 / -1; font-size: 13px; font-weight: 500; }
-.outlook-foot { margin: var(--space-2) 0 0; font-size: 12px; color: var(--text-muted); }
+.oo-src { grid-column: 1 / -1; font-size: 0.8125rem; font-weight: 500; }
+.outlook-foot { margin: var(--space-2) 0 0; font-size: 0.75rem; color: var(--text-muted); }
 
 /* Open questions. The resolution is the load-bearing line, so it gets the weight and the arrow;
    the reasoning behind it sits in a disclosure rather than competing with it. */
@@ -453,10 +453,10 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-radius: var(--radius-input);
   padding: var(--space-3) var(--space-4);
 }
-.oq-what { margin: 0; font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.45; }
+.oq-what { margin: 0; font-size: 0.875rem; font-weight: 600; color: var(--text); line-height: 1.45; }
 .oq-do {
   margin: var(--space-2) 0 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.55;
   color: var(--text-secondary);
   display: flex;
@@ -467,19 +467,19 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* 12px text on a 12px line is a ~16px target. The vertical padding takes it past 24px without
    changing where anything sits, because the block below it is spaced by the list's own gap. */
 .oq-why > summary {
-  font-size: 12px; font-weight: 600; color: var(--info); cursor: pointer;
+  font-size: 0.75rem; font-weight: 600; color: var(--info); cursor: pointer;
   list-style: none; display: inline-flex; align-items: center; gap: 4px;
   padding: var(--space-1) 0;
 }
 .oq-why > summary::-webkit-details-marker { display: none; }
 .oq-why > summary::before { content: "›"; display: inline-block; transition: transform var(--dur-fast) var(--ease); }
 .oq-why[open] > summary::before { transform: rotate(90deg); }
-.oq-why > p { margin: var(--space-2) 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+.oq-why > p { margin: var(--space-2) 0 0; font-size: 0.8125rem; line-height: 1.55; color: var(--text-secondary); }
 
 /* Coverage gaps: what PathWise did not read. Neutral, because an unread rule is not a warning
    about the reader's situation — it is a statement about this product's reach. */
 .outlook-gaps { margin: 0; padding-left: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
-.outlook-gaps li { font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+.outlook-gaps li { font-size: 0.8125rem; line-height: 1.55; color: var(--text-secondary); }
 
 /* The volatility note is written inline elsewhere, where it follows a short label on one line.
    The notes are long enough that here it wrapped after the label and left the separator stranded
@@ -488,7 +488,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .outlook .volatility { display: flex; flex-direction: column; gap: 4px; margin: 0; }
 .outlook .volatility-sep { display: none; }
 
-.outlook-more { font-size: 13px; font-weight: 500; align-self: flex-start; }
+.outlook-more { font-size: 0.8125rem; font-weight: 500; align-self: flex-start; }
 
 @media (max-width: 640px) {
   .outlook { padding: var(--space-4); gap: var(--space-4); }
@@ -510,7 +510,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   background: var(--callout-bg);
   border: 1px solid var(--border-strong);
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -528,7 +528,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .topbar-privacy {
   flex: none;
   margin: 0 0 0 auto;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text-secondary);
 }
 
@@ -587,7 +587,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   background: var(--surface);
   border: 1.5px dashed var(--border-strong);
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
 }
 .status-glyph svg { width: 13px; height: 13px; }
@@ -596,7 +596,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   background: var(--surface);
   border: 1.5px solid var(--status-blocked);
   color: var(--status-blocked);
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
 }
 /* The border keeps the pure status colour — it is a shape, not text. The numeral inside it is
@@ -612,7 +612,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   padding: 4px 8px;
   border-radius: var(--radius-input);
@@ -674,7 +674,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .segprog-seg.idle { background: var(--status-idle); }
 
 .segprog-legend { display: flex; align-items: center; gap: var(--space-4); margin-top: var(--space-2); flex-wrap: wrap; }
-.segprog-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); }
+.segprog-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8125rem; color: var(--text-secondary); }
 .segprog-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
 .segprog-dot.done { background: var(--status-done); }
 .segprog-dot.active { background: var(--status-active); }
@@ -770,8 +770,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 /* The derivation line under a claim. Deliberately set as data rather than prose — it is a pointer
    into the record, not another sentence of the argument — and deliberately silent when the step
    cites nothing, because an empty "from" would imply a source that does not exist. */
-.rtree-lead { margin: 3px 0 0; font-size: 12px; line-height: 1.45; color: var(--text-secondary); }
-.rtree-lead-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+.rtree-lead { margin: 3px 0 0; font-size: 0.75rem; line-height: 1.45; color: var(--text-secondary); }
+.rtree-lead-k { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
   color: var(--text-muted); margin-right: 6px; }
 .rtree-lead-more { color: var(--text-muted); }
 
@@ -781,7 +781,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   flex: none; width: 22px; height: 22px; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
   background: var(--canvas); border: 1px solid var(--border-strong);
-  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 700;
   color: var(--text-secondary); font-variant-numeric: tabular-nums;
 }
 
@@ -797,7 +797,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    not cover it. The inset pseudo-element lifts the target to ~73x31 without moving any layout. */
 .rtree-sources { flex: none; background: none; border: none; padding: 0; cursor: pointer;
   position: relative;
-  font-family: var(--font-sans); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-family: var(--font-sans); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em;
   font-weight: 700; color: var(--text-muted); }
 .rtree-sources::after { content: ""; position: absolute; inset: -8px; }
 .rtree-sources:hover { color: var(--info); }
@@ -878,8 +878,8 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-top: 1px solid var(--border);
 }
 .domain-card-findings .domain-card-finding-row:first-child { border-top: none; padding-top: var(--space-1); }
-.domain-card-more { display: inline-block; margin-top: var(--space-3); font-size: 13px; font-weight: 500; color: var(--info); }
-.back-link { display: inline-block; font-size: 13px; font-weight: 500; color: var(--info); }
+.domain-card-more { display: inline-block; margin-top: var(--space-3); font-size: 0.8125rem; font-weight: 500; color: var(--info); }
+.back-link { display: inline-block; font-size: 0.8125rem; font-weight: 500; color: var(--info); }
 /* `.content` is a flex column, and a flex child is blockified and stretched — so the back link
    would span the full content width and hand a 13px label a page-wide click target, which reads
    as a broken row on hover and is a trap for anyone aiming at something below it. It takes the
@@ -891,14 +891,14 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    Hero cross-domain finding
    ============================================================================= */
 .hero { padding: var(--space-5); margin-bottom: 0; }
-.hero .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-4); }
+.hero .eyebrow { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-4); }
 
 /* The fact. It is the subject of the whole page, so it gets the page's largest type and the only
    accent rule on the card. */
 .hero-fact { border-left: 3px solid var(--info); padding-left: var(--space-4); }
-.hero-fact-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+.hero-fact-k { display: block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em;
   font-weight: 700; color: var(--info); margin-bottom: 2px; }
-.hero-fact-v { margin: 0; font-size: 28px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 500; color: var(--text); }
+.hero-fact-v { margin: 0; font-size: 1.75rem; line-height: 1.2; letter-spacing: -0.02em; font-weight: 500; color: var(--text); }
 .hero-fact-v strong { font-weight: 700; }
 
 /* One fact becoming two consequences, drawn once. Purely a connector: no colour of its own, so it
@@ -913,7 +913,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    product's thesis. `min-width: 0` is the half that is easy to omit: a flex item's default
    `min-width: auto` floors it at its content size, so `flex: 0 1 auto` alone would still refuse to
    shrink below 287px. Two components drew the same connector and only one of them had been fixed. */
-.hero-split-note { flex: 0 1 auto; min-width: 0; font-size: 11px; text-transform: uppercase;
+.hero-split-note { flex: 0 1 auto; min-width: 0; font-size: 0.6875rem; text-transform: uppercase;
   letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); text-align: center; }
 
 .hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
@@ -927,22 +927,22 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   border-color: var(--blocked-border); }
 
 .door-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); }
-.door-system { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
-.door-why { margin: var(--space-2) 0 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.door-system { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.door-why { margin: var(--space-2) 0 0; font-size: 0.8125rem; line-height: 1.5; color: var(--text-secondary); }
 .door-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); margin-top: var(--space-3);
   padding-top: var(--space-3); border-top: 1px solid var(--blocked-border); }
 /* --text-muted was tuned against --canvas and --surface (4.73 / 5.02) and clears AA on both. This
    label does not sit on either: a door is tinted by its own status, and on `.door.blocked`'s
    --blocked-soft the same token measures 4.39:1 — 0.11 short. One step up the same neutral ramp
    clears every door tint with margin and keeps the label in the ink family it already belonged to. */
-.door-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
+.door-office { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
 
-.hero-foot { margin: var(--space-4) 0 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+.hero-foot { margin: var(--space-4) 0 0; font-size: 0.8125rem; line-height: 1.55; color: var(--text-secondary); }
 
 @media (max-width: 640px) {
   .hero .doors { grid-template-columns: 1fr; }
-  .hero-fact-v { font-size: 22px; }
-  .hero-split-note { font-size: 10px; }
+  .hero-fact-v { font-size: 1.375rem; }
+  .hero-split-note { font-size: 0.625rem; }
 }
 /* A second `.door` declaration used to sit here, left over from the version of the hero that
    rendered `.k` / `.v` rows. It was pure cascade damage and it was invisible in review because the
@@ -967,32 +967,32 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    "Day 70 Of 90" — a capital O on a preposition, on the two gauges carrying the most consequential
    numbers in the product. The level is labelled properly at source now (levelLabel), so the whole
    title can just be written the way it should read. */
-.gauge-head .gauge-title { font-size: 15px; font-weight: 600; color: var(--text); }
-.gauge-head .gauge-sub { font-size: 13px; font-weight: 600; }
+.gauge-head .gauge-title { font-size: 0.9375rem; font-weight: 600; color: var(--text); }
+.gauge-head .gauge-sub { font-size: 0.8125rem; font-weight: 600; }
 .gauge-head .gauge-sub.done { color: var(--status-done-text); }
 .gauge-head .gauge-sub.active { color: var(--status-active-text); }
 .gauge-head .gauge-sub.warn { color: var(--status-warn-text); }
 .gauge-head .gauge-sub.blocked { color: var(--status-blocked); }
 
-.gauge-cap-note { margin-top: var(--space-2); font-size: 12px; color: var(--text-muted); }
+.gauge-cap-note { margin-top: var(--space-2); font-size: 0.75rem; color: var(--text-muted); }
 
 /* Cliff / cap marker overlaid on a SegmentedProgress track. A sibling of .segprog so the
    track's own overflow never clips the label sitting above it. */
 .gauge-track-wrap { position: relative; padding-top: 20px; }
 .gauge-marker { position: absolute; top: 16px; bottom: -6px; width: 1px; background: var(--status-blocked); }
 .gauge-marker .lbl {
-  position: absolute; top: -18px; right: -4px; font-size: 11px; font-weight: 600;
+  position: absolute; top: -18px; right: -4px; font-size: 0.6875rem; font-weight: 600;
   color: var(--status-blocked); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.04em;
 }
 
-.gauge-note { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); line-height: 1.55; }
+.gauge-note { font-size: 0.8125rem; color: var(--text-secondary); margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); line-height: 1.55; }
 .gauge-note strong { color: var(--text); font-weight: 600; }
 
 .gauge-consequence {
   margin-top: var(--space-3);
   padding: var(--space-3);
   border-radius: var(--radius-input);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   border: 1px solid transparent;
 }
@@ -1004,11 +1004,11 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 
 /* Per-authorization usage lines (OPT budget) */
 .opt-lines { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: flex; flex-direction: column; gap: var(--space-2); }
-.opt-line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px var(--space-3); font-size: 13px; color: var(--text-secondary);
+.opt-line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px var(--space-3); font-size: 0.8125rem; color: var(--text-secondary);
   padding-bottom: var(--space-2); border-bottom: 1px dashed var(--border); }
 .opt-line:last-child { padding-bottom: 0; border-bottom: none; }
 .opt-line .ol-what { font-weight: 500; color: var(--text); }
-.opt-line .ol-when { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+.opt-line .ol-when { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
 .opt-line .ol-cost { margin-left: auto; white-space: nowrap; }
 .opt-line .ol-cost strong { color: var(--text); }
 
@@ -1022,26 +1022,26 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   transition: background var(--dur-fast) var(--ease);
 }
 .cta:hover { text-decoration: none; background: color-mix(in srgb, var(--text) 85%, black); }
-.cta .cta-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-inverse-muted); font-weight: 600; }
-.cta .cta-v { font-size: 16px; font-weight: 600; margin-top: 4px; color: var(--text-inverse); }
-.cta .cta-arrow { font-size: 20px; color: var(--text-inverse); }
+.cta .cta-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-inverse-muted); font-weight: 600; }
+.cta .cta-v { font-size: 1rem; font-weight: 600; margin-top: 4px; color: var(--text-inverse); }
+.cta .cta-arrow { font-size: 1.25rem; color: var(--text-inverse); }
 
 /* =============================================================================
    Money-moment screen
    ============================================================================= */
 .moment { padding: var(--space-5); }
 .moment-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
-.moment-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
+.moment-eyebrow { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
 /* Matched to `.jintro h2`, which is the same thing: the heading of the panel that introduces a
    screen. They were 22px and 20px at slightly different tracking, and the gap widened on a phone
    because only one of them had a mobile step-down — so the two diverged exactly where the
    difference is most visible. Six screens use one and this uses the other; a reader moving between
    them was being told, quietly and wrongly, that these are different kinds of heading. */
-.moment h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-2); letter-spacing: -0.015em; font-weight: 600; }
-.moment-sub { margin: 0; color: var(--text-secondary); font-size: 14px; max-width: 46ch; }
+.moment h2 { font-size: 1.375rem; line-height: 1.3; margin: 0 0 var(--space-2); letter-spacing: -0.015em; font-weight: 600; }
+.moment-sub { margin: 0; color: var(--text-secondary); font-size: 0.875rem; max-width: 46ch; }
 .btn {
   flex: none; background: var(--info); color: var(--text-inverse); border: none; border-radius: var(--radius-input);
-  padding: 11px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
+  padding: 11px 18px; font-size: 0.875rem; font-weight: 600; cursor: pointer;
   transition: background var(--dur-fast) var(--ease);
 }
 .btn:hover { background: color-mix(in srgb, var(--info) 85%, black); }
@@ -1065,21 +1065,21 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 /* The frozen-scenario label. Quiet by design — it is a caption on the record, not a status. */
 /* Each gauge keeps its own heading when the pair sits side by side, so neither one inherits the
    other's label. Same size and colour as .section-head, one level down in the hierarchy. */
-.gauge-pair-head { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+.gauge-pair-head { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--text-muted); margin-bottom: var(--space-3); }
 .gauge-pair > div { display: flex; flex-direction: column; }
 .gauge-pair > div > .gauge-card { flex: 1; }
 /* Stacked below 1280 — the second heading needs air from the card above it. */
 .gauge-pair > div + div { margin-top: var(--space-5); }
 
-.scenario-note { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.scenario-note { margin: 0; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
 .scenario-note strong { color: var(--text-secondary); font-weight: 600; }
-.scenario-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+.scenario-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
 .scenario-sep { margin: 0 6px; }
 
 .moment-count { margin: var(--space-5) 0 var(--space-2); display: flex; flex-direction: column; gap: var(--space-1); }
-.mc-lead { font-size: 15px; color: var(--text); }
-.mc-sub { font-size: 13px; color: var(--text-secondary); max-width: 68ch; line-height: 1.5; }
+.mc-lead { font-size: 0.9375rem; color: var(--text); }
+.mc-sub { font-size: 0.8125rem; color: var(--text-secondary); max-width: 68ch; line-height: 1.5; }
 .conseq { list-style: none; padding: 0; margin: var(--space-2) 0 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .conseq-item {
   display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4);
@@ -1098,30 +1098,30 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   background: var(--warn-soft);
   border-color: var(--warn-border);
 }
-.conseq-item--key .ci-effect { font-size: 15px; font-weight: 600; }
+.conseq-item--key .ci-effect { font-size: 0.9375rem; font-weight: 600; }
 
 .ci-body { flex: 1; min-width: 0; }
 .ci-top { display: flex; align-items: center; gap: var(--space-2); margin-bottom: 4px; flex-wrap: wrap; }
-.ci-effect { font-size: 14px; color: var(--text); }
-.ci-deadline { margin-top: var(--space-2); font-size: 13px; color: var(--text); }
-.ci-derivation { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
-.ci-miss { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-.ci-stale { margin-top: 6px; font-size: 12px; color: var(--status-blocked); font-weight: 600; }
+.ci-effect { font-size: 0.875rem; color: var(--text); }
+.ci-deadline { margin-top: var(--space-2); font-size: 0.8125rem; color: var(--text); }
+.ci-derivation { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+.ci-miss { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+.ci-stale { margin-top: 6px; font-size: 0.75rem; color: var(--status-blocked); font-weight: 600; }
 .ci-cite { margin-top: var(--space-2); }
-.moment-foot { margin-top: var(--space-5); font-size: 14px; color: var(--text-secondary); }
+.moment-foot { margin-top: var(--space-5); font-size: 0.875rem; color: var(--text-secondary); }
 
 /* =============================================================================
    Landing
    ============================================================================= */
 .landing { padding: var(--space-7) 44px; margin-top: var(--space-6); }
-.landing-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-4); }
-.landing-line { font-size: 32px; line-height: 1.22; margin: 0 0 var(--space-4); letter-spacing: -0.02em; max-width: 20ch; color: var(--text); font-weight: 600; text-wrap: balance; }
-.landing-lede { margin: 0 0 var(--space-5); color: var(--text-secondary); font-size: 15px; max-width: 60ch; line-height: 1.55; }
+.landing-eyebrow { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-4); }
+.landing-line { font-size: 2rem; line-height: 1.22; margin: 0 0 var(--space-4); letter-spacing: -0.02em; max-width: 20ch; color: var(--text); font-weight: 600; text-wrap: balance; }
+.landing-lede { margin: 0 0 var(--space-5); color: var(--text-secondary); font-size: 0.9375rem; max-width: 60ch; line-height: 1.55; }
 .landing-cta { display: inline-block; text-decoration: none; }
 .landing-cta:hover { text-decoration: none; }
 @media (max-width: 640px) {
   .landing { padding: var(--space-6) var(--space-4); }
-  .landing-line { font-size: 26px; }
+  .landing-line { font-size: 1.625rem; }
 }
 /* The scale block. Single column by default — it simply follows the copy on a phone, which is the
    correct reading order. It only becomes a second column where there is genuinely a column's worth
@@ -1133,14 +1133,14 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
 }
-.ls-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+.ls-k { display: block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em;
   font-weight: 700; color: var(--text-muted); margin-bottom: var(--space-3); }
 .ls-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-.ls-list li { display: flex; align-items: baseline; gap: var(--space-3); font-size: 13px; color: var(--text-secondary); }
-.ls-list strong { min-width: 2.2ch; font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+.ls-list li { display: flex; align-items: baseline; gap: var(--space-3); font-size: 0.8125rem; color: var(--text-secondary); }
+.ls-list strong { min-width: 2.2ch; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em;
   color: var(--text); font-variant-numeric: tabular-nums; }
 .ls-foot { margin: var(--space-3) 0 0; padding-top: var(--space-3); border-top: 1px dashed var(--border);
-  font-size: 11px; line-height: 1.5; color: var(--text-muted); }
+  font-size: 0.6875rem; line-height: 1.5; color: var(--text-muted); }
 
 .landing-cta-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-5); }
 /* Both CTAs are the same object at the same size — the difference between them is which one is the
@@ -1158,25 +1158,25 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 /* Two of these now, stacked. Inline they would run together as one sentence; as a column they
    read as two offers, which is what they are. */
 .landing-cta-alts { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
-.landing-cta-alt { font-size: 14px; font-weight: 600; color: var(--info); }
+.landing-cta-alt { font-size: 0.875rem; font-weight: 600; color: var(--info); }
 
 /* Says whose findings the hero below is showing. The shell badges every other screen that renders
    the example student; this is the one page with no shell, and the first thing anyone reads. */
 /* Needs air above it. With no top margin it sat flush against the bottom edge of the button row —
    touching it, at every width — which read as a rendering fault rather than as a caption on the
    panel below. It captions the instrument, so it belongs nearer to the instrument than to the CTAs. */
-.landing-proof-label { margin: var(--space-5) 0 var(--space-2); font-size: 12px; color: var(--text-muted); }
-.lpl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
+.landing-proof-label { margin: var(--space-5) 0 var(--space-2); font-size: 0.75rem; color: var(--text-muted); }
+.lpl-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-secondary); }
 .lpl-sep { margin: 0 6px; }
 /* Her name at the weight of a name, not of a caption — this is the only place in the product a
    person is introduced rather than labelled. */
-.lpl-who { font-size: 13px; font-weight: 700; color: var(--text); }
+.lpl-who { font-size: 0.8125rem; font-weight: 700; color: var(--text); }
 /* The introduction itself. Body size, not caption size: it is read, not scanned, and it is the
    one sentence on this page carrying a person rather than a claim. The number inside it is the
    only bold, so the eye lands on the margin before the prose. */
 .landing-proof-who {
   margin: 0 0 var(--space-4);
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.6;
   color: var(--text-secondary);
   max-width: 74ch;
@@ -1188,7 +1188,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .landing-footer { display: block; }
 
 .landing-refuse { padding: var(--space-7) 44px; margin-top: var(--space-4); }
-.landing-h2 { font-size: 24px; line-height: 1.25; margin: 0 0 var(--space-3); letter-spacing: -0.02em; font-weight: 600; color: var(--text); }
+.landing-h2 { font-size: 1.5rem; line-height: 1.25; margin: 0 0 var(--space-3); letter-spacing: -0.02em; font-weight: 600; color: var(--text); }
 .landing-guarantees { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: flex; flex-direction: column; }
 /* Three columns: the promise, what it means, and the thing itself. A grid rather than the flex row
    this was, because the artifact in the third column has to line up down the list — five atoms in a
@@ -1204,11 +1204,11 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   align-items: baseline; gap: 4px var(--space-3); max-width: 840px;
   padding: var(--space-3) 0; border-top: 1px solid var(--border); }
 .landing-guarantees li:first-child { border-top: none; }
-.lg-k { font-size: 13px; font-weight: 600; color: var(--text); }
-.lg-v { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+.lg-k { font-size: 0.8125rem; font-weight: 600; color: var(--text); }
+.lg-v { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; }
 .lg-demo { justify-self: end; display: inline-flex; align-items: center; }
 /* The deciding office, in the same treatment it carries on a finding row. */
-.lg-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+.lg-office { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
   color: var(--text-muted); white-space: nowrap; }
 
 /* Below 760 the three columns stop fitting: the citation alone runs to 30 characters. The label
@@ -1226,9 +1226,9 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .sh { margin-top: var(--space-5); padding: var(--space-5); background: var(--canvas); }
 
 .sh-fact { border-left: 3px solid var(--info); padding-left: var(--space-4); }
-.sh-fact-k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+.sh-fact-k { display: block; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em;
   font-weight: 700; color: var(--info); margin-bottom: 2px; }
-.sh-fact-v { margin: 0; font-size: 17px; line-height: 1.35; color: var(--text); letter-spacing: -0.01em; }
+.sh-fact-v { margin: 0; font-size: 1.0625rem; line-height: 1.35; color: var(--text); letter-spacing: -0.01em; }
 .sh-fact-v strong { font-weight: 600; }
 
 /* The connector: a hairline, a caption, a hairline. The "one thing becomes three" beat, drawn
@@ -1245,7 +1245,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
    judge on a phone sees, scrolling sideways, because one flex keyword said "never wrap".
    `min-width: 0` is the half that is easy to omit: a flex item's default `min-width: auto` floors it
    at its content size, so `flex: 0 1 auto` alone would still refuse to shrink below 347px. */
-.sh-flow-note { flex: 0 1 auto; min-width: 0; font-size: 11px; text-transform: uppercase;
+.sh-flow-note { flex: 0 1 auto; min-width: 0; font-size: 0.6875rem; text-transform: uppercase;
   letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); text-align: center; }
 
 /* `perspective` on the parent is what makes the settle below a real depth move rather than a scale:
@@ -1267,10 +1267,10 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 
 .sh-row-body { flex: 1; min-width: 0; }
 .sh-row-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); }
-.sh-row-system { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
-.sh-row-finding { margin: var(--space-1) 0 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.sh-row-system { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.sh-row-finding { margin: var(--space-1) 0 0; font-size: 0.8125rem; line-height: 1.5; color: var(--text-secondary); }
 .sh-row-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); margin-top: var(--space-2); }
-.sh-row-office { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.sh-row-office { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
 
 /* The refusal, beneath the three findings. Separated by a rule rather than made into a fourth
    card, because it is a different KIND of statement from the three above it — those are answers,
@@ -1278,28 +1278,28 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .sh-refusal { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border-strong); }
 .sh-refusal-head { display: flex; align-items: baseline; justify-content: space-between;
   flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-3); }
-.sh-refusal-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
+.sh-refusal-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;
   color: var(--text-muted); }
 /* Same inset-pseudo hit area as `.rtree-toggle` and `.rtree-sources`. Drawn at 13px and measured
    161x20 — under the 24px WCAG 2.5.8 minimum, and this one is a standalone call to action at the
    end of a card rather than a link inside a sentence, so the inline exception does not cover it. */
-.sh-refusal-go { font-size: 13px; font-weight: 600; color: var(--info); white-space: nowrap;
+.sh-refusal-go { font-size: 0.8125rem; font-weight: 600; color: var(--info); white-space: nowrap;
   position: relative; }
 .sh-refusal-go::after { content: ""; position: absolute; inset: -6px -4px; }
 /* 74ch is the measure this stylesheet already uses most often for running text. Without it these
    two paragraphs ran the full width of the systems-hero card — about 153 characters per line, more
    than twice the paragraph directly above them, on the first screen a reader sees. */
-.sh-refusal-why { margin: var(--space-3) 0 0; font-size: 12px; line-height: 1.55; color: var(--text-secondary); max-width: 74ch; }
+.sh-refusal-why { margin: var(--space-3) 0 0; font-size: 0.75rem; line-height: 1.55; color: var(--text-secondary); max-width: 74ch; }
 @media (max-width: 480px) { .sh-refusal-go { white-space: normal; } }
 
-.sh-foot { margin: var(--space-4) 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; max-width: 74ch; }
+.sh-foot { margin: var(--space-4) 0 0; font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; max-width: 74ch; }
 
 @media (max-width: 640px) {
   .landing-refuse { padding: var(--space-5); }
-  .landing-h2 { font-size: 20px; }
+  .landing-h2 { font-size: 1.25rem; }
   .lg-k { min-width: 0; }
   .sh { padding: var(--space-4); }
-  .sh-flow-note { font-size: 10px; }
+  .sh-flow-note { font-size: 0.625rem; }
 }
 
 /* Wrapping alone stops the overflow, but it does it by letting the caption eat the whole row and
@@ -1314,13 +1314,13 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 }
 
 .landing-brand { display: flex; align-items: baseline; gap: var(--space-2); margin-bottom: var(--space-2); }
-.landing-brand .logo { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; color: var(--text); }
+.landing-brand .logo { font-weight: 700; font-size: 1.125rem; letter-spacing: -0.02em; color: var(--text); }
 .landing-brand .dot { color: var(--info); }
 
 /* =============================================================================
    Footer
    ============================================================================= */
-.foot { margin-top: var(--space-6); font-size: 12px; color: var(--text-muted); text-align: center; padding-bottom: var(--space-5); }
+.foot { margin-top: var(--space-6); font-size: 0.75rem; color: var(--text-muted); text-align: center; padding-bottom: var(--space-5); }
 .foot .privacy { color: var(--status-done-text); font-weight: 600; }
 
 /* =============================================================================
@@ -1329,12 +1329,12 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .finding { padding: var(--space-5); }
 .finding-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .finding-headline-row { display: flex; align-items: flex-start; gap: var(--space-3); }
-.finding-headline { font-size: 22px; line-height: 1.3; margin: 0; letter-spacing: -0.015em; font-weight: 600; color: var(--text); }
+.finding-headline { font-size: 1.375rem; line-height: 1.3; margin: 0; letter-spacing: -0.015em; font-weight: 600; color: var(--text); }
 .finding .capsule { flex: none; margin-top: 4px; }
 
 .citation-block { background: var(--canvas); border: 1px solid var(--border); border-left: 3px solid var(--info); border-radius: var(--radius-input); padding: var(--space-4); }
-.citation-quote { margin: 0 0 var(--space-2); font-size: 14px; color: var(--text); font-style: italic; line-height: 1.55; }
-.citation-meta { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+.citation-quote { margin: 0 0 var(--space-2); font-size: 0.875rem; color: var(--text); font-style: italic; line-height: 1.55; }
+.citation-meta { font-size: 0.8125rem; color: var(--text-secondary); margin-top: 3px; }
 /* Same inset-pseudo hit area as `.rtree-toggle`, `.rtree-sources` and `.sh-refusal-go`. "Read the
    source" is the sole content of its own row rather than a link inside a sentence, so WCAG 2.5.8's
    inline exception does not cover it — measured 107x17 on a phone, against a 24px minimum. A
@@ -1349,11 +1349,11 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
    spacing and a rule above it, because it is a different KIND of link from "read the source" —
    that one leaves for the agency's website, this one stays inside the product and shows the data. */
 .citation-pack { display: inline-block; margin-top: var(--space-2); padding-top: var(--space-2);
-  border-top: 1px dashed var(--border); font-size: 13px; font-weight: 600; }
-.citation-pack code { font-family: var(--font-mono); font-size: 12px; }
+  border-top: 1px dashed var(--border); font-size: 0.8125rem; font-weight: 600; }
+.citation-pack code { font-family: var(--font-mono); font-size: 0.75rem; }
 
 /* Names which finding is which when /check shows both. */
-.reasoning-sub { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+.reasoning-sub { font-size: 0.8125rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--text-muted); margin: 0 0 var(--space-2); }
 
 /* How the reading was routed, above the answer it produced. A statement about PathWise's own
@@ -1362,34 +1362,34 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .routing { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-3);
   padding: var(--space-3) var(--space-4); background: var(--canvas);
   border: 1px solid var(--border); border-radius: var(--radius-input); }
-.routing-k { flex: none; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+.routing-k { flex: none; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em;
   font-weight: 700; color: var(--text-muted); }
-.routing-v { flex: 1 1 240px; min-width: 0; font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+.routing-v { flex: 1 1 240px; min-width: 0; font-size: 0.8125rem; line-height: 1.55; color: var(--text-secondary); }
 .routing-v strong { color: var(--text); font-weight: 600; }
 .routing-v .cite { margin-right: 4px; }
 
 .unknowns { list-style: none; padding: 0; margin: var(--space-2) 0 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .unknown-item { background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
-.unknown-what { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.unknown-what { font-size: 0.875rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 /* The 404 offers its three destinations in this list, and there they are whole standalone controls
    rather than links inside a sentence — measured 143x19, 155x19 and 238x19 on a phone, under the
    24px WCAG 2.5.8 minimum. Everywhere else `.unknown-what` holds plain text (an open question the
    engine raised), so this rule reaches nothing but the 404's links. */
 .unknown-what > a { position: relative; }
 .unknown-what > a::before { content: ""; position: absolute; inset: -4px -6px; }
-.unknown-why, .unknown-how { font-size: 13px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
-.unknown-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
+.unknown-why, .unknown-how { font-size: 0.8125rem; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
+.unknown-label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
 
-.finding-foot { margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-secondary); }
+.finding-foot { margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 0.8125rem; color: var(--text-secondary); }
 
 /* The volatility panel states what KIND of information it is; the note itself states what it is
    about. It deliberately does not open with a claim about the finding above it — see the comment
    in FindingDetail.tsx for the mis-scoped warning that made that necessary. */
 .volatility { margin-top: var(--space-3); background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: var(--radius-input);
   padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
-.volatility-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
+.volatility-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; color: var(--status-warn-text); }
 .volatility-sep { margin: 0 6px; opacity: 0.55; }
-.volatility-v { font-size: 13px; line-height: 1.5; color: var(--text); }
+.volatility-v { font-size: 0.8125rem; line-height: 1.5; color: var(--text); }
 
 /* =============================================================================
    "Check your own status" form
@@ -1397,19 +1397,19 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .check-form { padding: var(--space-5); }
 .field-row { display: flex; flex-wrap: wrap; gap: var(--space-4); }
 .field { display: flex; flex-direction: column; gap: 6px; flex: 1 1 180px; }
-.field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--text-muted); }
+.field label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--text-muted); }
 .field input, .field select {
-  font-family: var(--font-sans); font-size: 14px; color: var(--text); background: var(--surface);
+  font-family: var(--font-sans); font-size: 0.875rem; color: var(--text); background: var(--surface);
   border: 1px solid var(--border-strong); border-radius: var(--radius-input); padding: 9px 11px; width: 100%;
 }
 .field input:focus, .field select:focus { outline: none; border-color: var(--info); box-shadow: 0 0 0 3px color-mix(in srgb, var(--info) 15%, transparent); }
 .cpt-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px dashed var(--border); }
 .cpt-row:first-of-type { border-top: none; }
-.row-remove { flex: none; font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--status-blocked);
+.row-remove { flex: none; font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600; color: var(--status-blocked);
   background: color-mix(in srgb, var(--status-blocked) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--status-blocked) 30%, transparent);
   border-radius: var(--radius-input); padding: 9px 13px; cursor: pointer; transition: background var(--dur-fast) var(--ease); }
 .row-remove:hover { background: color-mix(in srgb, var(--status-blocked) 14%, var(--surface)); }
-.row-add { display: inline-block; margin-top: var(--space-3); font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+.row-add { display: inline-block; margin-top: var(--space-3); font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600;
   color: var(--info); background: color-mix(in srgb, var(--info) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--info) 30%, transparent);
   border-radius: var(--radius-input); padding: 9px 14px; cursor: pointer; transition: background var(--dur-fast) var(--ease); }
 .row-add:hover { background: color-mix(in srgb, var(--info) 14%, var(--surface)); }
@@ -1421,7 +1421,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   background: var(--callout-bg);
   border: 1px solid var(--callout-border);
   border-radius: var(--radius-input);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.55;
   color: var(--text);
   max-width: 74ch;
@@ -1429,7 +1429,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 
 .form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-5);
   padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.check-privacy { font-size: 13px; color: var(--status-done-text); font-weight: 600; }
+.check-privacy { font-size: 0.8125rem; color: var(--status-done-text); font-weight: 600; }
 
 /* The lifetime promise, beside the network one. Deliberately NOT given a status colour: "nothing is
    kept" is a statement about how this product is built, not a verdict on the reader's situation,
@@ -1442,7 +1442,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   background: var(--canvas);
   border: 1px solid var(--border);
   border-radius: var(--radius-input);
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.55;
   color: var(--text-secondary);
   max-width: 78ch;
@@ -1469,7 +1469,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .cl-more > summary::before {
   content: "›";
   display: inline-block;
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1;
   transition: transform var(--motion-fast, 140ms) var(--motion-ease, ease);
 }
@@ -1484,7 +1484,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .check-clear {
   flex: none;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-secondary);
   background: var(--surface);
@@ -1496,7 +1496,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 }
 .check-clear:hover { background: var(--canvas); color: var(--text); }
 /* A note under a field row — explains what an optional input does before it is filled in. */
-.field-note { margin: var(--space-3) 0 0; font-size: 12px; color: var(--text-muted);
+.field-note { margin: var(--space-3) 0 0; font-size: 0.75rem; color: var(--text-muted);
   line-height: 1.5; max-width: 74ch; }
 
 /* Now stated AFTER the form rather than in front of it — a caption on the answer, not a
@@ -1508,7 +1508,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 /* What the visitor gets back. */
 .check-expect { list-style: none; padding: 0; margin: var(--space-4) 0 var(--space-4);
   display: flex; flex-direction: column; gap: var(--space-2); }
-.check-expect li { position: relative; padding-left: var(--space-5); font-size: 13px;
+.check-expect li { position: relative; padding-left: var(--space-5); font-size: 0.8125rem;
   line-height: 1.5; color: var(--text-secondary); max-width: 74ch; }
 .check-expect li::before { content: ""; position: absolute; left: 6px; top: 8px; width: 5px; height: 5px;
   border-radius: 50%; background: var(--status-done); }
@@ -1530,21 +1530,21 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   border: none;
   box-shadow: none;
 }
-.jintro-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
-.jintro h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; text-wrap: balance; }
-.jintro p { margin: 0; color: var(--text-secondary); font-size: 14px; max-width: 62ch; line-height: 1.55; }
+.jintro-eyebrow { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
+.jintro h2 { font-size: 1.375rem; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; text-wrap: balance; }
+.jintro p { margin: 0; color: var(--text-secondary); font-size: 0.875rem; max-width: 62ch; line-height: 1.55; }
 /* The stakes line under a jintro heading. One notch above the panel's body copy in colour and
    weight, because it is the sentence the drawing below is worth reading FOR — but not a status
    and not a warning, so it takes no chroma from the four status colours. */
 .jintro .jintro-stakes {
   margin: 0 0 var(--space-4);
   color: var(--text);
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.55;
   max-width: 68ch;
 }
 .jstats { display: flex; flex-wrap: wrap; gap: 6px var(--space-5); margin-top: var(--space-4); padding-top: var(--space-3);
-  border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-muted); }
+  border-top: 1px dashed var(--border); font-size: 0.8125rem; color: var(--text-muted); }
 .jstat strong { color: var(--text); font-weight: 600; }
 
 .journey { position: relative; padding: 2px 0; }
@@ -1556,8 +1556,8 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   padding: var(--space-5) 0 var(--space-3) 46px; }
 .jgroup-mark { position: absolute; left: 10px; top: 34px; width: 12px; height: 12px; border-radius: 3px;
   background: var(--canvas); border: 2px solid var(--text-muted); transform: translateY(-50%) rotate(45deg); }
-.jgroup-name { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
-.jgroup-meta { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+.jgroup-name { font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
+.jgroup-meta { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
 
 .jlist { list-style: none; padding: 0; margin: 0; }
 .jitem { position: relative; margin-bottom: var(--space-2); }
@@ -1579,15 +1579,15 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   font-family: var(--font-sans); color: var(--text); padding: var(--space-3) var(--space-4); cursor: pointer; border-radius: var(--radius-card); }
 .jrow:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
 .jrow-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px var(--space-3); }
-.jdate { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
-.jtitle { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; color: var(--text); }
-.jinst { font-size: 13px; color: var(--text-muted); }
+.jdate { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+.jtitle { font-size: 0.9375rem; font-weight: 500; letter-spacing: -0.01em; color: var(--text); }
+.jinst { font-size: 0.8125rem; color: var(--text-muted); }
 .jchev {
   margin-left: auto; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
   color: var(--text-muted); transition: transform var(--dur-slow) var(--ease);
 }
 .jitem.open .jchev { transform: rotate(90deg); }
-.jmeta { display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+.jmeta { display: block; font-size: 0.8125rem; color: var(--text-secondary); margin-top: 4px; }
 
 .jdetail { display: grid; grid-template-rows: 1fr; padding: 0 var(--space-4) var(--space-4); animation: jopen var(--dur-slow) var(--ease) both; }
 @keyframes jopen { from { opacity: 0; } to { opacity: 1; } }
@@ -1595,29 +1595,29 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .jfacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-4);
   padding-top: var(--space-3); border-top: 1px dashed var(--border); }
 @media (max-width: 640px) { .jfacts { grid-template-columns: 1fr; } }
-.jfact .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
-.jfact .v { font-size: 14px; color: var(--text); margin-top: 4px; }
-.jsub { color: var(--text-secondary); font-size: 13px; }
+.jfact .k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+.jfact .v { font-size: 0.875rem; color: var(--text); margin-top: 4px; }
+.jsub { color: var(--text-secondary); font-size: 0.8125rem; }
 
 .jev-block { margin-top: var(--space-4); }
 .jev { list-style: none; padding: 0; margin: 7px 0 0; display: flex; flex-wrap: wrap; gap: 7px; }
-.jev li { font-size: 12px; color: var(--text); background: var(--canvas); border: 1px solid var(--border);
+.jev li { font-size: 0.75rem; color: var(--text); background: var(--canvas); border: 1px solid var(--border);
   border-radius: var(--radius-input); padding: 3px 9px; }
-.jev-id { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
-.jev-note { font-size: 12px; color: var(--text-muted); margin-top: 7px; }
+.jev-id { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-muted); }
+.jev-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 7px; }
 
 .jgap { margin-top: var(--space-4); background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-3); }
-.jgap .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
-.jgap .v { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+.jgap .k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+.jgap .v { font-size: 0.8125rem; color: var(--text-secondary); margin-top: 3px; }
 
 .jwhy { margin-top: var(--space-4); background: var(--callout-bg); border: 1px solid var(--callout-border);
   border-radius: var(--radius-input); padding: var(--space-3); }
-.jwhy .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); font-weight: 700; }
-.jwhy .v { font-size: 13px; color: var(--text); margin-top: 4px; }
+.jwhy .k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); font-weight: 700; }
+.jwhy .v { font-size: 0.8125rem; color: var(--text); margin-top: 4px; }
 
 @media (max-width: 640px) {
   .jintro { padding: var(--space-4); }
-  .jintro h2, .moment h2 { font-size: 19px; }
+  .jintro h2, .moment h2 { font-size: 1.1875rem; }
   /* The chevron stays. It was hidden here to save width, and what it actually saved was the only
      visible sign that a timeline row opens — on the screen where opening a row is how a reader
      reaches the evidence beneath an event. A phone reader got a list of dates that looked inert.
@@ -1625,10 +1625,10 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   .jchev { margin-top: 2px; }
 }
 
-.statuschip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+.statuschip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8125rem; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
 
 .memorystrip { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
-  padding: var(--space-3) var(--space-4); color: var(--text-secondary); font-size: 14px;
+  padding: var(--space-3) var(--space-4); color: var(--text-secondary); font-size: 0.875rem;
   transition: border-color var(--dur-fast) var(--ease); }
 .memorystrip:hover { text-decoration: none; border-color: var(--border-strong); }
 
@@ -1658,15 +1658,15 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 }
 .explore-row:first-child { border-top: none; }
 .explore-row:hover { text-decoration: none; background: var(--info-soft); }
-.explore-k { font-size: 14px; font-weight: 600; color: var(--text); }
+.explore-k { font-size: 0.875rem; font-weight: 600; color: var(--text); }
 /* Sits under the row label on the one route that changes student. Quiet, because it is a caveat
    on the destination rather than part of its name. */
 .explore-who {
   display: block; margin-top: 2px;
-  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--text-muted);
 }
-.explore-v { font-size: 13px; line-height: 1.5; }
+.explore-v { font-size: 0.8125rem; line-height: 1.5; }
 .explore-go { color: var(--info); font-weight: 600; }
 
 @media (max-width: 640px) {
@@ -1677,7 +1677,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   .explore-go { grid-row: 1; grid-column: 2; }
 }
 .memorystrip .ms-k { color: var(--text); font-weight: 600; }
-.memorystrip .ms-go { color: var(--info); font-weight: 600; font-size: 13px; white-space: nowrap; }
+.memorystrip .ms-go { color: var(--info); font-weight: 600; font-size: 0.8125rem; white-space: nowrap; }
 
 /* =============================================================================
    Routes that predate the design system — /student/next, /student/changed,
@@ -1699,7 +1699,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
    things that say "external authority" in this product. Dashed underline instead, which is the
    vocabulary already used for "not established". */
 .cite-self {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-style: italic;
   color: var(--text-muted);
   border-bottom: 1px dashed var(--border-strong);
@@ -1728,7 +1728,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
    is built to keep made the promise argue with itself. */
 .landing-privacy {
   margin: var(--space-5) 0 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: var(--text-secondary);
   max-width: 78ch;
@@ -1738,7 +1738,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
    PathWise is; the promise is the one the reader came for, the disclaimer the one they are owed. */
 .landing-disclaimer {
   margin: var(--space-3) 0 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.55;
   color: var(--muted);
   max-width: 78ch;
@@ -1751,10 +1751,10 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   color: var(--text-secondary); transition: border-color var(--dur-fast) var(--ease);
 }
 .nextcard:hover { text-decoration: none; border-color: var(--border-strong); border-left-color: var(--info); }
-.nextcard .nc-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
+.nextcard .nc-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
 .nextcard .nc-v { margin-top: var(--space-1); color: var(--text); }
-.nextcard .nc-when { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-top: var(--space-2); font-size: 13px; }
-.nextcard .nc-go { flex: none; color: var(--info); font-weight: 600; font-size: 13px; white-space: nowrap; }
+.nextcard .nc-when { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-top: var(--space-2); font-size: 0.8125rem; }
+.nextcard .nc-go { flex: none; color: var(--info); font-weight: 600; font-size: 0.8125rem; white-space: nowrap; }
 @media (max-width: 640px) {
   .nextcard { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
   .nextcard .nc-go { white-space: normal; }
@@ -1763,28 +1763,28 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 /* ---- Reminders — the plan, handed to a calendar the student already owns ---- */
 .btn.ghost { background: var(--surface); color: var(--info); border: 1px solid var(--info-border); box-shadow: none; display: inline-block; }
 .btn.ghost:hover { background: var(--info-soft); text-decoration: none; }
-.btn.sm { font-size: 13px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-input); }
+.btn.sm { font-size: 0.8125rem; padding: var(--space-2) var(--space-3); border-radius: var(--radius-input); }
 
 .rem { border-left: 3px solid var(--info); padding: var(--space-5); }
-.rem-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
-.rem-v { font-size: 18px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-1) 0 0; max-width: 44ch; color: var(--text); }
+.rem-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
+.rem-v { font-size: 1.125rem; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-1) 0 0; max-width: 44ch; color: var(--text); }
 .rem-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin-top: var(--space-4); }
 /* Confirmation of a purely local action — done-green, because nothing left the device. */
-.rem-said:not(:empty) { font-size: 13px; color: var(--status-done-text); font-weight: 600; max-width: 40ch; }
+.rem-said:not(:empty) { font-size: 0.8125rem; color: var(--status-done-text); font-weight: 600; max-width: 40ch; }
 .rem-note { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.rem-note p { margin: 0 0 var(--space-2); font-size: 13px; color: var(--text-secondary); max-width: 72ch; line-height: 1.55; }
+.rem-note p { margin: 0 0 var(--space-2); font-size: 0.8125rem; color: var(--text-secondary); max-width: 72ch; line-height: 1.55; }
 .rem-note p:last-child { margin-bottom: 0; }
 .rem-note strong { color: var(--text); font-weight: 600; }
 .rem-inline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); }
-.rem-inline .rem-hint { font-size: 13px; color: var(--text-muted); max-width: 52ch; }
-@media (max-width: 640px) { .rem { padding: var(--space-4); } .rem-v { font-size: 17px; } }
+.rem-inline .rem-hint { font-size: 0.8125rem; color: var(--text-muted); max-width: 52ch; }
+@media (max-width: 640px) { .rem { padding: var(--space-4); } .rem-v { font-size: 1.0625rem; } }
 
 /* ---- The aid deadline: three dates, one that binds ---- */
 .dl { border-left: 3px solid var(--info); padding: var(--space-5); }
 .dl-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
-.dl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
-.dl-v { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-top: var(--space-1); color: var(--text); }
-.dl-v .dl-which { font-size: 14px; font-weight: 400; color: var(--text-muted); }
+.dl-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
+.dl-v { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.01em; margin-top: var(--space-1); color: var(--text); }
+.dl-v .dl-which { font-size: 0.875rem; font-weight: 400; color: var(--text-muted); }
 .dl-rows {
   list-style: none; padding: var(--space-4) 0 0; margin: var(--space-4) 0 0;
   border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: var(--space-2);
@@ -1795,18 +1795,18 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 }
 .dl-row.binding { background: var(--info-soft); border-color: var(--info-border); }
 .dl-row.unknown { background: transparent; border-style: dashed; }
-.dl-date { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+.dl-date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--text-muted); white-space: nowrap; }
 .dl-row.binding .dl-date { color: var(--text); font-weight: 700; }
-.dl-label { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.dl-label { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 0.875rem; font-weight: 600; color: var(--text); }
 /* Word, not colour alone — the binding row says so in text as well as in tint. */
 .dl-flag {
-  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 0.625rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--info); background: var(--surface); border: 1px solid var(--info-border);
   border-radius: var(--radius-pill); padding: 1px var(--space-2);
 }
-.dl-note { grid-column: 2; font-size: 13px; color: var(--text-secondary); }
-.dl-consequence { margin: var(--space-4) 0 0; padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 14px; color: var(--text); }
-.dl-foot { margin-top: var(--space-2); font-size: 12px; color: var(--text-muted); }
+.dl-note { grid-column: 2; font-size: 0.8125rem; color: var(--text-secondary); }
+.dl-consequence { margin: var(--space-4) 0 0; padding-top: var(--space-4); border-top: 1px dashed var(--border); font-size: 0.875rem; color: var(--text); }
+.dl-foot { margin-top: var(--space-2); font-size: 0.75rem; color: var(--text-muted); }
 @media (max-width: 640px) {
   .dl-row { grid-template-columns: 1fr; }
   .dl-note { grid-column: 1; }
@@ -1818,7 +1818,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .nsitem { position: relative; padding-left: 46px; }
 .nsnum {
   position: absolute; left: 0; top: var(--space-4); width: 30px; height: 30px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; font-size: 0.8125rem; font-weight: 700;
   box-shadow: 0 0 0 4px var(--canvas);
 }
 /* The number carries the same four-state colour as the chip, and never carries it alone —
@@ -1839,19 +1839,19 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .nslist { gap: var(--space-2); }
 .nsnum { top: var(--space-3); }
 .nshead { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
-.nsdomain { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
-.nstitle { font-size: 17px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 44ch; color: var(--text); }
-.nswhy { margin: 0; font-size: 14px; color: var(--text-secondary); max-width: 66ch; line-height: 1.55; }
+.nsdomain { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.nstitle { font-size: 1.0625rem; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 44ch; color: var(--text); }
+.nswhy { margin: 0; font-size: 0.875rem; color: var(--text-secondary); max-width: 66ch; line-height: 1.55; }
 
 /* The collapsed card's one answer to "do I have to care about this today?". */
-.nswhen { margin-top: var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.nswhen { margin-top: var(--space-2); font-size: 0.875rem; font-weight: 600; color: var(--text); }
 .nswhen.warn { color: var(--status-warn-text); }
 .nswhen.blocked { color: var(--status-blocked); }
 .nswhen.unknown { color: var(--text-secondary); font-weight: 500; }
 
 .nsmore { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--space-3);
   background: none; border: none; padding: var(--space-1) 0; cursor: pointer;
-  font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--info); text-align: left; }
+  font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600; color: var(--info); text-align: left; }
 .nsmore:hover { text-decoration: underline; text-underline-offset: 3px; }
 .nsmore-chev { flex: none; transition: transform var(--dur-fast) var(--ease); }
 .nscard.open .nsmore-chev { transform: rotate(90deg); }
@@ -1871,23 +1871,23 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .nsdl.warn { background: var(--warn-soft); border-color: var(--warn-border); }
 .nsdl.blocked { background: var(--blocked-soft); border-color: var(--blocked-border); }
 .nsdl.idle { background: var(--idle-soft); border-color: var(--border); }
-.nsdl-do { font-size: 14px; font-weight: 600; color: var(--text); }
-.nsdl-hard { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-1); }
-.nsdl-miss { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px dashed var(--border-strong); }
-.nsdl-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); margin-right: var(--space-1); }
+.nsdl-do { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.nsdl-hard { font-size: 0.8125rem; color: var(--text-secondary); margin-top: var(--space-1); }
+.nsdl-miss { font-size: 0.8125rem; color: var(--text-secondary); margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px dashed var(--border-strong); }
+.nsdl-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); margin-right: var(--space-1); }
 /* The uncertainty pattern's "what you can do" line, on the open questions. */
-.nsresolve { margin-top: var(--space-3); font-size: 13px; color: var(--text); background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-input); padding: var(--space-3); }
-.nsfoot { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); font-size: 12px; color: var(--text-muted); }
+.nsresolve { margin-top: var(--space-3); font-size: 0.8125rem; color: var(--text); background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-input); padding: var(--space-3); }
+.nsfoot { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); font-size: 0.75rem; color: var(--text-muted); }
 
 /* ---- What changed? — the same engine, run twice ---- */
 .wc-gap { border-left: 3px solid var(--text-muted); padding: var(--space-5); transition: border-left-color var(--dur-slow) var(--ease); }
 .wc-gap.done { border-left-color: var(--status-done); }
 .wc-gap-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-5); flex-wrap: wrap; }
-.wc-gap-title { font-size: 18px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 40ch; color: var(--text); }
+.wc-gap-title { font-size: 1.125rem; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; margin: var(--space-2) 0 0; max-width: 40ch; color: var(--text); }
 .wc-gap-rows { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-5); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.wc-gap-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; padding-top: 3px; white-space: nowrap; }
-.wc-gap-v { font-size: 14px; color: var(--text); }
-.wc-undo { background: none; border: none; padding: 0; cursor: pointer; font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--info); }
+.wc-gap-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; padding-top: 3px; white-space: nowrap; }
+.wc-gap-v { font-size: 0.875rem; color: var(--text); }
+.wc-undo { background: none; border: none; padding: 0; cursor: pointer; font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600; color: var(--info); }
 @media (max-width: 640px) {
   .wc-gap { padding: var(--space-4); }
   .wc-gap-rows { grid-template-columns: 1fr; gap: 2px; }
@@ -1896,7 +1896,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 
 /* Before → after, side by side; stacked on mobile with the arrow turned down. */
 .wc-grid { display: grid; grid-template-columns: 1fr 34px 1fr; align-items: stretch; gap: var(--space-4); }
-.wc-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text-muted); }
+.wc-arrow { display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: var(--text-muted); }
 @media (max-width: 760px) {
   .wc-grid { grid-template-columns: 1fr; }
   .wc-arrow { transform: rotate(90deg); }
@@ -1904,11 +1904,11 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .wc-panel { padding: var(--space-4) var(--space-5); }
 /* Waiting on evidence: present, but visibly not yet computed. */
 .wc-panel.pending { background: transparent; border-style: dashed; box-shadow: none; }
-.wc-when { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.wc-when { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
 .wc-panel-head { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin: var(--space-2) 0 var(--space-3); }
-.wc-result { font-size: 15px; color: var(--text); }
-.wc-sub { font-size: 12px; color: var(--text-muted); }
-.wc-pending-note { font-size: 14px; color: var(--text-muted); margin-top: var(--space-3); max-width: 36ch; }
+.wc-result { font-size: 0.9375rem; color: var(--text); }
+.wc-sub { font-size: 0.75rem; color: var(--text-muted); }
+.wc-pending-note { font-size: 0.875rem; color: var(--text-muted); margin-top: var(--space-3); max-width: 36ch; }
 /* The two readings sit side by side down to a very narrow viewport, because the comparison IS the
    finding: two numbers from one engine, on opposite sides of one cliff. Stacking them turns a
    comparison into a list. */
@@ -1919,25 +1919,25 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .wc-reading.attention { border-left-color: var(--status-warn); background: var(--warn-soft); border-color: var(--warn-border); }
 .wc-reading.blocked { border-left-color: var(--status-blocked); background: var(--blocked-soft); border-color: var(--blocked-border); }
 .wc-reading.verified { border-left-color: var(--status-done); background: var(--done-soft); border-color: var(--done-border); }
-.wc-reading-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-.wc-reading-n { margin-top: var(--space-2); font-size: 30px; line-height: 1.05; font-weight: 600;
+.wc-reading-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); }
+.wc-reading-n { margin-top: var(--space-2); font-size: 1.875rem; line-height: 1.05; font-weight: 600;
   letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; }
-.wc-reading-of { font-size: 14px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-muted); }
-.wc-reading-v { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1); line-height: 1.4; }
+.wc-reading-of { font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; color: var(--text-muted); }
+.wc-reading-v { font-size: 0.75rem; color: var(--text-secondary); margin-top: var(--space-1); line-height: 1.4; }
 @media (max-width: 400px) { .wc-readings { grid-template-columns: 1fr; } }
 
 /* The two ways into the evidence flow, at equal weight. */
 .wc-ev-choose { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .wc-facts { list-style: none; padding: var(--space-3) 0 0; margin: var(--space-4) 0 0; border-top: 1px dashed var(--border); display: flex; flex-direction: column; gap: var(--space-2); }
-.wc-fact { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); font-size: 13px; color: var(--text-secondary); }
+.wc-fact { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); font-size: 0.8125rem; color: var(--text-secondary); }
 .wc-fact strong { color: var(--text); font-weight: 600; white-space: nowrap; }
 .wc-changes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .wc-change { display: flex; gap: var(--space-3); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
-.wc-change-k { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
-.wc-change-v { display: block; font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+.wc-change-k { display: block; font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.wc-change-v { display: block; font-size: 0.8125rem; color: var(--text-secondary); margin-top: 3px; }
 .wc-why { margin-top: var(--space-4); background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-card); padding: var(--space-4) var(--space-5); }
-.wc-why-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
-.wc-why-v { font-size: 14px; color: var(--text); margin-top: var(--space-2); line-height: 1.55; }
+.wc-why-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; }
+.wc-why-v { font-size: 0.875rem; color: var(--text); margin-top: var(--space-2); line-height: 1.55; }
 .wc-fade { display: flex; flex-direction: column; gap: var(--space-4); }
 
 /* =============================================================================
@@ -1984,7 +1984,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 }
 .ub-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
 .ub-verdict {
-  font-size: 20px; font-weight: 650; letter-spacing: -0.015em; color: var(--text-muted);
+  font-size: 1.25rem; font-weight: 650; letter-spacing: -0.015em; color: var(--text-muted);
   transition: color var(--dur-slow) var(--ease) 240ms;
 }
 /* The settled verdict takes the colour the ENGINE reached, not the colour "settled" suggests.
@@ -1996,7 +1996,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .ub--settled.ub--active .ub-verdict { color: var(--status-active-text); }
 .ub--settled.ub--blocked .ub-verdict { color: var(--status-blocked); }
 .ub--settled.ub--idle .ub-verdict { color: var(--text-muted); }
-.ub-range { font-size: 15px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.ub-range { font-size: 0.9375rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .ub-range strong { color: var(--text); font-weight: 700; }
 
 /* The track is EMPTY space, and has to look it. It was painted --canvas, which is the same value the
@@ -2018,7 +2018,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .ub-cliff { position: absolute; top: -18px; bottom: -18px; width: 3px; background: var(--status-blocked); border-radius: 2px; }
 .ub-cliff-lbl {
   position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--status-blocked); white-space: nowrap;
 }
 
@@ -2077,7 +2077,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   background: var(--text-muted);
 }
 /* The two readings are the finding. At 15px they were smaller than the body text explaining them. */
-.ub-tick-n { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+.ub-tick-n { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
 .ub-tick--lo { transform: translateX(-1px); }
 .ub-tick--lo::before { left: 0; }
 .ub-tick--hi { text-align: right; transform: translateX(1px); }
@@ -2092,7 +2092,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .ub-margin-lbl {
   /* Clears the taller endpoint numerals below the rail. */
   position: absolute; top: 50px; right: 0;
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--text-muted); white-space: nowrap;
 }
 @keyframes ubMarginIn { from { opacity: 0; } }
@@ -2114,17 +2114,17 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
    numbers were being drawn hard against the card's bottom border. */
 .ub--compact .ub-track { height: 12px; margin: 26px 0 30px; }
 .ub--compact .ub-head { align-items: center; }
-.ub--compact .ub-verdict { font-size: 14px; }
-.ub--compact .ub-range { font-size: 13px; }
+.ub--compact .ub-verdict { font-size: 0.875rem; }
+.ub--compact .ub-range { font-size: 0.8125rem; }
 .ub--compact .ub-cliff { top: -11px; bottom: -11px; width: 2px; }
-.ub--compact .ub-cliff-lbl { bottom: calc(100% + 4px); font-size: 10px; letter-spacing: 0.05em; }
+.ub--compact .ub-cliff-lbl { bottom: calc(100% + 4px); font-size: 0.625rem; letter-spacing: 0.05em; }
 .ub--compact .ub-span {
   top: -3px; bottom: -3px;
   background-image: repeating-linear-gradient(45deg, transparent 0 3px, var(--border-strong) 3px 6px);
 }
 .ub--compact .ub-tick { top: calc(100% + 7px); }
 .ub--compact .ub-tick::before { top: -7px; height: 7px; }
-.ub--compact .ub-tick-n { font-size: 15px; letter-spacing: -0.01em; }
+.ub--compact .ub-tick-n { font-size: 0.9375rem; letter-spacing: -0.01em; }
 
 /* A phone can hold the track — it must, because a span that stacks stops being a measurement. What
    a phone cannot hold is the scaled-up numerals: the span runs from 57% to 92% of the rail, so the
@@ -2134,8 +2134,8 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 @media (max-width: 480px) {
   .ub { padding: var(--space-4); }
   .ub-track { height: 22px; margin: 38px 0 58px; }
-  .ub-tick-n { font-size: 20px; }
-  .ub-verdict { font-size: 17px; }
+  .ub-tick-n { font-size: 1.25rem; }
+  .ub-verdict { font-size: 1.0625rem; }
   .ub-cliff { top: -15px; bottom: -15px; }
 }
 
@@ -2150,8 +2150,8 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 /* What came back from the read — measured facts, so they are set like data, not like prose. */
 .wc-ev-read { display: flex; flex-direction: column; gap: var(--space-2); }
 .wc-ev-file { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-3); }
-.wc-ev-name { font-family: var(--font-mono); font-size: 13px; color: var(--text); word-break: break-all; }
-.wc-ev-sample { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
+.wc-ev-name { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--text); word-break: break-all; }
+.wc-ev-sample { font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
 .wc-ev-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-2) var(--space-4); margin: 0; }
 .wc-ev-facts > div { min-width: 0; }
 /* Measurements returning, one after another — not prose appearing. Each of these is a fact PathWise
@@ -2163,20 +2163,20 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .wc-ev-facts > div:nth-child(2) { animation-delay: 60ms; }
 .wc-ev-facts > div:nth-child(3) { animation-delay: 120ms; }
 .wc-ev-facts > div:nth-child(4) { animation-delay: 180ms; }
-.wc-ev-facts dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
-.wc-ev-facts dd { margin: 2px 0 0; font-size: 13px; color: var(--text); }
+.wc-ev-facts dt { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; }
+.wc-ev-facts dd { margin: 2px 0 0; font-size: 0.8125rem; color: var(--text); }
 .wc-ev-hash { grid-column: 1 / -1; }
 .wc-ev-hash dd { font-family: var(--font-mono); word-break: break-all; }
-.wc-ev-note { font-size: 12px; color: var(--text-muted); margin: 0; max-width: 62ch; line-height: 1.5; }
+.wc-ev-note { font-size: 0.75rem; color: var(--text-muted); margin: 0; max-width: 62ch; line-height: 1.5; }
 
 /* The attestation. Its own bordered block because it is the one claim on this screen that comes
    from the student rather than from a rule or a measurement. */
 .wc-ev-attest { display: flex; flex-direction: column; gap: var(--space-3); width: 100%; background: var(--info-soft); border: 1px solid var(--info-border); border-radius: var(--radius-input); padding: var(--space-4); }
-.wc-ev-check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: 14px; color: var(--text); cursor: pointer; }
+.wc-ev-check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: 0.875rem; color: var(--text); cursor: pointer; }
 .wc-ev-check input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--info); cursor: pointer; }
 .wc-ev-attest-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); }
 .wc-ev-attest .btn:disabled { opacity: 0.45; cursor: default; }
-.wc-ev-error { font-size: 13px; color: var(--status-blocked); background: var(--blocked-soft); border: 1px solid var(--blocked-border); border-radius: var(--radius-input); padding: var(--space-2) var(--space-3); margin: 0; width: 100%; }
+.wc-ev-error { font-size: 0.8125rem; color: var(--status-blocked); background: var(--blocked-soft); border: 1px solid var(--blocked-border); border-radius: var(--radius-input); padding: var(--space-2) var(--space-3); margin: 0; width: 100%; }
 
 /* ---- Coverage map + rule-pack viewer ---- */
 .cov-counts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px dashed var(--border); }
@@ -2189,20 +2189,20 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   border-bottom: 1px dashed var(--border);
   gap: var(--space-3) var(--space-5);
 }
-.cov-counts--lead .cov-count { font-size: 15px; }
-.cov-counts--lead .cov-count strong { font-size: 22px; }
-.cov-count { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; color: var(--text-secondary); }
-.cov-count strong { font-size: 16px; font-weight: 700; color: var(--text); }
+.cov-counts--lead .cov-count { font-size: 0.9375rem; }
+.cov-counts--lead .cov-count strong { font-size: 1.375rem; }
+.cov-count { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 0.8125rem; color: var(--text-secondary); }
+.cov-count strong { font-size: 1rem; font-weight: 700; color: var(--text); }
 .cov-sep { color: var(--border-strong); }
 
 .cov-legend { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
 @media (max-width: 760px) { .cov-legend { grid-template-columns: 1fr; } }
 .cov-legend li { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
-.cov-legend-k { display: flex; align-items: center; gap: var(--space-2); font-size: 13px; font-weight: 600; }
+.cov-legend-k { display: flex; align-items: center; gap: var(--space-2); font-size: 0.8125rem; font-weight: 600; }
 .cov-legend-k.done { color: var(--status-done-text); }
 .cov-legend-k.warn { color: var(--status-warn-text); }
 .cov-legend-k.idle { color: var(--text-muted); }
-.cov-legend-v { font-size: 12px; color: var(--text-secondary); margin-top: var(--space-1); }
+.cov-legend-v { font-size: 0.75rem; color: var(--text-secondary); margin-top: var(--space-1); }
 
 /* The map itself — compact, quiet, one tile per jurisdiction. */
 /* Wider tiles than before: each one now carries two domain badges rather than one word, and a
@@ -2228,16 +2228,16 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .cov-tile:has(.cov-tile-head:not(:disabled):hover) { border-color: var(--border-strong); }
 
 .cov-top { display: flex; align-items: center; gap: var(--space-2); }
-.cov-code { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.03em; }
-.cov-more { margin-left: auto; font-size: 13px; color: var(--text-muted); line-height: 1; }
-.cov-name { display: block; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; margin-top: var(--space-1); }
+.cov-code { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-muted); letter-spacing: 0.03em; }
+.cov-more { margin-left: auto; font-size: 0.8125rem; color: var(--text-muted); line-height: 1; }
+.cov-name { display: block; font-size: 0.8125rem; font-weight: 600; letter-spacing: -0.01em; margin-top: var(--space-1); }
 
 /* Residency and state aid, rated separately. One badge per domain, because one badge per
    jurisdiction would have to round "modelled for residency, source captured for aid" to something
    untrue in one direction or the other. */
 .cov-domains { display: flex; flex-direction: column; gap: 3px; margin-top: var(--space-2);
   padding-top: var(--space-2); border-top: 1px dashed var(--border); }
-.cov-domain { display: flex; align-items: center; gap: 6px; font-size: 11px; line-height: 1.3; }
+.cov-domain { display: flex; align-items: center; gap: 6px; font-size: 0.6875rem; line-height: 1.3; }
 .cov-domain .status-glyph { flex: none; transform: scale(0.72); transform-origin: center; margin: -4px; }
 .cov-domain-k { color: var(--text-secondary); font-weight: 600; min-width: 62px; }
 .cov-domain-v { font-weight: 600; }
@@ -2248,23 +2248,23 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 
 .cov-detail { padding: 0 var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
 .cov-detail-row { display: flex; flex-direction: column; gap: 2px; padding-top: var(--space-2); border-top: 1px dashed var(--border); }
-.cov-detail-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
-.cov-detail-v { font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
+.cov-detail-k { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.cov-detail-v { font-size: 0.75rem; line-height: 1.5; color: var(--text-secondary); }
 .cov-detail-v strong { color: var(--text); font-weight: 600; }
 .cov-detail-v a { display: inline-block; margin-top: 2px; }
 .cov-source { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
 /* Deliberately quiet and deliberately present: the difference between a page PathWise read and a
    host that merely answered is small, and rounding it off is how a product starts overclaiming. */
-.cov-check { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+.cov-check { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
   color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-pill);
   padding: 1px 6px; cursor: help; }
 .cov-answers { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--space-2); }
 /* A research note is not a citation and is styled so it cannot be mistaken for one. */
-.cov-note-unverified em { display: block; margin-top: 3px; color: var(--text-muted); font-size: 11px; }
+.cov-note-unverified em { display: block; margin-top: 3px; color: var(--text-muted); font-size: 0.6875rem; }
 
 .rp-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .rp-tab {
-  font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); background: var(--surface);
+  font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); background: var(--surface);
   border: 1px solid var(--border); border-radius: var(--radius-pill); padding: var(--space-1) var(--space-3);
   cursor: pointer; transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
@@ -2272,22 +2272,22 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .rp-tab:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
 .rp-tab.active { background: var(--info-soft); border-color: var(--info-border); color: var(--info); font-weight: 700; }
 .rp-panel { padding: var(--space-5); }
-.rp-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--text); }
-.rp-blurb { margin: var(--space-1) 0 0; font-size: 13px; color: var(--text-secondary); max-width: 66ch; }
+.rp-title { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--text); }
+.rp-blurb { margin: var(--space-1) 0 0; font-size: 0.8125rem; color: var(--text-secondary); max-width: 66ch; }
 .rp-meta { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-5); margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px dashed var(--border); }
-.rp-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; padding-top: 2px; white-space: nowrap; }
-.rp-v { font-size: 13px; color: var(--text); overflow-wrap: anywhere; }
+.rp-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); font-weight: 700; padding-top: 2px; white-space: nowrap; }
+.rp-v { font-size: 0.8125rem; color: var(--text); overflow-wrap: anywhere; }
 .rp-v.absent { color: var(--text-muted); }
 @media (max-width: 640px) { .rp-meta { grid-template-columns: 1fr; gap: 2px; } .rp-k { padding-top: var(--space-2); } }
-.rp-filebar { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin-top: var(--space-4); font-size: 12px; color: var(--text-muted); }
+.rp-filebar { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin-top: var(--space-4); font-size: 0.75rem; color: var(--text-muted); }
 .rp-filename { font-family: var(--font-mono); color: var(--text-secondary); overflow-wrap: anywhere; }
 .rp-json {
   margin: var(--space-2) 0 0; max-height: 440px; overflow: auto; background: var(--canvas);
   border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-4);
-  font-family: var(--font-mono); font-size: 12px; line-height: 1.6; color: var(--text-secondary);
+  font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6; color: var(--text-secondary);
   white-space: pre; tab-size: 2;
 }
-.rp-frame { margin: 0 0 var(--space-3); font-size: 14px; color: var(--text); }
+.rp-frame { margin: 0 0 var(--space-3); font-size: 0.875rem; color: var(--text); }
 
 /* ---- Engine B past the gate — the worked domicile analysis inside a finding ---- */
 .dm { margin-top: var(--space-1); }
@@ -2297,20 +2297,20 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .dm-h .section-head { margin: 0; }
 .dm-card { background: var(--canvas); border: 1px solid var(--border); border-radius: var(--radius-input); padding: var(--space-4); }
 .dm-card-top { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
-.dm-fact { font-size: 13px; color: var(--text-secondary); }
+.dm-fact { font-size: 0.8125rem; color: var(--text-secondary); }
 .dm-sub { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px dashed var(--border); }
-.dm-sub-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
-.dm-sub-v { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-1); }
+.dm-sub-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 0.875rem; font-weight: 600; color: var(--text); }
+.dm-sub-v { font-size: 0.8125rem; color: var(--text-secondary); margin-top: var(--space-1); }
 .dm-sub .dm-tags { margin-top: var(--space-2); }
 .dm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .dm-tag {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
   color: var(--info); background: var(--info-soft); border: 1px solid var(--info-border);
   border-radius: var(--radius-pill); padding: 1px var(--space-2);
 }
 .dm-tag.off { color: var(--text-muted); background: var(--idle-soft); border-color: var(--border); }
 .dm-inline { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: var(--space-2) 0 0; }
-.dm-inline li { font-size: 12px; color: var(--text-secondary); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
+.dm-inline li { font-size: 0.75rem; color: var(--text-secondary); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius-input); padding: 2px var(--space-2); }
 
 .dm-rows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .dm-row { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--status-done); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
@@ -2320,37 +2320,37 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
    so it is muted and dashed rather than given a status colour of its own. */
 .dm-row.inapplicable { border-left-color: var(--border); border-style: dashed; background: transparent; }
 .dm-row-top { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
-.dm-factor { font-size: 14px; font-weight: 600; color: var(--text); }
+.dm-factor { font-size: 0.875rem; font-weight: 600; color: var(--text); }
 .dm-weight {
-  font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+  font-family: var(--font-mono); font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;
   border-radius: var(--radius-input); padding: 2px 7px; color: var(--info);
   background: var(--info-soft); border: 1px solid var(--info-border);
 }
 /* Weight is stated in the pack's own word, so the chip never has to carry the meaning alone. */
 .dm-weight.secondary { color: var(--text-muted); background: var(--idle-soft); border-color: var(--border); }
 .dm-aux {
-  display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 5px; font-size: 0.6875rem; font-weight: 600;
   color: var(--status-warn-text); background: var(--warn-soft); border: 1px solid var(--warn-border);
   border-radius: var(--radius-pill); padding: 2px var(--space-2);
 }
-.dm-when { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
-.dm-na { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.dm-when { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+.dm-na { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
 .dm-row-top .statuschip, .dm-row-top .dm-na { margin-left: auto; }
-.dm-row-note { font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2); }
+.dm-row-note { font-size: 0.8125rem; color: var(--text-secondary); margin-top: var(--space-2); }
 .dm-clause-wrap { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-left: var(--space-2); }
-.dm-clause-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
-.dm-clause { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); background: var(--idle-soft); border: 1px solid var(--border); border-radius: var(--radius-input); padding: 1px 6px; overflow-wrap: anywhere; }
+.dm-clause-k { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text-muted); }
+.dm-clause { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-secondary); background: var(--idle-soft); border: 1px solid var(--border); border-radius: var(--radius-input); padding: 1px 6px; overflow-wrap: anywhere; }
 .dm-row .dm-tags { margin-top: var(--space-2); }
 
 .dm-warn { margin-top: var(--space-3); background: var(--warn-soft); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: var(--space-4); }
-.dm-warn-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 13px; font-weight: 700; color: var(--status-warn-text); }
-.dm-warn-v { margin: var(--space-2) 0 0; font-size: 14px; color: var(--text); font-style: italic; }
+.dm-warn-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 0.8125rem; font-weight: 700; color: var(--status-warn-text); }
+.dm-warn-v { margin: var(--space-2) 0 0; font-size: 0.875rem; color: var(--text); font-style: italic; }
 .dm-acts { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: var(--space-2); }
 .dm-act { background: var(--surface); border: 1px solid var(--warn-border); border-radius: var(--radius-input); padding: var(--space-2) var(--space-3); }
 .dm-act.off { background: transparent; border-style: dashed; border-color: var(--border); }
-.dm-act-k { display: block; font-size: 13px; font-weight: 600; color: var(--text); }
+.dm-act-k { display: block; font-size: 0.8125rem; font-weight: 600; color: var(--text); }
 .dm-act.off .dm-act-k { color: var(--text-muted); }
-.dm-act-v { display: block; font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.dm-act-v { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
 
 .dm-calc { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .dm-calc-row {
@@ -2360,21 +2360,21 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
 .dm-calc-row.op { background: transparent; border-style: dashed; }
 .dm-calc-row.binding { background: var(--info-soft); border-color: var(--info-border); }
 .dm-calc-row.pending { background: transparent; border-style: dashed; }
-.dm-calc-date { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+.dm-calc-date { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--text-muted); white-space: nowrap; }
 .dm-calc-row.binding .dm-calc-date { color: var(--text); font-weight: 700; }
-.dm-calc-k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text); }
-.dm-calc-v { grid-column: 2; font-size: 13px; color: var(--text-secondary); }
+.dm-calc-k { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--text); }
+.dm-calc-v { grid-column: 2; font-size: 0.8125rem; color: var(--text-secondary); }
 .dm-calc-v .statuschip { margin-left: var(--space-1); }
-.dm-rule { margin: var(--space-4) 0 0; padding-top: var(--space-3); border-top: 1px dashed var(--border); font-size: 13px; color: var(--text); font-style: italic; }
+.dm-rule { margin: var(--space-4) 0 0; padding-top: var(--space-3); border-top: 1px dashed var(--border); font-size: 0.8125rem; color: var(--text); font-style: italic; }
 
 .dm-cons { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .dm-con { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--info); border-radius: var(--radius-input); padding: var(--space-3) var(--space-4); }
 .dm-con.off { border-left-color: var(--border); border-style: dashed; background: transparent; }
-.dm-con-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 14px; font-weight: 600; color: var(--text); }
+.dm-con-k { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1) var(--space-2); font-size: 0.875rem; font-weight: 600; color: var(--text); }
 .dm-con.off .dm-con-k { color: var(--text-muted); }
-.dm-con-note { margin: var(--space-2) 0 0; font-size: 13px; color: var(--text); font-style: italic; }
+.dm-con-note { margin: var(--space-2) 0 0; font-size: 0.8125rem; color: var(--text); font-style: italic; }
 .dm-con.off .dm-con-note { color: var(--text-secondary); }
-.dm-con-v { margin: var(--space-1) 0 0; font-size: 13px; color: var(--text-secondary); }
+.dm-con-v { margin: var(--space-1) 0 0; font-size: 0.8125rem; color: var(--text-secondary); }
 
 /* A phone cannot hold the date column beside the label — stack them, and let the fixed columns go. */
 @media (max-width: 640px) {
@@ -2406,18 +2406,18 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   .topbar { padding: var(--space-3) var(--space-4); gap: var(--space-3); height: auto; min-height: var(--topbar-height); flex-wrap: wrap; }
   /* The privacy line is the one thing on this bar worth the width, so it wraps under the title
      rather than being dropped the way the search field it replaced was. */
-  .topbar-privacy { margin-left: 0; font-size: 12px; }
+  .topbar-privacy { margin-left: 0; font-size: 0.75rem; }
   /* One lever. Setting --gutter here rather than .content's padding keeps the landing and the
      shell on the same measurement at every width. */
   :root { --gutter: var(--space-4); }
 }
 @media (max-width: 640px) {
-  .t-page-title { font-size: 20px; }
+  .t-page-title { font-size: 1.25rem; }
   .landing { padding: var(--space-5); }
-  .landing-line { font-size: 24px; max-width: none; }
+  .landing-line { font-size: 1.5rem; max-width: none; }
   .hero, .finding, .check-form, .rp-panel, .wc-panel, .nscard, .rem, .dl { padding: var(--space-4); }
   .finding-head { flex-direction: column; gap: var(--space-3); }
-  .finding-headline { font-size: 19px; }
+  .finding-headline { font-size: 1.1875rem; }
   .bare-page-inner { padding: var(--space-5) var(--gutter) 64px; }
 }
 
@@ -2471,7 +2471,7 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
      width reads as unfinished. The cap rises with the container and the size rises with it, so the
      sentence sets in three lines and fills the measure it is given. Still capped in `ch`, so the
      line length stays readable rather than stretching. */
-  .landing-line { font-size: 38px; max-width: 26ch; }
+  .landing-line { font-size: 2.375rem; max-width: 26ch; }
 }
 
 @media (min-width: 1280px) {
@@ -2718,15 +2718,15 @@ a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black);
   position: static; height: auto; min-height: 0; box-shadow: none;
 }
 .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-.brand .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.02em; color: var(--ink); }
+.brand .logo { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; color: var(--ink); }
 .brand .logo:hover { text-decoration: none; }
 .brand .dot { color: var(--accent); }
-.brand .tag { font-size: 13px; color: var(--muted); }
+.brand .tag { font-size: 0.8125rem; color: var(--muted); }
 .topnav { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
 /* ---- the original pill ---- */
 .pill {
-  font-size: 12px; color: var(--muted); background: var(--surface);
+  font-size: 0.75rem; color: var(--muted); background: var(--surface);
   border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px;
   white-space: nowrap;
 }
@@ -2746,11 +2746,11 @@ a.navpill-cta { background: var(--accent); border-color: var(--accent); color: #
 a.navpill-cta:hover { background: color-mix(in srgb, var(--accent) 88%, black); border-color: transparent; color: #fff; }
 a.navpill-cta.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 .sitenav-sub { margin-top: -12px; margin-bottom: 22px; }
-.sitenav-sub .navpill { font-size: 11.5px; }
+.sitenav-sub .navpill { font-size: 0.71875rem; }
 
 /* ---- the page's own name, at the original scale ---- */
 .page-title {
-  font-size: 25px; line-height: 1.3; letter-spacing: -0.01em; font-weight: 700;
+  font-size: 1.5625rem; line-height: 1.3; letter-spacing: -0.01em; font-weight: 700;
   color: var(--ink); margin: 0 0 18px;
   /* Balanced, not blindly: applied to the four display headings that were measured wrapping — the
      landing line at 3 lines, the coverage claim at 5 and the cross-domain fact at 6 — where an
@@ -2759,7 +2759,7 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   text-wrap: balance;
 }
 
-.shell-meta { margin-top: 28px; font-size: 12px; color: var(--muted); text-align: center; }
+.shell-meta { margin-top: 28px; font-size: 0.75rem; color: var(--muted); text-align: center; }
 /* The disclaimer runs under the build line, one notch quieter and measured, so it reads as a
    sentence rather than a third field in a row of metadata. It is not hidden: it takes the same
    muted ink the rest of the strip takes and stays above the AA threshold on this ground. */
@@ -2778,7 +2778,7 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   .shell-wrap > .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
   .topnav { justify-content: flex-start; }
   .brand .tag { display: none; }
-  .page-title { font-size: 21px; }
+  .page-title { font-size: 1.3125rem; }
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -2810,7 +2810,7 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 .status-glyph.idle:not(.count) {
   color: var(--text-muted); background: var(--surface);
   border: 1px dashed var(--border-strong);
-  font-size: 11px; font-weight: 700; line-height: 1;
+  font-size: 0.6875rem; font-weight: 700; line-height: 1;
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -2837,11 +2837,11 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
   border-top: 1px solid var(--border);
 }
 .domain-evidence dt {
-  font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  font-size: 0.65625rem; letter-spacing: 0.06em; text-transform: uppercase;
   font-weight: 700; color: var(--text-muted); white-space: nowrap; padding-top: 1px;
 }
 .domain-evidence dd {
-  margin: 0; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.45;
+  margin: 0; font-family: var(--font-mono); font-size: 0.71875rem; line-height: 1.45;
   color: var(--text-secondary); word-break: break-word;
 }
 
@@ -2899,12 +2899,12 @@ h1.topbar-title {
   .sitenav-more > summary {
     display: inline-flex; align-items: center; gap: 6px;
     cursor: pointer; list-style: none;
-    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);
     padding: 7px 2px; min-height: 32px; width: fit-content;
   }
   .sitenav-more > summary::-webkit-details-marker { display: none; }
   .sitenav-more > summary::before {
-    content: "›"; display: inline-block; font-size: 14px; line-height: 1;
+    content: "›"; display: inline-block; font-size: 0.875rem; line-height: 1;
     transition: transform var(--motion-fast, 140ms) var(--motion-ease, ease);
   }
   .sitenav-more[open] > summary::before { transform: rotate(90deg); }
@@ -2933,7 +2933,7 @@ h1.topbar-title {
   .shell-wrap { padding-top: 14px; }
   .shell-wrap > .topbar { margin-bottom: 10px; }
   .shell-wrap > nav { margin: 8px 0; }
-  .page-title { font-size: 21px; margin: 4px 0 6px; }
+  .page-title { font-size: 1.3125rem; margin: 4px 0 6px; }
   .jintro { margin-bottom: var(--space-2); }
   .jintro h2 { margin: 0 0 var(--space-1, 4px); }
   /* The elaboration, not the heading. On a screen this short the choice is between two lines of
@@ -2946,14 +2946,14 @@ h1.topbar-title {
 /* The rail's group labels. Set as quiet small-caps so they read as headings over the pills rather
    than as another pill a reader might try to click. */
 .sitenav-group {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  font-size: 0.625rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--text-muted); align-self: center; white-space: nowrap;
   padding-right: 2px;
 }
 
 /* CAPSULE → the original `.pill`. */
 .capsule {
-  font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600; padding: 3px 9px; border-radius: 999px;
   background: var(--surface); border: 1px solid var(--line); color: var(--muted);
 }
 /* Same correction the `.badge.amber` rule below already carries, applied to the two siblings it was
@@ -2976,7 +2976,7 @@ h1.topbar-title {
 }
 .segprog-seg { border-radius: 0; }
 .segprog-seg.done { background: linear-gradient(180deg, #3a6ae4, #2f5fe0); }
-.segprog-legend { margin-top: 12px; font-size: 12.5px; color: var(--ink-soft); }
+.segprog-legend { margin-top: 12px; font-size: 0.78125rem; color: var(--ink-soft); }
 .segprog-dot { border-radius: 3px; }
 
 /* =================================================================================================
@@ -2994,7 +2994,7 @@ h1.topbar-title {
   margin-bottom: 22px;
 }
 .hero .eyebrow {
-  font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--accent); font-weight: 600; margin-bottom: 10px;
 }
 /* 22px/600, which is what `.finding-headline` and /coverage's lede already use — the app's own
@@ -3003,11 +3003,11 @@ h1.topbar-title {
    Every other route already stepped down; this is the outlier being brought into line, not a new
    size being introduced. */
 .hero-h {
-  font-size: 22px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em;
+  font-size: 1.375rem; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01em;
   font-weight: 600; color: var(--ink);
 }
 .hero-h strong { font-weight: 700; }
-.hero-lede { margin: 0 0 16px; color: var(--ink-soft); font-size: 15.5px; }
+.hero-lede { margin: 0 0 16px; color: var(--ink-soft); font-size: 0.96875rem; }
 .hero .doors { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px; }
 @media (max-width: 640px) { .hero .doors { grid-template-columns: 1fr; } }
 .door {
@@ -3016,24 +3016,24 @@ h1.topbar-title {
 }
 .door .k {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  font-size: 12px; color: var(--red); font-weight: 600;
+  font-size: 0.75rem; color: var(--red); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.05em;
 }
-.door .v { font-size: 14px; color: var(--ink); margin-top: 5px; }
+.door .v { font-size: 0.875rem; color: var(--ink); margin-top: 5px; }
 /* This rule wins over the one ~1800 lines up, so the contrast correction has to live here too.
    `--muted` is --text-muted, tuned against --canvas and --surface; a door is tinted by its own
    status, and on `.door.blocked`'s --blocked-soft it measures 4.39:1 — 0.11 under AA. One step up
    the same neutral ramp clears every door tint and keeps the label in its own ink family. */
 .door-office {
-  margin-top: 8px; font-size: 11.5px; color: var(--ink-soft);
+  margin-top: 8px; font-size: 0.71875rem; color: var(--ink-soft);
   text-transform: uppercase; letter-spacing: 0.05em;
 }
-.hero-foot { margin: 16px 0 0; color: var(--ink-soft); font-size: 14px; }
+.hero-foot { margin: 16px 0 0; color: var(--ink-soft); font-size: 0.875rem; }
 
 /* ---- the original band pill, with its dot ---- */
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600; padding: 3px 9px; border-radius: 999px;
 }
 .badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 /* FORENSIC LAB: one mark per status, not two.
@@ -3060,14 +3060,14 @@ h1.topbar-title {
 .domain-card .domain-card-head { display: block; margin: 0; padding: 0; border: 0; }
 .domain-card .domain {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--muted); font-weight: 600;
 }
-.domain-office { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.domain-status { font-size: 16px; font-weight: 650; margin: 8px 0 6px; color: var(--ink); line-height: 1.35; }
-.domain-detail { font-size: 13.5px; color: var(--ink-soft); margin-top: 8px; }
+.domain-office { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.domain-status { font-size: 1rem; font-weight: 650; margin: 8px 0 6px; color: var(--ink); line-height: 1.35; }
+.domain-detail { font-size: 0.84375rem; color: var(--ink-soft); margin-top: 8px; }
 .domain-card .domain-card-progress { margin: 12px 0 0; }
-.domain-card-more { display: inline-block; margin-top: 10px; font-size: 13.5px; align-self: flex-start; }
+.domain-card-more { display: inline-block; margin-top: 10px; font-size: 0.84375rem; align-self: flex-start; }
 /* The card is a flex column, so an inline-flex pill would otherwise stretch to the full card
    width and stop reading as a pill. */
 .domain-card .badge { align-self: flex-start; }
