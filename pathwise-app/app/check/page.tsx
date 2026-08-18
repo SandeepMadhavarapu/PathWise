@@ -732,10 +732,24 @@ export default function CheckPage() {
             immigration finding is the one that suffers in silence for it: with nothing entered the
             ledger has nothing to count, which is correct and looks identical to the form being
             broken. Saying both things — optional, and what it buys — costs one line. */}
+        {/* The counting basis, stated before the boxes rather than inferred from the answer.
+            The ledger counts DISTINCT DAYS, so three authorizations covering the same ten days are
+            ten days and not thirty. That is the correct reading — nobody is on CPT twice on a
+            Tuesday — and it is the reading a DSO would expect. But measured on the live product,
+            entering three overlapping authorizations returned "10 full-time CPT days" with nothing
+            on the page accounting for the other twenty, and a reader testing with a real record
+            hits exactly that: correct arithmetic that looks like a dropped row.
+
+            The subtler half was already said and is not repeated here — when concurrent part-time
+            authorizations combine past the threshold, the ledger legend names the overlap days and
+            how many authorizations made them. What was missing is the plain case, where the days
+            simply coincide and there is nothing for that legend to report. */}
         <p className="field-note">
           Optional. CPT is work authorization tied to your programme; full-time CPT is what counts
           against the 365-day cliff that ends OPT eligibility. Leave this blank if you have had
-          none — PathWise will say it has no CPT on record rather than assume you have none.
+          none — PathWise will say it has no CPT on record rather than assume you have none. Days
+          are counted once each: two authorizations covering the same day are one day, not two,
+          though concurrent part-time hours do combine.
         </p>
         {rows.map((row, i) => (
           <div className="cpt-row" key={i}>
