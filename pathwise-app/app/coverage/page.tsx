@@ -47,11 +47,21 @@ import type { StatusKey as GlyphStatus } from "@/lib/tokens";
 // student's record, applied to our own coverage.
 const LEVEL: Record<
   CapabilityLevel,
-  { key: "verified" | "attention" | "unknown"; glyph: GlyphStatus; word: string; short: string }
+  { key: "verified" | "attention" | "sourced" | "unknown"; glyph: GlyphStatus; word: string; short: string }
 > = {
   modelled: { key: "verified", glyph: "done", word: "Modelled & verified", short: "modelled" },
   partial: { key: "attention", glyph: "warn", word: "Partially modelled", short: "partial" },
-  sourced_only: { key: "attention", glyph: "warn", word: "Source captured", short: "source captured" },
+  // Was `glyph: "warn"`, which made it identical to `partial` in every channel the page has: the
+  // same amber triangle in the counts row, the same amber in the legend, and the same
+  // rgb(183,121,31) in the bar — 43 jurisdictions and 2 jurisdictions rendered indistinguishably on
+  // the one page whose entire subject is how far PathWise has actually got. Only the word differed.
+  //
+  // `active` is the honest key, not merely a free colour: source captured means the deciding body
+  // and its published rule are on record and linked, and the modelling has not been written yet.
+  // That is work underway, which is what the arrow and the teal already mean everywhere else in
+  // this product. It reads at deltaE 80 from warn, and the arrow differs from the triangle in
+  // shape, so the distinction survives greyscale and colour-vision deficiency alike.
+  sourced_only: { key: "sourced", glyph: "active", word: "Source captured", short: "source captured" },
   unable_to_verify: { key: "unknown", glyph: "idle", word: "Unable to verify", short: "unable to verify" },
   not_modelled: { key: "unknown", glyph: "idle", word: "Not modelled", short: "not modelled" },
 };

@@ -2227,6 +2227,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 .cov-domain-v { font-weight: 600; }
 .cov-domain.verified .cov-domain-v { color: var(--status-done-text); }
 .cov-domain.attention .cov-domain-v { color: var(--status-warn-text); }
+.cov-domain.sourced .cov-domain-v { color: var(--status-active-text); }
 .cov-domain.unknown .cov-domain-v { color: var(--text-muted); }
 
 .cov-detail { padding: 0 var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
