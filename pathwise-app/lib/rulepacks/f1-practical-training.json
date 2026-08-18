@@ -6,8 +6,12 @@
   "guidelines_effective": "2016-05-10",
   "verified_on": "2026-07-24",
   "volatility": {
-    "status": "stable",
-    "note": "Core CPT/OPT structure stable; STEM extension list updated periodically."
+    "status": "recently_changed",
+    "note": "DHS published a final rule on 17 July 2026 (90 FR / RIN 1653-AA95, doc 2026-14439; 8 CFR pts 214, 248, 274a) replacing duration of status for F, J and I nonimmigrants with a fixed period of admission, effective 15 September 2026. As of this pack's verification date the rule is PUBLISHED BUT NOT YET EFFECTIVE. PathWise models the CPT/OPT rules at 8 CFR 214.2(f)(10)-(12), which the rule does not appear to amend, so the findings this pack produces are unaffected. PathWise does NOT model the fixed admission period, the extension-of-stay procedure, or the transition provisions for students already admitted under duration of status. A student relying on this product after 15 September 2026 needs advice this product does not give.",
+    "published_on": "2026-07-17",
+    "effective_on": "2026-09-15",
+    "source_url": "https://www.federalregister.gov/documents/2026/07/17/2026-14439/establishing-a-fixed-time-period-of-admission-and-an-extension-of-stay-procedure-for-nonimmigrant",
+    "modelled_by_pathwise": false
   },
   "cpt": {
     "full_time_threshold_hours_per_week": 20,
@@ -19,7 +23,11 @@
     "amber_margin_note": "Display band, not a regulation: within 60 days of the cliff the ledger reads amber. Authored here so a jurisdiction can set its own warning distance without touching code.",
     "overlap_aggregation": {
       "rule": "Concurrent part-time CPT authorizations aggregate; a day whose summed authorized hours exceed 20 counts as a full-time CPT day.",
-      "cite": "USCIS Policy Manual (practical training aggregation)"
+      "cite": "PathWise interpretation — not a located federal authority",
+      "basis": "pathwise_interpretation",
+      "basis_note": "8 CFR 214.2(f)(10)(i) defines part-time CPT as 20 hours or less per week and bars post-completion OPT after one year or more of FULL-TIME CPT. It is silent on whether two concurrent part-time authorizations combine into a full-time day. PathWise reads 12 + 12 hours on one day as more than 20 authorized hours on that day, and therefore full-time. That reading is an inference from the hours definition, not a rule any authority states. The prevailing published reading, stated on many university international-office pages, is the opposite: that part-time CPT does not affect OPT eligibility at all. Searched 2026-08-18 for a locating authority (USCIS Policy Manual Vol. 2 Pt. F Ch. 5, SEVP guidance, 8 CFR 214.2(f)(10)); none found. Recorded as an interpretation rather than removed, because the arithmetic it drives is shown separately and the reader is told which days depend on it.",
+      "contrary_reading": "Part-time CPT does not count toward the one-year full-time CPT bar.",
+      "verified_on": "2026-08-18"
     },
     "level_partition": {
       "rule": "The CPT/OPT cap is per education level. Bachelor's CPT does not carry into a master's.",
@@ -64,15 +72,30 @@
     "termination_cite": "8 CFR 214.2(f) · SEVP"
   },
   "reporting_obligations": [
-    { "id": "stem_ead_receipt", "deadline_days": 10, "cite": "8 CFR 214.2(f)(12)" },
-    { "id": "employer_or_address_change", "deadline_days": 10, "cite": "8 CFR 214.2(f)(12)" },
-    { "id": "validation_report", "every_months": 6, "cite": "8 CFR 214.2(f)(12)" }
+    {
+      "id": "stem_ead_receipt",
+      "deadline_days": 10,
+      "cite": "8 CFR 214.2(f)(12)"
+    },
+    {
+      "id": "employer_or_address_change",
+      "deadline_days": 10,
+      "cite": "8 CFR 214.2(f)(12)"
+    },
+    {
+      "id": "validation_report",
+      "every_months": 6,
+      "cite": "8 CFR 214.2(f)(12)"
+    }
   ],
   "grace_period": {
     "days_after_i20_or_ead_end": 60,
     "whichever_comes_first": true,
     "requires_qualifying_action_before_expiry": [
-      "post_completion_opt", "transfer", "level_up", "change_of_status"
+      "post_completion_opt",
+      "transfer",
+      "level_up",
+      "change_of_status"
     ],
     "cite": "8 CFR 214.2(f)(5)(iv)"
   }

@@ -38,9 +38,17 @@ export function LedgerBar({
   if (ledger.overlapDays > 0) {
     legend.push({
       status: "warn",
+      // "on PathWise's reading" is not hedging for its own sake. 8 CFR 214.2(f)(10)(i) defines
+      // part-time CPT as 20 hours or less per week and bars OPT after a year of FULL-TIME CPT; it
+      // says nothing about two concurrent part-time authorizations combining into a full-time day.
+      // PathWise infers that from the hours definition, and the widely published reading is the
+      // opposite — that part-time CPT does not count at all. Searched for a locating authority on
+      // 2026-08-18 and found none. These days are therefore the ones a reader should know are
+      // contested, and this is the swatch that already isolates them, so it is where the status
+      // belongs. The pack records the same thing in `cpt.overlap_aggregation.basis`.
       label: `days from ${ledger.overlapConcurrentAuths} part-time internship${
         ledger.overlapConcurrentAuths === 1 ? "" : "s"
-      } that overlapped (over ${FULL_TIME_HOURS_THRESHOLD} hrs/wk combined → full-time)`,
+      } that overlapped — counted as full-time on PathWise's reading, not a located federal rule`,
       value: ledger.overlapDays,
     });
   }

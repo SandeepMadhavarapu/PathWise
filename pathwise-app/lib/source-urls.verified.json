@@ -433,6 +433,14 @@
         "va-domicile.json.agencies[0].source_url",
         "va-domicile.json.source_url"
       ]
+    },
+    "https://www.federalregister.gov/documents/2026/07/17/2026-14439/establishing-a-fixed-time-period-of-admission-and-an-extension-of-stay-procedure-for-nonimmigrant": {
+      "status": "live",
+      "observed": "HTTP 200. Federal Register final rule doc 2026-14439, published 2026-07-17, effective 2026-09-15.",
+      "confirmed_on": "2026-08-18",
+      "cited_by": [
+        "f1-practical-training.json.volatility.source_url"
+      ]
     }
   }
 }
