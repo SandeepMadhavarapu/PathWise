@@ -1045,6 +1045,22 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   transition: background var(--dur-fast) var(--ease);
 }
 .btn:hover { background: color-mix(in srgb, var(--info) 85%, black); }
+/* ---- Pressed states ----
+   The stylesheet had 25 hover rules, 5 focus-visible rules and not one :active rule, so nothing in
+   the product acknowledged a click while the mouse was still down. Every rule below darkens or
+   tints the surface the control already has — no transform, no scale, no shadow, so nothing moves
+   and nothing reflows, and there is no animation for reduced-motion to suppress. The step is one
+   notch past hover, which is what makes it read as "pressed" rather than as another hover. */
+.btn:active { background: color-mix(in srgb, var(--info) 72%, black); }
+.btn.ghost:active { background: color-mix(in srgb, var(--info) 14%, var(--surface)); }
+.cta:active { background: color-mix(in srgb, var(--text) 72%, black); }
+a.navpill:active { background: var(--canvas); border-color: var(--accent); }
+a.navpill-cta:active { background: color-mix(in srgb, var(--accent) 74%, black); }
+.pill:active { background: var(--canvas); }
+/* Disclosure summaries are buttons in everything but name — the rail's fold and the privacy
+   elaboration both open on click, and neither said so while being clicked. */
+.sitenav-more > summary:active,
+.cl-more > summary:active { color: var(--text); }
 
 /* The frozen-scenario label. Quiet by design — it is a caption on the record, not a status. */
 /* Each gauge keeps its own heading when the pair sits side by side, so neither one inherits the
@@ -1099,7 +1115,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
    ============================================================================= */
 .landing { padding: var(--space-7) 44px; margin-top: var(--space-6); }
 .landing-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-4); }
-.landing-line { font-size: 32px; line-height: 1.22; margin: 0 0 var(--space-4); letter-spacing: -0.02em; max-width: 20ch; color: var(--text); font-weight: 600; }
+.landing-line { font-size: 32px; line-height: 1.22; margin: 0 0 var(--space-4); letter-spacing: -0.02em; max-width: 20ch; color: var(--text); font-weight: 600; text-wrap: balance; }
 .landing-lede { margin: 0 0 var(--space-5); color: var(--text-secondary); font-size: 15px; max-width: 60ch; line-height: 1.55; }
 .landing-cta { display: inline-block; text-decoration: none; }
 .landing-cta:hover { text-decoration: none; }
@@ -1515,7 +1531,7 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   box-shadow: none;
 }
 .jintro-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--info); font-weight: 600; margin-bottom: var(--space-2); }
-.jintro h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; }
+.jintro h2 { font-size: 22px; line-height: 1.3; margin: 0 0 var(--space-3); letter-spacing: -0.015em; font-weight: 600; text-wrap: balance; }
 .jintro p { margin: 0; color: var(--text-secondary); font-size: 14px; max-width: 62ch; line-height: 1.55; }
 /* The stakes line under a jintro heading. One notch above the panel's body copy in colour and
    weight, because it is the sentence the drawing below is worth reading FOR — but not a status
@@ -2736,6 +2752,11 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 .page-title {
   font-size: 25px; line-height: 1.3; letter-spacing: -0.01em; font-weight: 700;
   color: var(--ink); margin: 0 0 18px;
+  /* Balanced, not blindly: applied to the four display headings that were measured wrapping — the
+     landing line at 3 lines, the coverage claim at 5 and the cross-domain fact at 6 — where an
+     unbalanced last line leaves one or two words stranded under a full measure. Body copy keeps
+     normal wrapping, where balancing costs layout work and buys nothing. */
+  text-wrap: balance;
 }
 
 .shell-meta { margin-top: 28px; font-size: 12px; color: var(--muted); text-align: center; }
