@@ -55,7 +55,13 @@ function listPhrase(items: string[]): string {
 const formatDate = formatDomicileDate;
 
 export function JobMoment() {
-  const [revealed, setRevealed] = useState(false);
+  // Was `useState(false)` behind an "I got a job →" button. The gate was the bug: measured, the
+  // pre-click page filled 66% of a 1920x1080 viewport and 80% of 1440x900 — the only route in the
+  // product that under-fills its own screen — so the strongest demonstration PathWise has looked
+  // like a page that had failed to load, and only rewarded a reader who clicked anyway. Nothing
+  // about the output changes; the same engine call renders the same consequences. It is simply no
+  // longer conditional on a click that a judge with twenty other projects open will not make.
+  const [revealed] = useState(true);
   // The residency consequence turns on a state's gate, so the event is read under the rules of the
   // state Priya's record puts her in — not under whichever pack the engine happened to import.
   const consequences = applyLifeEvent(priyaStudent, priyaJobOffer, jurisdictionFor(priyaStudent));
@@ -77,11 +83,6 @@ export function JobMoment() {
             &ldquo;congrats.&rdquo; Watch what a reasoning engine says instead.
           </p>
         </div>
-        {!revealed && (
-          <button className="btn" onClick={() => setRevealed(true)}>
-            I got a job →
-          </button>
-        )}
       </div>
 
       {revealed && (
@@ -154,7 +155,18 @@ export function JobMoment() {
                           directly above — so the product appeared to cite itself as if it were law.
                           The wording is unchanged and was always honest; only the costume is
                           removed, so the two kinds of claim stop looking like one kind. */}
-                      <span className={/^PathWise/.test(c.cite.authority) ? "cite-self" : "cite"}>
+                      {/* `wrap` because these authorities are the longest in the product — the
+                          residency one runs to "Part II, Section 03(A) & Section 02(4); SCHEV
+                          Domicile Guidelines, Code of Virginia 23.1-510(D)", 641px of unbreakable
+                          mono. `.cite` is nowrap by design so a short citation never splits across
+                          lines mid-section-number; at this length that turned into 300px of
+                          horizontal overflow at 430px wide. The modifier already existed for
+                          exactly this case. */}
+                      <span
+                        className={
+                          /^PathWise/.test(c.cite.authority) ? "cite-self" : "cite wrap"
+                        }
+                      >
                         {c.cite.authority}
                       </span>
                       {/* An unmodelled jurisdiction's consequence carries the official source the

@@ -13,7 +13,8 @@ import { SystemsHero } from "@/components/SystemsHero";
 import { Capsule } from "@/components/Capsule";
 import { computeCptLedger, levelLabel } from "@/lib/engines/cpt-ledger";
 import { aidFindingFor, jurisdictionFor, residencyFindingFor } from "@/lib/engines/jurisdiction";
-import { priyaAid, priyaEvents, priyaStudent } from "@/lib/fixtures/priya";
+import { applyLifeEvent } from "@/lib/engines/consequence-engine";
+import { priyaAid, priyaEvents, priyaJobOffer, priyaStudent } from "@/lib/fixtures/priya";
 import { formatDecidingOffice } from "@/lib/format";
 import { statusFromFindingResult } from "@/lib/tokens";
 import type { Finding } from "@/lib/types";
@@ -62,6 +63,13 @@ export default function Landing() {
   // cannot drift from the number there; the institution count is her own record's length. Nothing
   // in the sentence is asserted that the engines have not computed.
   const masters = computeCptLedger(priyaEvents).forLevel("masters");
+
+  // The two numbers in the /moment link below, counted from the same engine call that page renders
+  // rather than typed into a label. `applyLifeEvent` is pure and the fixture is static, so this
+  // resolves at build time and cannot drift from what a reader finds when they arrive.
+  const momentResult = applyLifeEvent(priyaStudent, priyaJobOffer, jx);
+  const momentConsequences = momentResult.length;
+  const momentOffices = new Set(momentResult.map((c) => c.domain)).size;
 
   const demos: React.ReactNode[] = [
     <Capsule key="verdict" variant="tinted" status={statusFromFindingResult(residency.result)}>
@@ -201,9 +209,25 @@ export default function Landing() {
                 </li>
               ))}
             </ul>
-            <Link href="/student/changed" className="landing-cta-alt">
-              Watch it refuse to guess, then change its mind when evidence arrives →
-            </Link>
+            {/* Two ways to watch the engine work, and the strongest one was not linked from this
+                page at all. /moment — one event resolved across every office at once — was reachable
+                only from the rail and from one row inside the worked example, which meant a reader
+                who never opened the rail never met the best thing the product does. It goes first
+                here because it is the better demonstration, and it is one line rather than a panel
+                because this page already asks enough of a reader.
+
+                The counts are derived from the same engine call the page itself renders, never
+                typed: add a consequence to the map and this sentence follows it. A number about
+                the engine that a human maintains is a number that eventually lies. */}
+            <div className="landing-cta-alts">
+              <Link href="/moment" className="landing-cta-alt">
+                Watch one job offer become {momentConsequences} consequences across{" "}
+                {momentOffices} of her three offices →
+              </Link>
+              <Link href="/student/changed" className="landing-cta-alt">
+                Watch it refuse to guess, then change its mind when evidence arrives →
+              </Link>
+            </div>
           </section>
         </main>
 

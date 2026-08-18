@@ -1139,6 +1139,9 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
 @media (max-width: 519px) {
   .landing-cta-row .btn { flex: 1 1 100%; text-align: center; }
 }
+/* Two of these now, stacked. Inline they would run together as one sentence; as a column they
+   read as two offers, which is what they are. */
+.landing-cta-alts { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
 .landing-cta-alt { font-size: 14px; font-weight: 600; color: var(--info); }
 
 /* Says whose findings the hero below is showing. The shell badges every other screen that renders
