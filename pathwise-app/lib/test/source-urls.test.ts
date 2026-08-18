@@ -155,6 +155,36 @@ assert('the packs cite at least one source URL', cited.size > 0, cited.size);
   assert('every jurisdiction source link the coverage file offers a reader resolves', bad.length === 0, bad);
 }
 
+// 6 · Human review survives the machine.
+//
+// `npm run check:sources` re-probes every URL and rewrites this manifest. It used to keep a human's
+// `live_confirmed_in_browser` note only when the fresh probe FAILED; when a host answered 200 the
+// curated entry was replaced with a bare "HTTP 200". One run destroyed thirteen review notes,
+// including the one recording that tn.gov resets automated clients intermittently and is not dead —
+// exactly the knowledge the next person needs when it flakes again. A machine re-reaching a page is
+// the weaker of the two observations, not the newer one.
+//
+// This test does not exercise the script; it guards the artefact the script writes, which is what a
+// careless run actually damages. If these annotations thin out, someone has overwritten review with
+// automation and the suite says so before it reaches a commit.
+{
+  const humanReviewed = Object.entries(known).filter(
+    ([, v]) => v.status === 'live_confirmed_in_browser',
+  );
+  assert(
+    'human browser confirmations are still on file (check:sources must not overwrite review)',
+    humanReviewed.length >= 12,
+    `${humanReviewed.length} entries carry live_confirmed_in_browser; expected at least 12`,
+  );
+  // A confirmation with no reasoning is not review. Each must still say what the human saw.
+  const empty = humanReviewed.filter(([, v]) => !v.observed || v.observed.trim().length < 20);
+  assert(
+    'every human confirmation still carries the observation that justifies it',
+    empty.length === 0,
+    empty.map(([u]) => u),
+  );
+}
+
 console.log('');
 if (failures === 0) {
   console.log('ALL TESTS PASSED — every cited source URL has been checked, and none is dead.');

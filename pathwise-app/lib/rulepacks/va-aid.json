@@ -13,14 +13,18 @@
       "id": "schev",
       "name": "State Council of Higher Education for Virginia",
       "short_name": "SCHEV",
-      "decides": ["aid"],
+      "decides": [
+        "aid"
+      ],
       "source_url": "https://www.schev.edu/financial-aid/financial-aid/federal-state-financial-aid"
     },
     {
       "id": "institution_financial_aid",
       "name": "The institution's financial aid office",
       "short_name": "Financial aid office",
-      "decides": ["aid"]
+      "decides": [
+        "aid"
+      ]
     }
   ],
   "capabilities": [
@@ -42,27 +46,65 @@
   "form_selection": {
     "rule": "Students eligible for FAFSA should file FAFSA (covers both federal and state aid). VASA is for students who cannot file FAFSA (e.g., undocumented / tuition-equity students).",
     "fafsa_blocks": [
-      { "when": "immigration.status in ['F1','J1','M1']", "result": "ineligible", "headline": "F-1 status blocks Virginia state financial aid", "cite": "SCHEV VASA guidance" }
+      {
+        "when": "immigration.status in ['F1','J1','M1']",
+        "result": "ineligible",
+        "headline": "F-1 status blocks Virginia state financial aid",
+        "cite": "SCHEV VASA guidance"
+      }
     ]
   },
   "status_classification": {
     "cite": "SCHEV VASA guidance; Federal Student Aid (FAFSA)",
     "note": "The form-selection rule turns on whether the student is eligible to file the FAFSA. The list below is an IMPLEMENTATION BOUNDARY, not a legal category: it names the immigration statuses PathWise has actually read this pack's rule against — the three its block names, plus citizen and lawful permanent resident, for which PathWise returns the FAFSA answer. PathWise does not restate federal FAFSA eligibility criteria here and makes no claim about which other statuses can or cannot file. Statuses this pack does NOT cover include the undocumented and tuition-equity students its own rule names as the state alternative's audience: their route is real and is simply not modelled here. For any status outside the list PathWise reports which form applies neither way — never that the student is ineligible.",
-    "classified": ["citizen", "LPR", "F1", "J1", "M1"]
+    "classified": [
+      "citizen",
+      "LPR",
+      "F1",
+      "J1",
+      "M1"
+    ]
   },
   "state_provisions": [
-    { "id": "domicile", "note": "Qualifies through Virginia domicile, as determined under Virginia's residency rules.", "requires": ["domicile_established"] },
-    { "id": "military_dependent", "note": "Qualifies as a dependent of military personnel stationed in VA.", "requires": ["military_orders", "dependent_proof"] },
-    { "id": "tuition_equity", "note": "Qualifies under tuition-equity provision.", "requires": ["va_high_school_attendance", "va_high_school_graduation", "tax_filing_evidence"], "volatility": "under_litigation" }
+    {
+      "id": "domicile",
+      "note": "Qualifies through Virginia domicile, as determined under Virginia's residency rules.",
+      "requires": [
+        "domicile_established"
+      ]
+    },
+    {
+      "id": "military_dependent",
+      "note": "Qualifies as a dependent of military personnel stationed in VA.",
+      "requires": [
+        "military_orders",
+        "dependent_proof"
+      ]
+    },
+    {
+      "id": "tuition_equity",
+      "note": "Qualifies under tuition-equity provision.",
+      "requires": [
+        "va_high_school_attendance",
+        "va_high_school_graduation",
+        "tax_filing_evidence"
+      ],
+      "volatility": "under_litigation"
+    }
   ],
   "deadlines": {
     "priority_date": "03-01",
     "rule": "A student's true deadline is the EARLIEST of {college priority date, state deadline, federal deadline}. Surface the earliest, not the federal fallback.",
-    "cite": "SCHEV VASA guidance; institutional priority dates"
+    "cite": "Institutional priority dates; no single statewide VASA date located",
+    "priority_date_basis": "unlocated",
+    "priority_date_note": "SCHEV's published VASA guidance directs students to their institution's own published financial aid deadline and states that deadlines vary by institution; searched 2026-08-18 and no single statewide VASA deadline was located. The 03-01 value is therefore a FALLBACK used only when an institution supplies no date of its own, not a Virginia deadline PathWise can cite. The rule that matters — surface the EARLIEST of the college, state and federal dates — is unchanged, and the college's own date governs whenever one is known."
   },
   "confidentiality": {
-    "note": "Campuses are legally prohibited from sharing VASA application information for immigration enforcement.",
-    "cite": "SCHEV public guidance",
-    "product_consequence": "Underpins the no-account / no-store privacy posture."
+    "note": "PathWise never transmits or stores anything entered here, so nothing a student types on this page can be shared by PathWise with anyone. That is a property of this application and is checkable: no network request is made after the page loads and no value is written to storage.",
+    "cite": "PathWise architecture — verifiable in the running application",
+    "basis": "pathwise_architecture",
+    "product_consequence": "Underpins the no-account / no-store privacy posture.",
+    "removed_claim": "This block previously read: 'Campuses are legally prohibited from sharing VASA application information for immigration enforcement', cited to 'SCHEV public guidance'. Searched 2026-08-18 (SCHEV, Code of Virginia Title 23.1, Virginia Administrative Code) for a provision establishing that prohibition; none was located. Searching instead surfaced Code of Virginia provisions running the other way, requiring institutions to notify the Attorney General when a student admitted on a visa fails to enroll or withdraws, with onward notification to USCIS. Those provisions concern enrollment reporting rather than aid-application data and so do not necessarily contradict the removed sentence — but a student deciding whether to file a state aid application could act on a promise of legal confidentiality, and PathWise must not make a promise it cannot locate. What replaced it is narrower and true.",
+    "unverified_note": "Whether Virginia law restricts institutional disclosure of state aid application data is a real question this pack does not answer. A student who needs that answer should ask the institution's financial aid office or counsel."
   }
 }

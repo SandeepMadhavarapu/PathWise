@@ -94,6 +94,45 @@ function differences(a: unknown, b: unknown, path: string, out: Difference[]): v
  * construction rule that no official source supports.
  */
 const INTENDED_CHANGES: Difference[] = [
+  // ---- 0. Two Virginia aid claims that no located authority supports. -----------------------
+  //
+  // The aid pack asserted, in a reasoning step a student reads: "Campuses are legally prohibited
+  // from sharing VASA application information for immigration enforcement." Searched 2026-08-18
+  // across SCHEV, Code of Virginia Title 23.1 and the Virginia Administrative Code for a provision
+  // establishing that prohibition; none was located. The search instead surfaced Code of Virginia
+  // provisions running the other way — institutions must notify the Attorney General when a
+  // student admitted on a visa fails to enroll or withdraws, who notifies USCIS. Those concern
+  // enrollment reporting, not aid-application data, so they do not necessarily contradict the
+  // sentence. But this is the one claim in the product a student might act on to their cost: a
+  // promise of legal confidentiality could decide whether someone files at all. PathWise must not
+  // make a promise it cannot locate.
+  //
+  // What replaced it is narrower and independently checkable — PathWise transmits and stores
+  // nothing, which is a property of the running application, not of Virginia law. The privacy
+  // posture never needed the legal claim to stand up.
+  //
+  // The deadline cite changes for the same reason. SCHEV's VASA guidance directs students to their
+  // own institution's published deadline and says deadlines vary by institution; no statewide VASA
+  // date was located. 03-01 remains in the pack as the fallback the engine uses when an institution
+  // supplies nothing, and the rule that matters — surface the EARLIEST of college, state and
+  // federal — is untouched. Only the claim about what authority stands behind the date has changed.
+  {
+    path: "priya:aid-eligibility.reasoning_steps[6].claim",
+    before:
+      "Campuses are legally prohibited from sharing VASA application information for immigration enforcement. Underpins the no-account / no-store privacy posture.",
+    after:
+      "PathWise never transmits or stores anything entered here, so nothing a student types on this page can be shared by PathWise with anyone. That is a property of this application and is checkable: no network request is made after the page loads and no value is written to storage. Underpins the no-account / no-store privacy posture.",
+  },
+  {
+    path: "priya:aid-deadline.cite",
+    before: "SCHEV VASA guidance; institutional priority dates",
+    after: "Institutional priority dates; no single statewide VASA date located",
+  },
+  {
+    path: "priya:next-steps[3].cite",
+    before: "SCHEV VASA guidance; institutional priority dates",
+    after: "Institutional priority dates; no single statewide VASA date located",
+  },
   // ---- 1. Volatility now describes the rule it is attached to. -------------------------------
   //
   // va-domicile.json carried a pack-level volatility note about the TUITION-EQUITY provision — a

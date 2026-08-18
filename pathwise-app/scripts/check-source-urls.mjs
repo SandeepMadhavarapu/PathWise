@@ -97,24 +97,52 @@ const prev = (() => { try { return JSON.parse(readFileSync(MANIFEST, 'utf8')); }
 
 console.log(`Resolving ${urls.size} distinct source URLs from the rulepacks…\n`);
 const out = {};
-let dead = 0, unverified = 0, live = 0;
+let dead = 0, unverified = 0, live = 0, preserved = 0;
+const conflicts = [];
 for (const [url, where] of urls) {
   const r = await classify(url);
   const carried = prev.urls?.[url];
   // A human confirmation already on file survives a machine's inability to reach the host. It does
   // NOT survive a 404: a page that has gone is gone whatever anyone concluded last month.
+  //
+  // It also has to survive a SUCCESS, which is the case this originally got wrong. The old
+  // condition preserved a human note only when the fresh probe came back `unverified`; when the
+  // host answered 200 the curated entry was replaced with a bare "HTTP 200". That silently
+  // destroyed thirteen review notes in one run — among them the one recording that tn.gov resets
+  // automated clients intermittently and is not dead, which is precisely the knowledge someone
+  // needs the next time it flakes. A machine re-reaching a page is not new information about a
+  // page a human has already been to; it is the weaker observation of the two.
+  const humanReviewed = carried?.status === 'live_confirmed_in_browser';
   const final =
     r.status === 'dead'
       ? r
-      : r.status === 'unverified' && carried?.status === 'live_confirmed_in_browser'
-        ? { status: 'live_confirmed_in_browser', observed: carried.observed }
+      : humanReviewed
+        ? { status: carried.status, observed: carried.observed, ...(carried.confirmed_on ? { confirmed_on: carried.confirmed_on } : {}) }
         : r;
+  // A human entry that a fresh probe now calls dead is the one case a person must look at: it is
+  // reported rather than quietly overwritten, and the dead status is what gets written.
+  if (humanReviewed && r.status === 'dead') {
+    conflicts.push({ url, was: carried.observed, now: r.observed });
+  }
+  if (humanReviewed && r.status !== 'dead') preserved++;
   out[url] = { ...final, cited_by: [...where].sort() };
   if (final.status === 'dead') dead++;
   else if (final.status === 'unverified') unverified++;
   else live++;
   const tag = final.status === 'dead' ? 'DEAD' : final.status === 'unverified' ? 'CHECK' : 'ok';
   console.log(`  ${tag.padEnd(6)} ${final.observed.padEnd(52)} ${url}`);
+}
+
+if (preserved > 0) {
+  console.log(`
+  ${preserved} human-reviewed entr${preserved === 1 ? 'y' : 'ies'} preserved unchanged.`);
+}
+if (conflicts.length > 0) {
+  console.log(`
+  *** ${conflicts.length} human-reviewed URL(s) now look DEAD. A person must decide:`);
+  for (const c of conflicts) console.log(`      ${c.url}
+        was: ${c.was}
+        now: ${c.now}`);
 }
 
 writeFileSync(
