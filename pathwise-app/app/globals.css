@@ -1715,6 +1715,15 @@ h1, h2, h3, .t-page-title, .t-card-title, .t-row-title {
   max-width: 78ch;
 }
 .landing-privacy strong { color: var(--text); font-weight: 650; }
+/* One notch quieter than the privacy promise directly above it. Both are statements about what
+   PathWise is; the promise is the one the reader came for, the disclaimer the one they are owed. */
+.landing-disclaimer {
+  margin: var(--space-3) 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 78ch;
+}
 
 /* ---- Dashboard → next steps ---- */
 .nextcard {
@@ -2726,6 +2735,15 @@ a.navpill-cta.active { background: var(--accent); border-color: var(--accent); c
 }
 
 .shell-meta { margin-top: 28px; font-size: 12px; color: var(--muted); text-align: center; }
+/* The disclaimer runs under the build line, one notch quieter and measured, so it reads as a
+   sentence rather than a third field in a row of metadata. It is not hidden: it takes the same
+   muted ink the rest of the strip takes and stays above the AA threshold on this ground. */
+.shell-meta-disclaimer {
+  display: inline-block;
+  margin-top: 6px;
+  max-width: 68ch;
+  line-height: 1.5;
+}
 
 /* The old shell had no inner scroll container; content flows in the page. */
 .shell-wrap > main { display: block; padding: 0; max-width: none; }

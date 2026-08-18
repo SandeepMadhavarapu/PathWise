@@ -367,8 +367,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
+      {/* The disclaimer belongs in the shell and not on a page, because the thing it disclaims
+          happens on every page: a finding that quotes a regulation at a visa holder and tells them
+          a door is shut. The product hedges its epistemics carefully already — "unable to verify"
+          is a first-class result, and "PathWise advises; the office decides" closes several pages —
+          but hedging what PathWise KNOWS is not the same as stating what PathWise IS, and the
+          second was nowhere in eleven routes. A reader in this position is entitled to both.
+
+          It sits with the verification date and the build sha rather than in a banner because that
+          is what this strip is: the line that says what you are looking at and how far to trust it.
+          A disclaimer shouted at the top would be a product apologising for its answers. This one
+          is a fact about the tool, filed with the other facts about the tool. */}
       <div className="shell-meta">
         Rules verified: {formatVerifiedDate(RULES_VERIFIED_ON)} · Build: {BUILD_SHA}
+        <br />
+        <span className="shell-meta-disclaimer">
+          PathWise reads published rules and decides nothing. It is not legal advice. The offices
+          named in each finding are the ones that decide.
+        </span>
       </div>
     </div>
   );

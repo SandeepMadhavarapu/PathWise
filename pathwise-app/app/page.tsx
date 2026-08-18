@@ -249,6 +249,16 @@ export default function Landing() {
             PathWise reasons on your device — the app makes no network requests once it has loaded,
             and a document you pick is read in the tab and never uploaded.
           </p>
+
+          {/* The same sentence the shell carries on every other route. The landing page is not an
+              AppShell route, so it would otherwise be the one page without it — and it is the page
+              a reader arrives on, where the claim "PathWise does" is made largest. A product that
+              says it sees what three offices cannot should say, in the same breath, that it is not
+              one of them. */}
+          <p className="landing-disclaimer">
+            PathWise reads published rules and decides nothing. It is not legal advice. The offices
+            named in each finding are the ones that decide.
+          </p>
         </footer>
       </div>
     </div>
