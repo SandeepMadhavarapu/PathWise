@@ -523,6 +523,44 @@ export default function CheckPage() {
   const bothDoorsClosed = isBlocked && aidFinding.result === "ineligible";
 
   // Immigration summary: the level closest to the 365-day cliff.
+  /**
+   * Whether the duplicate rows actually change the answer — and if they do, the answer is unknown.
+   *
+   * Naming the ambiguity on the form was not enough. Measured before this: one 12-hour row entered
+   * twice over a 371-day span produced "6 days past the CPT cliff", a red band and "OPT eligibility
+   * lost for this level" — from a record whose honest reading is ZERO full-time days, because a
+   * single 12-hour authorization is part-time and contributes none. The form said the rows were
+   * indistinguishable; the finding went on to state one of the two readings as fact. A warning above
+   * a confident wrong verdict is not a warning, it is a footnote.
+   *
+   * So the ledger is computed twice — as entered, and with exact duplicates collapsed to one. If
+   * both readings agree, the duplicate is immaterial and nothing changes: that is the full-time
+   * case, where days are a union and repeating a row is inert. If they disagree, PathWise genuinely
+   * cannot tell which record it is looking at, and the honest output is that it cannot say — not
+   * the harsher of the two numbers, and not the kinder one either.
+   *
+   * Two genuinely distinct concurrent authorizations still aggregate: they differ in at least one
+   * modelled field, so nothing collapses and no ambiguity is raised.
+   */
+  const dedupedLedger = (() => {
+    if (duplicateRowGroups.length === 0) return null;
+    const seen = new Set<string>();
+    const collapsed = events.filter((e) => {
+      const key = `${e.date}|${e.end_date}|${e.attrs.hours_per_week}|${e.program_level}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return computeCptLedger(collapsed);
+  })();
+
+  const duplicatesAreMaterial =
+    dedupedLedger !== null &&
+    ledger.byLevel.some((l) => {
+      const other = dedupedLedger.forLevel(l.level);
+      return !other || other.fullTimeDays !== l.fullTimeDays;
+    });
+
   const closestLevel = ledger.byLevel.length
     ? ledger.byLevel.reduce((a, b) => (b.daysToCliff < a.daysToCliff ? b : a))
     : undefined;
@@ -1050,15 +1088,29 @@ export default function CheckPage() {
               domain="Immigration (F-1)"
               decidingOffice={formatDecidingOffice("SEVP")}
               status={
-                closestLevel
-                  ? formatCliffDistance(closestLevel.daysToCliff)
-                  : uncountedRows > 0
-                    ? "No complete CPT row"
-                    : "No CPT on record"
+                duplicatesAreMaterial
+                  ? "CPT total cannot be determined"
+                  : closestLevel
+                    ? formatCliffDistance(closestLevel.daysToCliff)
+                    : uncountedRows > 0
+                      ? "No complete CPT row"
+                      : "No CPT on record"
               }
               band={closestLevel ? closestLevel.band : uncountedRows > 0 ? "amber" : "green"}
+              /* `tone` is the card's existing override for a status the band cannot express, and
+                 `idle` is this product's vocabulary for a question it could not settle. An
+                 indistinguishable duplicate is exactly that: not a warning about a known total but
+                 the absence of a knowable one. Amber would say "here is your number, be careful";
+                 red would assert the harsher reading as fact. The badge reads "Unable to verify". */
+              tone={duplicatesAreMaterial ? "idle" : undefined}
               detail={
-                closestLevel
+                duplicatesAreMaterial
+                  ? `Two or more CPT rows are identical in every field PathWise reads, and the total depends on which they are: counted separately they give ${
+                      closestLevel?.fullTimeDays ?? 0
+                    } full-time days, counted as one authorization entered more than once they give ${
+                      dedupedLedger?.forLevel(closestLevel?.level ?? "masters")?.fullTimeDays ?? 0
+                    }. PathWise cannot tell those apart from the record supplied, so it reports neither as your total. Remove a row if it is a duplicate, or change a field if the authorizations differ.`
+                  : closestLevel
                   ? // `levelLabel`, not the raw enum. This printed "at the masters level" — the
                     // internal key — while /student, computing the same sentence from the same
                     // ledger, printed "at the master's level".

@@ -359,6 +359,31 @@ console.log('\n===== 4 · One date spelling, and only one =====');
   );
   assert('20h exactly is still not full-time', days([auth(20)]) === 0, days([auth(20)]));
   assert('duplicating a FULL-TIME authorization changes nothing', days([auth(40)]) === days([auth(40), auth(40)]));
+
+  // The preservation half of the fix, and the reason /check collapses nothing on its own.
+  //
+  // /check reports "cannot be determined" only when the two readings DISAGREE — it computes the
+  // ledger as entered and again with exact duplicates collapsed, and stays silent when both give
+  // the same number. These are the cases that must never be swept into that: authorizations which
+  // differ in any modelled field are distinguishable, so no collapse applies and genuine
+  // concurrency still aggregates. If this ever stopped holding, real overlapping part-time work
+  // would be discarded as a typo, which is the opposite error and the worse one.
+  const at = (s: string, e: string, h: number) => ({
+    type: 'cpt_auth' as const,
+    date: s,
+    end_date: e,
+    program_level: 'masters' as ProgramLevel,
+    attrs: { hours_per_week: h },
+  });
+  assert(
+    'two DISTINCT overlapping part-time authorizations still aggregate',
+    days([at('2024-01-01', '2024-01-10', 12), at('2024-01-05', '2024-01-15', 12)] as never) === 6,
+    days([at('2024-01-01', '2024-01-10', 12), at('2024-01-05', '2024-01-15', 12)] as never),
+  );
+  assert(
+    'same dates with different hours are distinguishable and still aggregate',
+    days([at('2024-01-01', '2024-01-10', 12), at('2024-01-01', '2024-01-10', 13)] as never) === 10,
+  );
 }
 
 console.log('');
