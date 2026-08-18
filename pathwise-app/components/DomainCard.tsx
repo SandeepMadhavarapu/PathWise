@@ -66,6 +66,26 @@ export function DomainCard({
           ? "Attention"
           : "Blocked";
 
+  /**
+   * Whether the evidence block should repeat the deciding office.
+   *
+   * The office is already the card's subtitle, three lines above — so on a fully modelled finding
+   * the block was printing "SEVP", "Domicile Officer", "Financial Aid Office" a second time and
+   * calling it evidence. Measured on the Virginia result, each of the three cards carried its
+   * office exactly twice, and of the block's three rows only two said anything the card had not
+   * already said.
+   *
+   * But on a jurisdiction with no pack it is the ONLY thing the block can honestly hold: no
+   * verification date exists, no source count exists, and inventing either is the one thing this
+   * product must never do. There, the office is not a repetition, it is the whole of what is known.
+   *
+   * So it renders when it is the block's only content, and stands down when the block has
+   * something the card has not already said. Ohio keeps "Decision office", then stops.
+   */
+  const officeRepeatsSubtitle = !!evidence?.office && evidence.office === decidingOffice;
+  const evidenceHasMore = !!(evidence?.verified || evidence?.sources);
+  const showEvidenceOffice = !!evidence?.office && !(officeRepeatsSubtitle && evidenceHasMore);
+
   return (
     <div className="surface domain-card">
       {/* The original structure: a small-caps domain label, the status line, the band pill, then
@@ -104,9 +124,9 @@ export function DomainCard({
           Every row is optional and renders only when the caller has the real value: a jurisdiction
           with no pack has no citation and no verification date, and this block must stay empty
           rather than print a placeholder. */}
-      {evidence && (evidence.office || evidence.verified || evidence.sources) ? (
+      {evidence && (showEvidenceOffice || evidence.verified || evidence.sources) ? (
         <dl className="domain-evidence">
-          {evidence.office ? (
+          {showEvidenceOffice ? (
             <>
               <dt>Decision office</dt>
               <dd>{evidence.office}</dd>
